@@ -12,7 +12,7 @@ import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import { fetchInboxCount } from 'api/utils'
 
-const logger = new Logger('EventHandler')
+const logger = Logger.create('EventHandler')
 
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)

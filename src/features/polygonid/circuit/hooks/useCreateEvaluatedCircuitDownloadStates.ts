@@ -9,7 +9,7 @@ import {
 } from '../@types'
 import { useCreateCircuitDownloadStates } from './useCreateCircuitDownloadStates'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export function useCreateEvaluatedCircuitDownloadStates({
   publicDir,

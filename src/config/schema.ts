@@ -38,6 +38,9 @@ export const EnvVarsSchema = z
 
     // Telemetry
     LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+    HIDE_STACK_TRACES_IN_LOG: z
+      .enum(['true', 'false'])
+      .transform((v) => v === 'false'),
     ENABLE_SENTRY: z.enum(['true', 'false']).transform((v) => v === 'true'),
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().default('local'),

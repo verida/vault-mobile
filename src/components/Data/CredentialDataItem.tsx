@@ -30,7 +30,7 @@ import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
-const logger = new Logger('Components/Data/CredentialDataItem')
+const logger = Logger.create('Components/Data/CredentialDataItem')
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: DataItem

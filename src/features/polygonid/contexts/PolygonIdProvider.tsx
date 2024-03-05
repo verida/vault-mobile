@@ -9,7 +9,7 @@ import React from 'react'
 import { ALL_CIRCUIT_IDS } from '../circuit/constants'
 import { PolygonIdManagerProvider } from './PolygonIdManagerContext'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export const PolygonIdProvider: React.FunctionComponent = (props) => {
   const { children } = props

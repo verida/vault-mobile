@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 import { Logger } from 'features/telemetry'
 
-const logger = new Logger('Emitter')
+const logger = Logger.create('Emitter')
 
 export type EmitterTypes = {
   SAVE_GENERIC_PROPERTY: {

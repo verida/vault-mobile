@@ -28,7 +28,7 @@ import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 
-const logger = new Logger('TokenRecipient')
+const logger = Logger.create('TokenRecipient')
 
 export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 

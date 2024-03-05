@@ -25,7 +25,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Pages/SelectAsset')
+const logger = Logger.create('Pages/SelectAsset')
 
 export interface SelectAssetScreenProps {
   searchableAddresses: string[]

@@ -14,7 +14,7 @@ import {
 } from 'features/polygonid/constants'
 import { Logger } from 'features/telemetry'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export function isPolygonIdMessage(message: string) {
   return (

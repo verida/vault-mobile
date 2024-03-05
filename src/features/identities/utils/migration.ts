@@ -6,7 +6,7 @@ import { Logger } from 'features/telemetry'
 import { UpdateContextMigrationProgressFunction } from '../types'
 import { getNetworkFromDID } from './network'
 
-const logger = new Logger('IdentityMigration')
+const logger = Logger.create('IdentityMigration')
 
 export function canMigrateToMainnet(did: string) {
   const network = did ? getNetworkFromDID(did) : undefined

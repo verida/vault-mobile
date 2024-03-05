@@ -33,7 +33,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Pages/Profiles/AddPlatformLink')
+const logger = Logger.create('Pages/Profiles/AddPlatformLink')
 
 enum PageType {
   ListSocialNetworks,

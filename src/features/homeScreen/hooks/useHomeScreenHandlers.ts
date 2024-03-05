@@ -8,7 +8,7 @@ import { Linking } from 'react-native'
 
 import { fetchInboxCount } from 'api/utils'
 
-const logger = new Logger('HomeScreen')
+const logger = Logger.create('HomeScreen')
 
 /**
  * This is a temporary hooks to migrate all the handlers that used to be set on the previous home screen. The logic here is not related to the Home screen, so should be moved to an appropriate location.

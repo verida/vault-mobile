@@ -17,7 +17,7 @@ import {
   getCircuitsDir,
 } from '../utils'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export function useDownloadCircuit({
   veridaBaseUri = POLYGON_ID_CIRCUITS_DOWNLOAD_URL,

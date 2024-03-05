@@ -16,7 +16,7 @@ import AccountManager from 'api/AccountManager'
 
 import { useEmitter } from './useEmitter'
 
-const logger = new Logger('Auth')
+const logger = Logger.create('Auth')
 
 type AuthContextState = {
   refresh: () => Promise<boolean>

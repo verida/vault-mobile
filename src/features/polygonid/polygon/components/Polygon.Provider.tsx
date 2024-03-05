@@ -21,7 +21,7 @@ import {
 } from '../@types'
 import { PolygonContextProvider } from '../contexts'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 const defaultGenerateRandomKey: RandomKeyGenerator = () => String(Math.random())
 

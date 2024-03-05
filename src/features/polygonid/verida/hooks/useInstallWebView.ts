@@ -10,7 +10,7 @@ import RNFS from 'react-native-fs'
 
 import { Stateful } from '../../@types'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 const loadingState = (): Stateful<string> => ({
   loading: true,

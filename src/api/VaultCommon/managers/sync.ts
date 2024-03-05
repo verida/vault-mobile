@@ -6,7 +6,7 @@ import {
 } from '../interfaces/inbox/Inbox'
 import VaultCommon from '../vault'
 
-const logger = new Logger('VaultSyncManager')
+const logger = Logger.create('VaultSyncManager')
 
 /**
  * Manage login requests and responses

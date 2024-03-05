@@ -6,7 +6,7 @@ import StaticServer from 'react-native-static-server'
 
 import { FileServerProps } from '../@types'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export function useFileServer({ dir, port }: FileServerProps) {
   const [isReady, setIsReady] = React.useState(false)

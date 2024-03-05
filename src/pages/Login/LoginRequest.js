@@ -32,7 +32,7 @@ import {
 } from '../../constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
-const logger = new Logger('Pages/Login/LoginRequest')
+const logger = Logger.create('Pages/Login/LoginRequest')
 
 global.EncryptionUtils = EncryptionUtils
 
