@@ -1,7 +1,8 @@
 import { Context } from '@verida/client-rn'
 import { config } from 'config'
-import { Logger } from 'features/telemetry'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+
+import { Logger } from '~/features/telemetry'
 
 import AccountManager from 'api/AccountManager'
 
@@ -45,7 +46,10 @@ export type PolygonIdManagerContextType = {
   isPolygonIdReady: boolean
   areCircuitsReady: boolean
   isWitnessReady: boolean
+  isManagerReady: boolean
+  isManagerInitialising: boolean
   manager: PolygonIdManager | null
+  restartManager: () => Promise<void>
 }
 
 export const PolygonIdManagerContext =
@@ -53,8 +57,12 @@ export const PolygonIdManagerContext =
     isPolygonIdReady: false,
     areCircuitsReady: false,
     isWitnessReady: false,
+    isManagerReady: false,
+    isManagerInitialising: false,
     manager: null,
-    // TODO: Provide a function reset the manager if anything wrong
+    restartManager: async () => {
+      return
+    },
   })
 
 export const PolygonIdManagerProvider: React.FC = (props) => {
@@ -65,13 +73,14 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const account = accountManager.getSelectedAccount()
   const veridaVaultContext = accountManager.context as Context | undefined
 
+  const [isManagerInitialising, setIsManagerInitialising] = useState(false)
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 
   const { circuitStorage, areAllCircuitsAvailable } = usePolygonIdCircuits()
   const { calculateWitness, isReady: isWitnessReady } = usePolygonIdWitness()
 
-  useEffect(() => {
+  const initManager = useCallback(async () => {
     if (!areAllCircuitsAvailable) {
       logger.debug(
         'Circuits not available, cannot create Polygon ID Manager yet'
@@ -94,24 +103,23 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
       return
     }
 
-    const execute = async () => {
-      try {
-        const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
+    try {
+      setIsManagerInitialising(true)
+      const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
 
-        const manager = await PolygonIdManager.createManager(
-          polygonIdConfig,
-          polygonIdPrivateKey,
-          veridaVaultContext,
-          circuitStorage,
-          calculateWitness
-        )
-        setPolygonIdManager(manager)
-      } catch (error) {
-        logger.error(error)
-      }
+      const manager = await PolygonIdManager.createManager(
+        polygonIdConfig,
+        polygonIdPrivateKey,
+        veridaVaultContext,
+        circuitStorage,
+        calculateWitness
+      )
+      setPolygonIdManager(manager)
+    } catch (error) {
+      logger.error(error)
+    } finally {
+      setIsManagerInitialising(false)
     }
-
-    execute()
   }, [
     isWitnessReady,
     areAllCircuitsAvailable,
@@ -121,15 +129,33 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     calculateWitness,
   ])
 
+  const restartManager = useCallback(async () => {
+    setPolygonIdManager(null)
+    await initManager()
+  }, [initManager])
+
+  useEffect(() => {
+    initManager()
+  }, [initManager])
+
   const contextValue: PolygonIdManagerContextType = useMemo(
     () => ({
       isPolygonIdReady:
         areAllCircuitsAvailable && isWitnessReady && !!polygonIdManager,
       areCircuitsReady: areAllCircuitsAvailable,
       isWitnessReady: isWitnessReady,
+      isManagerReady: !!polygonIdManager,
+      isManagerInitialising: isManagerInitialising,
       manager: polygonIdManager,
+      restartManager,
     }),
-    [areAllCircuitsAvailable, isWitnessReady, polygonIdManager]
+    [
+      areAllCircuitsAvailable,
+      isWitnessReady,
+      isManagerInitialising,
+      polygonIdManager,
+      restartManager,
+    ]
   )
 
   return (
