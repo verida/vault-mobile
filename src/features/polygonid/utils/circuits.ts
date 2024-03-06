@@ -31,11 +31,27 @@ export async function initCircuitStorage(
     )
     .map(([circuitId]) => circuitId as CircuitId)
 
-  logger.debug('Circuits to download:', { unavailableCircuits })
+  await downloadAndSaveCircuits(
+    unavailableCircuits,
+    circuitStorage,
+    circuitsRemoteBaseUrl,
+    updateState
+  )
+
+  logger.info('Circuit storage initialised')
+}
+
+export async function downloadAndSaveCircuits(
+  circuitIds: CircuitId[],
+  circuitStorage: CircuitStorage,
+  circuitsRemoteBaseUrl: string,
+  updateState: UpdateStateCallback
+) {
+  logger.debug('Downloading circuits...', { circuitIds })
 
   await Promise.all(
-    unavailableCircuits.map(async (circuitId) => {
-      await saveCircuitData(
+    circuitIds.map(async (circuitId) => {
+      await downloadAndSaveCircuit(
         circuitId,
         circuitStorage,
         circuitsRemoteBaseUrl,
@@ -43,11 +59,9 @@ export async function initCircuitStorage(
       )
     })
   )
-
-  logger.info('Circuit storage initialised')
 }
 
-export async function saveCircuitData(
+export async function downloadAndSaveCircuit(
   circuitId: CircuitId,
   circuitStorage: CircuitStorage,
   circuitsRemoteBaseUrl: string,

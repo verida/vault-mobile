@@ -1,12 +1,18 @@
-import { CircuitStorage } from '@0xpolygonid/js-sdk'
+import { CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
 import { config } from 'config'
-import { Logger } from 'features/telemetry'
-import React, { createContext, useEffect, useMemo } from 'react'
+import React, { createContext, useCallback, useEffect, useMemo } from 'react'
+
+import { Logger } from '~/features/telemetry'
 
 import { REQUIRED_CIRCUIT_IDS } from '../constants'
 import { usePolygonIdCircuitStates } from '../hooks'
 import { CircuitStates } from '../types'
-import { createCircuitStorage, initCircuitStorage } from '../utils'
+import {
+  createCircuitStorage,
+  downloadAndSaveCircuit,
+  downloadAndSaveCircuits,
+  initCircuitStorage,
+} from '../utils'
 
 const logger = Logger.create('PolygonId')
 
@@ -18,7 +24,8 @@ export type PolygonIdCircuitsContextType = {
   readonly areAnyCircuitsDownloading: boolean
   readonly areAnyCircuitsUnavailable: boolean
   readonly circuitStates: CircuitStates
-  // TODO: Add a function to download a circuit
+  readonly downloadCircuit: (circuitId: CircuitId) => Promise<void>
+  readonly downloadAllCircuits: () => Promise<void>
 }
 
 export const PolygonIdCircuitsContext =
@@ -62,6 +69,27 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
     updateState,
   ])
 
+  const downloadCircuit = useCallback(
+    async (circuitId: CircuitId) => {
+      await downloadAndSaveCircuit(
+        circuitId,
+        circuitStorage,
+        config.polygonId.common.circuitsDownloadUrl,
+        updateState
+      )
+    },
+    [updateState]
+  )
+
+  const downloadAllCircuits = useCallback(async () => {
+    await downloadAndSaveCircuits(
+      Object.keys(circuitStates) as CircuitId[],
+      circuitStorage,
+      config.polygonId.common.circuitsDownloadUrl,
+      updateState
+    )
+  }, [circuitStates, updateState])
+
   const contextValue: PolygonIdCircuitsContextType = useMemo(
     () => ({
       circuitStorage,
@@ -69,12 +97,16 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
       areAnyCircuitsDownloading,
       areAnyCircuitsUnavailable,
       circuitStates,
+      downloadCircuit,
+      downloadAllCircuits,
     }),
     [
       areAllCircuitsAvailable,
       areAnyCircuitsDownloading,
       areAnyCircuitsUnavailable,
       circuitStates,
+      downloadCircuit,
+      downloadAllCircuits,
     ]
   )
 
