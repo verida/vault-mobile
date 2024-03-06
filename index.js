@@ -4,7 +4,7 @@
 Object.assign(navigator || {}, { product: 'ReactNative' })
 
 import '@walletconnect/react-native-compat'
-import './polyfills/shim'
+import './shim'
 import 'react-native-get-random-values'
 import '@ethersproject/shims'
 import 'react-native-crypto'

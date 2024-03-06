@@ -27,9 +27,9 @@ import {
   buildPackageManager,
   buildProofService,
   getOrCreatePolygonIdIdentity,
+  getVeridaDatastore,
   migratePolygonIdData,
-} from './polygonid'
-import { getVeridaDatastore } from './storage'
+} from '../utils'
 
 const logger = Logger.create('PolygonId')
 

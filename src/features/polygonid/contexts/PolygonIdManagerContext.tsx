@@ -6,9 +6,10 @@ import { Logger } from '~/features/telemetry'
 
 import AccountManager from 'api/AccountManager'
 
+import { PolygonIdManager } from '../classes'
 import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
 import { PolygonIdConfig } from '../types'
-import { getPolygonIdPrivateKey, PolygonIdManager } from '../utils'
+import { getPolygonIdPrivateKey } from '../utils'
 
 const logger = Logger.create('PolygonId')
 
