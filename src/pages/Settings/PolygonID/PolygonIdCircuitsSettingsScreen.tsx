@@ -1,10 +1,10 @@
-import { CircuitDownloadStateDebug } from 'features/polygonid/circuit'
-import { ALL_CIRCUIT_IDS } from 'features/polygonid/circuit/constants'
+import { usePolygonIdCircuits } from 'features/polygonid'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { CircuitDownloadStateDebug } from 'components/PolygonId'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -29,6 +29,8 @@ export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<
     })
   }, [navigation])
 
+  const { circuitStates } = usePolygonIdCircuits()
+
   return (
     <View
       style={[
@@ -48,10 +50,11 @@ export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<
           </Text>
         </View>
         <View>
-          {ALL_CIRCUIT_IDS.map((circuitId) => (
+          {Object.entries(circuitStates).map(([circuitId, circuitState]) => (
             <CircuitDownloadStateDebug
               key={circuitId}
-              circuitId={circuitId}
+              label={circuitId}
+              status={circuitState.status}
               style={styles.circuitWrapper}
             />
           ))}

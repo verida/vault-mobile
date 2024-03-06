@@ -1,20 +1,21 @@
-import type {
+import {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
+  PROTOCOL_CONSTANTS,
 } from '@0xpolygonid/js-sdk'
 import axios from 'axios'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
 import { DidMetadata, getDidMetadata, saveDidMetadata } from 'features/did'
+import { Logger } from 'features/telemetry'
+
 import {
   IDEN3_PROTOCOL,
   IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM,
   IDEN3_PROTOCOL_DEEPLINK_REQUEST_PARAM,
   IDEN3_PROTOCOL_DEEPLINK_SCHEME,
-  PROTOCOL_MESSAGE_TYPE,
-} from 'features/polygonid/constants'
-import { Logger } from 'features/telemetry'
+} from '../constants'
 
-const logger = Logger.create('Polygon ID')
+const logger = Logger.create('PolygonId')
 
 export function isPolygonIdMessage(message: string) {
   return (
@@ -94,17 +95,18 @@ function parseUriMessage(message: string) {
   }
 
   logger.warn('The Polygon ID message is invalid')
-  throw new Error('Invalid PolygonID message')
+  throw new Error('Invalid Polygon ID message')
 }
 
 function parseMessage(
   message: Record<string, unknown>
 ): AuthorizationRequestMessage | CredentialsOfferMessage {
   switch (message.type) {
-    case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE:
+    case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
+      .AUTHORIZATION_REQUEST_MESSAGE_TYPE:
       // Either a Connection request or a ZK Proof request
       return message as AuthorizationRequestMessage
-    case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE:
+    case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE:
       // Offer to save a new ZK credential
       return message as CredentialsOfferMessage
     default:

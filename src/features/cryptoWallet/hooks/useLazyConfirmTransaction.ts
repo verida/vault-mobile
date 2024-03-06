@@ -12,9 +12,9 @@ import {
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
 import { getRpcUrlOrThrow } from 'features/caip'
-import { Stateful } from 'features/polygonid/@types'
 import { Logger } from 'features/telemetry'
 import * as React from 'react'
+import { Stateful } from 'types'
 
 import {
   AggregateWalletBannerBalance,

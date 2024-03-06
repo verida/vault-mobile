@@ -52,13 +52,13 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
   const [erroMessage, setErrorMessage] = useState<string | undefined>()
   const [success, setSuccess] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
-  const { handleAcceptCredentialsOffer, isReady: isPolygonIdReady } =
-    usePolygonId()
+  const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
   const styles = useThemeAwareStyle(createStyles)
   const insets = useSafeAreaInsets()
 
   const polygonIdNotReady =
-    details.protocols.includes('polygonid') && !isPolygonIdReady
+    details.protocols.includes('polygonid') &&
+    (!isPolygonIdReady || !polygonIdManager)
 
   const processButtonDisabled = processing || polygonIdNotReady
 
@@ -67,12 +67,16 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
   }, [navigation])
 
   const handleAccept = useCallback(async () => {
+    if (!polygonIdManager) {
+      return
+    }
+
     setProcessing(true)
     // TODO: Handle different actions depending on the type of request
 
     // Doesn't need a try/catch as handled in the function itself
     const { result, error: requestError } =
-      await handleAcceptCredentialsOffer(data)
+      await polygonIdManager.processCredentialsOffer(data)
     if (result) {
       setSuccess(true)
     } else {
@@ -81,7 +85,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
     }
     setProcessing(false)
     // TODO: Handle the case where the user closes the screen before the request is processed
-  }, [handleAcceptCredentialsOffer, data])
+  }, [polygonIdManager, data])
 
   const handleToggleDetails = useCallback(() => {
     setDetailsOpen((prevValue) => !prevValue)

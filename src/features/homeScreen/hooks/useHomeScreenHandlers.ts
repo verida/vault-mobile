@@ -26,7 +26,7 @@ export function useHomeScreenHandlers() {
         return
       }
 
-      // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
+      // Ignore Polygon ID deeplink here, as it's handled in features/protocolHandlers
       if (
         isPolygonIdMessage(initialUrl) ||
         isCryptoRequestDeepLink(initialUrl)

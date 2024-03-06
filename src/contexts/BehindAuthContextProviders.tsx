@@ -19,11 +19,11 @@ export const BehindAuthContextProviders: React.FunctionComponent<
   // TODO: Move other relavant context providers here
   return (
     <CryptoWalletProvider>
-      <VeramoProvider>
-        <PolygonIdProvider>
+      <PolygonIdProvider>
+        <VeramoProvider>
           <ProtocolsProvider>{children}</ProtocolsProvider>
-        </PolygonIdProvider>
-      </VeramoProvider>
+        </VeramoProvider>
+      </PolygonIdProvider>
     </CryptoWalletProvider>
   )
 }
