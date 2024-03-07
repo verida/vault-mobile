@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 
 import {
   BottomActionBar,
+  CopyToClipboardButton,
   ScreenWrapper,
   StatusInfo,
   StatusList,
@@ -26,6 +27,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
   useEffect(() => {
     navigation.setOptions({
       title: 'Polygon ID Status',
+      headerBackTitleVisible: false,
     })
   }, [navigation])
 
@@ -35,9 +37,11 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     isManagerReady,
     isManagerInitialising,
     restartManager,
+    manager,
   } = usePolygonId()
 
-  const { circuitStates, downloadAllCircuits } = usePolygonIdCircuits()
+  const { circuitStates, areAnyCircuitsDownloading, downloadAllCircuits } =
+    usePolygonIdCircuits()
 
   const statusItems: StatusListItem[] = useMemo(
     () => [
@@ -60,7 +64,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
   const circuitsStatusItems: StatusListItem[] = Object.entries(
     circuitStates
   ).map(([circuitId, circuitState]) => ({
-    label: `${circuitId}${circuitState.status === 'DOWNLOADING' ? ' (downloading...)' : circuitState.status === 'UNAVAILABLE' ? ' (unavailable)' : ''}`,
+    label: circuitId,
     status:
       circuitState.status === 'AVAILABLE'
         ? 'success'
@@ -80,11 +84,16 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     [isPolygonIdReady, statusItems, circuitsStatusItems]
   )
 
+  const sharedContent = manager?.did?.string() ?? ''
+
   const styles = useThemeAwareStyle(createStyles)
 
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        alwaysBounceVertical={false}>
         <StatusInfo
           statusType={globalStatus}
           title={
@@ -102,23 +111,31 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
                 : 'Try restarting the engine or re-downloading the circuits.'
           }
         />
-        <ScrollView contentContainerStyle={styles.sectionContainer}>
+        <View style={styles.sharedContentContainer}>
+          <View style={{ flex: 1 }}>
+            <Typography numberOfLines={2} lineBreakMode='middle'>
+              {sharedContent}
+            </Typography>
+          </View>
+          <CopyToClipboardButton content={sharedContent} />
+        </View>
+        <View style={styles.sectionContainer}>
           <View style={styles.section}>
             <Typography variant='h4'>Engine</Typography>
             <StatusList statusItems={statusItems} style={styles.statusList} />
           </View>
           <View style={styles.section}>
-            <Typography variant='h4'>Circuits</Typography>
+            <Typography variant='h4'>{`Circuits${areAnyCircuitsDownloading ? ' (downloading...)' : ''}`}</Typography>
             <StatusList
               statusItems={circuitsStatusItems}
               style={styles.statusList}
             />
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
       <BottomActionBar
         hideBorder
-        actionsOrientation='column'
+        actionsOrientation='row'
         actions={[
           {
             label: 'Restart engine',
@@ -126,7 +143,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
             color: 'grey',
           },
           {
-            label: 'Re-download circuits',
+            label: 'Download circuits',
             onPress: downloadAllCircuits,
             color: 'grey',
           },
@@ -140,9 +157,11 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
+    },
+    contentContainer: {
       paddingTop: theme.spacing.l,
       paddingHorizontal: theme.spacing.m,
-      gap: theme.spacing.l,
+      gap: theme.spacing.m,
     },
     sectionContainer: {
       gap: theme.spacing.l,
@@ -152,5 +171,15 @@ const createStyles = (theme: Theme) =>
     },
     statusList: {
       marginLeft: theme.spacing.m,
+    },
+    sharedContentContainer: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm,
+      borderRadius: theme.roundness.l,
+      backgroundColor: theme.color.primary5,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: theme.spacing.s,
     },
   })
