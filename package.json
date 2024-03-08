@@ -27,7 +27,7 @@
     "storybook:generate": "sb-rn-get-stories"
   },
   "dependencies": {
-    "@0xpolygonid/js-sdk": "^1.8.1",
+    "@0xpolygonid/js-sdk": "^1.8.2",
     "@babel/helper-environment-visitor": "^7.16.7",
     "@cheqd/did-provider-cheqd": "^3.6.6",
     "@cheqd/sdk": "^3.6.1",
