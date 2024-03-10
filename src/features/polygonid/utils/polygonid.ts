@@ -28,6 +28,7 @@ import {
   ProvingParams,
   RHSResolver,
   StateVerificationFunc,
+  VerifiableConstants,
   VerificationHandlerFunc,
   VerificationParams,
   W3CCredential,
@@ -383,7 +384,8 @@ export async function migratePolygonIdData(veridaContext: Context) {
     logger.debug('Fetching identity credentials from database')
     const credentialsToDelete = (await credentialDatabase.getMany(
       {
-        'data.credentialSubject.type': 'AuthBJJCredential',
+        'data.credentialSubject.type':
+          VerifiableConstants.AUTH.AUTH_BJJ_CREDENTIAL_TYPE,
         'data.credentialSubject.x': { $exists: true },
         'data.credentialSubject.y': { $exists: true },
       },
