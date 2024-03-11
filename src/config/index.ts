@@ -51,6 +51,9 @@ export const config = {
     blockchain: {
       enableCustomNetwork: false,
     },
+    polygonid: {
+      enableCredentialStatusCheck: false,
+    },
   },
   verida: {
     [EnvironmentType.LOCAL]: {

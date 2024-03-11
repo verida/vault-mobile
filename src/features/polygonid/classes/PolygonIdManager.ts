@@ -19,6 +19,9 @@ import Axios, { AxiosRequestConfig } from 'axios'
 import { Logger } from 'features/telemetry'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
+import { config as appConfig } from '~/config'
+import { VerificationResult } from '~/features/verifiableCredential'
+
 import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
 import {
   buildCredentialWallet,
@@ -294,6 +297,37 @@ export class PolygonIdManager {
           'Something went wrong processing the Polygon ID credential offer.'
         ),
       }
+    }
+  }
+
+  public async verifyCredential(
+    credential: W3CCredential
+  ): Promise<VerificationResult | undefined> {
+    // TODO: Try to move this as a Veramo plugin
+
+    if (!this.credentialWallet) {
+      return undefined
+    }
+
+    logger.debug('Verifying credential...')
+
+    try {
+      // TODO: Remove feature flag when we have more certainty on the revocation status check. For now, when we test, status.mtp.existence is always false meaning the credential is invalid. But it could be because we test with credentials that are not relevant.
+      const status = appConfig.features.polygonid.enableCredentialStatusCheck
+        ? await this.credentialWallet.getRevocationStatusFromCredential(
+            credential
+          )
+        : undefined
+
+      return {
+        verified: status?.mtp.existence,
+        expired: credential.expirationDate
+          ? credential.expirationDate < new Date().toISOString()
+          : false,
+      }
+    } catch (error) {
+      logger.error(error)
+      return undefined
     }
   }
 
