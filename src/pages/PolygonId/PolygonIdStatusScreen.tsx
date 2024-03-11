@@ -84,7 +84,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     [isPolygonIdReady, statusItems, circuitsStatusItems]
   )
 
-  const sharedContent = manager?.did?.string() ?? ''
+  const sharedContent = manager?.did?.string() ?? null
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -114,10 +114,13 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         <View style={styles.sharedContentContainer}>
           <View style={{ flex: 1 }}>
             <Typography numberOfLines={2} lineBreakMode='middle'>
-              {sharedContent}
+              {sharedContent ?? 'No identifier yet'}
             </Typography>
           </View>
-          <CopyToClipboardButton content={sharedContent} />
+          <CopyToClipboardButton
+            content={sharedContent ?? ''}
+            disabled={!sharedContent}
+          />
         </View>
         <View style={styles.sectionContainer}>
           <View style={styles.section}>
