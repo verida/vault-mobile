@@ -49,6 +49,7 @@ export type PolygonIdManagerContextType = {
   isWitnessReady: boolean
   isManagerReady: boolean
   isManagerInitialising: boolean
+  isManagerInError: boolean
   manager: PolygonIdManager | null
   restartManager: () => Promise<void>
 }
@@ -60,6 +61,7 @@ export const PolygonIdManagerContext =
     isWitnessReady: false,
     isManagerReady: false,
     isManagerInitialising: false,
+    isManagerInError: false,
     manager: null,
     restartManager: async () => {
       return
@@ -75,6 +77,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const veridaVaultContext = accountManager.context as Context | undefined
 
   const [isManagerInitialising, setIsManagerInitialising] = useState(false)
+  const [isManagerInError, setIsManagerInError] = useState(false)
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 
@@ -82,6 +85,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const { calculateWitness, isReady: isWitnessReady } = usePolygonIdWitness()
 
   const initManager = useCallback(async () => {
+    setPolygonIdManager(null)
     if (!areAllCircuitsAvailable) {
       logger.debug(
         'Circuits not available, cannot create Polygon ID Manager yet'
@@ -106,6 +110,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
 
     try {
       setIsManagerInitialising(true)
+      setIsManagerInError(false)
       const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
 
       const manager = await PolygonIdManager.createManager(
@@ -117,6 +122,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
       )
       setPolygonIdManager(manager)
     } catch (error) {
+      setIsManagerInError(true)
       logger.error(error)
     } finally {
       setIsManagerInitialising(false)
@@ -131,7 +137,6 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   ])
 
   const restartManager = useCallback(async () => {
-    setPolygonIdManager(null)
     await initManager()
   }, [initManager])
 
@@ -144,9 +149,10 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
       isPolygonIdReady:
         areAllCircuitsAvailable && isWitnessReady && !!polygonIdManager,
       areCircuitsReady: areAllCircuitsAvailable,
-      isWitnessReady: isWitnessReady,
+      isWitnessReady,
       isManagerReady: !!polygonIdManager,
-      isManagerInitialising: isManagerInitialising,
+      isManagerInitialising,
+      isManagerInError,
       manager: polygonIdManager,
       restartManager,
     }),
@@ -154,6 +160,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
       areAllCircuitsAvailable,
       isWitnessReady,
       isManagerInitialising,
+      isManagerInError,
       polygonIdManager,
       restartManager,
     ]

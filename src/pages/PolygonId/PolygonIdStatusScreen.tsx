@@ -36,6 +36,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     isWitnessReady,
     isManagerReady,
     isManagerInitialising,
+    isManagerInError,
     restartManager,
     manager,
   } = usePolygonId()
@@ -51,14 +52,16 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
           ? 'success'
           : isManagerInitialising
             ? 'processing'
-            : 'error',
+            : isManagerInError
+              ? 'error'
+              : 'idle',
       },
       {
         label: 'Witness',
         status: isWitnessReady ? 'success' : 'error',
       },
     ],
-    [isManagerInitialising, isManagerReady, isWitnessReady]
+    [isManagerInitialising, isManagerInError, isManagerReady, isWitnessReady]
   )
 
   const circuitsStatusItems: StatusListItem[] = Object.entries(
