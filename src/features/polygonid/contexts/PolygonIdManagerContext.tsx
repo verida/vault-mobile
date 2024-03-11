@@ -8,37 +8,31 @@ import AccountManager from 'api/AccountManager'
 
 import { PolygonIdManager } from '../classes'
 import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
-import { PolygonIdConfig } from '../types'
+import { PolygonIdIdentityConfig } from '../types'
 import { getPolygonIdPrivateKey } from '../utils'
 
 const logger = Logger.create('PolygonId')
 
-export const polygonIdTestnetConfig: PolygonIdConfig = {
-  polygonIdBlockchain: config.polygonId.common.blockchain,
-  polygonIdDidMethod: config.polygonId.common.didMethod,
-  polygonIdIpfsGatewayUrl: config.polygonId.common.ipfsGatewayUrl,
-  polygonIdRevocationType: config.polygonId.common.revocationType,
-  polygonIdNetworkId: config.polygonId.testnet.networkId,
-  polygonIdRevocationBaseUrl: config.polygonId.testnet.revocationBaseUrl,
-  polygonIdRpcUrl: config.polygonId.testnet.rpcUrl,
-  polygonIdContractAddress: config.polygonId.testnet.contractAddress,
+export const polygonIdTestnetConfig: PolygonIdIdentityConfig = {
+  blockchain: config.polygonId.common.blockchain,
+  networkId: config.polygonId.testnet.networkId,
+  didMethod: config.polygonId.common.didMethod,
+  revocationType: config.polygonId.common.revocationType,
+  revocationBaseUrl: config.polygonId.testnet.revocationBaseUrl,
 }
 
-export const polygonIdMainnetConfig: PolygonIdConfig = {
-  polygonIdBlockchain: config.polygonId.common.blockchain,
-  polygonIdDidMethod: config.polygonId.common.didMethod,
-  polygonIdIpfsGatewayUrl: config.polygonId.common.ipfsGatewayUrl,
-  polygonIdRevocationType: config.polygonId.common.revocationType,
-  polygonIdNetworkId: config.polygonId.mainnet.networkId,
-  polygonIdRevocationBaseUrl: config.polygonId.mainnet.revocationBaseUrl,
-  polygonIdRpcUrl: config.polygonId.mainnet.rpcUrl,
-  polygonIdContractAddress: config.polygonId.mainnet.contractAddress,
+export const polygonIdMainnetConfig: PolygonIdIdentityConfig = {
+  blockchain: config.polygonId.common.blockchain,
+  networkId: config.polygonId.mainnet.networkId,
+  didMethod: config.polygonId.common.didMethod,
+  revocationType: config.polygonId.common.revocationType,
+  revocationBaseUrl: config.polygonId.mainnet.revocationBaseUrl,
 }
 
 // For the moment we are fixing the Polygon ID network to mainnet but we could adapt it based on the Verida network.
 const polygonIdNetwork: 'mainnet' | 'testnet' = 'mainnet'
 
-const polygonIdConfig =
+const polygonIdIdentityConfig =
   polygonIdNetwork === 'mainnet'
     ? polygonIdMainnetConfig
     : polygonIdTestnetConfig
@@ -71,7 +65,7 @@ export const PolygonIdManagerContext =
 export const PolygonIdManagerProvider: React.FC = (props) => {
   const { children } = props
 
-  // TODO: Handle account switching
+  // TODO: Better handle account switching. For now it's ok as creating or switching identity remount almost the whole app including this provider but it's not a good implementation. We should listen to account changes and restart the manager when the account changes.
   const accountManager = AccountManager.getInstance()
   const account = accountManager.getSelectedAccount()
   const veridaVaultContext = accountManager.context as Context | undefined
@@ -114,7 +108,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
       const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
 
       const manager = await PolygonIdManager.createManager(
-        polygonIdConfig,
+        polygonIdIdentityConfig,
         polygonIdPrivateKey,
         veridaVaultContext,
         circuitStorage,

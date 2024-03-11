@@ -10,6 +10,7 @@ import {
   CredentialStorage,
   CredentialWallet,
   DataPrepareHandlerFunc,
+  defaultEthConnectionConfig,
   EthConnectionConfig,
   EthStateStorage,
   IDataStorage,
@@ -39,6 +40,8 @@ import { Context } from '@verida/client-rn'
 import { Logger } from 'features/telemetry'
 import { VeridaRecord } from 'features/verida'
 
+import { config as appConfig } from '~/config'
+
 import {
   POLYGON_ID_CREDENTIALS_DATABASE_NAME,
   POLYGON_ID_IDENTITY_DATABASE_NAME,
@@ -46,7 +49,7 @@ import {
   POLYGON_ID_MERKLE_TREE_DATABASE_NAME,
   POLYGON_ID_PROFILE_DATABASE_NAME,
 } from '../constants'
-import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
+import { CalculateWitnessFunction, PolygonIdIdentityConfig } from '../types'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
   buildPolygonIdVeridaDataSource,
@@ -58,9 +61,27 @@ import {
 
 const logger = Logger.create('PolygonId')
 
+export function getBlockchainConfigs(): EthConnectionConfig[] {
+  const polygonMainnetConfig: EthConnectionConfig = {
+    ...defaultEthConnectionConfig,
+    chainId: core.ChainIds[core.NetworkId.Main],
+    contractAddress: appConfig.polygonId.mainnet.contractAddress,
+    url: appConfig.polygonId.mainnet.rpcUrl,
+  }
+
+  const polygonMumbaiConfig: EthConnectionConfig = {
+    ...defaultEthConnectionConfig,
+    chainId: core.ChainIds[core.NetworkId.Mumbai],
+    contractAddress: appConfig.polygonId.testnet.contractAddress,
+    url: appConfig.polygonId.testnet.rpcUrl,
+  }
+
+  return [polygonMainnetConfig, polygonMumbaiConfig]
+}
+
 export async function buildDataStorage(
   veridaContext: Context,
-  ethConnectionConfig: EthConnectionConfig
+  blockchainConfigs: EthConnectionConfig[]
 ): Promise<IDataStorage> {
   logger.debug('Building data storage...')
 
@@ -107,7 +128,7 @@ export async function buildDataStorage(
         ),
         40
       ),
-      states: new EthStateStorage(ethConnectionConfig),
+      states: new EthStateStorage(blockchainConfigs),
     }
 
     logger.info('Data storage built successfully')
@@ -121,7 +142,7 @@ export async function buildDataStorage(
 
 export function buildCredentialWallet(
   dataStorage: IDataStorage,
-  ethConnectionConfig: EthConnectionConfig
+  blockchainConfigs: EthConnectionConfig[]
 ) {
   logger.debug('Building credential wallet...')
 
@@ -140,7 +161,7 @@ export function buildCredentialWallet(
 
     statusRegistry.register(
       CredentialStatusType.Iden3OnchainSparseMerkleTreeProof2023,
-      new OnChainResolver([ethConnectionConfig])
+      new OnChainResolver(blockchainConfigs)
     )
 
     statusRegistry.register(
@@ -197,7 +218,7 @@ export function buildProofService(
   circuitStorage: CircuitStorage,
   stateStorage: IStateStorage,
   calculateWitness: CalculateWitnessFunction,
-  config: PolygonIdConfig
+  ipfsGatewayURL?: string
 ) {
   logger.debug('Building proof service...')
 
@@ -208,7 +229,7 @@ export function buildProofService(
       circuitStorage,
       stateStorage,
       {
-        ipfsGatewayURL: config.polygonIdIpfsGatewayUrl,
+        ipfsGatewayURL,
         prover: new ZkProver(circuitStorage, calculateWitness),
       }
     )
@@ -285,7 +306,7 @@ export async function buildPackageManager(
 export async function getOrCreatePolygonIdIdentity(
   identityWallet: IdentityWallet,
   dataStorage: IDataStorage,
-  config: PolygonIdConfig,
+  config: PolygonIdIdentityConfig,
   privateKey: string
 ): Promise<core.DID> {
   try {
@@ -299,13 +320,13 @@ export async function getOrCreatePolygonIdIdentity(
 
     logger.debug('Creating Polygon ID identity')
     const result = await identityWallet.createIdentity({
-      method: config.polygonIdDidMethod,
-      blockchain: config.polygonIdBlockchain,
-      networkId: config.polygonIdNetworkId,
+      method: config.didMethod,
+      blockchain: config.blockchain,
+      networkId: config.networkId,
       seed: new Uint8Array(Buffer.from(privateKey, 'utf-8')),
       revocationOpts: {
-        id: config.polygonIdRevocationBaseUrl,
-        type: config.polygonIdRevocationType,
+        id: config.revocationBaseUrl,
+        type: config.revocationType,
       },
     })
 
