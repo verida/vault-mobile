@@ -64,14 +64,15 @@ const logger = Logger.create('PolygonId')
 export function getBlockchainConfigs(): EthConnectionConfig[] {
   const polygonMainnetConfig: EthConnectionConfig = {
     ...defaultEthConnectionConfig,
-    chainId: core.ChainIds[core.NetworkId.Main],
+    chainId: core.ChainIds[`${core.Blockchain.Polygon}:${core.NetworkId.Main}`], // Careful as this is not strongly typed
     contractAddress: appConfig.polygonId.mainnet.contractAddress,
     url: appConfig.polygonId.mainnet.rpcUrl,
   }
 
   const polygonMumbaiConfig: EthConnectionConfig = {
     ...defaultEthConnectionConfig,
-    chainId: core.ChainIds[core.NetworkId.Mumbai],
+    chainId:
+      core.ChainIds[`${core.Blockchain.Polygon}:${core.NetworkId.Mumbai}`], // Careful as this is not strongly typed
     contractAddress: appConfig.polygonId.testnet.contractAddress,
     url: appConfig.polygonId.testnet.rpcUrl,
   }
