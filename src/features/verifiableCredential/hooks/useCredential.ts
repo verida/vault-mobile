@@ -10,7 +10,7 @@ import { useCallback } from 'react'
 
 import { VerificationResult } from '../types'
 
-const logger = new Logger('Verifiable Credential')
+const logger = Logger.create('Verifiable Credential')
 
 const defaultVerificationOptions: Omit<IVerifyCredentialArgs, 'credential'> = {
   fetchRemoteContexts: true,

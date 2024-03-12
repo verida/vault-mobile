@@ -13,7 +13,7 @@ import {
   MinifiedBlockchainAccountNear,
 } from '../@types'
 
-const logger = new Logger('veridaAccountMaybeToMinifiedVeridaAccount')
+const logger = Logger.create('veridaAccountMaybeToMinifiedVeridaAccount')
 
 const veridaAccountToMinifiedBlockchainAccountEip155 = (
   blockchainAccount: BlockchainAccount

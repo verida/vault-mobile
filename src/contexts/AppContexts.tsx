@@ -65,16 +65,16 @@ export const AppContexts: React.FunctionComponent<AppContextsProps> = (
                                 <CryptoWalletProvider>
                                   <WalletConnectProvider>
                                     <GestureHandlerRootView style={{ flex: 1 }}>
-                                      <VeramoProvider>
-                                        <PolygonIdProvider>
+                                      <PolygonIdProvider>
+                                        <VeramoProvider>
                                           <ProtocolsProvider>
                                             {/* Keep the AppHandlers last */}
                                             <AppHandlers />
                                             {children}
                                             {/*  */}
                                           </ProtocolsProvider>
-                                        </PolygonIdProvider>
-                                      </VeramoProvider>
+                                        </VeramoProvider>
+                                      </PolygonIdProvider>
                                     </GestureHandlerRootView>
                                     <MetaServerChecks />
                                   </WalletConnectProvider>

@@ -99,10 +99,10 @@ export function useTokenCalculator({
       typeof valueToNormalize !== 'string'
         ? null
         : !valueToNormalize.length
-        ? null
-        : isNaN(parseFloat(valueToNormalize))
-        ? null
-        : (valueToNormalize as `${number}`),
+          ? null
+          : isNaN(parseFloat(valueToNormalize))
+            ? null
+            : (valueToNormalize as `${number}`),
     []
   )
 

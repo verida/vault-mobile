@@ -8,7 +8,7 @@ import { Message } from './inbox/Message'
 import { Request } from './inbox/Request'
 import { Send } from './inbox/Send'
 
-const logger = new Logger('InboxManager')
+const logger = Logger.create('InboxManager')
 
 const DataHandler = {
   [InboxType.DATA_SEND]: Send,

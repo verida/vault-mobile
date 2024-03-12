@@ -1,318 +1,161 @@
-import type {
-  AuthorizationRequestMessage,
-  AuthorizationResponseMessage,
-  CredentialsOfferMessage,
-  W3CCredential,
-} from '@0xpolygonid/js-sdk'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
-import { Logger } from 'features/telemetry'
-import React, { createContext, useCallback, useMemo } from 'react'
+import { Context } from '@verida/client-rn'
+import { config } from 'config'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { MainStackParams } from 'navigation/types'
-import type {
-  ConnectionRequestScreenParams,
-  IncomingDataRequestScreenParams,
-  ProofRequestScreenParams,
-} from 'pages/Requests'
+import { Logger } from '~/features/telemetry'
 
-import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
-import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
+import AccountManager from 'api/AccountManager'
 
-const logger = new Logger('Polygon ID')
+import { PolygonIdManager } from '../classes'
+import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
+import { PolygonIdConfig } from '../types'
+import { getPolygonIdPrivateKey } from '../utils'
 
-type PolygonIdContextType = {
-  isReady: boolean
-  handleDeepLinkUrl: (url: string) => void
-  handleQRCodeMessage: (data: string) => void
-  handleAcceptConnectionRequest: (
-    data: AuthorizationRequestMessage
-  ) => Promise<{
-    result?: {
-      callbackResponse: any
-      authResponse: AuthorizationResponseMessage
-    }
-    error?: Error
-  }>
-  handleAcceptProofRequest: (data: AuthorizationRequestMessage) => Promise<{
-    result?: {
-      callbackResponse: any
-      authResponse: AuthorizationResponseMessage
-    }
-    error?: Error
-  }>
-  handleAcceptCredentialsOffer: (data: CredentialsOfferMessage) => Promise<{
-    result?: W3CCredential[]
-    error?: Error
-  }>
+const logger = Logger.create('PolygonId')
+
+export const polygonIdTestnetConfig: PolygonIdConfig = {
+  polygonIdBlockchain: config.polygonId.common.blockchain,
+  polygonIdDidMethod: config.polygonId.common.didMethod,
+  polygonIdIpfsGatewayUrl: config.polygonId.common.ipfsGatewayUrl,
+  polygonIdRevocationType: config.polygonId.common.revocationType,
+  polygonIdNetworkId: config.polygonId.testnet.networkId,
+  polygonIdRevocationBaseUrl: config.polygonId.testnet.revocationBaseUrl,
+  polygonIdRpcUrl: config.polygonId.testnet.rpcUrl,
+  polygonIdContractAddress: config.polygonId.testnet.contractAddress,
 }
 
-// export const PolygonIdManagerContext =
-//   createContext<PolygonIdContextType | null>(null)
-// TODO: Revert back to null initial value after changing Polygon ID implementation. The current WebView implementation means that the context is not available until the WebView is ready.
-export const PolygonIdManagerContext = createContext<PolygonIdContextType>({
-  isReady: false,
-  handleDeepLinkUrl: () => {
-    // Nothing
-  },
-  handleQRCodeMessage: () => {
-    // Nothing
-  },
-  handleAcceptConnectionRequest: async () => ({}),
-  handleAcceptProofRequest: async () => ({}),
-  handleAcceptCredentialsOffer: async () => ({}),
-})
+export const polygonIdMainnetConfig: PolygonIdConfig = {
+  polygonIdBlockchain: config.polygonId.common.blockchain,
+  polygonIdDidMethod: config.polygonId.common.didMethod,
+  polygonIdIpfsGatewayUrl: config.polygonId.common.ipfsGatewayUrl,
+  polygonIdRevocationType: config.polygonId.common.revocationType,
+  polygonIdNetworkId: config.polygonId.mainnet.networkId,
+  polygonIdRevocationBaseUrl: config.polygonId.mainnet.revocationBaseUrl,
+  polygonIdRpcUrl: config.polygonId.mainnet.rpcUrl,
+  polygonIdContractAddress: config.polygonId.mainnet.contractAddress,
+}
 
-export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
+// For the moment we are fixing the Polygon ID network to mainnet but we could adapt it based on the Verida network.
+const polygonIdNetwork: 'mainnet' | 'testnet' = 'mainnet'
+
+const polygonIdConfig =
+  polygonIdNetwork === 'mainnet'
+    ? polygonIdMainnetConfig
+    : polygonIdTestnetConfig
+
+export type PolygonIdManagerContextType = {
+  isPolygonIdReady: boolean
+  areCircuitsReady: boolean
+  isWitnessReady: boolean
+  isManagerReady: boolean
+  isManagerInitialising: boolean
+  manager: PolygonIdManager | null
+  restartManager: () => Promise<void>
+}
+
+export const PolygonIdManagerContext =
+  React.createContext<PolygonIdManagerContextType>({
+    isPolygonIdReady: false,
+    areCircuitsReady: false,
+    isWitnessReady: false,
+    isManagerReady: false,
+    isManagerInitialising: false,
+    manager: null,
+    restartManager: async () => {
+      return
+    },
+  })
+
+export const PolygonIdManagerProvider: React.FC = (props) => {
   const { children } = props
 
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  // TODO: Handle account switching
+  const accountManager = AccountManager.getInstance()
+  const account = accountManager.getSelectedAccount()
+  const veridaVaultContext = accountManager.context as Context | undefined
 
-  const { isReady, handleAuthorizationRequest, handleCredentialsOffer } =
-    usePolygonContext()
+  const [isManagerInitialising, setIsManagerInitialising] = useState(false)
+  const [polygonIdManager, setPolygonIdManager] =
+    useState<PolygonIdManager | null>(null)
 
-  const polygonIdManagerCreationState = useCreatePolygonIdManager()
+  const { circuitStorage, areAllCircuitsAvailable } = usePolygonIdCircuits()
+  const { calculateWitness, isReady: isWitnessReady } = usePolygonIdWitness()
 
-  if (
-    'error' in polygonIdManagerCreationState &&
-    polygonIdManagerCreationState.error
-  ) {
-    logger.error(polygonIdManagerCreationState.error)
-  }
-
-  const maybeManagerId =
-    'result' in polygonIdManagerCreationState
-      ? polygonIdManagerCreationState.result
-      : undefined
-
-  const isPolygonIdReady = isReady && !!maybeManagerId
-
-  const handleMessage = useCallback(
-    async (
-      message: AuthorizationRequestMessage | CredentialsOfferMessage,
-      replaceNavigationScreen?: boolean
-    ) => {
-      const entityMetadata = await getEntityMetadata(
-        message.from,
-        message.type ===
-          PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE
-          ? (message as AuthorizationRequestMessage).body.callbackUrl
-          : undefined
+  const initManager = useCallback(async () => {
+    if (!areAllCircuitsAvailable) {
+      logger.debug(
+        'Circuits not available, cannot create Polygon ID Manager yet'
       )
+      return
+    }
 
-      // TODO: factorise this function that's becoming too big
-      switch (message.type) {
-        case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
-          const requestData = message as AuthorizationRequestMessage
+    if (!isWitnessReady) {
+      logger.debug('Witness not ready, cannot create Polygon ID Manager yet')
+      return
+    }
 
-          const url = new URL(requestData.body.callbackUrl) // TODO: Handle error
+    if (
+      !account ||
+      !account.did ||
+      !account.privateKey ||
+      !veridaVaultContext
+    ) {
+      logger.debug('No Verida account, cannot create Polygon ID Manager yet')
+      return
+    }
 
-          if (requestData.body?.scope && requestData.body.scope.length) {
-            // We have a scope object implying we need to submit a ZK proof
-            const screenParams: ProofRequestScreenParams = {
-              name: entityMetadata.name || 'Unknown',
-              logo: entityMetadata.icon,
-              details: {
-                protocols: ['polygonid'],
-                timestamp: new Date().toISOString(),
-                url: url.origin,
-                requesterId: requestData.from || 'Unknown',
-                message: requestData.body?.reason,
-              },
-              data: requestData,
-            }
-            if (replaceNavigationScreen) {
-              navigation.replace('ProofRequest', screenParams)
-            } else {
-              navigation.navigate('ProofRequest', screenParams)
-            }
-          } else {
-            // We have a generic connection request
-            const screenParams: ConnectionRequestScreenParams = {
-              name: entityMetadata.name || 'Unknown',
-              logo: entityMetadata.icon,
-              details: {
-                protocols: ['polygonid'],
-                timestamp: new Date().toISOString(),
-                url: url.origin,
-                requesterId: requestData.from || 'Unknown',
-                message: requestData.body?.reason,
-              },
-              data: requestData,
-            }
-            if (replaceNavigationScreen) {
-              navigation.replace('ConnectionRequest', screenParams)
-            } else {
-              navigation.navigate('ConnectionRequest', screenParams)
-            }
-          }
-          return
-        }
-        case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE: {
-          const offerData = message as CredentialsOfferMessage
+    try {
+      setIsManagerInitialising(true)
+      const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
 
-          const screenParams: IncomingDataRequestScreenParams = {
-            name: entityMetadata.name || 'Unknown',
-            logo: entityMetadata.icon,
-            details: {
-              protocols: ['polygonid'],
-              timestamp: new Date().toISOString(),
-              requesterId: offerData.from || 'Unknown',
-            },
-            data: offerData,
-          }
-          if (replaceNavigationScreen) {
-            navigation.replace('IncomingDataRequest', screenParams)
-          } else {
-            navigation.navigate('IncomingDataRequest', screenParams)
-          }
-          return
-        }
-        default: {
-          logger.warn(`Polygon ID message type not supported`, {
-            messageType: message.type,
-          })
-          throw new Error(
-            `Polygon ID message type not supported: ${message.type}}`
-          )
-        }
-      }
-    },
-    [navigation]
-  )
+      const manager = await PolygonIdManager.createManager(
+        polygonIdConfig,
+        polygonIdPrivateKey,
+        veridaVaultContext,
+        circuitStorage,
+        calculateWitness
+      )
+      setPolygonIdManager(manager)
+    } catch (error) {
+      logger.error(error)
+    } finally {
+      setIsManagerInitialising(false)
+    }
+  }, [
+    isWitnessReady,
+    areAllCircuitsAvailable,
+    account,
+    veridaVaultContext,
+    circuitStorage,
+    calculateWitness,
+  ])
 
-  const handleDeepLinkUrl = useCallback(
-    async (url: string) => {
-      try {
-        const message = await parsePolygonIdMessage(url)
-        handleMessage(message, false)
-        // Assuming the deep link doesn't come from a particular screen so we don't replace it.
-      } catch (error: unknown) {
-        // TODO: Display an Alert to the user as there are no other feedback
-        logger.error(error)
-      }
-    },
-    [handleMessage]
-  )
+  const restartManager = useCallback(async () => {
+    setPolygonIdManager(null)
+    await initManager()
+  }, [initManager])
 
-  const handleQRCodeMessage = useCallback(
-    async (qrCodeMessage: string) => {
-      try {
-        const message = await parsePolygonIdMessage(qrCodeMessage)
-        handleMessage(message, true)
-        // Assuming the QR Code comes from the scanner screen, we replace this screen, so when the user is finished with the Polygon ID screen, they go back to the previous screen, not the QR Code scanner screen
-      } catch (error: unknown) {
-        // TODO: Display an Alert to the user as there are no other feedback
-        logger.error(error)
-      }
-    },
-    [handleMessage]
-  )
+  useEffect(() => {
+    initManager()
+  }, [initManager])
 
-  const handleAcceptConnectionRequest = useCallback(
-    async (data: AuthorizationRequestMessage) => {
-      if (!isPolygonIdReady) {
-        return {
-          error: new Error('Polygon ID engine is not ready.'),
-        }
-      }
-      try {
-        const result = await handleAuthorizationRequest({
-          data,
-          managerId: maybeManagerId!,
-        })
-        return { result }
-      } catch (cause: unknown) {
-        const error = new Error(
-          // TODO: Adapt the error message to the type of error
-          // The error message must be user-friendly, as it will be displayed in the UI
-          'Something went wrong when accepting the Polygon ID connection request',
-          { cause }
-        )
-        logger.error(error)
-        return {
-          error,
-        }
-      }
-    },
-    [isPolygonIdReady, maybeManagerId, handleAuthorizationRequest]
-  )
-
-  const handleAcceptProofRequest = useCallback(
-    async (data: AuthorizationRequestMessage) => {
-      if (!isPolygonIdReady) {
-        return {
-          error: new Error('Polygon ID engine is not ready.'),
-        }
-      }
-      try {
-        const result = await handleAuthorizationRequest({
-          data,
-          managerId: maybeManagerId!,
-        })
-        return { result }
-      } catch (cause: unknown) {
-        const error = new Error(
-          // TODO: Adapt the error message to the type of error
-          // The error message must be user-friendly, as it will be displayed in the UI
-          'Something went wrong when answering the Polygon ID proof request',
-          { cause }
-        )
-        logger.error(error)
-        return {
-          error,
-        }
-      }
-    },
-    [isPolygonIdReady, maybeManagerId, handleAuthorizationRequest]
-  )
-
-  const handleAcceptCredentialsOffer = useCallback(
-    async (data: CredentialsOfferMessage) => {
-      if (!isPolygonIdReady) {
-        return {
-          error: new Error('Polygon ID engine is not ready.'),
-        }
-      }
-      try {
-        const result = await handleCredentialsOffer({
-          data,
-          managerId: maybeManagerId!,
-        })
-        return { result }
-      } catch (cause: unknown) {
-        const error = new Error(
-          // TODO: Adapt the error message to the type of error
-          // The error message must be user-friendly, as it will be displayed in the UI
-          'Something went wrong when accepting the Polygon ID credential offer.',
-          { cause }
-        )
-        logger.error(error)
-        return {
-          error,
-        }
-      }
-    },
-    [isPolygonIdReady, maybeManagerId, handleCredentialsOffer]
-  )
-
-  const contextValue: PolygonIdContextType = useMemo(
+  const contextValue: PolygonIdManagerContextType = useMemo(
     () => ({
-      isReady: isPolygonIdReady,
-      handleDeepLinkUrl,
-      handleQRCodeMessage,
-      handleAcceptConnectionRequest,
-      handleAcceptProofRequest,
-      handleAcceptCredentialsOffer,
+      isPolygonIdReady:
+        areAllCircuitsAvailable && isWitnessReady && !!polygonIdManager,
+      areCircuitsReady: areAllCircuitsAvailable,
+      isWitnessReady: isWitnessReady,
+      isManagerReady: !!polygonIdManager,
+      isManagerInitialising: isManagerInitialising,
+      manager: polygonIdManager,
+      restartManager,
     }),
     [
-      isPolygonIdReady,
-      handleDeepLinkUrl,
-      handleQRCodeMessage,
-      handleAcceptConnectionRequest,
-      handleAcceptProofRequest,
-      handleAcceptCredentialsOffer,
+      areAllCircuitsAvailable,
+      isWitnessReady,
+      isManagerInitialising,
+      polygonIdManager,
+      restartManager,
     ]
   )
 

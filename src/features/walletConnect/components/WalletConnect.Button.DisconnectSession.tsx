@@ -8,7 +8,7 @@ import Button from 'components/Button'
 
 import { useWalletConnectContext } from '../contexts'
 
-const logger = new Logger('WalletConnect')
+const logger = Logger.create('WalletConnect')
 
 const defaultReason: ErrorResponse = getSdkError('USER_DISCONNECTED')
 

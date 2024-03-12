@@ -11,7 +11,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { buildItem } from '../helpers/inbox'
 
-const logger = new Logger('Pages/Inbox')
+const logger = Logger.create('Pages/Inbox')
 
 const Inbox = () => {
   const listRef = useRef(null)

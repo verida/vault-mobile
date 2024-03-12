@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useFonts } from 'styles'
 
-const logger = new Logger('App')
+const logger = Logger.create('App')
 
 export function useAppInit() {
   const [initialised, setInitialised] = useState(false)

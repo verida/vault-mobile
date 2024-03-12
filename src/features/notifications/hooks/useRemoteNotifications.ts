@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 import { registerRemoteNotification } from '../api'
 
-const logger = new Logger('Notifications')
+const logger = Logger.create('Notifications')
 
 export function useRemoteNotifications() {
   const selectedAccount = useSelector(selectSelectedAccount)

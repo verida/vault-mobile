@@ -12,28 +12,29 @@ export type CryptoWalletValueBannerProps = {
   unit?: string
 } & ViewProps
 
-export const CryptoWalletValueBanner: React.FunctionComponent<CryptoWalletValueBannerProps> =
-  (props) => {
-    const { value, unit, ...viewProps } = props
+export const CryptoWalletValueBanner: React.FunctionComponent<
+  CryptoWalletValueBannerProps
+> = (props) => {
+  const { value, unit, ...viewProps } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.container}>
-          <Typography variant='label' style={styles.label}>
-            Total Value
-          </Typography>
-          <NumberFiat
-            value={value ? value.toNumber() : 0}
-            unit={unit}
-            variant='h3'
-            style={styles.value}
-          />
-        </View>
+  return (
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <Typography variant='label' style={styles.label}>
+          Total Value
+        </Typography>
+        <NumberFiat
+          value={value ? value.toNumber() : 0}
+          unit={unit}
+          variant='h3'
+          style={styles.value}
+        />
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -72,6 +72,6 @@ export function getDefaultVeridaNetwork(): EnvironmentType {
   return config.dev.devMode
     ? EnvironmentType.DEVNET
     : config.features.veridaMainnet.enabled
-    ? EnvironmentType.MAINNET
-    : EnvironmentType.TESTNET
+      ? EnvironmentType.MAINNET
+      : EnvironmentType.TESTNET
 }

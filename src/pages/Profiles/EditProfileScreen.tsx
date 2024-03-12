@@ -22,7 +22,7 @@ import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
 import InputStyles from '../../styles/inputs'
 
-const logger = new Logger('Pages/Profiles/EditProfile')
+const logger = Logger.create('Pages/Profiles/EditProfile')
 
 /**
  * Take from the schema, better to fetch them dynamic

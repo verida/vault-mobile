@@ -8,15 +8,28 @@ import {
   getMaybeAddEthereumChainRequestParamByChainId,
 } from '../../../../src/features/blockchain/eip155/utils/chainsList'
 
+const axios = require('axios')
+const MockAdapter = require('axios-mock-adapter')
+
+const mock = new MockAdapter(axios)
+
+const chainsListData = require('./__mocks__/chains-list.json')
+
 jest.setTimeout(10 * 1000)
 
 let chainsList: Awaited<ReturnType<typeof fetchChainsList>> | undefined
+
+mock.onGet('https://chainid.network/chains.json').reply(200, chainsListData)
 
 beforeAll(async () => {
   chainsList = await fetchChainsList()
 
   if (!Array.isArray(chainsList) || !chainsList.length)
     throw new Error(`Was unable to determine chainsList.`)
+})
+
+afterAll(async () => {
+  mock.restore()
 })
 
 describe('blockchain/eip155/utils/chainsList', () => {

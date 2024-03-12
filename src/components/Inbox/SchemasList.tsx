@@ -14,7 +14,7 @@ import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-const logger = new Logger('Components/Data/SchemasList')
+const logger = Logger.create('Components/Data/SchemasList')
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -43,9 +43,8 @@ function SchemasList(props: SchemasListProps) {
         const _dataList: RequestedData[] = []
         await Promise.all(
           schemas.map(async (schemaUrl) => {
-            const schema = await AccountManager.getInstance().client?.getSchema(
-              schemaUrl
-            )
+            const schema =
+              await AccountManager.getInstance().client?.getSchema(schemaUrl)
             const schemaJson = (await schema?.getSchemaJson()) as any
             if (!schemaJson) {
               return

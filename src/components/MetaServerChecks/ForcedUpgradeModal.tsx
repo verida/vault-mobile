@@ -15,7 +15,7 @@ import { APP_VERSION } from 'constants/application'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Components/ForcedUpgradeModal')
+const logger = Logger.create('Components/ForcedUpgradeModal')
 
 type Props = {
   dismissModal: () => void
