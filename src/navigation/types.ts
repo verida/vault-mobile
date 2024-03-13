@@ -21,7 +21,7 @@ import {
   ConnectionsScreenParams,
   SingleConnectionScreenParams,
 } from '~/pages/Connections'
-import { PolygonIdStatusScreenParams } from '~/pages/PolygonID'
+import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
   BuyTokenScreenParams,
   ConfirmTransactionScreenParams,

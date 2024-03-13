@@ -8,7 +8,7 @@ import {
   BlockchainNetworksScreen,
 } from '~/pages/Blockchains'
 import { SingleConnectionScreen } from '~/pages/Connections'
-import { PolygonIdStatusScreen } from '~/pages/PolygonID'
+import { PolygonIdStatusScreen } from '~/pages/PolygonId'
 import {
   BuyTokenScreen,
   ConfirmTransactionScreen,
