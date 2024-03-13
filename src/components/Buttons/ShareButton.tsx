@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 import { Theme } from 'styles/types'
 
-const logger = new Logger('ShareButton')
+const logger = Logger.create('ShareButton')
 
 export type ShareButtonProps = {
   title?: string

@@ -11,7 +11,7 @@ import { MainStackScreenProps } from 'navigation/types'
 
 import { buildItem } from '../../helpers/inbox'
 
-const logger = new Logger('Pages/Inbox')
+const logger = Logger.create('Pages/Inbox')
 
 export type InboxScreenParams = undefined
 

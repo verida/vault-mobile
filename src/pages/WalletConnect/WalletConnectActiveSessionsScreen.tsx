@@ -21,53 +21,54 @@ export type WalletConnectActiveSessionsScreenParams = undefined
 type WalletConnectActiveSessionsScreenProps =
   MainStackScreenProps<'WalletConnectActiveSessions'>
 
-export const WalletConnectActiveSessionsScreen: React.FC<WalletConnectActiveSessionsScreenProps> =
-  (props) => {
-    const { navigation } = props
+export const WalletConnectActiveSessionsScreen: React.FC<
+  WalletConnectActiveSessionsScreenProps
+> = (props) => {
+  const { navigation } = props
 
-    const { activeSessions: defaultActiveSessions } = useWalletConnectContext()
+  const { activeSessions: defaultActiveSessions } = useWalletConnectContext()
 
-    const activeSessions = Object.keys(defaultActiveSessions)
+  const activeSessions = Object.keys(defaultActiveSessions)
 
-    return (
-      <View style={styles.flex}>
-        <NavigationHeader left={leftIcon} title='WalletConnect DApps' />
-        <Layout style={[LayoutStyle.layout]}>
-          {activeSessions.length ? (
-            <>
-              <Text style={styles.title}>Active DApp Sessions</Text>
-              <Spacer height={32} />
-              {activeSessions.map((walletConnectSessionKey) => (
-                <WalletConnectSessionItem
-                  key={walletConnectSessionKey}
-                  walletConnectSessionKey={walletConnectSessionKey}
-                  onPress={() =>
-                    navigation.navigate<'WalletConnectActiveSessionDetails'>(
-                      'WalletConnectActiveSessionDetails',
-                      { walletConnectSessionKey }
-                    )
-                  }
-                />
-              ))}
-              <Spacer height={32} />
-            </>
-          ) : (
-            <>
-              <Spacer height={32} />
-              <Text
-                style={[
-                  text.grey,
-                  styles.label,
-                  { flex: 1, alignSelf: 'center' },
-                ]}>
-                {'No active DApp sessions'}
-              </Text>
-            </>
-          )}
-        </Layout>
-      </View>
-    )
-  }
+  return (
+    <View style={styles.flex}>
+      <NavigationHeader left={leftIcon} title='WalletConnect DApps' />
+      <Layout style={[LayoutStyle.layout]}>
+        {activeSessions.length ? (
+          <>
+            <Text style={styles.title}>Active DApp Sessions</Text>
+            <Spacer height={32} />
+            {activeSessions.map((walletConnectSessionKey) => (
+              <WalletConnectSessionItem
+                key={walletConnectSessionKey}
+                walletConnectSessionKey={walletConnectSessionKey}
+                onPress={() =>
+                  navigation.navigate<'WalletConnectActiveSessionDetails'>(
+                    'WalletConnectActiveSessionDetails',
+                    { walletConnectSessionKey }
+                  )
+                }
+              />
+            ))}
+            <Spacer height={32} />
+          </>
+        ) : (
+          <>
+            <Spacer height={32} />
+            <Text
+              style={[
+                text.grey,
+                styles.label,
+                { flex: 1, alignSelf: 'center' },
+              ]}>
+              {'No active DApp sessions'}
+            </Text>
+          </>
+        )}
+      </Layout>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },

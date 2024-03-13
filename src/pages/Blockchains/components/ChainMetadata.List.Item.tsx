@@ -12,11 +12,13 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { ChainMetadataListItemTag } from './ChainMetadata.List.Item.Tag'
 
-export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
-  chainMetadata,
-}: {
+type ChainMetadataListItemProps = {
   readonly chainMetadata: ChainMetadata
-}): JSX.Element {
+}
+
+export const ChainMetadataListItem: React.FunctionComponent<
+  ChainMetadataListItemProps
+> = ({ chainMetadata }) => {
   const { theme } = useTheme()
   const { icon: uri, name: label } = chainMetadata
   const { getChainMetadataDetails } = useChainMetadataDetails()
@@ -40,7 +42,7 @@ export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
       </View>
     </View>
   )
-})
+}
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center' },

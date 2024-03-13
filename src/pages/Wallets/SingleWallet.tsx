@@ -1,11 +1,14 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
+import {
+  BlockchainAccount,
+  BlockchainWalletWithAccounts,
+} from 'features/blockchain'
 import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { BlockchainAccount, BlockchainWalletWithAccounts } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'

@@ -10,7 +10,7 @@ import { useDispatch, useStore } from 'react-redux'
 import { RootState, useAppSelector } from 'reduxStore/types'
 
 import { BLOCKCHAIN_SLICE_NAME } from '../@types'
-import { addCustomNetwork, removeCustomNetwork } from '../slice'
+import { addCustomNetwork, removeCustomNetwork } from '../redux'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
   readonly addCustomNetworks: (

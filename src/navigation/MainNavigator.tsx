@@ -3,20 +3,35 @@ import { BaseScreenHeader, ModalScreenHeader } from 'components'
 import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
-import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
-import { TabsNavigator } from 'navigation/TabsNavigator'
-import { MainStackParams } from 'navigation/types'
-import {
-  NFTCollectionDetailScreen,
-  NFTDetailScreen,
-  SelectAssetScreen,
-} from 'pages/Assets'
-import { ChangePinScreen } from 'pages/Authentication'
 import {
   BlockchainNetworkEditorScreen,
   BlockchainNetworksScreen,
-} from 'pages/Blockchains'
-import { SingleConnectionScreen } from 'pages/Connections'
+} from '~/pages/Blockchains'
+import { SingleConnectionScreen } from '~/pages/Connections'
+import { PolygonIdStatusScreen } from '~/pages/PolygonID'
+import {
+  BuyTokenScreen,
+  ConfirmTransactionScreen,
+  ReceiveTokenScreen,
+  SendTokenScreen,
+  SingleCurrencyScreen,
+  TokenRecipientScreen,
+  TransactionDetailsScreen,
+  TransactionFailureScreen,
+  TransactionSuccessScreen,
+} from '~/pages/Tokens'
+import {
+  WalletConnectActiveSessionDetailsScreen,
+  WalletConnectActiveSessionsScreen,
+} from '~/pages/WalletConnect'
+
+import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
+import { TabsNavigator } from 'navigation/TabsNavigator'
+import { MainStackParams } from 'navigation/types'
+import { NFTCollectionDetailScreen } from 'pages/Assets/NFTCollectionDetail'
+import { NFTDetailScreen } from 'pages/Assets/NFTDetail'
+import { SelectAssetScreen } from 'pages/Assets/SelectAsset'
+import { ChangePinScreen } from 'pages/Authentication/ChangePin'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
   AddIdentityScreen,
@@ -31,7 +46,6 @@ import {
 import { InboxItemScreen, InboxScreen, ShareableDataScreen } from 'pages/Inbox'
 import { LoginHistoryScreen } from 'pages/Login'
 import LoginRequest from 'pages/Login/LoginRequest'
-import { PolygonIdCircuitsSettingsScreen } from 'pages/PolygonID'
 import {
   AddVeridaOneCustomLinkScreen,
   AddVeridaOnePlatformLinkScreen,
@@ -56,26 +70,9 @@ import {
   ProofRequestScreen,
 } from 'pages/Requests'
 import { SettingsScreen } from 'pages/Settings'
-import {
-  BuyTokenScreen,
-  ConfirmTransactionScreen,
-  ReceiveTokenScreen,
-  SendTokenScreen,
-  SingleCurrencyScreen,
-  TokenRecipientScreen,
-  TransactionDetailsScreen,
-  TransactionFailureScreen,
-  TransactionSuccessScreen,
-} from 'pages/Tokens'
-import {
-  WalletConnectActiveSessionDetailsScreen,
-  WalletConnectActiveSessionsScreen,
-} from 'pages/WalletConnect'
-import {
-  ManageWalletsScreen,
-  SingleWalletScreen,
-  SuccessFailureScreen,
-} from 'pages/Wallets'
+import { ManageWalletsScreen } from 'pages/Wallets/ManageWallets'
+import { SingleWalletScreen } from 'pages/Wallets/SingleWallet'
+import { SuccessFailureScreen } from 'pages/Wallets/SuccessFailure'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -244,15 +241,25 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='NFTCollectionDetail'
             component={NFTCollectionDetailScreen}
           />
-          <Stack.Screen name='NFTDetail' component={NFTDetailScreen} />
+          <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
+
+          <Stack.Screen
+            name='PolygonIdStatus'
+            component={PolygonIdStatusScreen}
+            options={{
+              // TODO: Refactor the whole Navigation to leverage the header customisation
+              headerShown: true,
+            }}
+          />
 
           {/* Internal Screens */}
-          {__DEV__ && (
+          {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
+          {/* {__DEV__ && (
             <Stack.Screen
               name='__Storybook__'
               component={require('../../.storybook').default}
             />
-          )}
+          )} */}
 
           {/* Modal screens */}
           <Stack.Group
@@ -287,10 +294,6 @@ export const MainNavigator: React.FunctionComponent = () => {
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
             <Stack.Screen name='Settings' component={SettingsScreen} />
-            <Stack.Screen
-              name='PolygonIdCircuitsSettings'
-              component={PolygonIdCircuitsSettingsScreen}
-            />
           </Stack.Group>
           <Stack.Group
             screenOptions={{

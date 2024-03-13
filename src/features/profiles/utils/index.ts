@@ -7,7 +7,7 @@ import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 import { PublicProfile } from '../@types'
 
-const logger = new Logger('Profiles')
+const logger = Logger.create('Profiles')
 
 export async function getPublicProfileDatastore(
   did: string,

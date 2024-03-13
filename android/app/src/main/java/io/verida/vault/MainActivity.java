@@ -1,12 +1,13 @@
 package io.verida.vault;
-import expo.modules.ReactActivityDelegateWrapper;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 import expo.modules.splashscreen.singletons.SplashScreen;
 import expo.modules.splashscreen.SplashScreenImageResizeMode;
@@ -15,7 +16,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
+
+        // get the root view and activate touch filtering to prevent tap jacking
+        View v = findViewById(android.R.id.content);
+        v.setFilterTouchesWhenObscured(true);
+        
         SplashScreen.show(this, SplashScreenImageResizeMode.COVER, ReactRootView.class, false);
     }
 
@@ -28,13 +34,19 @@ public class MainActivity extends ReactActivity {
         return "main";
     }
 
+    /**
+     * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
+     * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
+     * (aka React 18) with two boolean flags.
+     */
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {
-        return new ReactActivityDelegateWrapper(this,
-                new ReactActivityDelegate(this, getMainComponentName())
-        );
+        return new DefaultReactActivityDelegate(
+                this,
+                getMainComponentName(),
+                // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+                DefaultNewArchitectureEntryPoint.getFabricEnabled());
     }
-
     /**
      * Align the back button behavior with Android S
      * where moving root activities to background instead of finishing activities.

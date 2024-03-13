@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, ReactNode } from 'react'
 import {
   Keyboard,
   LayoutRectangle,
@@ -468,9 +468,9 @@ type SelectProps<T extends Option> = {
   arrowStyle: StyleProp<ViewStyle>
   arrowColor: string
   arrowSize: number
-  customArrowUp: (size: number, color: string) => Component
-  customArrowDown: (size: number, color: string) => Component
-  customTickIcon: () => Component
+  customArrowUp: (size: number, color: string) => ReactNode
+  customArrowDown: (size: number, color: string) => ReactNode
+  customTickIcon: () => ReactNode
   zIndex: number
   disabled: boolean
   searchable: boolean

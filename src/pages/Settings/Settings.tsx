@@ -3,8 +3,9 @@ import { useTheme } from 'contexts'
 import { useCurrentIdentity } from 'features/identities'
 import { canMigrateToMainnet } from 'features/identities/utils/migration'
 import { useThemeAwareStyle } from 'hooks'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
+import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import PropertyList from 'components/PropertyList'
@@ -38,6 +39,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
+
+  const [walletAppVersion, setWalletAppVersion] = useState(
+    `${APP_NAME} ${APP_VERSION_FORMATTED}`
+  )
 
   useEffect(() => {
     navigation.setOptions({
@@ -129,16 +134,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       label: 'Polygon ID',
       items: [
         {
-          label: 'Circuits',
+          label: 'Status',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('PolygonIdCircuitsSettings'),
+          onPress: () => navigation.navigate('PolygonIdStatus'),
         },
       ],
     },
   ]
 
-  const walletAppVersion = `${APP_NAME} ${APP_VERSION_FORMATTED}`
+  useEffect(() => {
+    CodePush.getUpdateMetadata().then((metadata) => {
+      metadata &&
+        setWalletAppVersion(
+          `${APP_NAME} ${APP_VERSION_FORMATTED}\nCodePush ${metadata.label}`
+        )
+    })
+  }, [])
 
   return (
     <ScreenWrapper backgroundColor={theme.color.snow}>

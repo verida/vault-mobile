@@ -25,7 +25,7 @@ import ShareableDataItem, {
   ShareableDataItemType,
 } from 'pages/Inbox/ShareableDataItem'
 
-const logger = new Logger('Pages/Inbox/ShareableData')
+const logger = Logger.create('Pages/Inbox/ShareableData')
 
 export type ShareableDataScreenParams = {
   schemaUrl: string

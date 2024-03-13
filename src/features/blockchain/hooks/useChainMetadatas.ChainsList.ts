@@ -1,9 +1,7 @@
 import { ChainId } from 'caip'
-import { cryptoWalletApi } from 'features/cryptoWallet'
+import { config } from 'config'
 import * as React from 'react'
 
-import { BlockchainNetwork } from '../../../api/types'
-import { config } from '../../../config'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
@@ -12,8 +10,8 @@ import {
   isSupportedCaipNamespace,
   UseChainMetadataState,
 } from '../../caip'
-
-const { useChainsListQuery } = cryptoWalletApi
+import { BlockchainNetwork } from '../@types'
+import { useGetBlockchainNetworksQuery } from '../redux'
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,
@@ -27,7 +25,6 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
   const {
-    chainName,
     rpcUrl,
     symbol,
     decimal: decimals,
@@ -49,11 +46,11 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   return {
     namespace,
     reference,
-    name: chainName,
+    name: label,
     rpcUrls: [rpc],
     symbol,
     decimals,
-    nativeCurrencyName: label,
+    nativeCurrencyName: symbol,
     icon,
     blockExplorers,
     isMainnet,
@@ -86,7 +83,7 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
     data,
     error: cause,
     isLoading: isLoadingChainsList,
-  } = useChainsListQuery(DEFAULT_CHAIN_LIST_QUERY)
+  } = useGetBlockchainNetworksQuery(DEFAULT_CHAIN_LIST_QUERY)
 
   return React.useMemo<UseChainMetadataState>(() => {
     if (isLoadingChainsList) return { loading: true }

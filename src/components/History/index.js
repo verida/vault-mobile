@@ -7,7 +7,7 @@ import EmptyList from '../Lists/EmptyList'
 import Text from '../Text'
 import History from './History'
 
-const logger = new Logger('Components/History')
+const logger = Logger.create('Components/History')
 
 export default ({ route }) => {
   const [history, setHistory] = useState(null)

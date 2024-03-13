@@ -14,7 +14,7 @@ export type AvatarFallbackType =
   | 'wallet'
   | 'generic'
 
-// TODO: Allow a text as fallback
+// TODO: Allow a text as fallback. Difficulty is to handle the size of the text according to the size of the component
 export type AvatarProps = {
   source?: string | Source
   hideBorder?: boolean
@@ -41,12 +41,12 @@ export const Avatar: React.FunctionComponent<AvatarProps> = (props) => {
     fallbackType === 'person'
       ? 'user'
       : fallbackType === 'entity'
-      ? 'business'
-      : fallbackType === 'app'
-      ? 'calculator'
-      : fallbackType === 'wallet'
-      ? 'wallet'
-      : 'user'
+        ? 'business'
+        : fallbackType === 'app'
+          ? 'calculator'
+          : fallbackType === 'wallet'
+            ? 'wallet'
+            : 'user'
 
   const imageSource = source
     ? typeof source === 'string'
@@ -104,7 +104,6 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.color.veryLightGrey,
       borderWidth: 1,
       borderStyle: 'solid',
-      // borderColor: theme.color.background,
     },
     border: {
       borderWidth: 1,

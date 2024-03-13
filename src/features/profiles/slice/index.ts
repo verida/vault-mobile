@@ -9,7 +9,7 @@ import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 import { PublicProfile } from '../@types'
 import { getPublicProfile } from '../utils'
 
-const logger = new Logger('Profiles')
+const logger = Logger.create('Profiles')
 
 const publicProfileEmptyState: PublicProfile = {
   name: '',

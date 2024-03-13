@@ -12,7 +12,7 @@ import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('DeleteIdentityScreen')
+const logger = Logger.create('DeleteIdentityScreen')
 
 const title = 'Do you want to delete your Identity?'
 const info = `This operation is final!\n\nYour data will be deleted from the Verida Network and your decentralized Identifier will be disabled.\n\nThere is no recovery possible after this operation`

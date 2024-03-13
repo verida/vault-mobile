@@ -1,7 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { config } from 'config'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
-import { BLOCKCHAIN_SLICE_NAME, blockchainSlice } from 'features/blockchain'
+import {
+  BLOCKCHAIN_SLICE_NAME,
+  blockchainApi,
+  blockchainSlice,
+} from 'features/blockchain'
 import { cryptoWalletApi, cryptoWalletSlice } from 'features/cryptoWallet'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
@@ -12,6 +17,7 @@ import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
 import {
+  createMigrate,
   FLUSH,
   PAUSE,
   PERSIST,
@@ -22,11 +28,17 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import {
+  REDUX_PERSIST_CURRENT_VERSION,
+  reduxPersistMigrations,
+} from './migrations'
 import { reduxPersistMmkvStorage } from './utils/mmkvPersistStorage'
 
 const persistConfig = {
   key: 'root',
   storage: reduxPersistMmkvStorage,
+  version: REDUX_PERSIST_CURRENT_VERSION,
+  migrate: createMigrate(reduxPersistMigrations, { debug: config.dev.devMode }),
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
     BLOCKCHAIN_SLICE_NAME,
@@ -36,6 +48,7 @@ const persistConfig = {
 
     // TODO: Revisit, maybe we shouldn't persist API results in the first place.
     // But that's really a nice performance enhancement ATM considering some APIs take an average of 3-10 seconds to load.
+    blockchainApi.reducerPath,
     cryptoWalletApi.reducerPath,
     assetsApi.reducerPath,
   ],
@@ -52,6 +65,7 @@ export const rootReducer = combineReducers({
   profiles: profilesSlice.reducer,
 
   // API reducers
+  [blockchainApi.reducerPath]: blockchainApi.reducer,
   [cryptoWalletApi.reducerPath]: cryptoWalletApi.reducer,
   [assetsApi.reducerPath]: assetsApi.reducer,
 })
@@ -77,6 +91,7 @@ export function configureAppStore() {
         immutableCheck: false, // Disable immutable check as takes more than 32 ms and shows a warning, may enable when need to deep debug redux
       })
         .concat(middleware)
+        .concat(blockchainApi.middleware)
         .concat(cryptoWalletApi.middleware)
         .concat(assetsApi.middleware),
     devTools: __DEV__,

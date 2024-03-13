@@ -22,10 +22,10 @@ import PagerView, {
 } from 'react-native-pager-view'
 
 import { Icon } from 'components/Icon'
-import { BLACK_COLOR_OPACITY, WHITE_COLOR_OPACITY } from 'constants/color'
+import { WHITE_COLOR_OPACITY } from 'constants/color'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('HomePromoBanners')
+const logger = Logger.create('HomePromoBanners')
 
 const AnimatedBannersView = Animated.createAnimatedComponent(PagerView)
 
@@ -173,14 +173,6 @@ const createStyles = (theme: Theme) =>
       borderRadius: theme.roundness.xs,
       borderColor: theme.color.onPrimary,
       backgroundColor: WHITE_COLOR_OPACITY(0.3),
-      shadowColor: BLACK_COLOR_OPACITY(0.4),
-      shadowOffset: {
-        height: 4,
-        width: 0,
-      },
-      shadowOpacity: 1,
-      shadowRadius: theme.roundness.xs,
-      elevation: 8,
     },
     bannerButtonLabel: {
       fontFamily: theme.fontFamily.bold,

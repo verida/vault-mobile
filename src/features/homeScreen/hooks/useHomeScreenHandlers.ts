@@ -8,7 +8,7 @@ import { Linking } from 'react-native'
 
 import { fetchInboxCount } from 'api/utils'
 
-const logger = new Logger('HomeScreen')
+const logger = Logger.create('HomeScreen')
 
 /**
  * This is a temporary hooks to migrate all the handlers that used to be set on the previous home screen. The logic here is not related to the Home screen, so should be moved to an appropriate location.
@@ -26,7 +26,7 @@ export function useHomeScreenHandlers() {
         return
       }
 
-      // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
+      // Ignore Polygon ID deeplink here, as it's handled in features/protocolHandlers
       if (
         isPolygonIdMessage(initialUrl) ||
         isCryptoRequestDeepLink(initialUrl)

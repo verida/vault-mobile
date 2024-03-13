@@ -1,9 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
 import {
+  BlockchainNetwork,
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
-  isValidSeedPhrase,
-} from 'features/cryptoWallet'
+} from 'features/blockchain'
+import { isValidSeedPhrase } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -14,9 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
 
-import { BlockchainNetwork } from 'api/types'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -24,11 +23,11 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { useAppSelector } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  blockchainNetworks: Record<string, BlockchainNetwork> | undefined
   onImportWallet: (data: any) => void
   hideModal: () => void
 }
@@ -36,21 +35,26 @@ type Props = {
 const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
   Object.freeze({})
 
-const ImportModal = ({
-  visible,
-  hideModal,
-  onImportWallet,
-  blockchainNetworks: maybeBlockchainNetworks,
-}: Props) => {
-  const blockchainNetworks =
-    maybeBlockchainNetworks || defaultBlockchainNetworks
-
+const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
   const privateKeyEnabledNetworks = ['eip155']
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
   const [privateKey, setPrivateKey] = useState('')
   const [blockchain, setBlockchain] = useState('multi')
   const [inputSwitch, setInputSwitch] = useState('seedPhrase')
+
+  const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
+  const blockchainNetworks =
+    maybeBlockchainNetworks || defaultBlockchainNetworks
+  const blockchainItems = Object.values(blockchainNetworks).map(
+    (network: BlockchainNetwork) => {
+      return {
+        label: getBlockchainNetworkLabel(network),
+        value: network.chainId,
+      }
+    }
+  )
+  blockchainItems.unshift({ label: 'Multi-chain Wallet', value: 'multi' })
 
   const onBlockchainChange = (option: any) => {
     const network = blockchainNetworks[option.value]
@@ -82,17 +86,6 @@ const ImportModal = ({
       setPrivateKey(clipboardData)
     }
   }
-
-  const blockchainItems = Object.values(blockchainNetworks).map(
-    (network: BlockchainNetwork) => {
-      return {
-        label: getBlockchainNetworkLabel(network),
-        value: network.chainId,
-      }
-    }
-  )
-
-  blockchainItems.unshift({ label: 'Multichain Wallet', value: 'multi' })
 
   const showAlert = () =>
     Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
@@ -261,10 +254,4 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (rootState: any) => {
-  return {
-    blockchainNetworks: getBlockchainNetworks(rootState),
-  }
-}
-
-export default connect(mapStateToProps)(ImportModal)
+export default ImportModal

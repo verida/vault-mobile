@@ -30,227 +30,224 @@ import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
-const logger = new Logger('Components/Data/CredentialDataItem')
+const logger = Logger.create('Components/Data/CredentialDataItem')
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: DataItem
   item: VeridaVerifiableCredentialRecord
 }
 
-export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps> =
-  (props) => {
-    const { data, item } = props
+export const CredentialDataItem: React.FunctionComponent<
+  CredentialDataItemProps
+> = (props) => {
+  const { data, item } = props
 
-    // TODO: Validate the item is a Verifiable Credential Record
-    const { credentialData } = item
+  // TODO: Validate the item is a Verifiable Credential Record
+  const { credentialData } = item
 
-    const extractedIssuer = extractIssuer(credentialData)
+  const extractedIssuer = extractIssuer(credentialData)
 
-    const credentialDataFields: DataField[] = data.data
+  const credentialDataFields: DataField[] = data.data
 
-    const credentialMetadataFields: DataField[] = [
-      {
-        field: 'Issuance Date',
-        value: item.credentialData.issuanceDate
-          ? moment(item.credentialData.issuanceDate).format(
-              'DD MMM YYYY, h:mm a'
-            )
-          : '-',
-      },
-      {
-        field: 'Expiration Date',
-        value: item.credentialData.expirationDate
-          ? moment(item.credentialData.expirationDate).format(
-              'DD MMM YYYY, h:mm a'
-            )
-          : 'No expiration',
-      },
-    ]
+  const credentialMetadataFields: DataField[] = [
+    {
+      field: 'Issuance Date',
+      value: item.credentialData.issuanceDate
+        ? moment(item.credentialData.issuanceDate).format('DD MMM YYYY, h:mm a')
+        : '-',
+    },
+    {
+      field: 'Expiration Date',
+      value: item.credentialData.expirationDate
+        ? moment(item.credentialData.expirationDate).format(
+            'DD MMM YYYY, h:mm a'
+          )
+        : 'No expiration',
+    },
+  ]
 
-    const [loading, setLoading] = useState(false)
-    const [issuer, setIssuer] = useState({
-      did: extractedIssuer,
-      name: 'Unknown',
-      avatar: '',
-    })
-    const [status, setStatus] = useState<CredentialValidityStatus>('unknown')
-    const { verifyCredential } = useCredential()
+  const [loading, setLoading] = useState(false)
+  const [issuer, setIssuer] = useState({
+    did: extractedIssuer,
+    name: 'Unknown',
+    avatar: '',
+  })
+  const [status, setStatus] = useState<CredentialValidityStatus>('unknown')
+  const { verifyCredential } = useCredential()
 
-    useEffect(() => {
-      if (isEmpty(item)) {
-        return
-      }
+  useEffect(() => {
+    if (isEmpty(item)) {
+      return
+    }
 
-      async function checkCredential(credential: VerifiableCredential) {
-        const result = await verifyCredential(credential)
-        const validityStatus = getCredentialValidityStatus(result)
-        setStatus(validityStatus)
-      }
+    async function checkCredential(credential: VerifiableCredential) {
+      const result = await verifyCredential(credential)
+      const validityStatus = getCredentialValidityStatus(result)
+      setStatus(validityStatus)
+    }
 
-      // TODO: Factorise this (or part of it) as it's also used in DataGridListItem
-      async function getIssuerProfile(issuerDid: string, contextName?: string) {
-        try {
-          let issuerProfile
-          // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
-          if (isValidVeridaDid(issuerDid)) {
-            const publicProfile = await getPublicProfile(issuerDid, contextName)
-            issuerProfile = {
-              did: issuerDid,
-              name: publicProfile?.name || 'Unknown',
-              avatar: publicProfile?.avatar || DefaultAvatar,
-            }
-          } else {
-            const didMetadata = await getDidMetadata(issuerDid)
-            issuerProfile = {
-              did: issuerDid,
-              name: didMetadata?.name || 'Unknown',
-              avatar: didMetadata?.icon || DefaultAvatar,
-            }
+    // TODO: Factorise this (or part of it) as it's also used in DataGridListItem
+    async function getIssuerProfile(issuerDid: string, contextName?: string) {
+      try {
+        let issuerProfile
+        // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
+        if (isValidVeridaDid(issuerDid)) {
+          const publicProfile = await getPublicProfile(issuerDid, contextName)
+          issuerProfile = {
+            did: issuerDid,
+            name: publicProfile?.name || 'Unknown',
+            avatar: publicProfile?.avatar || DefaultAvatar,
           }
-          setIssuer(issuerProfile)
-        } catch (error) {
-          logger.error(
-            new Error('Failed to get the issuer profile', { cause: error })
-          )
+        } else {
+          const didMetadata = await getDidMetadata(issuerDid)
+          issuerProfile = {
+            did: issuerDid,
+            name: didMetadata?.name || 'Unknown',
+            avatar: didMetadata?.icon || DefaultAvatar,
+          }
         }
+        setIssuer(issuerProfile)
+      } catch (error) {
+        logger.error(
+          new Error('Failed to get the issuer profile', { cause: error })
+        )
       }
+    }
 
-      async function init() {
-        try {
-          setLoading(true)
-          getIssuerProfile(extractedIssuer)
-          await checkCredential(credentialData)
-        } catch (error) {
-          logger.error(
-            new Error('Failed to check the credential', { cause: error })
-          )
-        } finally {
-          setLoading(false)
-        }
+    async function init() {
+      try {
+        setLoading(true)
+        getIssuerProfile(extractedIssuer)
+        await checkCredential(credentialData)
+      } catch (error) {
+        logger.error(
+          new Error('Failed to check the credential', { cause: error })
+        )
+      } finally {
+        setLoading(false)
       }
+    }
 
-      init()
-    }, [item, credentialData, extractedIssuer, verifyCredential])
+    init()
+  }, [item, credentialData, extractedIssuer, verifyCredential])
 
-    const avatarSource = issuer.avatar
-      ? typeof issuer.avatar === 'string' && issuer.avatar.startsWith('http')
-        ? { uri: issuer.avatar }
-        : issuer.avatar
-      : DefaultAvatar
+  const avatarSource = issuer.avatar
+    ? typeof issuer.avatar === 'string' && issuer.avatar.startsWith('http')
+      ? { uri: issuer.avatar }
+      : issuer.avatar
+    : DefaultAvatar
 
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{item?.name}</Text>
-        <View style={styles.verificationStatusContainer}>
-          {loading ? (
-            <>
-              <ActivityIndicator size={20} color={GREY_COLOR} />
-              <Text style={styles.verifiedText}>
-                Verification in progress...
-              </Text>
-            </>
-          ) : (
-            <>
-              {status === 'unknown' ? (
-                <>
-                  <AntDesign
-                    name='questioncircleo'
-                    size={20}
-                    color={GREY_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>
-                    Validity can not be determined
-                  </Text>
-                </>
-              ) : null}
-              {status === 'revoked' ? (
-                <>
-                  <AntDesign
-                    name='exclamationcircle'
-                    size={20}
-                    color={ORANGE_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>Revoked</Text>
-                </>
-              ) : null}
-              {status === 'suspended' ? (
-                <>
-                  <AntDesign
-                    name='exclamationcircle'
-                    size={20}
-                    color={ORANGE_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>Temporarily Suspended</Text>
-                </>
-              ) : null}
-              {status === 'valid' ? (
-                <>
-                  <AntDesign
-                    name='checkcircleo'
-                    size={20}
-                    color={SUCCESS_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>Valid</Text>
-                </>
-              ) : null}
-              {status === 'expired' ? (
-                <>
-                  <AntDesign
-                    name='exclamationcircle'
-                    size={20}
-                    color={ORANGE_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>Expired</Text>
-                </>
-              ) : null}
-              {status === 'invalid' ? (
-                <>
-                  <AntDesign
-                    name='exclamationcircle'
-                    size={20}
-                    color={ORANGE_COLOR}
-                  />
-                  <Text style={styles.verifiedText}>Invalid</Text>
-                </>
-              ) : null}
-            </>
-          )}
-        </View>
-        <Card transparent style={styles.card}>
-          <CardItem>
-            <Body>
-              <NativeBaseText note>Issuer</NativeBaseText>
-              <View style={styles.issuerInfo}>
-                <Image source={avatarSource} style={styles.issuerLogo} />
-                <View style={styles.issuerNameAndDidContainer}>
-                  <Text
-                    style={styles.issuerName}
-                    numberOfLines={1}
-                    ellipsizeMode='middle'>
-                    {issuer.name}
-                  </Text>
-                  <Text
-                    style={styles.issuerDid}
-                    numberOfLines={1}
-                    ellipsizeMode='tail'>
-                    {issuer.did}
-                  </Text>
-                </View>
-              </View>
-            </Body>
-          </CardItem>
-        </Card>
-        <View>
-          <Text style={styles.sectionTitle}>Credential Data</Text>
-          <DataFieldList fields={credentialDataFields} />
-        </View>
-        <View>
-          <Text style={styles.sectionTitle}>Other Information</Text>
-          <DataFieldList fields={credentialMetadataFields} />
-        </View>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{item?.name}</Text>
+      <View style={styles.verificationStatusContainer}>
+        {loading ? (
+          <>
+            <ActivityIndicator size={20} color={GREY_COLOR} />
+            <Text style={styles.verifiedText}>Verification in progress...</Text>
+          </>
+        ) : (
+          <>
+            {status === 'unknown' ? (
+              <>
+                <AntDesign
+                  name='questioncircleo'
+                  size={20}
+                  color={GREY_COLOR}
+                />
+                <Text style={styles.verifiedText}>
+                  Validity can not be determined
+                </Text>
+              </>
+            ) : null}
+            {status === 'revoked' ? (
+              <>
+                <AntDesign
+                  name='exclamationcircle'
+                  size={20}
+                  color={ORANGE_COLOR}
+                />
+                <Text style={styles.verifiedText}>Revoked</Text>
+              </>
+            ) : null}
+            {status === 'suspended' ? (
+              <>
+                <AntDesign
+                  name='exclamationcircle'
+                  size={20}
+                  color={ORANGE_COLOR}
+                />
+                <Text style={styles.verifiedText}>Temporarily Suspended</Text>
+              </>
+            ) : null}
+            {status === 'valid' ? (
+              <>
+                <AntDesign
+                  name='checkcircleo'
+                  size={20}
+                  color={SUCCESS_COLOR}
+                />
+                <Text style={styles.verifiedText}>Valid</Text>
+              </>
+            ) : null}
+            {status === 'expired' ? (
+              <>
+                <AntDesign
+                  name='exclamationcircle'
+                  size={20}
+                  color={ORANGE_COLOR}
+                />
+                <Text style={styles.verifiedText}>Expired</Text>
+              </>
+            ) : null}
+            {status === 'invalid' ? (
+              <>
+                <AntDesign
+                  name='exclamationcircle'
+                  size={20}
+                  color={ORANGE_COLOR}
+                />
+                <Text style={styles.verifiedText}>Invalid</Text>
+              </>
+            ) : null}
+          </>
+        )}
       </View>
-    )
-  }
+      <Card transparent style={styles.card}>
+        <CardItem>
+          <Body>
+            <NativeBaseText note>Issuer</NativeBaseText>
+            <View style={styles.issuerInfo}>
+              <Image source={avatarSource} style={styles.issuerLogo} />
+              <View style={styles.issuerNameAndDidContainer}>
+                <Text
+                  style={styles.issuerName}
+                  numberOfLines={1}
+                  ellipsizeMode='middle'>
+                  {issuer.name}
+                </Text>
+                <Text
+                  style={styles.issuerDid}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {issuer.did}
+                </Text>
+              </View>
+            </View>
+          </Body>
+        </CardItem>
+      </Card>
+      <View>
+        <Text style={styles.sectionTitle}>Credential Data</Text>
+        <DataFieldList fields={credentialDataFields} />
+      </View>
+      <View>
+        <Text style={styles.sectionTitle}>Other Information</Text>
+        <DataFieldList fields={credentialMetadataFields} />
+      </View>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

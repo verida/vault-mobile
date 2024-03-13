@@ -19,7 +19,7 @@ const tabIcons: Record<
   Home: { default: 'home', focused: 'home' },
   Profile: { default: 'user', focused: 'user' },
   Data: { default: 'data', focused: 'data' },
-  // Connections: { default: 'connections', focused: 'connections' }, // TODO: uncomment when ready
+  Connections: { default: 'connections', focused: 'connections' },
   Assets: { default: 'wallet', focused: 'wallet' },
 }
 

@@ -12,37 +12,36 @@ export type DataItem = {
 
 export type DataFolderDisplayType = 'grid' | 'folders' | 'cards'
 
-export type DataFolderDefinition =
+export type DataFolderDefinition = {
+  name: string
+  title: string
+  titlePlural?: string
+  icon: React.ReactNode
+  color?: string
+  root: boolean
+} & (
   | {
-      name: string
-      title: string
-      titlePlural?: string
-      icon: React.ReactNode
-      color?: string
-      root: boolean
-    } & (
-      | {
-          display: 'folders'
-          folders: string[]
+      display: 'folders'
+      folders: string[]
+    }
+  | {
+      display: 'grid' | 'cards'
+      database: string
+      layouts?: {
+        list?: string[]
+        view?: string[]
+      }
+      sort?: Record<string, unknown>[]
+      fields?: {
+        [key: string]: {
+          label: string
         }
-      | {
-          display: 'grid' | 'cards'
-          database: string
-          layouts?: {
-            list?: string[]
-            view?: string[]
-          }
-          sort?: Record<string, unknown>[]
-          fields?: {
-            [key: string]: {
-              label: string
-            }
-          }
-          card?: {
-            name?: (record: VeridaRecord) => string
-            summary?: (record: VeridaRecord) => string
-          }
-          nameField?: string
-          summaryField?: string
-        }
-    )
+      }
+      card?: {
+        name?: (record: VeridaRecord) => string
+        summary?: (record: VeridaRecord) => string
+      }
+      nameField?: string
+      summaryField?: string
+    }
+)

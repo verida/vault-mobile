@@ -11,7 +11,7 @@ import { useAppDispatch } from 'reduxStore/types'
 
 import { useCurrentIdentity } from './useCurrentIdentity'
 
-const logger = new Logger('Identities')
+const logger = Logger.create('Identities')
 
 export function useIdentities() {
   const { switchToAccount, refresh } = useAuth()

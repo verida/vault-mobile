@@ -2,27 +2,31 @@ import Clipboard from '@react-native-community/clipboard'
 import {
   getAggregateWalletBannerBalanceResult,
   getSelectedWalletById,
-  getWalletAddressForChainId,
   ResourceParams,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeChainMetadataForResource,
-  useSelectedMinifiedBlockchainAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import * as React from 'react'
+import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { useSelector } from 'react-redux'
+
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
-import TokenBanner from 'components/Tokens/TokenBanner'
+import { TokenBanner } from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import { MainStackScreenProps } from 'navigation/types'
 
@@ -46,7 +50,15 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
   // TODO: idk what to do about this yet
   const selectedWallet = useSelector(getSelectedWalletById)
 
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   const chainId = useChainIdForResourceParams({ resource })
+
+  const chain = chainMetadatas.find(
+    (chainMetadata) =>
+      chainMetadata.namespace === chainId.namespace &&
+      chainMetadata.reference === chainId.reference
+  )
 
   const [maybeAggregateWalletBannerBalance] =
     getAggregateWalletBannerBalanceResult(
@@ -58,15 +70,12 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+    : undefined
 
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
-
-  // TODO: is this right? what about multiple competing private keys for the same network?
-  const maybeAddress = getWalletAddressForChainId(
-    chainId,
-    selectedMinifiedAccounts
-  )
+  const maybeAddress = account?.address || null
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -76,14 +85,13 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
   // hook regardless.
   const {
     result: aggregateWalletBannerBalances,
-    loading: isLoadingBalance,
     refetch: refetchBalance,
     error: maybeErrorBalance,
   } = useAggregateWalletBannerBalancesWithResultCaching({
     resource,
   })
 
-  const { price } = useAggregateWalletBannerBalancesValuation({
+  const { price: value, currency } = useAggregateWalletBannerBalancesValuation({
     aggregateWalletBannerBalances,
   })
 
@@ -100,8 +108,6 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
     assetId,
   })
 
-  const isLoading = isLoadingTransactions || isLoadingBalance
-
   const error =
     (isAssetSupportedByWalletProvider && errorTransactions) || maybeErrorBalance
 
@@ -110,6 +116,8 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
     () => void Promise.all([refetchTransactions(), refetchBalance()]),
     [refetchTransactions, refetchBalance]
   )
+
+  const styles = useThemeAwareStyle(createStyles)
 
   if (error)
     return (
@@ -128,28 +136,24 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
         }}
         title={title}
       />
-      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <TokenBanner
-        isSumOfMultipleBalances={false}
-        decimals={maybeAggregateWalletBannerBalance?.decimals}
-        tokenType={isAssetSupportedByWalletProvider ? null : ''}
-        totalBalance={price}
-        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
-        valuation={maybeAggregateWalletBannerBalance?.valuation}
-        showControls
         selectedWallet={selectedWallet}
+        decimals={maybeAggregateWalletBannerBalance?.decimals}
+        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+        tokenBalanceValue={value}
+        tokenBalanceValueCurrency={currency}
+        valuation={maybeAggregateWalletBannerBalance?.valuation}
         symbol={maybeAggregateWalletBannerBalance?.symbol}
-        icon={maybeAggregateWalletBannerBalance?.icon}
+        icon={maybeAggregateWalletBannerBalance?.icon || undefined}
+        chainLabel={chain?.name}
+        chainLogo={chain?.icon || undefined}
+        isChainMainnet={!!chain?.isMainnet}
         receiveButtonAction={() => {
-          if (!maybeAggregateWalletBannerBalance) return
-
           return navigation.navigate('ReceiveToken', {
             aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
           })
         }}
         sendButtonAction={() => {
-          if (!maybeAggregateWalletBannerBalance) return
-
           return navigation.navigate('SendToken', {
             aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
           })
@@ -169,19 +173,26 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
             backgroundColor: 'rgba(4, 17, 51, 1)',
           })
         }}
+        style={styles.tokenBanner}
       />
-      {!isAssetSupportedByWalletProvider ||
-      !maybeAggregateWalletBannerBalance ? (
+      {!isAssetSupportedByWalletProvider ? (
         // Here, we're handling a custom asset. We could render something accordingly.
         <React.Fragment />
       ) : (
         <TransactionsList
           aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
-          refreshing={isLoading}
+          refreshing={isLoadingTransactions}
           list={transactions}
         />
       )}
     </Container>
   )
 }
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    tokenBanner: {
+      margin: theme.spacing.m,
+    },
+  })

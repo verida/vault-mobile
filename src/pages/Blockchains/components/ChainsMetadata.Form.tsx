@@ -232,7 +232,9 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
 })
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 24 },
+  container: {
+    flex: 1,
+  },
   select: {
     height: 60,
     alignItems: 'flex-start',

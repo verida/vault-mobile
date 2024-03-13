@@ -13,42 +13,43 @@ import { BaseScreenHeader } from './BaseScreenHeader'
 
 export type ModalScreenHeaderProps = NativeStackHeaderProps
 
-export const ModalScreenHeader: React.FunctionComponent<ModalScreenHeaderProps> =
-  (props) => {
-    const { navigation, options, ...otherProps } = props
+export const ModalScreenHeader: React.FunctionComponent<
+  ModalScreenHeaderProps
+> = (props) => {
+  const { navigation, options, ...otherProps } = props
 
-    const layout = useSafeAreaFrame()
-    const styles = useThemeAwareStyle(createStyles)
-    const { theme } = useTheme()
+  const layout = useSafeAreaFrame()
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
 
-    const handleBackPress = useCallback(() => {
-      navigation.goBack()
-    }, [navigation])
+  const handleBackPress = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
 
-    const headerLeft: typeof options.headerLeft = useCallback(
-      () => (
-        <TouchableOpacity
-          onPress={handleBackPress}
-          hitSlop={HIT_SLOP_10_10}
-          style={styles.closeButton}>
-          <Icon name='close' size={24} color={theme.color.onBackground} />
-        </TouchableOpacity>
-      ),
-      [handleBackPress, theme.color.onBackground, styles.closeButton]
-    )
+  const headerLeft: typeof options.headerLeft = useCallback(
+    () => (
+      <TouchableOpacity
+        onPress={handleBackPress}
+        hitSlop={HIT_SLOP_10_10}
+        style={styles.closeButton}>
+        <Icon name='close' size={24} color={theme.color.onBackground} />
+      </TouchableOpacity>
+    ),
+    [handleBackPress, theme.color.onBackground, styles.closeButton]
+  )
 
-    return (
-      <BaseScreenHeader
-        {...otherProps}
-        navigation={navigation}
-        options={{
-          ...options,
-          headerLeft,
-        }}
-        layout={layout}
-      />
-    )
-  }
+  return (
+    <BaseScreenHeader
+      {...otherProps}
+      navigation={navigation}
+      options={{
+        ...options,
+        headerLeft,
+      }}
+      layout={layout}
+    />
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

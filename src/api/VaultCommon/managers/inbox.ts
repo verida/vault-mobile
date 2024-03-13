@@ -8,7 +8,7 @@ import { Message } from './inbox/Message'
 import { Request } from './inbox/Request'
 import { Send } from './inbox/Send'
 
-const logger = new Logger('InboxManager')
+const logger = Logger.create('InboxManager')
 
 const DataHandler = {
   [InboxType.DATA_SEND]: Send,
@@ -36,7 +36,7 @@ export class InboxManager {
   public async handleAction(
     inboxEntry: InboxEntry,
     action: keyof DataAction,
-    payload: any
+    payload: unknown
   ) {
     logger.debug('Handling inbox item action', { inboxEntry, action, payload })
     logger.debug('Initializing messaging')
@@ -53,12 +53,7 @@ export class InboxManager {
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
-      const error = new Error('Unknown inbox type!: ' + inboxEntry.type)
-      logger.error(error)
-      return {
-        success: false,
-        errors: [error],
-      }
+      throw new Error('Unknown inbox type!: ' + inboxEntry.type)
     }
 
     const MiddlewareInstance = new Middleware(

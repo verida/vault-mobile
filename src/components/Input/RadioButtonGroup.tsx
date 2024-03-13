@@ -16,40 +16,41 @@ export type RadioButtonGroupProps = {
   onValueChange?: (value: string) => void
 } & ViewProps
 
-export const RadioButtonGroup: React.FunctionComponent<RadioButtonGroupProps> =
-  (props) => {
-    const { items, onValueChange, selectedItem, ...viewProps } = props
+export const RadioButtonGroup: React.FunctionComponent<
+  RadioButtonGroupProps
+> = (props) => {
+  const { items, onValueChange, selectedItem, ...viewProps } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    const handleItemToggle = useCallback(
-      (value: string) => {
-        if (value === selectedItem) {
-          return
-        }
-        if (onValueChange) {
-          onValueChange(value)
-        }
-      },
-      [onValueChange, selectedItem]
-    )
+  const handleItemToggle = useCallback(
+    (value: string) => {
+      if (value === selectedItem) {
+        return
+      }
+      if (onValueChange) {
+        onValueChange(value)
+      }
+    },
+    [onValueChange, selectedItem]
+  )
 
-    return (
-      <View {...viewProps}>
-        <View>
-          {items.map((item, index) => (
-            <RadioButton
-              key={item.value}
-              label={item.label}
-              onToggle={() => handleItemToggle(item.value)}
-              checked={item.value === selectedItem}
-              style={index === 0 ? undefined : styles.item}
-            />
-          ))}
-        </View>
+  return (
+    <View {...viewProps}>
+      <View>
+        {items.map((item, index) => (
+          <RadioButton
+            key={item.value}
+            label={item.label}
+            onToggle={() => handleItemToggle(item.value)}
+            checked={item.value === selectedItem}
+            style={index === 0 ? undefined : styles.item}
+          />
+        ))}
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

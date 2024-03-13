@@ -2,7 +2,7 @@ import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore as it comes from our own declaration extension
-import { SvgProps, View } from 'react-native'
+import { DimensionValue, SvgProps, View } from 'react-native'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 import { IconProps } from 'react-native-vector-icons/Icon'
@@ -16,7 +16,6 @@ import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
 import TickIcon from 'assets/icons/tick_icon.svg'
 import WarningIcon from 'assets/icons/warning_icon.svg'
-import PlusIcon from 'assets/plus_icon.svg' // TODO: The icon should not have a color
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
 // TODO: Check with the designers on whether to use custom icons or from a library and if so, pick a single library rather than the mix of different icons styles with currently have.
@@ -28,7 +27,6 @@ type CustomIconName =
   | 'share'
   | 'tick'
   | 'warning'
-  | 'plus'
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
@@ -68,12 +66,14 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'send'
+  | 'receive'
 
 export type IconName = CustomIconName | LibIconName
 
 export const Icon = (props: {
   name: IconName
-  size?: number | string
+  size?: DimensionValue | undefined
   color?: string
 }) => {
   const { theme } = useTheme()
@@ -102,8 +102,6 @@ export const Icon = (props: {
       return <Ionicon name='copy-outline' {...iconProps} />
     case 'edit':
       return <EditIcon {...svgProps} />
-    case 'plus':
-      return <PlusIcon {...svgProps} />
     case 'goto':
       return <GoToIcon {...svgProps} />
     case 'share':
@@ -317,11 +315,23 @@ export const Icon = (props: {
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
         </IconWrapper>
       )
+    case 'send':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='vertical-align-top' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'receive':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='vertical-align-bottom' {...iconProps} />
+        </IconWrapper>
+      )
   }
 }
 
 type IconWrapperProps = {
-  size?: number | string
+  size?: DimensionValue | undefined
   children: React.ReactNode
 }
 function IconWrapper(props: IconWrapperProps) {

@@ -25,7 +25,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 
-const logger = new Logger('TokenRecipient')
+const logger = Logger.create('TokenRecipient')
 
 export type TokenRecipientScreenParams = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance

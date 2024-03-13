@@ -1,4 +1,3 @@
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import {
@@ -45,14 +44,13 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
   } = props
 
   const insets = useSafeAreaInsets()
-  const headerHeight = useHeaderHeight()
   const styles = useThemeAwareStyle(createStyles)
 
   const resolvedSafeAreaEdges = noSafeArea
     ? []
     : allSafeAreaEdges
-    ? ['top', 'bottom', 'left', 'right']
-    : safeAreaEdges
+      ? ['top', 'bottom', 'left', 'right']
+      : safeAreaEdges
 
   return (
     <View
@@ -78,7 +76,6 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             }
           : {},
       ]}>
-      {/* TODO: Keyboard avoiding to be properly tested on screens with inputs */}
       <KeyboardAvoidingView
         enabled={keyboardAvoiding}
         behavior={
@@ -86,9 +83,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             ? 'padding'
             : 'height'
         }
-        keyboardVerticalOffset={
-          keyboardVerticalOffset || headerHeight + insets.top + 10 // TODO: Need to find out why the +10 adjustment. Need to check the headerHeight is correct
-        }
+        keyboardVerticalOffset={keyboardVerticalOffset}
         style={{ flex: 1 }}>
         {children}
       </KeyboardAvoidingView>

@@ -584,8 +584,8 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                 {isDoneCreateAccount
                   ? 'Success!'
                   : showRetry
-                  ? 'Something went wrong'
-                  : 'Building your Identity'}
+                    ? 'Something went wrong'
+                    : 'Building your Identity'}
               </Headline>
               <Text
                 style={[
@@ -598,8 +598,8 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                 {isDoneCreateAccount
                   ? 'Your Identity has been successfully created'
                   : showRetry
-                  ? createAccountErrorMessage
-                  : 'Please wait...'}
+                    ? createAccountErrorMessage
+                    : 'Please wait...'}
               </Text>
               <Spacer vertical='xxl' />
               <AnimatedCheckbox

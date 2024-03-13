@@ -15,7 +15,8 @@ import { Container, Content, List } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
+import { BlockchainWalletWithAccounts } from '~/features/blockchain'
+
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'

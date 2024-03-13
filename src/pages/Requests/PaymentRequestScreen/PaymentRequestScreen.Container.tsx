@@ -129,16 +129,16 @@ export const PaymentRequestScreenContainer = React.memo(
           message: 'The requested asset has not been found!',
         }
       : !hasSufficientBalance
-      ? {
-          type: 'error',
-          message: 'Insufficient balance.',
-        }
-      : !isNotMalformed
-      ? {
-          type: 'error',
-          message: 'The requested amount is not valid!',
-        }
-      : undefined
+        ? {
+            type: 'error',
+            message: 'Insufficient balance.',
+          }
+        : !isNotMalformed
+          ? {
+              type: 'error',
+              message: 'The requested amount is not valid!',
+            }
+          : undefined
 
     return (
       <React.Fragment>

@@ -1,7 +1,12 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
+import {
+  BlockchainNetwork,
+  BlockchainWalletWithAccounts,
+  getBlockchainNetworks,
+} from 'features/blockchain'
+import { getAllWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
@@ -50,7 +55,6 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
@@ -77,7 +81,7 @@ import { Theme } from 'styles/types'
 
 // TODO: We absolutely have to refactor and breakdown this page!
 
-const logger = new Logger('Pages/Profiles/PublicProfile')
+const logger = Logger.create('Pages/Profiles/PublicProfile')
 
 export enum PublicProfileEditMode {
   EditWalletPublicLabel,
@@ -397,7 +401,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updateWalletAddressesOrder = useCallback(
-    (walletAddressesOrder) => {
+    (walletAddressesOrder: VeridaOneWalletAddress[]) => {
       let orderNumber = 0
 
       const newPublicAddresses = [...publicWalletAddresses]
@@ -419,7 +423,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updatePlatformLinksOrder = useCallback(
-    (updatedOderPlatformLinks) => {
+    (updatedOderPlatformLinks: VeridaOnePlatformLink[]) => {
       let orderNumber = 0
 
       const updatedPlatformLinks = [...platformLinks]
@@ -439,10 +443,10 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updateCustomLinksOrder = useCallback(
-    (customLinksNewOrder) => {
+    (customLinksWithNewOrder: VeridaOneCustomLink[]) => {
       let orderNumber = 0
 
-      const newCustomLinks = customLinksNewOrder.map(
+      const newCustomLinks = customLinksWithNewOrder.map(
         (link: VeridaOneCustomLink) => {
           link.order = orderNumber++
           return link
@@ -573,7 +577,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   }
 
   const removeFeaturedAsset = useCallback(
-    (index, featuredAsset: VeridaOneFeaturedAsset) => {
+    (featuredAsset: VeridaOneFeaturedAsset) => {
       let updatedFeaturedAssets = [...featuredAssets]
       const itemIndex = featuredAssets.findIndex(
         (it) =>
@@ -1108,7 +1112,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
                         break
 
                       case 1:
-                        removeFeaturedAsset(index, featuredAsset)
+                        removeFeaturedAsset(featuredAsset)
                         break
 
                       case cancelButtonIndex:

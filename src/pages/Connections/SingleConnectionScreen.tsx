@@ -64,9 +64,8 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
 
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
-      const connectionInstance = await DataConnectorsManager.getConnection(
-        provider
-      )
+      const connectionInstance =
+        await DataConnectorsManager.getConnection(provider)
       setState(connectionInstance)
     }
     load()
@@ -86,9 +85,8 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
     if (connectNow) {
       // eslint-disable-next-line no-void
       void (async () => {
-        const connectionInstance = await DataConnectorsManager.getConnection(
-          provider
-        )
+        const connectionInstance =
+          await DataConnectorsManager.getConnection(provider)
         await connectionInstance.initiateAuth()
       })()
     }
@@ -96,21 +94,18 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
-    )
+    const connectionInstance =
+      await DataConnectorsManager.getConnection(provider)
     return connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
-    )
+    const connectionInstance =
+      await DataConnectorsManager.getConnection(provider)
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
-    )
+    const connectionInstance =
+      await DataConnectorsManager.getConnection(provider)
     connectionInstance.disconnect()
   }
 

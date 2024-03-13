@@ -32,7 +32,7 @@ export default class Folder {
    * @param {*} filter
    * @param {*} options
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
   public async getMany<T extends object = Record<string, unknown>>(
     filter: any = {},
     options: any = {}

@@ -24,7 +24,7 @@ import {
   MaintenanceMode,
 } from '../@types'
 
-const logger = new Logger('ConfigContext')
+const logger = Logger.create('ConfigContext')
 
 const DEFAULT_REMOTE_CONFIG = {
   forced_upgrade: '{}',

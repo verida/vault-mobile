@@ -1,10 +1,8 @@
 import Clipboard from '@react-native-community/clipboard'
 import {
   AggregateWalletBannerBalance,
-  getWalletAddressForChainId,
   useChainIdForResourceParams,
-  useMaybeChainMetadataForResource,
-  useSelectedMinifiedBlockchainAccounts,
+  useMaybeSelectedWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -19,7 +17,6 @@ import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
@@ -46,14 +43,13 @@ export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+  const selectedWallet = useMaybeSelectedWallet()
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+    : undefined
 
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
-
-  const maybeAddress = getWalletAddressForChainId(
-    chainId,
-    selectedMinifiedAccounts
-  )
+  const maybeAddress = account?.address || null
 
   const hasAddress = typeof maybeAddress === 'string' && Boolean(maybeAddress)
 
@@ -66,7 +62,6 @@ export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
         }}
         title={`Receive ${aggregateWalletBannerBalance.symbol}`}
       />
-      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <Layout style={styles.container}>
         <View style={styles.content}>
           {hasAddress && (

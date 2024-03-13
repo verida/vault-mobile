@@ -32,7 +32,7 @@ import {
 } from '../../constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
-const logger = new Logger('Pages/Login/LoginRequest')
+const logger = Logger.create('Pages/Login/LoginRequest')
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -55,8 +55,8 @@ export default (props) => {
     !currentIdentityNetwork || !hasNetworkInRequest
       ? 'unknown'
       : isNetworkCompatibleForConnect(currentIdentityNetwork, info.network)
-      ? 'compatible'
-      : 'incompatible'
+        ? 'compatible'
+        : 'incompatible'
 
   const { onRequestConnect } = useWalletConnectContext()
 
@@ -126,12 +126,12 @@ export default (props) => {
                   parsed.environment === EnvironmentType.MAINNET
                     ? EnvironmentType.MAINNET
                     : parsed.environment === EnvironmentType.TESTNET
-                    ? EnvironmentType.TESTNET
-                    : parsed.environment === EnvironmentType.DEVNET
-                    ? EnvironmentType.DEVNET
-                    : parsed.environment === EnvironmentType.LOCAL
-                    ? EnvironmentType.LOCAL
-                    : null,
+                      ? EnvironmentType.TESTNET
+                      : parsed.environment === EnvironmentType.DEVNET
+                        ? EnvironmentType.DEVNET
+                        : parsed.environment === EnvironmentType.LOCAL
+                          ? EnvironmentType.LOCAL
+                          : null,
                 logoUrl: parsed.logoUrl,
                 openUrl: parsed.openUrl ? parsed.openUrl : null,
                 walletConnect: parsed.walletConnect,
@@ -408,52 +408,53 @@ export default (props) => {
                 </AlertBanner>
               </View>
             ) : null}
-            {compatibleNetwork !== 'incompatible' && (expired || errorMessage) && (
-              <View style={style.modal}>
-                {errorMessage && (
-                  <>
-                    <View style={{ flexDirection: 'row' }}>
+            {compatibleNetwork !== 'incompatible' &&
+              (expired || errorMessage) && (
+                <View style={style.modal}>
+                  {errorMessage && (
+                    <>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Text
+                          style={[
+                            style.text,
+                            { color: errorMessage.color, marginBottom: 2 },
+                          ]}>
+                          <Icon
+                            type='AntDesign'
+                            name={errorMessage.iconName}
+                            style={[style.text, { color: errorMessage.color }]}
+                          />
+                          &nbsp; {errorMessage.heading}
+                        </Text>
+                      </View>
                       <Text
                         style={[
                           style.text,
-                          { color: errorMessage.color, marginBottom: 2 },
+                          { fontSize: 12, color: errorMessage.color },
+                          expired && { marginBottom: 5 },
                         ]}>
-                        <Icon
-                          type='AntDesign'
-                          name={errorMessage.iconName}
-                          style={[style.text, { color: errorMessage.color }]}
-                        />
-                        &nbsp; {errorMessage.heading}
+                        {errorMessage.message}
                       </Text>
-                    </View>
+                    </>
+                  )}
+                  {expired && (
                     <Text
                       style={[
                         style.text,
-                        { fontSize: 12, color: errorMessage.color },
-                        expired && { marginBottom: 5 },
+                        { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
                       ]}>
-                      {errorMessage.message}
+                      Expired: {timeToExpire}
                     </Text>
-                  </>
-                )}
-                {expired && (
+                  )}
                   <Text
                     style={[
                       style.text,
-                      { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
+                      { fontSize: 12, color: '#FF3B30', marginTop: 5 },
                     ]}>
-                    Expired: {timeToExpire}
+                    Please refresh the login screen
                   </Text>
-                )}
-                <Text
-                  style={[
-                    style.text,
-                    { fontSize: 12, color: '#FF3B30', marginTop: 5 },
-                  ]}>
-                  Please refresh the login screen
-                </Text>
-              </View>
-            )}
+                </View>
+              )}
           </View>
         ) : null}
       </Content>

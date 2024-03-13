@@ -13,7 +13,7 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
 import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from 'constants/color'
 
-const logger = new Logger('Components/Inbox/types/DatabaseSync')
+const logger = Logger.create('Components/Inbox/types/DatabaseSync')
 
 export default (props) => {
   const { item, navigation } = props
@@ -32,7 +32,7 @@ export default (props) => {
       setCurrentAction(null)
       navigation.goBack()
     } catch (error) {
-      Alert.alert('Error', 'Cannot sync data now')
+      Alert.alert('Error', 'Something went wrong when sending the data')
       logger.error(error)
       setCurrentAction(null)
     }

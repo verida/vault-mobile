@@ -25,145 +25,140 @@ export type QrCodeScannerScreenParams = {
 
 type QrCodeScannerScreenProps = MainStackScreenProps<'ScanQrCode'>
 
-export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenProps> =
-  (props) => {
-    const { navigation, route } = props
+export const QrCodeScannerScreen: React.FunctionComponent<
+  QrCodeScannerScreenProps
+> = (props) => {
+  const { navigation, route } = props
 
-    const [processing, setProcessing] = useState(false)
-    const [isFlashOn, setIsFlashOn] = useState(false)
-    const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
-    const handleDeeplink = useDeeplink()
+  const [processing, setProcessing] = useState(false)
+  const [isFlashOn, setIsFlashOn] = useState(false)
+  const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
+  const handleDeeplink = useDeeplink()
 
-    const handleToggleFlash = useCallback(() => {
-      setIsFlashOn((prevState) => !prevState)
-    }, [])
+  const handleToggleFlash = useCallback(() => {
+    setIsFlashOn((prevState) => !prevState)
+  }, [])
 
-    const handleClose = useCallback(async () => {
-      navigation.goBack()
-    }, [navigation])
+  const handleClose = useCallback(async () => {
+    navigation.goBack()
+  }, [navigation])
 
-    const processQrCodeMessage = useCallback(
-      async (data?: string) => {
-        setProcessing(true)
+  const processQrCodeMessage = useCallback(
+    async (data?: string) => {
+      setProcessing(true)
 
-        if (!data) {
-          setProcessing(false)
-          Alert.alert('Error', 'QR Code invalid')
-          return
-        }
-
-        if (route.params.onReadQRCode) {
-          route.params.onReadQRCode(data)
-          navigation.goBack()
-          return
-        }
-
-        const handledByProtocols = processQrCodeByProtocolHandlers(data)
-        if (handledByProtocols) {
-          // It's assumed the protocol handlers manage the navigation but i would be better to TODO: Find a way to not have the handler manager closing the QR Code scanner.
-          return
-        }
-
-        // TODO: Progressively move the protocols into the protocol handlers
-
-        const { hostname, pathname } = parse(data, true)
-
-        // Check if supported URL
-        if (
-          !isEmpty(hostname) &&
-          isSupportedDomain(hostname) &&
-          canBeHandledByDeeplink(pathname)
-        ) {
-          // TODO: Move Verida Connect to protocol handlers
-          handleDeeplink(data)
-          return
-        }
-
+      if (!data) {
         setProcessing(false)
-        Alert.alert('Error', 'QR Code not supported by the Verida Wallet')
-      },
-      [
-        processQrCodeByProtocolHandlers,
-        handleDeeplink,
-        navigation,
-        route.params,
-      ]
-    )
-
-    const debouncedProcessQrCodeMessage = useDebouncedCallback(
-      processQrCodeMessage,
-      WAIT_TIME,
-      {
-        leading: true,
+        Alert.alert('Error', 'QR Code invalid')
+        return
       }
-    )
 
-    const handleQrCodeRead = async (event: BarCodeReadEvent) => {
-      const { data } = event
-      await debouncedProcessQrCodeMessage(data)
+      if (route.params.onReadQRCode) {
+        route.params.onReadQRCode(data)
+        navigation.goBack()
+        return
+      }
+
+      const handledByProtocols = processQrCodeByProtocolHandlers(data)
+      if (handledByProtocols) {
+        // It's assumed the protocol handlers manage the navigation but i would be better to TODO: Find a way to not have the handler manager closing the QR Code scanner.
+        return
+      }
+
+      // TODO: Progressively move the protocols into the protocol handlers
+
+      const { hostname, pathname } = parse(data, true)
+
+      // Check if supported URL
+      if (
+        !isEmpty(hostname) &&
+        isSupportedDomain(hostname) &&
+        canBeHandledByDeeplink(pathname)
+      ) {
+        // TODO: Move Verida Connect to protocol handlers
+        handleDeeplink(data)
+        return
+      }
+
+      setProcessing(false)
+      Alert.alert('Error', 'QR Code not supported by the Verida Wallet')
+    },
+    [processQrCodeByProtocolHandlers, handleDeeplink, navigation, route.params]
+  )
+
+  const debouncedProcessQrCodeMessage = useDebouncedCallback(
+    processQrCodeMessage,
+    WAIT_TIME,
+    {
+      leading: true,
     }
+  )
 
-    // HACK: In development mode, we'll also read the content of the clipboard
-    //       for a connection string.
-    const [maybeClipboardContent] =
-      config.dev.devMode && config.dev.enableClipboardInQrCodeScanner
-        ? // eslint-disable-next-line react-hooks/rules-of-hooks
-          useClipboard()
-        : []
-
-    React.useEffect(() => {
-      ;(async () => {
-        if (!maybeClipboardContent) return
-
-        return debouncedProcessQrCodeMessage(maybeClipboardContent)
-      })()
-    }, [maybeClipboardContent, debouncedProcessQrCodeMessage])
-
-    return (
-      <>
-        <StatusBar
-          barStyle='light-content' // It's a full screen with no header, the overlay is translucent dark so need light status bar content
-          backgroundColor='transparent'
-        />
-        <View style={styles.container}>
-          <RNCamera
-            style={styles.camera}
-            type={RNCamera.Constants.Type.back}
-            flashMode={
-              isFlashOn
-                ? RNCamera.Constants.FlashMode.torch
-                : RNCamera.Constants.FlashMode.off
-            }
-            captureAudio={false}
-            androidCameraPermissionOptions={{
-              title: 'Permission to use camera',
-              message: 'We need your permission to use your camera',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
-            onBarCodeRead={Platform.OS === 'ios' ? handleQrCodeRead : undefined}
-            onGoogleVisionBarcodesDetected={({ barcodes }) => {
-              if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
-                return
-              }
-              debouncedProcessQrCodeMessage(barcodes[0].data)
-            }}
-            googleVisionBarcodeType={
-              RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType
-                .QR_CODE
-            }
-          />
-          <QrCodeScannerOverlay
-            processing={processing}
-            isFlashOn={isFlashOn}
-            onToggleFlash={handleToggleFlash}
-            onClose={handleClose}
-            firstTime={route.params.firstTime}
-          />
-        </View>
-      </>
-    )
+  const handleQrCodeRead = async (event: BarCodeReadEvent) => {
+    const { data } = event
+    await debouncedProcessQrCodeMessage(data)
   }
+
+  // HACK: In development mode, we'll also read the content of the clipboard
+  //       for a connection string.
+  const [maybeClipboardContent] =
+    config.dev.devMode && config.dev.enableClipboardInQrCodeScanner
+      ? // eslint-disable-next-line react-hooks/rules-of-hooks
+        useClipboard()
+      : []
+
+  React.useEffect(() => {
+    ;(async () => {
+      if (!maybeClipboardContent) return
+
+      return debouncedProcessQrCodeMessage(maybeClipboardContent)
+    })()
+  }, [maybeClipboardContent, debouncedProcessQrCodeMessage])
+
+  return (
+    <>
+      <StatusBar
+        barStyle='light-content' // It's a full screen with no header, the overlay is translucent dark so need light status bar content
+        backgroundColor='transparent'
+      />
+      <View style={styles.container}>
+        <RNCamera
+          style={styles.camera}
+          type={RNCamera.Constants.Type.back}
+          flashMode={
+            isFlashOn
+              ? RNCamera.Constants.FlashMode.torch
+              : RNCamera.Constants.FlashMode.off
+          }
+          captureAudio={false}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'We need your permission to use your camera',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          onBarCodeRead={Platform.OS === 'ios' ? handleQrCodeRead : undefined}
+          onGoogleVisionBarcodesDetected={({ barcodes }) => {
+            if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
+              return
+            }
+            debouncedProcessQrCodeMessage(barcodes[0].data)
+          }}
+          googleVisionBarcodeType={
+            RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
+          }
+        />
+        <QrCodeScannerOverlay
+          processing={processing}
+          isFlashOn={isFlashOn}
+          onToggleFlash={handleToggleFlash}
+          onClose={handleClose}
+          firstTime={route.params.firstTime}
+        />
+      </View>
+    </>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

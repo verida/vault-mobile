@@ -1,4 +1,4 @@
-import React, { useCallback, useImperativeHandle, useState } from 'react'
+import React from 'react'
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
@@ -7,80 +7,55 @@ import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
 
 export interface SegmentData {
-  title?: string
+  key: string
+  title: string
 }
 
-export type SegmentProps = React.ComponentProps<typeof View> & {
-  segments?: SegmentData[]
-  selected?: boolean
-  initialIndex?: number
-  enabled?: boolean
-  onChangedSegmentIndex: (index: number) => void
+export type SegmentsControlProps = React.ComponentProps<typeof View> & {
+  segments: SegmentData[]
+  activeSegmentIndex: number
+  onSegmentPress: (index: number) => void
 }
 
-export type SegmentControlRef = {
-  setSelectedIndex: (index: number) => void
-}
+export const SegmentsControl: React.FC<SegmentsControlProps> = (props) => {
+  const { segments, style, activeSegmentIndex, onSegmentPress } = props
 
-const SegmentControl = React.forwardRef<SegmentControlRef, SegmentProps>(
-  (props, receivedRef) => {
-    const {
-      segments = [],
-      style,
-      initialIndex = 0,
-      onChangedSegmentIndex,
-      enabled = true,
-    } = props
-    const [selectedIndex, setSelectedIndex] = useState(initialIndex)
-    const touchOnSegment = useCallback(
-      (idx: number) => {
-        if (enabled) {
-          onChangedSegmentIndex(idx)
-          setSelectedIndex(idx)
-        }
-      },
-      [enabled, onChangedSegmentIndex]
-    )
-
-    useImperativeHandle(receivedRef, () => ({
-      setSelectedIndex: (index) => {
-        setSelectedIndex(index)
-      },
-    }))
-
-    return (
-      <View style={[styles.container, style]}>
-        <View style={styles.containerContent}>
-          {segments.map((data, index) => (
-            <TouchableWithoutFeedback
-              key={`${data.title}-${index}`}
-              onPress={() => touchOnSegment(index)}
-              hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-              <View
-                key={`${data.title}-${index}`}
+  return (
+    <View style={[styles.container, style]}>
+      <View style={styles.containerContent}>
+        {segments.map((segment, index) => (
+          <TouchableWithoutFeedback
+            key={segment.key}
+            onPress={() => onSegmentPress(index)}
+            hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+            <View
+              key={segment.key}
+              style={[
+                index === activeSegmentIndex
+                  ? styles.segmentButtonFocused
+                  : styles.segmentButtonNormal,
+                { width: `${100 / segments.length}%` },
+              ]}>
+              <Text
                 style={[
-                  index === selectedIndex
-                    ? styles.segmentButtonFocused
-                    : styles.segmentButtonNormal,
-                  { width: `${100 / segments.length}%` },
+                  index === activeSegmentIndex
+                    ? styles.textFocused
+                    : styles.text,
                 ]}>
-                <Text
-                  style={[
-                    index === selectedIndex ? styles.textFocused : styles.text,
-                  ]}>
-                  {data.title}
-                </Text>
-                {index > 0 &&
-                  index !== selectedIndex &&
-                  index !== selectedIndex + 1 && <View style={styles.line} />}
-              </View>
-            </TouchableWithoutFeedback>
-          ))}
-        </View>
+                {segment.title}
+              </Text>
+              {index > 0 &&
+                index !== activeSegmentIndex &&
+                index !== activeSegmentIndex + 1 && (
+                  <View style={styles.line} />
+                )}
+            </View>
+          </TouchableWithoutFeedback>
+        ))}
       </View>
-    )
-  }
-)
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -89,7 +64,6 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 16,
     padding: 2,
     color: TEXT_COLOR,
   },
@@ -145,5 +119,3 @@ const styles = StyleSheet.create({
     backgroundColor: BLACK_COLOR_OPACITY(0.36),
   },
 })
-
-export default SegmentControl

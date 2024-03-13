@@ -4,7 +4,8 @@ import React, { useCallback } from 'react'
 import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import { NFT, NFTCollection, NFTMetadata } from 'api/types'
+import { NFT, NFTCollection, NFTMetadata } from '~/features/assets'
+
 import GridView from 'components/Grids/GridView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -15,77 +16,78 @@ import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
-const logger = new Logger('Pages/NFTCollectionDetail')
+const logger = Logger.create('Pages/NFTCollectionDetail')
 
 export type NFTCollectionDetailScreenParams = { collection: NFTCollection }
 
 type NFTCollectionDetailScreenProps =
   MainStackScreenProps<'NFTCollectionDetail'>
 
-export const NFTCollectionDetailScreen: React.FC<NFTCollectionDetailScreenProps> =
-  (props) => {
-    const {
-      navigation,
-      route: { params },
-    } = props
-    const { collection } = params
+export const NFTCollectionDetailScreen: React.FC<
+  NFTCollectionDetailScreenProps
+> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { collection } = params
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    const renderCollection = useCallback<ListRenderItem<NFT>>(
-      ({ item }) => {
-        try {
-          const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
-            image: null,
-          }
-          const uri = getNFTImageUri(imageMeta.image)
-          return (
-            <Pressable
-              onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
-              <View style={styles.column}>
-                <FastImage
-                  style={styles.image}
-                  defaultSource={require('assets/picture.png')}
-                  source={{
-                    uri,
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.cover}
-                />
-                <Tag withBlur style={styles.itemTag}>
-                  <Tag.Label numberOfLines={1} style={styles.tagLabel}>
-                    {item.name}
-                  </Tag.Label>
-                  <Tag.Label style={styles.tagLabelNumber}>
-                    #{item.token_id}
-                  </Tag.Label>
-                </Tag>
-              </View>
-            </Pressable>
-          )
-        } catch (error) {
-          logger.error(error)
+  const renderCollection = useCallback<ListRenderItem<NFT>>(
+    ({ item }) => {
+      try {
+        const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
+          image: null,
         }
+        const uri = getNFTImageUri(imageMeta.image)
+        return (
+          <Pressable
+            onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
+            <View style={styles.column}>
+              <FastImage
+                style={styles.image}
+                defaultSource={require('assets/picture.png')}
+                source={{
+                  uri,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <Tag withBlur style={styles.itemTag}>
+                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
+                  {item.name}
+                </Tag.Label>
+                <Tag.Label style={styles.tagLabelNumber}>
+                  #{item.token_id}
+                </Tag.Label>
+              </Tag>
+            </View>
+          </Pressable>
+        )
+      } catch (error) {
+        logger.error(error)
+      }
 
-        return null
-      },
-      [navigation, styles]
-    )
+      return null
+    },
+    [navigation, styles]
+  )
 
-    return (
-      <Screen>
-        <NavigationHeader title={collection.name} bottomBorder />
-        <View style={styles.container}>
-          <GridView
-            numColumns={NUMBER_OF_COLUMNS}
-            data={collection.nfts?.data ?? []}
-            keyExtractor={(item) => `${item.token_id}`}
-            renderItem={renderCollection}
-          />
-        </View>
-      </Screen>
-    )
-  }
+  return (
+    <Screen>
+      <NavigationHeader title={collection.name} bottomBorder />
+      <View style={styles.container}>
+        <GridView
+          numColumns={NUMBER_OF_COLUMNS}
+          data={collection.nfts?.data ?? []}
+          keyExtractor={(item) => `${item.token_id}`}
+          renderItem={renderCollection}
+        />
+      </View>
+    </Screen>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

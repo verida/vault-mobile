@@ -1,9 +1,9 @@
+/* eslint-disable no-console */
 import type { CaptureContext } from '@sentry/types'
 import { config } from 'config'
 import { LogLevel, Sentry } from 'features/telemetry'
 
 const levelOrder: LogLevel[] = ['error', 'warn', 'info', 'debug']
-const currentLogLevelIndex = levelOrder.indexOf(config.logLevel)
 
 const sentryLevelMapping = {
   error: 'error',
@@ -24,15 +24,42 @@ const sentryLevelMapping = {
  * For `logger.error`, the error will be captured with `Sentry.captureException`.
  */
 export class Logger {
+  // Static properties
+  private static currentLevelIndex: number = levelOrder.indexOf(config.logLevel)
+  private static hideStackTraces: boolean = config.hideStackTracesInLog
+  private static instances = new Map<string, Logger>()
+
+  // Instance properties
   private readonly category: string
+
+  private constructor(category: string) {
+    this.category = category
+  }
 
   /**
    * Creates a new instance of the logger.
    *
    * @param category Used to prefix the message in the console. For instance, set "Polygon ID" for everything related to Polygon ID. Note, the category is also pass into the Sentry breadcrumb, so avoid filename and/or function names, stay high level, by feature.
    */
-  constructor(category: string) {
-    this.category = category
+  static create(category: string) {
+    if (Logger.instances.has(category)) {
+      return Logger.instances.get(category)!
+    }
+    const logger = new Logger(category)
+    Logger.instances.set(category, logger)
+    return logger
+  }
+
+  static setLogLevel(level: LogLevel) {
+    Logger.currentLevelIndex = levelOrder.indexOf(level)
+  }
+
+  static setHideStackTraces(hide: boolean) {
+    Logger.hideStackTraces = hide
+  }
+
+  private shouldSkipPrint(level: LogLevel) {
+    return levelOrder.indexOf(level) > Logger.currentLevelIndex
   }
 
   private formatMessage(message: string) {
@@ -45,7 +72,7 @@ export class Logger {
     data?: Record<string, unknown>,
     error?: Error | unknown
   ) {
-    if (levelOrder.indexOf(level) > currentLogLevelIndex) {
+    if (this.shouldSkipPrint(level)) {
       return
     }
 
@@ -63,14 +90,28 @@ export class Logger {
       return
     }
 
-    const formattedMessage = this.formatMessage(message)
+    let formattedMessage = this.formatMessage(message)
+
+    if (error instanceof Error && error.stack && !Logger.hideStackTraces) {
+      formattedMessage += `\nStack trace:`
+      formattedMessage += `\n${error.stack}`
+    }
 
     const extra = []
     if (data) extra.push(data)
-    if (error) extra.push(error)
 
-    // eslint-disable-next-line no-console
     console[level](formattedMessage, ...extra)
+
+    if (error instanceof Error && error.cause) {
+      console.group('Caused by:')
+      this.log(
+        level,
+        error.cause instanceof Error ? error.cause.message : '',
+        undefined,
+        error.cause
+      )
+      console.groupEnd()
+    }
   }
 
   public error(error: Error | unknown, sentryCaptureContext?: CaptureContext) {
@@ -105,5 +146,36 @@ export class Logger {
 
   public debug(message: string, data?: Record<string, unknown>) {
     this.log('debug', message, data)
+  }
+
+  public startTimer(label: string) {
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return () => this.endTimer(label)
+    }
+    this.debug(`Starting timer: ${label}`)
+    console.time(label)
+    return () => this.endTimer(label)
+  }
+
+  public logTimer(label: string, ...extra: string[]) {
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
+    }
+    console.timeLog(label, extra)
+  }
+
+  public endTimer(label: string) {
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
+    }
+    console.timeEnd(label)
+    this.debug(`Timer ended: ${label}`)
+  }
+
+  public table(data: unknown[], properties?: string[]) {
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
+    }
+    console.table(data, properties)
   }
 }

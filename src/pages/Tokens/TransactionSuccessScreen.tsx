@@ -12,33 +12,34 @@ export type TransactionSuccessScreenParams = {
 
 type TransactionSuccessScreenProps = MainStackScreenProps<'TransactionSuccess'>
 
-export const TransactionSuccessScreen: React.FC<TransactionSuccessScreenProps> =
-  (props) => {
-    const {
-      navigation,
-      route: { params },
-    } = props
-    const { amount, toAddress, aggregateWalletBannerBalance } = params
+export const TransactionSuccessScreen: React.FC<
+  TransactionSuccessScreenProps
+> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { amount, toAddress, aggregateWalletBannerBalance } = params
 
-    const { resource, label: title } = aggregateWalletBannerBalance
+  const { resource, label: title } = aggregateWalletBannerBalance
 
-    const titleText = 'Success!'
+  const titleText = 'Success!'
 
-    const descriptionText = `You sent ${amount} ${aggregateWalletBannerBalance.symbol} to ${toAddress}.`
-    const buttonLabel = 'Done'
+  const descriptionText = `You sent ${amount} ${aggregateWalletBannerBalance.symbol} to ${toAddress}.`
+  const buttonLabel = 'Done'
 
-    return (
-      <SuccessFailure // <- lol
-        failure={false}
-        titleText={titleText}
-        descriptionText={descriptionText}
-        buttonLabel={buttonLabel}
-        actionButtonOnPress={() =>
-          navigation.navigate('SingleCurrency', {
-            resource,
-            title,
-          })
-        }
-      />
-    )
-  }
+  return (
+    <SuccessFailure // <- lol
+      failure={false}
+      titleText={titleText}
+      descriptionText={descriptionText}
+      buttonLabel={buttonLabel}
+      actionButtonOnPress={() =>
+        navigation.navigate('SingleCurrency', {
+          resource,
+          title,
+        })
+      }
+    />
+  )
+}

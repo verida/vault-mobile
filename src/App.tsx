@@ -11,6 +11,7 @@ import {
   CryptoWalletProvider,
 } from 'features/cryptoWallet'
 import { IdentityDrawerProvider } from 'features/identityDrawer'
+import { requestNotificationPermission } from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import React, { useEffect, useState } from 'react'
@@ -46,7 +47,7 @@ initApplication()
 //<CryptoWalletBalanceProvider>
 //  <CryptoWalletProvider>
 
-const logger = new Logger('App')
+const logger = Logger.create('App')
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -83,6 +84,16 @@ function App() {
     }
 
     init()
+  }, [])
+
+  useEffect(() => {
+    const tid = setTimeout(() => {
+      requestNotificationPermission()
+    }, 1000)
+
+    return () => {
+      clearTimeout(tid)
+    }
   }, [])
 
   const AppContent = (

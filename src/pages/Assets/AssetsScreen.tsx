@@ -1,46 +1,44 @@
-import { useTheme } from 'contexts/ThemeContext'
 import { getSelectedWalletById } from 'features/cryptoWallet'
+import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useWindowDimensions } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
-import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
+import { SegmentData, SegmentsControl } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
-import Tokens from 'pages/Tokens/Dashboard'
+import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
 import { useAppSelector } from 'reduxStore/types'
+import { Theme } from 'styles/types'
 
 import Collectibles from './Collectibles'
 
-const segmentLists = [
+const segments: SegmentData[] = [
   {
+    key: 'coins',
     title: 'Coins',
   },
   {
+    key: 'collectibles',
     title: 'Collectibles',
   },
   // {
+  //  key: 'badges',
   //   title: 'Badges',
   // },
 ]
 
-const TokensRoute = () => <Tokens />
+const TokensRoute = () => <TokenDashboard />
 const CollectiblesRoute = () => <Collectibles />
 // const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
 
 const renderScene = SceneMap({
-  tokens: TokensRoute,
-  nfts: CollectiblesRoute,
+  coins: TokensRoute,
+  collectibles: CollectiblesRoute,
   // badges: BadgesRoute,
 })
-
-enum Assets {
-  COINS,
-  COLLECTIBLES,
-  BADGES,
-}
 
 export type AssetsScreenParams = undefined
 
@@ -50,22 +48,11 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const { navigation } = props
 
   const selectedWallet = useAppSelector(getSelectedWalletById)
-  const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
-  const [collection, setCollection] = useState<Assets>(Assets.COINS)
+  const [activeTabIndex, setActiveTabIndex] = useState(0)
   const layout = useWindowDimensions()
-  const segmentedControlRef = useRef<SegmentControlRef>(null)
-  const { theme } = useTheme()
 
-  const [routes] = React.useState([
-    { key: 'tokens' },
-    { key: 'nfts' },
-    // { key: 'badges' },
-  ])
-
-  const onChangedSegmentIndex = (index: number) => {
-    setCollection(index)
-  }
+  const styles = useThemeAwareStyle(createStyles)
 
   const onCloseModal = () => {
     setModalVisible(!modalVisible)
@@ -75,7 +62,7 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
     setModalVisible((prevModalVisible) => !prevModalVisible)
   }, [])
 
-  const walletSelect = useCallback(
+  const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
         selectedWallet={selectedWallet}
@@ -88,29 +75,25 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   useEffect(() => {
     navigation.setOptions({
       headerShadowVisible: false,
-      headerTitle: walletSelect,
+      headerTitle: () => walletSelect,
     })
   }, [navigation, walletSelect])
 
   return (
     <Container>
+      <View style={styles.tabsContainer}>
+        <SegmentsControl
+          segments={segments}
+          activeSegmentIndex={activeTabIndex}
+          onSegmentPress={setActiveTabIndex}
+        />
+      </View>
       <TabView
         lazy
-        navigationState={{ index: collection, routes }}
+        navigationState={{ index: activeTabIndex, routes: segments }}
         renderScene={renderScene}
-        renderTabBar={(_props) => (
-          <SegmentControl
-            style={{ marginTop: theme.spacing.s }}
-            ref={segmentedControlRef}
-            segments={segments}
-            initialIndex={0}
-            onChangedSegmentIndex={onChangedSegmentIndex}
-          />
-        )}
-        onIndexChange={(index) => {
-          setCollection(index)
-          segmentedControlRef.current?.setSelectedIndex(index)
-        }}
+        renderTabBar={() => null}
+        onIndexChange={setActiveTabIndex}
         initialLayout={{ width: layout.width }}
       />
       <WalletSelectorModal
@@ -120,3 +103,25 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
     </Container>
   )
 }
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+      fontSize: 20,
+      marginVertical: 10,
+    },
+    avatarIcon: {
+      width: 32,
+      height: 32,
+      marginBottom: 3,
+    },
+    tabsContainer: {
+      marginTop: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
+      paddingBottom: theme.spacing.sm,
+    },
+  })

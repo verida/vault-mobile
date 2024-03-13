@@ -10,7 +10,7 @@ import { store } from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
-const logger = new Logger('Utils')
+const logger = Logger.create('Utils')
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')

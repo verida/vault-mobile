@@ -6,7 +6,11 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { BlockchainWallet } from 'api/types'
+import {
+  BlockchainWallet,
+  blockchainApi,
+  getBlockchainNetworks,
+} from 'features/blockchain'
 import {
   CreateIdentityStepStatus,
   CreateIdentityStep,
@@ -25,7 +29,6 @@ import {
   setSelectedWallet,
   getSelectedWalletId,
   cryptoWalletApi,
-  getBlockchainNetworks,
   WALLET_SCHEMA_0_2_0_URI,
   getUniqueWalletAddresses,
   getWallets,
@@ -35,7 +38,7 @@ import DataConnectorsManager from './DataConnectorsManager'
 
 import { config } from 'config'
 import EventEmitter from 'events'
-import { WalletManager } from './Wallet/WalletManager'
+import { WalletManager } from '../features/cryptoWallet/utils/WalletManager'
 import { EnvironmentType, IContext } from '@verida/types'
 import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
@@ -50,7 +53,7 @@ import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
 import { getDidClientConfigForNetwork } from 'features/verida'
 
-const logger = new Logger('AccountManager')
+const logger = Logger.create('AccountManager')
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -110,10 +113,10 @@ class AccountManager extends EventEmitter {
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
-        }
 
-        // Load or restore user wallets from the mnemonic
-        this.initUserWallets()
+          // Load or restore user wallets from the mnemonic
+          this.initUserWallets()
+        }
       }
     } catch (error) {
       logger.error(error)
@@ -126,7 +129,7 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          cryptoWalletApi.endpoints.chainsList.initiate(
+          blockchainApi.endpoints.getBlockchainNetworks.initiate(
             {},
             {
               forceRefetch: false,
@@ -136,14 +139,13 @@ class AccountManager extends EventEmitter {
       ])
 
       const wallets = JSON.parse(walletsRaw || '{}')
-      // No accounts available so needs to restore the wallets
+
       if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
         const selectedAccount = this.getSelectedAccount()
         if (selectedAccount) {
           const network = getNetworkFromDID(selectedAccount.did)
           await this.connect(false, network)
         }
-        await this.restoreUserWallet(true)
       } else {
         store.dispatch(saveUserWallets(wallets))
         store.dispatch(setSelectedWallet(selectedWalletId!))
@@ -178,6 +180,7 @@ class AccountManager extends EventEmitter {
     }
     this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
+    await this.restoreUserWallet(true)
   }
 
   public static getInstance(): AccountManager {
@@ -329,7 +332,7 @@ class AccountManager extends EventEmitter {
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
-        label: 'Multi Coin Wallet',
+        label: 'Multi-chain Wallet',
         multiChain: true, // Set this's a multi-chain wallet
       }
 
@@ -373,8 +376,9 @@ class AccountManager extends EventEmitter {
 
   public async restoreUserWallet(clearWallets: boolean) {
     try {
+      const previouslySelectedWalletId = getSelectedWalletId(store.getState())
       if (clearWallets) {
-        await store.dispatch(removeUserWallets())
+        store.dispatch(removeUserWallets())
       }
 
       const datastore = await this.context?.openDatastore(
@@ -393,18 +397,20 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        const currentlySelectedWallet = getSelectedWalletId(store.getState())
+        const previouslySelectedWallet = previouslySelectedWalletId
+          ? wallets[previouslySelectedWalletId!]
+          : undefined
 
-        if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
-          const selectedWalletID = hdWallets[0]._id
+        const selectedWalletId = previouslySelectedWallet
+          ? previouslySelectedWalletId
+          : hdWallets[0]._id
 
-          store.dispatch(setSelectedWallet(selectedWalletID))
+        store.dispatch(setSelectedWallet(selectedWalletId))
 
-          await SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
-            selectedWalletID
-          )
-        }
+        await SecureStore.setItemAsync(
+          SELECTED_WALLET_STORAGE_KEY,
+          selectedWalletId
+        )
       }
     } catch (error) {
       logger.error(error)
@@ -626,7 +632,6 @@ class AccountManager extends EventEmitter {
         const network = getNetworkFromDID(did)
         await this.connect(true, network)
       }
-      await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
@@ -721,7 +726,6 @@ class AccountManager extends EventEmitter {
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
       store.dispatch(fetchAllPublicProfilesData())
-      await this.restoreUserWallet(true)
 
       return this.selectedAccount
     } catch (error) {

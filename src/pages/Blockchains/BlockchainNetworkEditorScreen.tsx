@@ -1,29 +1,22 @@
 import { ChainId } from 'caip'
+import { BottomActionBar, ScreenWrapper } from 'components'
 import {
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/blockchain'
 import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
-import { Container } from 'native-base'
+import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Alert, StyleSheet } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
-import Button from 'components/Button'
 import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
-import { ChainMetadataListSeparatorComponent } from 'pages/Blockchains/components'
+import { Theme } from 'styles/types'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'
@@ -33,189 +26,185 @@ const attemptedToModifyDisabledNetworkError = () =>
     'Attempted to modify a network that is not permitted for modification.'
   )
 
-const logger = new Logger('BlockchainNetworkEditorScreen')
+const logger = Logger.create('BlockchainNetworkEditorScreen')
 
-export type BlockchainNetworksEditorScreenParams = {
+export type BlockchainNetworkEditorScreenParams = {
   readonly title: string
   readonly initialValue: ChainMetadata | null
-  readonly disabled: boolean
+  readonly isEditable: boolean
 }
 
 type BlockchainNetworkEditorScreenProps =
   MainStackScreenProps<'BlockchainNetworkEditor'>
 
-export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScreenProps> =
-  (props) => {
-    const {
-      navigation,
-      route: { params },
-    } = props
-    const { initialValue, title, disabled } = params
+export const BlockchainNetworkEditorScreen: React.FC<
+  BlockchainNetworkEditorScreenProps
+> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { initialValue, title, isEditable } = params
 
-    const { removeCustomNetworks, addCustomNetworks } =
-      useChainMetadatasCustom()
+  const { removeCustomNetworks, addCustomNetworks } = useChainMetadatasCustom()
 
-    const maybeInitialNamespace = initialValue?.namespace
-    const maybeInitialReference = initialValue?.reference
+  const maybeInitialNamespace = initialValue?.namespace
+  const maybeInitialReference = initialValue?.reference
 
-    // TODO: prevent the user from modifying reserved chains
+  // TODO: prevent the user from modifying reserved chains
 
-    // TODO: which namespace should this be? initial or current?
-    const maybeChainIdToDelete = React.useMemo(
-      () =>
-        maybeInitialNamespace && maybeInitialReference
-          ? new ChainId({
-              reference: maybeInitialReference,
-              namespace: maybeInitialNamespace,
-            })
-          : null,
-      [maybeInitialNamespace, maybeInitialReference]
+  // TODO: which namespace should this be? initial or current?
+  const maybeChainIdToDelete = React.useMemo(
+    () =>
+      maybeInitialNamespace && maybeInitialReference
+        ? new ChainId({
+            reference: maybeInitialReference,
+            namespace: maybeInitialNamespace,
+          })
+        : null,
+    [maybeInitialNamespace, maybeInitialReference]
+  )
+
+  const onPressDeleteNetwork = React.useCallback(async () => {
+    if (!isEditable) throw attemptedToModifyDisabledNetworkError()
+
+    if (!maybeChainIdToDelete) return
+
+    const shouldDelete = await new Promise<boolean>((resolve) =>
+      Alert.alert(
+        'Are you sure you want to delete this network?',
+        '',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => resolve(false),
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: () => resolve(true),
+            style: 'destructive',
+          },
+        ],
+        { cancelable: false }
+      )
     )
 
-    const onPressDeleteNetwork = React.useCallback(async () => {
-      if (disabled) throw attemptedToModifyDisabledNetworkError()
+    if (!shouldDelete) return
 
-      if (!maybeChainIdToDelete) return
+    await removeCustomNetworks([maybeChainIdToDelete])
 
-      const shouldDelete = await new Promise<boolean>((resolve) =>
-        Alert.alert(
-          'Are you sure you want to delete this network?',
-          '',
-          [
-            {
-              text: 'Cancel',
-              onPress: () => resolve(false),
-              style: 'cancel',
-            },
-            {
-              text: 'Delete',
-              onPress: () => resolve(true),
-              style: 'destructive',
-            },
-          ],
-          { cancelable: false }
+    return navigation.goBack()
+  }, [isEditable, maybeChainIdToDelete, removeCustomNetworks, navigation])
+
+  const headerSideButton: HeaderSideButton = React.useMemo(
+    () => ({
+      icon: <TrashBinIcon />,
+      action: onPressDeleteNetwork,
+    }),
+    [onPressDeleteNetwork]
+  )
+
+  const deleteControlsEnabled = Boolean(isEditable && maybeChainIdToDelete)
+
+  const chainMetadataFormFields = useCreateChainMetadataFormFields({
+    initialValue,
+  })
+
+  const { evaluationResult, getMaybeEvaluatedChainMetadata } =
+    chainMetadataFormFields
+
+  const hasErrors = Boolean(evaluationResult.error)
+
+  const { isReservedChainId } = useChainMetadataDetails()
+
+  const onPressSave = React.useCallback(async () => {
+    try {
+      if (!isEditable) throw attemptedToModifyDisabledNetworkError()
+
+      const { data } = getMaybeEvaluatedChainMetadata()
+
+      if (!data)
+        throw new Error(
+          `Developer error. Expected EvaluatedChainMetadata, encountered "${String(
+            data
+          )}".`
         )
-      )
 
-      if (!shouldDelete) return
+      const { namespace, reference } = data
 
-      await removeCustomNetworks([maybeChainIdToDelete])
+      const desiredChainId = new ChainId({ namespace, reference })
+
+      if (isReservedChainId(desiredChainId)) {
+        Alert.alert(
+          'Unable to continue',
+          `Sorry, ${desiredChainId.toString()} is currently reserved.`
+        )
+
+        // Prevent the operation from continuing.
+        throw new Error('Attempted to save a reserved chainId.')
+      }
+
+      // HACK: Adding a custom network will implicitly overwrite
+      //       duplicate fields.
+      await addCustomNetworks([data])
 
       return navigation.goBack()
-    }, [disabled, maybeChainIdToDelete, removeCustomNetworks, navigation])
+    } catch (e) {
+      logger.error(e)
+    }
+  }, [
+    isReservedChainId,
+    isEditable,
+    navigation,
+    getMaybeEvaluatedChainMetadata,
+    addCustomNetworks,
+  ])
 
-    const headerSideButton: HeaderSideButton = React.useMemo(
-      () => ({
-        icon: <TrashBinIcon />,
-        action: onPressDeleteNetwork,
-      }),
-      [onPressDeleteNetwork]
-    )
+  const styles = useThemeAwareStyle(createStyles)
 
-    const deleteControlsEnabled = Boolean(!disabled && maybeChainIdToDelete)
-
-    const chainMetadataFormFields = useCreateChainMetadataFormFields({
-      initialValue,
-    })
-
-    const { evaluationResult, getMaybeEvaluatedChainMetadata } =
-      chainMetadataFormFields
-
-    const isMalformed = Boolean(evaluationResult.error)
-
-    const saveControlsEnabled = !isMalformed && !disabled
-
-    const { isReservedChainId } = useChainMetadataDetails()
-
-    const onPressSave = React.useCallback(async () => {
-      try {
-        if (!saveControlsEnabled) throw attemptedToModifyDisabledNetworkError()
-
-        const { data } = getMaybeEvaluatedChainMetadata()
-
-        if (!data)
-          throw new Error(
-            `Developer error. Expected EvaluatedChainMetadata, encountered "${String(
-              data
-            )}".`
-          )
-
-        const { namespace, reference } = data
-
-        const desiredChainId = new ChainId({ namespace, reference })
-
-        if (isReservedChainId(desiredChainId)) {
-          Alert.alert(
-            'Unable to continue',
-            `Sorry, ${desiredChainId.toString()} is currently reserved.`
-          )
-
-          // Prevent the operation from continuing.
-          throw new Error('Attempted to save a reserved chainId.')
-        }
-
-        // HACK: Adding a custom network will implicitly overwrite
-        //       duplicate fields.
-        await addCustomNetworks([data])
-
-        return navigation.goBack()
-      } catch (e) {
-        logger.error(e)
-      }
-    }, [
-      isReservedChainId,
-      saveControlsEnabled,
-      navigation,
-      getMaybeEvaluatedChainMetadata,
-      addCustomNetworks,
-    ])
-
-    return (
-      <Container>
-        <NavigationHeader
-          title={title}
-          renderNetInfo={false}
-          right={deleteControlsEnabled ? headerSideButton : undefined}
+  return (
+    <ScreenWrapper keyboardAvoiding>
+      <NavigationHeader
+        title={title}
+        renderNetInfo={false}
+        right={deleteControlsEnabled ? headerSideButton : undefined}
+      />
+      <ScrollView style={styles.flex} contentContainerStyle={styles.content}>
+        <ChainsMetadataForm
+          {...chainMetadataFormFields}
+          disabled={!isEditable}
         />
-        <SafeAreaView style={[styles.flex, { marginTop: -35 }]}>
-          <ScrollView
-            style={[styles.flex]}
-            keyboardShouldPersistTaps='always'
-            keyboardDismissMode='on-drag'>
-            {/* TODO: Needs KeyboardAwareScrollView, the component specified in package.json causes crashes? */}
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-              <ChainsMetadataForm
-                {...chainMetadataFormFields}
-                disabled={disabled}
-              />
-              <View style={{ height: 24 }} />
-            </KeyboardAvoidingView>
-          </ScrollView>
-          <View>
-            <ChainMetadataListSeparatorComponent />
-            <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
-              <Button
-                onPress={onPressSave}
-                style={[styles.actionButton]}
-                disabled={!saveControlsEnabled}>
-                {isMalformed ? 'Invalid' : 'Save'}
-              </Button>
-            </View>
-          </View>
-        </SafeAreaView>
-      </Container>
-    )
-  }
+      </ScrollView>
+      <BottomActionBar
+        alertType={isEditable ? (hasErrors ? 'error' : undefined) : 'info'}
+        alertContent={
+          isEditable
+            ? hasErrors
+              ? 'Some fields are invalid'
+              : undefined
+            : 'This network is built-in and non-editable'
+        }
+        actions={
+          isEditable
+            ? [
+                {
+                  label: 'Save',
+                  onPress: onPressSave,
+                  disabled: hasErrors,
+                },
+              ]
+            : []
+        }
+      />
+    </ScreenWrapper>
+  )
+}
 
-const styles = StyleSheet.create({
-  actionButton: {
-    marginBottom: 0,
-  },
-  content: {
-    backgroundColor: '#fff',
-    flex: 1,
-    paddingVertical: 24,
-  },
-  flex: { flex: 1 },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    content: {
+      padding: theme.spacing.m,
+    },
+  })

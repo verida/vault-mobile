@@ -16,7 +16,7 @@ import AccountManager from 'api/AccountManager'
 
 import { useEmitter } from './useEmitter'
 
-const logger = new Logger('Auth')
+const logger = Logger.create('Auth')
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextState>({
   refresh: async () => false,
   authenticated: false,
   loaded: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   switchToAccount: async () => {},
   forcedSignOut: async () => false,
 })

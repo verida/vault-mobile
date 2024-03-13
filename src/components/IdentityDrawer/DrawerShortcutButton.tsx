@@ -15,32 +15,27 @@ export type DrawerShortcutButtonProps = {
   label: string
 } & TouchableOpacityProps
 
-export const DrawerShortcutButton: React.FunctionComponent<DrawerShortcutButtonProps> =
-  (props) => {
-    const {
-      icon,
-      label,
-      onPress,
-      activeOpacity = 0.4,
-      ...touchableProps
-    } = props
+export const DrawerShortcutButton: React.FunctionComponent<
+  DrawerShortcutButtonProps
+> = (props) => {
+  const { icon, label, onPress, activeOpacity = 0.4, ...touchableProps } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={activeOpacity}
-        {...touchableProps}>
-        <View style={styles.container}>
-          {icon}
-          <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
-            {label}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    )
-  }
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={activeOpacity}
+      {...touchableProps}>
+      <View style={styles.container}>
+        {icon}
+        <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
+          {label}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

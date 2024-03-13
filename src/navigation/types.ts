@@ -6,23 +6,44 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import {
-  AssetsScreenParams,
   NFTCollectionDetailScreenParams,
   NFTDetailScreenParams,
-  SelectAssetScreenParams,
-} from 'pages/Assets'
+} from '~/pages/Assets'
 import {
   ChangePinScreenParams,
   CreatePinScreenParams,
-} from 'pages/Authentication'
+} from '~/pages/Authentication'
 import {
-  BlockchainNetworksEditorScreenParams,
+  BlockchainNetworkEditorScreenParams,
   BlockchainNetworksScreenParams,
-} from 'pages/Blockchains'
+} from '~/pages/Blockchains'
 import {
-  // ConnectionsScreenParams,
+  ConnectionsScreenParams,
   SingleConnectionScreenParams,
-} from 'pages/Connections'
+} from '~/pages/Connections'
+import { PolygonIdStatusScreenParams } from '~/pages/PolygonID'
+import {
+  BuyTokenScreenParams,
+  ConfirmTransactionScreenParams,
+  ReceiveTokenScreenParams,
+  SendTokenScreenParams,
+  SingleCurrencyScreenParams,
+  TokenRecipientScreenParams,
+  TransactionDetailsScreenParams,
+  TransactionFailureScreenParams,
+  TransactionSuccessScreenParams,
+} from '~/pages/Tokens'
+import {
+  WalletConnectActiveSessionDetailsScreenParams,
+  WalletConnectActiveSessionsScreenParams,
+} from '~/pages/WalletConnect'
+import {
+  ManageWalletsScreenParams,
+  SingleWalletScreenParams,
+  SuccessFailureScreenParams,
+} from '~/pages/Wallets'
+
+import { SelectAssetScreenParams } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
@@ -46,7 +67,6 @@ import {
 } from 'pages/Inbox'
 import { LoginHistoryScreenParams } from 'pages/Login'
 import { OnboardingScreenParams } from 'pages/Onboarding'
-import { PolygonIdCircuitsSettingsScreenParams } from 'pages/PolygonID'
 import {
   AddVeridaOneCustomLinkScreenParams,
   AddVeridaOnePlatformLinkScreenParams,
@@ -71,26 +91,6 @@ import {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { SettingsScreenParams } from 'pages/Settings'
-import {
-  BuyTokenScreenParams,
-  ConfirmTransactionScreenParams,
-  ReceiveTokenScreenParams,
-  SendTokenScreenParams,
-  SingleCurrencyScreenParams,
-  TokenRecipientScreenParams,
-  TransactionDetailsScreenParams,
-  TransactionFailureScreenParams,
-  TransactionSuccessScreenParams,
-} from 'pages/Tokens'
-import {
-  WalletConnectActiveSessionDetailsScreenParams,
-  WalletConnectActiveSessionsScreenParams,
-} from 'pages/WalletConnect'
-import {
-  ManageWalletsScreenParams,
-  SingleWalletScreenParams,
-  SuccessFailureScreenParams,
-} from 'pages/Wallets'
 
 export type RootStackParams = {
   Auth: undefined
@@ -115,8 +115,8 @@ export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataScreenParams
-  // Connections: ConnectionsScreenParams // TODO: uncomment when ready
-  Assets: AssetsScreenParams
+  Connections: ConnectionsScreenParams
+  Assets: undefined
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
@@ -140,6 +140,7 @@ export type MainStackParams = {
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
   UnlockVeridaOne: UnlockVeridaOneScreenParams
+  VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
   SingleCurrency: SingleCurrencyScreenParams
   SendToken: SendTokenScreenParams
@@ -172,7 +173,7 @@ export type MainStackParams = {
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
   BlockchainNetworks: BlockchainNetworksScreenParams
-  BlockchainNetworkEditor: BlockchainNetworksEditorScreenParams
+  BlockchainNetworkEditor: BlockchainNetworkEditorScreenParams
   WalletConnectActiveSessions: WalletConnectActiveSessionsScreenParams
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsScreenParams
   SingleConnection: SingleConnectionScreenParams
@@ -181,7 +182,7 @@ export type MainStackParams = {
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
   Settings: SettingsScreenParams
-  PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
+  PolygonIdStatus: PolygonIdStatusScreenParams
   __Storybook__: undefined
 }
 
