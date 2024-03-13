@@ -153,7 +153,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   }, [])
 
   return (
-    <ScreenWrapper backgroundColor={theme.color.snow}>
+    <ScreenWrapper
+      backgroundColor={theme.color.snow}
+      safeAreaEdges={['left', 'right']}>
       <ScrollView
         contentContainerStyle={[
           styles.container,

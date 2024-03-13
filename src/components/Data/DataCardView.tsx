@@ -23,6 +23,8 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<any[]>([])
+
+  // TODO: Find what's best to use here, the built-in useNavigation with a generic or a custom one
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   useEffect(() => {
