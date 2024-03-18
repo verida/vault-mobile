@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
 import { AssetId } from 'caip'
 import { config } from 'config'
 import { isEmpty } from 'lodash'
@@ -8,9 +8,14 @@ import { RootState } from 'reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
 
-const baseQuery = fetchBaseQuery({
-  baseUrl: config.walletProvider.url,
-})
+const baseQuery = retry(
+  fetchBaseQuery({
+    baseUrl: config.walletProvider.url,
+  }),
+  {
+    maxRetries: 2,
+  }
+)
 
 export const cryptoWalletApi = createApi({
   reducerPath: 'cryptoWalletApi',
