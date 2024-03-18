@@ -41,13 +41,21 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     manager,
   } = usePolygonId()
 
-  const { circuitStates, areAnyCircuitsDownloading, downloadAllCircuits } =
-    usePolygonIdCircuits()
+  const {
+    circuitStates,
+    areAllCircuitsAvailable,
+    areAnyCircuitsDownloading,
+    downloadAllCircuits,
+  } = usePolygonIdCircuits()
 
   const statusItems: StatusListItem[] = useMemo(
     () => [
       {
-        label: isManagerInitialising ? 'Manager (initialising...)' : 'Manager',
+        label: isManagerInitialising
+          ? 'Manager (initialising...)'
+          : !isManagerReady && !areAllCircuitsAvailable
+            ? 'Manager (waiting circuits...)'
+            : 'Manager',
         status: isManagerReady
           ? 'success'
           : isManagerInitialising
@@ -61,7 +69,13 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         status: isWitnessReady ? 'success' : 'error',
       },
     ],
-    [isManagerInitialising, isManagerInError, isManagerReady, isWitnessReady]
+    [
+      isManagerInitialising,
+      isManagerInError,
+      isManagerReady,
+      areAllCircuitsAvailable,
+      isWitnessReady,
+    ]
   )
 
   const circuitsStatusItems: StatusListItem[] = Object.entries(
