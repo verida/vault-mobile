@@ -21,9 +21,11 @@ export const cryptoWalletApi = createApi({
       return action.payload?.[reducerPath]
     }
   },
+  keepUnusedDataFor: 60 * 15, // 15 mins
+  refetchOnMountOrArgChange: true,
+  refetchOnReconnect: true,
   endpoints: (build) => ({
     getBalances: build.query({
-      keepUnusedDataFor: 60 * 15, // 15 mins
       query: (walletAddresses: string[]) =>
         `balance/getBalanceByChains?${walletAddresses
           .map((address) => `wallet=${address}`)
