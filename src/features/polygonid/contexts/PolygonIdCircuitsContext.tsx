@@ -1,6 +1,12 @@
 import { CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
 import { config } from 'config'
-import React, { createContext, useCallback, useEffect, useMemo } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { Logger } from '~/features/telemetry'
 
@@ -23,6 +29,7 @@ export type PolygonIdCircuitsContextType = {
   readonly areAllCircuitsAvailable: boolean
   readonly areAnyCircuitsDownloading: boolean
   readonly areAnyCircuitsUnavailable: boolean
+  readonly areAnyCircuitsInError: boolean
   readonly circuitStates: CircuitStates
   readonly downloadCircuit: (circuitId: CircuitId) => Promise<void>
   readonly downloadAllCircuits: () => Promise<void>
@@ -34,34 +41,43 @@ export const PolygonIdCircuitsContext =
 export const PolygonIdCircuitsProvider: React.FC = (props) => {
   const { children } = props
 
+  const [initialising, setInitialising] = useState(false)
+  const [downloading, setDownloading] = useState(false)
+
   const {
     areAllCircuitsAvailable,
-    areAnyCircuitsDownloading,
     areAnyCircuitsUnavailable,
+    areAnyCircuitsDownloading,
+    areAnyCircuitsInError,
     circuitStates,
     updateState,
   } = usePolygonIdCircuitStates(circuitStorage, REQUIRED_CIRCUIT_IDS)
 
   // Ensure all circuits are downloaded at startup
   useEffect(() => {
-    if (!areAnyCircuitsUnavailable) {
+    if (!areAnyCircuitsUnavailable || initialising) {
       return
     }
-    // FIXME: If there's an error downloading a circuit, for any reason, the circuit state will be switch back to UNAVAILABLE, meaning this init will be triggered again, and again, and again...
 
+    setInitialising(true)
     initCircuitStorage(
       circuitStates,
       circuitStorage,
       config.polygonId.common.circuitsDownloadUrl,
       updateState
-    ).catch((error: unknown) => {
-      logger.error(
-        new Error('There was an error initialising the circuit storage', {
-          cause: error,
-        })
-      )
-    })
+    )
+      .catch((error: unknown) => {
+        logger.error(
+          new Error('There was an error initialising the circuit storage', {
+            cause: error,
+          })
+        )
+      })
+      .finally(() => {
+        setInitialising(false)
+      })
   }, [
+    initialising,
     circuitStates,
     areAllCircuitsAvailable,
     areAnyCircuitsDownloading,
@@ -71,39 +87,67 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
 
   const downloadCircuit = useCallback(
     async (circuitId: CircuitId) => {
-      await downloadAndSaveCircuit(
-        circuitId,
+      if (downloading) {
+        // TODO: Not great as the caller doesn't know what's happening
+        return
+      }
+
+      setDownloading(true)
+
+      try {
+        await downloadAndSaveCircuit(
+          circuitId,
+          circuitStorage,
+          config.polygonId.common.circuitsDownloadUrl,
+          updateState
+        )
+      } catch (error) {
+        logger.error(error)
+      } finally {
+        setDownloading(false)
+      }
+    },
+    [downloading, updateState]
+  )
+
+  const downloadAllCircuits = useCallback(async () => {
+    if (downloading) {
+      // TODO: Not great as the caller doesn't know what's happening
+      return
+    }
+
+    setDownloading(true)
+
+    try {
+      await downloadAndSaveCircuits(
+        Object.keys(circuitStates) as CircuitId[],
         circuitStorage,
         config.polygonId.common.circuitsDownloadUrl,
         updateState
       )
-    },
-    [updateState]
-  )
-
-  const downloadAllCircuits = useCallback(async () => {
-    await downloadAndSaveCircuits(
-      Object.keys(circuitStates) as CircuitId[],
-      circuitStorage,
-      config.polygonId.common.circuitsDownloadUrl,
-      updateState
-    )
-  }, [circuitStates, updateState])
+    } catch (error) {
+      logger.error(error)
+    } finally {
+      setDownloading(false)
+    }
+  }, [downloading, circuitStates, updateState])
 
   const contextValue: PolygonIdCircuitsContextType = useMemo(
     () => ({
       circuitStorage,
       areAllCircuitsAvailable,
-      areAnyCircuitsDownloading,
       areAnyCircuitsUnavailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsInError,
       circuitStates,
       downloadCircuit,
       downloadAllCircuits,
     }),
     [
       areAllCircuitsAvailable,
-      areAnyCircuitsDownloading,
       areAnyCircuitsUnavailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsInError,
       circuitStates,
       downloadCircuit,
       downloadAllCircuits,

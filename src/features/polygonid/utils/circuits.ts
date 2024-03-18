@@ -79,9 +79,14 @@ export async function downloadAndSaveCircuit(
       `Circuit data for ${circuitId} successfully saved to circuit storage`
     )
   } catch (error) {
-    updateState(circuitId, CircuitStatus.UNAVAILABLE)
-    logger.error(
-      new Error('Failed to save Polygon ID circuit data', { cause: error })
+    // Necessary to catch the error to update the state,
+    updateState(circuitId, CircuitStatus.ERROR)
+
+    throw new Error(
+      `Failed to download and save Polygon ID circuit ${circuitId}`,
+      {
+        cause: error,
+      }
     )
   }
 }
@@ -94,16 +99,49 @@ async function fetchCircuitData(
 
   const fileUrls = getCircuitFileUrls(circuitId, circuitsRemoteBaseUrl)
 
-  const [verificationKey, provingKey, wasm] = await Promise.all(
-    Object.values(fileUrls).map((url) => fetchCircuitFile(url))
-  )
+  const [verificationKeyResult, provingKeyResult, wasmResult] =
+    await Promise.allSettled(
+      Object.values(fileUrls).map((url) => fetchCircuitFile(url))
+    )
+
+  const filesInError: { file: string; cause: Error }[] = []
+
+  if (verificationKeyResult.status === 'rejected') {
+    filesInError.push({
+      file: 'verification_key.json',
+      cause: verificationKeyResult.reason,
+    })
+  }
+
+  if (provingKeyResult.status === 'rejected') {
+    filesInError.push({
+      file: 'circuit_final.zkey',
+      cause: provingKeyResult.reason,
+    })
+  }
+
+  if (wasmResult.status === 'rejected') {
+    filesInError.push({ file: 'circuit.wasm', cause: wasmResult.reason })
+  }
+
+  if (
+    verificationKeyResult.status === 'rejected' ||
+    provingKeyResult.status === 'rejected' ||
+    wasmResult.status === 'rejected'
+  ) {
+    throw new Error(
+      `Failed to fetch the files: ${filesInError.map((item) => item.file).join(', ')} for circuit ${circuitId}`,
+      { cause: filesInError.map((item) => item.cause)[0] }
+      // Downside is that it will only show the first error
+    )
+  }
 
   logger.debug(`Circuit data for ${circuitId} successfully fetched`)
   return {
     circuitId: String(circuitId),
-    verificationKey,
-    provingKey,
-    wasm,
+    verificationKey: verificationKeyResult.value,
+    provingKey: provingKeyResult.value,
+    wasm: wasmResult.value,
   }
 }
 
@@ -122,6 +160,7 @@ async function fetchCircuitFile(url: string) {
   logger.debug('Fetching circuit file:', { url })
 
   const response = await fetch(url)
+
   if (!response.ok) {
     throw new Error(`Failed to fetch circuit ${url}`)
   }
@@ -188,6 +227,10 @@ export function isCircuitDownloading(circuitState: CircuitState) {
   return circuitState.status === CircuitStatus.DOWNLOADING
 }
 
+export function isCircuitInError(circuitState: CircuitState) {
+  return circuitState.status === CircuitStatus.ERROR
+}
+
 export function areCircuitsAvailable(circuitStates: CircuitStates) {
   return Object.values(circuitStates).every((circuitState) =>
     isCircuitAvailable(circuitState)
@@ -203,5 +246,11 @@ export function areCircuitsUnavailable(circuitStates: CircuitStates) {
 export function areCircuitsDownloading(circuitStates: CircuitStates) {
   return !!Object.values(circuitStates).find((circuitState) =>
     isCircuitDownloading(circuitState)
+  )
+}
+
+export function areCircuitsInError(circuitStates: CircuitStates) {
+  return !!Object.values(circuitStates).find((circuitState) =>
+    isCircuitInError(circuitState)
   )
 }

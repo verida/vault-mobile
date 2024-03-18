@@ -10,7 +10,11 @@ import {
   StatusListItem,
   Typography,
 } from '~/components'
-import { usePolygonId, usePolygonIdCircuits } from '~/features/polygonid'
+import {
+  CircuitStatus,
+  usePolygonId,
+  usePolygonIdCircuits,
+} from '~/features/polygonid'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
@@ -83,11 +87,13 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
   ).map(([circuitId, circuitState]) => ({
     label: circuitId,
     status:
-      circuitState.status === 'AVAILABLE'
+      circuitState.status === CircuitStatus.AVAILABLE
         ? 'success'
-        : circuitState.status === 'DOWNLOADING'
+        : circuitState.status === CircuitStatus.DOWNLOADING
           ? 'processing'
-          : 'idle',
+          : circuitState.status === CircuitStatus.ERROR
+            ? 'error'
+            : 'idle',
   }))
 
   const globalStatus = useMemo(
