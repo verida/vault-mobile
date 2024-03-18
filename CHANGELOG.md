@@ -1,12 +1,13 @@
-# 1.2.0 (2024-03-xx)
+# 1.2.0 (2024-03-19)
 
 ## Enhancements
 
-- Update Polygon ID status screen in Settings
 - Rework the Polygon ID integration to fix stability issues, improve performance and user experience
+- Update Polygon ID status screen in Settings
 
 ## Bug Fixes
 
+- Fix crypto wallet balances stuck in loading in some cases
 - Fix mock data in unit tests
 - Upgrade various dependencies
 
