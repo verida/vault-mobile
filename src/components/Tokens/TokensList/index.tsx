@@ -6,10 +6,11 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
+import { Typography } from '~/components'
+
 import { Theme } from 'styles/types'
 
 import { TokensListItem } from './TokensList.Item'
-import { Typography } from '~/components'
 
 const defaultOnPullToRefresh = () => undefined
 
