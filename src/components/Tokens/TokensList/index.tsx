@@ -6,6 +6,8 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
+import { Typography } from '~/components'
+
 import { Theme } from 'styles/types'
 
 import { TokensListItem } from './TokensList.Item'
@@ -24,6 +26,7 @@ type TokensListProps = {
     aggregateWalletBannerBalance: AggregateWalletBannerBalance
   ) => void
   readonly refreshing?: boolean
+  readonly error?: Error
 }
 
 export const TokensList: React.FC<TokensListProps> = (props) => {
@@ -32,6 +35,7 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
     onPressItem,
     onPullToRefresh = defaultOnPullToRefresh,
     refreshing = false,
+    error,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
@@ -42,9 +46,10 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
         <TokensListItem
           aggregateWalletBannerBalance={item}
           onPress={() => onPressItem(item)}
+          style={styles.bottomBorder}
         />
       ),
-      [onPressItem]
+      [onPressItem, styles.bottomBorder]
     )
 
   return (
@@ -55,7 +60,15 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       onRefresh={onPullToRefresh}
       refreshing={refreshing}
       contentContainerStyle={styles.contentContainer}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ListEmptyComponent={() => (
+        <View>
+          <Typography variant='h5SemiBold' style={styles.emptyListTitle}>
+            {error
+              ? 'Something went wrong!\nPull down to refresh'
+              : "You don't have any coins yet"}
+          </Typography>
+        </View>
+      )}
     />
   )
 }
@@ -65,11 +78,13 @@ const createStyles = (theme: Theme) =>
     contentContainer: {
       borderTopWidth: 1,
       borderTopColor: theme.color.lightGrey,
+    },
+    bottomBorder: {
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
     },
-    separator: {
-      height: 1,
-      backgroundColor: theme.color.lightGrey,
+    emptyListTitle: {
+      marginTop: theme.spacing.m,
+      textAlign: 'center',
     },
   })
