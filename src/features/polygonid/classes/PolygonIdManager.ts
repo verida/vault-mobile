@@ -6,7 +6,6 @@ import {
   core,
   CredentialsOfferMessage,
   CredentialWallet,
-  defaultEthConnectionConfig,
   FetchHandler,
   IDataStorage,
   IdentityWallet,
@@ -19,13 +18,17 @@ import Axios, { AxiosRequestConfig } from 'axios'
 import { Logger } from 'features/telemetry'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
-import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
+import { config as appConfig } from '~/config'
+import { VerificationResult } from '~/features/verifiableCredential'
+
+import { CalculateWitnessFunction, PolygonIdIdentityConfig } from '../types'
 import {
   buildCredentialWallet,
   buildDataStorage,
   buildIdentityWallet,
   buildPackageManager,
   buildProofService,
+  getBlockchainConfigs,
   getOrCreatePolygonIdIdentity,
   getVeridaDatastore,
   migratePolygonIdData,
@@ -34,7 +37,6 @@ import {
 const logger = Logger.create('PolygonId')
 
 export class PolygonIdManager {
-  private config: PolygonIdConfig
   private veridaContext: Context
   did?: core.DID
   identityWallet?: IdentityWallet
@@ -45,13 +47,12 @@ export class PolygonIdManager {
   authHandler?: AuthHandler
   fetchHandler?: FetchHandler
 
-  private constructor(config: PolygonIdConfig, veridaContext: Context) {
-    this.config = config
+  private constructor(veridaContext: Context) {
     this.veridaContext = veridaContext
   }
 
   public static async createManager(
-    config: PolygonIdConfig,
+    identityConfig: PolygonIdIdentityConfig,
     identityPrivatekey: string,
     veridaVaultContext: Context,
     circuitStorage: CircuitStorage,
@@ -60,8 +61,13 @@ export class PolygonIdManager {
     logger.info('Creating a Polygon ID Manager')
     try {
       // Pass the private key as needed, do not keep it as a class property
-      const instance = new PolygonIdManager(config, veridaVaultContext)
-      await instance.init(identityPrivatekey, circuitStorage, calculateWitness)
+      const instance = new PolygonIdManager(veridaVaultContext)
+      await instance.init(
+        identityConfig,
+        identityPrivatekey,
+        circuitStorage,
+        calculateWitness
+      )
 
       logger.info('Polygon ID Manager created successfully')
       return instance
@@ -76,24 +82,23 @@ export class PolygonIdManager {
   }
 
   private async init(
+    identityConfig: PolygonIdIdentityConfig,
     identityPrivatekey: string,
     circuitStorage: CircuitStorage,
     calculateWitness: CalculateWitnessFunction
   ) {
     logger.info('Initialising a Polygon ID Manager')
 
-    const ethConnectionConfig = defaultEthConnectionConfig
-    ethConnectionConfig.contractAddress = this.config.polygonIdContractAddress
-    ethConnectionConfig.url = this.config.polygonIdRpcUrl
+    const blockchainConfigs = getBlockchainConfigs()
 
     this.dataStorage = await buildDataStorage(
       this.veridaContext,
-      ethConnectionConfig
+      blockchainConfigs
     )
 
     this.credentialWallet = buildCredentialWallet(
       this.dataStorage,
-      ethConnectionConfig
+      blockchainConfigs
     )
 
     this.identityWallet = await buildIdentityWallet(
@@ -108,7 +113,7 @@ export class PolygonIdManager {
       circuitStorage,
       this.dataStorage.states,
       calculateWitness,
-      this.config
+      appConfig.polygonId.common.ipfsGatewayUrl
     )
 
     this.packageManager = await buildPackageManager(
@@ -131,7 +136,7 @@ export class PolygonIdManager {
     this.did = await getOrCreatePolygonIdIdentity(
       this.identityWallet,
       this.dataStorage,
-      this.config,
+      identityConfig,
       identityPrivatekey
     )
 
@@ -294,6 +299,37 @@ export class PolygonIdManager {
           'Something went wrong processing the Polygon ID credential offer.'
         ),
       }
+    }
+  }
+
+  public async verifyCredential(
+    credential: W3CCredential
+  ): Promise<VerificationResult | undefined> {
+    // TODO: Try to move this as a Veramo plugin
+
+    if (!this.credentialWallet) {
+      return undefined
+    }
+
+    logger.debug('Verifying credential...')
+
+    try {
+      // TODO: Remove feature flag when we have more certainty on the revocation status check. For now, when we test, status.mtp.existence is always false meaning the credential is invalid. But it could be because we test with credentials that are not relevant.
+      const status = appConfig.features.polygonid.enableCredentialStatusCheck
+        ? await this.credentialWallet.getRevocationStatusFromCredential(
+            credential
+          )
+        : undefined
+
+      return {
+        verified: status?.mtp.existence,
+        expired: credential.expirationDate
+          ? credential.expirationDate < new Date().toISOString()
+          : false,
+      }
+    } catch (error) {
+      logger.error(error)
+      return undefined
     }
   }
 

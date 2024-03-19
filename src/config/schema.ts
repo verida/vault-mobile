@@ -41,15 +41,23 @@ export const EnvVarsSchema = z
     LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
     HIDE_STACK_TRACES_IN_LOG: z
       .enum(['true', 'false'])
+      .default('false')
       .transform((v) => v === 'false'),
-    ENABLE_SENTRY: z.enum(['true', 'false']).transform((v) => v === 'true'),
+    ENABLE_SENTRY: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().default('local'),
 
     // Dev
-    DISABLE_LOG_BOX: z.enum(['true', 'false']).transform((v) => v === 'true'),
+    DISABLE_LOG_BOX: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER: z
       .enum(['true', 'false'])
+      .default('false')
       .transform((v) => v === 'true'),
   })
   .passthrough()

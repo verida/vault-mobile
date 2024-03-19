@@ -6,6 +6,7 @@ import { CircuitStatus, UpdateStateCallback } from '../types'
 import {
   areCircuitsAvailable,
   areCircuitsDownloading,
+  areCircuitsInError,
   areCircuitsUnavailable,
   getCircuitStates,
   getInitialCircuitStates,
@@ -57,23 +58,26 @@ export function usePolygonIdCircuitStates(
     []
   )
 
-  const areAnyCircuitsDownloading = areCircuitsDownloading(circuitStates)
   const areAllCircuitsAvailable = areCircuitsAvailable(circuitStates)
   const areAnyCircuitsUnavailable = areCircuitsUnavailable(circuitStates)
+  const areAnyCircuitsDownloading = areCircuitsDownloading(circuitStates)
+  const areAnyCircuitsInError = areCircuitsInError(circuitStates)
 
   return useMemo(
     () => ({
       circuitStates,
-      areAnyCircuitsDownloading,
       areAllCircuitsAvailable,
       areAnyCircuitsUnavailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsInError,
       updateState,
     }),
     [
       circuitStates,
-      areAnyCircuitsDownloading,
       areAllCircuitsAvailable,
       areAnyCircuitsUnavailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsInError,
       updateState,
     ]
   )

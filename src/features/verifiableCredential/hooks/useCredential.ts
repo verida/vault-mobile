@@ -8,6 +8,8 @@ import { Logger } from 'features/telemetry'
 import { extractIssuer, useVeramo } from 'features/veramo'
 import { useCallback } from 'react'
 
+import { usePolygonId } from '~/features/polygonid'
+
 import { VerificationResult } from '../types'
 
 const logger = Logger.create('Verifiable Credential')
@@ -24,6 +26,7 @@ const defaultVerificationOptions: Omit<IVerifyCredentialArgs, 'credential'> = {
 
 export const useCredential = () => {
   const { agent } = useVeramo()
+  const { manager: polygonIdManager } = usePolygonId()
 
   const verifyCredential = useCallback(
     async (
@@ -38,6 +41,7 @@ export const useCredential = () => {
       try {
         let verificationResult: IVerifyResult
 
+        const subject = credential.credentialSubject.id
         const issuer = extractIssuer(credential)
 
         if (issuer.startsWith('did:cheqd') && !!credential.credentialStatus) {
@@ -49,6 +53,26 @@ export const useCredential = () => {
               ...resolvedOptions,
             },
           } as ICheqdVerifyCredentialWithStatusList2021Args)
+        } else if (
+          (subject?.startsWith('did:polygonid') ||
+            issuer.startsWith('did:polygonid')) &&
+          !!credential.credentialStatus
+        ) {
+          // TODO: Try to make a Veramo plugin for Polygon ID
+          if (!polygonIdManager) {
+            return undefined
+          }
+
+          const polygonIdCredential =
+            await polygonIdManager.credentialWallet?.findById(
+              credential.id as string
+            )
+
+          if (!polygonIdCredential) {
+            return undefined
+          }
+
+          return await polygonIdManager.verifyCredential(polygonIdCredential)
         } else {
           logger.debug('Verifying generic credential with Veramo native method')
           verificationResult = await agent.verifyCredential({
@@ -68,7 +92,7 @@ export const useCredential = () => {
         logger.error(error)
       }
     },
-    [agent]
+    [agent, polygonIdManager]
   )
 
   // Expose other Veramo functions as needed
