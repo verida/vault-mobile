@@ -10,7 +10,11 @@ import {
   StatusListItem,
   Typography,
 } from '~/components'
-import { usePolygonId, usePolygonIdCircuits } from '~/features/polygonid'
+import {
+  CircuitStatus,
+  usePolygonId,
+  usePolygonIdCircuits,
+} from '~/features/polygonid'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
@@ -36,29 +40,46 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     isWitnessReady,
     isManagerReady,
     isManagerInitialising,
+    isManagerInError,
     restartManager,
     manager,
   } = usePolygonId()
 
-  const { circuitStates, areAnyCircuitsDownloading, downloadAllCircuits } =
-    usePolygonIdCircuits()
+  const {
+    circuitStates,
+    areAllCircuitsAvailable,
+    areAnyCircuitsDownloading,
+    downloadAllCircuits,
+  } = usePolygonIdCircuits()
 
   const statusItems: StatusListItem[] = useMemo(
     () => [
       {
-        label: isManagerInitialising ? 'Manager (initialising...)' : 'Manager',
+        label: isManagerInitialising
+          ? 'Manager (initialising...)'
+          : !isManagerReady && !areAllCircuitsAvailable
+            ? 'Manager (waiting circuits...)'
+            : 'Manager',
         status: isManagerReady
           ? 'success'
           : isManagerInitialising
             ? 'processing'
-            : 'error',
+            : isManagerInError
+              ? 'error'
+              : 'idle',
       },
       {
         label: 'Witness',
         status: isWitnessReady ? 'success' : 'error',
       },
     ],
-    [isManagerInitialising, isManagerReady, isWitnessReady]
+    [
+      isManagerInitialising,
+      isManagerInError,
+      isManagerReady,
+      areAllCircuitsAvailable,
+      isWitnessReady,
+    ]
   )
 
   const circuitsStatusItems: StatusListItem[] = Object.entries(
@@ -66,11 +87,13 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
   ).map(([circuitId, circuitState]) => ({
     label: circuitId,
     status:
-      circuitState.status === 'AVAILABLE'
+      circuitState.status === CircuitStatus.AVAILABLE
         ? 'success'
-        : circuitState.status === 'DOWNLOADING'
+        : circuitState.status === CircuitStatus.DOWNLOADING
           ? 'processing'
-          : 'idle',
+          : circuitState.status === CircuitStatus.ERROR
+            ? 'error'
+            : 'idle',
   }))
 
   const globalStatus = useMemo(
@@ -84,7 +107,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     [isPolygonIdReady, statusItems, circuitsStatusItems]
   )
 
-  const sharedContent = manager?.did?.string() ?? ''
+  const sharedContent = manager?.did?.string() ?? null
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -114,10 +137,13 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         <View style={styles.sharedContentContainer}>
           <View style={{ flex: 1 }}>
             <Typography numberOfLines={2} lineBreakMode='middle'>
-              {sharedContent}
+              {sharedContent ?? 'No identifier yet'}
             </Typography>
           </View>
-          <CopyToClipboardButton content={sharedContent} />
+          <CopyToClipboardButton
+            content={sharedContent ?? ''}
+            disabled={!sharedContent}
+          />
         </View>
         <View style={styles.sectionContainer}>
           <View style={styles.section}>

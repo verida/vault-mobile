@@ -10,9 +10,10 @@ export type CredentialValidityStatus =
   | 'expired'
 
 export type VerificationResult = {
-  verified: boolean
+  verified?: boolean
   revoked?: boolean
   suspended?: boolean
+  expired?: boolean
   error?: IVerifyResult['error']
 }
 

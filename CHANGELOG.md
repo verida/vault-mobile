@@ -1,3 +1,23 @@
+# 1.2.0 (2024-03-19)
+
+## Enhancements
+
+- Rework the Polygon ID integration to fix stability issues, improve performance and user experience
+- Update Polygon ID status screen in Settings
+
+## Bug Fixes
+
+- Fix crypto wallet balances stuck in loading in some cases
+- Fix mock data in unit tests
+- Upgrade various dependencies
+
+# 1.1.2 (2024-02-28)
+
+## Bug Fixes
+
+- Fix gas fees when sending transactions on Polygon mainnet
+- Fix/Improve display of error messages when crypto transactions fail
+
 # 1.1.1 (2024-02-15)
 
 ## Bug Fixes
