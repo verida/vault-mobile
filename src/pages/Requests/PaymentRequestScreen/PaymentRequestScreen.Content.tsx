@@ -114,29 +114,29 @@ export const PaymentRequestScreenContent = React.memo(
               maybeConfirmTransactionError
                 ? 'error'
                 : loading || !transactionConfirmation
-                ? 'processsing'
-                : 'success'
+                  ? 'processsing'
+                  : 'success'
             }
             title={
               maybeConfirmTransactionError
                 ? 'Error!'
                 : loading || !transactionConfirmation
-                ? 'Processing payment...'
-                : 'Success!'
+                  ? 'Processing payment...'
+                  : 'Success!'
             }
             subtitle={
               maybeConfirmTransactionError
                 ? 'Something went wrong. Please try again later.'
                 : loading || !transactionConfirmation
-                ? 'Please wait a moment, we are transferring your payment.'
-                : `${
-                    // TODO: This prop needs to be refactored to accept a JSX.Element
-                    //       instead of a string:
-                    'Payment'
-                    //maybeFormattedFiatValue
-                    //  ? maybeFormattedFiatValue
-                    //  : 'Payment'
-                  } sent to ${senderName}!`
+                  ? 'Please wait a moment, we are transferring your payment.'
+                  : `${
+                      // TODO: This prop needs to be refactored to accept a JSX.Element
+                      //       instead of a string:
+                      'Payment'
+                      //maybeFormattedFiatValue
+                      //  ? maybeFormattedFiatValue
+                      //  : 'Payment'
+                    } sent to ${senderName}!`
             }
           />
           {Boolean(maybeBlockchainExplorerUrl && transactionConfirmation) && (

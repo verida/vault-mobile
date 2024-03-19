@@ -3,7 +3,7 @@ import { Logger } from 'features/telemetry'
 import { InboxResponse, InboxType } from '../../interfaces/inbox/Inbox'
 import { DataAction } from './DataAction'
 
-const logger = new Logger('InboxDataRequest')
+const logger = Logger.create('InboxDataRequest')
 
 const MSG = 'Send you the requested data'
 
@@ -32,7 +32,6 @@ export class Request extends DataAction {
     logger.debug('Data response sent')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   decline() {}
 
   async metadata() {

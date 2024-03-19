@@ -7,6 +7,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { NFT, NFTCollection } from 'features/assets'
 import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
+import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
+
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
@@ -48,10 +50,7 @@ import {
   PaymentRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
-import {
-  PolygonIdCircuitsSettingsScreenParams,
-  SettingsScreenParams,
-} from 'pages/Settings'
+import { SettingsScreenParams } from 'pages/Settings'
 import { ConfirmTransactionScreenProps } from 'pages/Tokens/ConfirmTransaction'
 import { ReceiveTokenScreenProps } from 'pages/Tokens/ReceiveToken'
 import { SendTokenScreenProps } from 'pages/Tokens/SendToken'
@@ -166,7 +165,7 @@ export type MainStackParams = {
   ProofRequest: ProofRequestScreenParams
 
   Settings: SettingsScreenParams
-  PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
+  PolygonIdStatus: PolygonIdStatusScreenParams
 
   __Storybook__: undefined
 }

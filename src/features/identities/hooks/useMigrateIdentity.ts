@@ -29,7 +29,7 @@ import {
 import { canMigrateToMainnet, migrateContext } from '../utils'
 import { useCurrentIdentity } from './useCurrentIdentity'
 
-const logger = new Logger('IdentityMigration')
+const logger = Logger.create('IdentityMigration')
 
 const mainnetNetwork = EnvironmentType.MAINNET
 

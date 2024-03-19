@@ -19,7 +19,7 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Components/ClaimUsernameView')
+const logger = Logger.create('Components/ClaimUsernameView')
 
 export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
@@ -114,8 +114,8 @@ export const ClaimUsernameView = React.forwardRef(
             {isDoneCreateUsername
               ? 'Perfect'
               : showRetry
-              ? 'Something went wrong'
-              : 'Creating your username'}
+                ? 'Something went wrong'
+                : 'Creating your username'}
           </Headline>
           <Text
             style={[
@@ -128,8 +128,8 @@ export const ClaimUsernameView = React.forwardRef(
             {isDoneCreateUsername
               ? `You successfully claimed username`
               : showRetry
-              ? createUsernameErrorMessage
-              : 'Please wait...'}
+                ? createUsernameErrorMessage
+                : 'Please wait...'}
           </Text>
           {isDoneCreateUsername && (
             <Title

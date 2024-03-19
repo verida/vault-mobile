@@ -1,10 +1,5 @@
+import { core as PolygonId, CredentialStatusType } from '@0xpolygonid/js-sdk'
 import { EnvironmentType } from '@verida/types'
-import {
-  Blockchain,
-  CredentialStatusType,
-  DidMethod,
-  NetworkId,
-} from 'features/polygonid/constants'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
@@ -23,6 +18,7 @@ const { data: envVars } = envVarsCheckResult
 
 export const config = {
   logLevel: envVars.LOG_LEVEL,
+  hideStackTracesInLog: envVars.HIDE_STACK_TRACES_IN_LOG,
   dev: {
     devMode: __DEV__,
     disableLogBox: envVars.DISABLE_LOG_BOX,
@@ -54,6 +50,9 @@ export const config = {
     },
     blockchain: {
       enableCustomNetwork: false,
+    },
+    polygonid: {
+      enableCredentialStatusCheck: false,
     },
   },
   verida: {
@@ -103,19 +102,21 @@ export const config = {
   },
   polygonId: {
     common: {
-      blockchain: Blockchain.Polygon,
-      didMethod: DidMethod.PolygonId,
-      revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+      circuitsDownloadUrl: envVars.POLYGON_ID_CIRCUITS_DOWNLOAD_URL,
+      witnessCalculationTimeout: 5000, // The witness calculation should be a fraction of a second, so timing out after 5 seconds
+      blockchain: PolygonId.Blockchain.Polygon,
+      didMethod: PolygonId.DidMethod.PolygonId,
+      revocationType: CredentialStatusType.Iden3commRevocationStatusV1,
       ipfsGatewayUrl: envVars.IPFS_GATEWAY_URL,
     },
     testnet: {
-      networkId: NetworkId.Mumbai,
+      networkId: PolygonId.NetworkId.Mumbai,
       revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
       rpcUrl: envVars.POLYGON_ID_TESTNET_RPC_URL,
       contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4',
     },
     mainnet: {
-      networkId: NetworkId.Main,
+      networkId: PolygonId.NetworkId.Main,
       revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
       rpcUrl: envVars.POLYGON_ID_MAINNET_RPC_URL,
       contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',

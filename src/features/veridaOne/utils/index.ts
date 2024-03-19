@@ -8,7 +8,7 @@ import {
   VERIDA_ONE_WEBSITE,
 } from '../constants'
 
-const logger = new Logger('VeridaOne')
+const logger = Logger.create('VeridaOne')
 
 export function verifyVeridaOneInviteCode(code: string) {
   return code?.trim().toLowerCase() === VERIDA_ONE_INVITE_CODE.toLowerCase()

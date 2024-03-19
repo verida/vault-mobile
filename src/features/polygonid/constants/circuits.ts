@@ -1,2 +1,7 @@
-export const POLYGON_ID_CIRCUITS_DOWNLOAD_URL =
-  'https://verida-static-resources.s3.amazonaws.com/polygonid' // TODO: Move this inb the global configuration and to a environment variable
+import { CircuitId } from '@0xpolygonid/js-sdk'
+
+export const REQUIRED_CIRCUIT_IDS: CircuitId[] = [
+  CircuitId.AuthV2,
+  CircuitId.AtomicQueryMTPV2,
+  CircuitId.AtomicQuerySigV2,
+]

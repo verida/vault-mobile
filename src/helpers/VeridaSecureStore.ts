@@ -4,7 +4,7 @@ import * as SystemSecureStore from 'expo-secure-store'
 import { Logger } from 'features/telemetry'
 import Crypto from 'react-native-quick-crypto'
 
-const logger = new Logger('VeridaSecureStore')
+const logger = Logger.create('VeridaSecureStore')
 
 const SYSTEM_SECURE_STORAGE_NEEDS_MIGRATE = true
 const SYSTEM_SECURE_STORAGE_KEY = 'verida-main-key'

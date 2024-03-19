@@ -140,10 +140,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       label: 'Polygon ID',
       items: [
         {
-          label: 'Circuits',
+          label: 'Status',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('PolygonIdCircuitsSettings'),
+          onPress: () => navigation.navigate('PolygonIdStatus'),
         },
       ],
     },

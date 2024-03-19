@@ -9,6 +9,7 @@ module.exports = function (api) {
           root: ['./src'],
           extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
           alias: {
+            '~': ['./src'],
             api: ['./src/api'],
             assets: ['./src/assets'],
             components: ['./src/components'],
@@ -33,6 +34,16 @@ module.exports = function (api) {
       '@babel/plugin-syntax-import-assertions',
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
+    ],
+    overrides: [
+      {
+        test: './node_modules/@0xpolygonid/js-sdk/node_modules/ethers',
+        plugins: [
+          '@babel/plugin-proposal-private-property-in-object',
+          '@babel/plugin-proposal-class-properties',
+          '@babel/plugin-proposal-private-methods',
+        ],
+      },
     ],
   }
 }

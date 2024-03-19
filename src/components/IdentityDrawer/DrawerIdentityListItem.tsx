@@ -17,56 +17,55 @@ export type DrawerIdentityListItemProps = {
   onPress?: (did: string) => void
 }
 
-export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListItemProps> =
-  (props) => {
-    const { did, profile, isCurrent, onPress } = props
-    const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
-    const displayedDid = getAddressFromDID(did)
+export const DrawerIdentityListItem: React.FunctionComponent<
+  DrawerIdentityListItemProps
+> = (props) => {
+  const { did, profile, isCurrent, onPress } = props
+  const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
+  const displayedDid = getAddressFromDID(did)
 
-    const isNameEmpty = !profile.name
-    const displayedName = profile.name || PROFILE_EMPTY_NAME_VALUE
+  const isNameEmpty = !profile.name
+  const displayedName = profile.name || PROFILE_EMPTY_NAME_VALUE
 
-    const styles = useThemeAwareStyle(createStyles)
-    const { theme } = useTheme()
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
 
-    const handlePress = useCallback(() => {
-      onPress?.(did)
-    }, [onPress, did])
+  const handlePress = useCallback(() => {
+    onPress?.(did)
+  }, [onPress, did])
 
-    return (
-      <TouchableHighlight
-        disabled={isCurrent}
-        onPress={handlePress}
-        underlayColor={theme.color.snow}>
-        <View style={[styles.container, isCurrent && styles.current]}>
-          <IdentityAvatar
-            source={profile.avatar?.uri}
-            network={network}
-            networkIndicatorSize='compact'
-            style={styles.avatar}
-          />
-          <View style={styles.nameContainer}>
-            <Text
-              style={
-                isNameEmpty ? [styles.name, styles.emptyName] : styles.name
-              }
-              numberOfLines={1}
-              ellipsizeMode='tail'>
-              {displayedName}
-            </Text>
-            <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
-              {displayedDid}
-            </Text>
-          </View>
-          {isCurrent ? (
-            <View style={styles.checkmark}>
-              <Checkmark />
-            </View>
-          ) : null}
+  return (
+    <TouchableHighlight
+      disabled={isCurrent}
+      onPress={handlePress}
+      underlayColor={theme.color.snow}>
+      <View style={[styles.container, isCurrent && styles.current]}>
+        <IdentityAvatar
+          source={profile.avatar?.uri}
+          network={network}
+          networkIndicatorSize='compact'
+          style={styles.avatar}
+        />
+        <View style={styles.nameContainer}>
+          <Text
+            style={isNameEmpty ? [styles.name, styles.emptyName] : styles.name}
+            numberOfLines={1}
+            ellipsizeMode='tail'>
+            {displayedName}
+          </Text>
+          <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
+            {displayedDid}
+          </Text>
         </View>
-      </TouchableHighlight>
-    )
-  }
+        {isCurrent ? (
+          <View style={styles.checkmark}>
+            <Checkmark />
+          </View>
+        ) : null}
+      </View>
+    </TouchableHighlight>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -9,7 +9,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
-const logger = new Logger('Pages/Data/DataFolderScreen')
+const logger = Logger.create('Pages/Data/DataFolderScreen')
 
 export interface DataFolderScreenParams {
   folderName: string

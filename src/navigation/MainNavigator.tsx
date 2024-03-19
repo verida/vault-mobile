@@ -2,6 +2,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
+import { PolygonIdStatusScreen } from '~/pages/PolygonId'
+
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
 import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
@@ -51,7 +53,7 @@ import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
-import { PolygonIdCircuitsSettingsScreen, SettingsScreen } from 'pages/Settings'
+import { SettingsScreen } from 'pages/Settings'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
 import ReceiveToken from 'pages/Tokens/ReceiveToken'
@@ -217,8 +219,8 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
 
           <Stack.Screen
-            name='PolygonIdCircuitsSettings'
-            component={PolygonIdCircuitsSettingsScreen}
+            name='PolygonIdStatus'
+            component={PolygonIdStatusScreen}
             options={{
               // TODO: Refactor the whole Navigation to leverage the header customisation
               headerShown: true,
@@ -226,12 +228,13 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
 
           {/* Internal Screens */}
-          {__DEV__ && (
+          {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
+          {/* {__DEV__ && (
             <Stack.Screen
               name='__Storybook__'
               component={require('../../.storybook').default}
             />
-          )}
+          )} */}
 
           {/* Modal screens */}
           <Stack.Group

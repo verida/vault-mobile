@@ -39,7 +39,7 @@ import {
 } from '../hooks'
 import { createWalletConnectSessionApprovalConfiguration } from '../utils'
 
-const logger = new Logger('WalletConnect')
+const logger = Logger.create('WalletConnect')
 
 const maybeThrowMissingDependenciesError = (
   proposal: Web3WalletTypes.EventArguments['session_proposal'],

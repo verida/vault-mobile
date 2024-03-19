@@ -177,8 +177,8 @@ async function getGasFees(chainId?: string) {
     chainId === 'eip155:137'
       ? 'https://gasstation.polygon.technology/v2'
       : chainId === 'eip155:80001'
-      ? 'https://gasstation-testnet.polygon.technology/v2'
-      : null
+        ? 'https://gasstation-testnet.polygon.technology/v2'
+        : null
 
   if (!gasStationURL) {
     return {}

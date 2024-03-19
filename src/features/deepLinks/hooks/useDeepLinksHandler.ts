@@ -4,7 +4,7 @@ import { Logger } from 'features/telemetry'
 import { useEffect } from 'react'
 import { Linking } from 'react-native'
 
-const logger = new Logger('DeepLinks')
+const logger = Logger.create('DeepLinks')
 
 export function useDeepLinksHandler() {
   const { processDeepLink } = useProtocols()

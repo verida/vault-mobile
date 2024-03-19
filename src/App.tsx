@@ -48,7 +48,7 @@ initApplication()
 //<CryptoWalletBalanceProvider>
 //  <CryptoWalletProvider>
 
-const logger = new Logger('App')
+const logger = Logger.create('App')
 
 function App() {
   const [loading, setLoading] = useState(true)

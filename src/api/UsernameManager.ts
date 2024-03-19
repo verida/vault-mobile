@@ -5,7 +5,7 @@ import { getDidClientConfigForNetwork } from 'features/verida'
 
 import AccountManager from './AccountManager'
 
-const logger = new Logger('UsernameManager')
+const logger = Logger.create('UsernameManager')
 
 export default class UsernameManager {
   private static client?: VeridaNameClient

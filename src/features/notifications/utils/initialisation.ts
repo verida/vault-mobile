@@ -14,7 +14,7 @@ import {
 } from '../constants'
 import { pushRefreshInboxNotification } from './notifications'
 
-const logger = new Logger('Notifications')
+const logger = Logger.create('Notifications')
 
 export async function initNotifications() {
   if (Platform.OS === 'android') {

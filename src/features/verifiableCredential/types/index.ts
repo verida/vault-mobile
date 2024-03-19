@@ -10,9 +10,10 @@ export type CredentialValidityStatus =
   | 'expired'
 
 export type VerificationResult = {
-  verified: boolean
+  verified?: boolean
   revoked?: boolean
   suspended?: boolean
+  expired?: boolean
   error?: IVerifyResult['error']
 }
 
@@ -26,7 +27,7 @@ export type VeridaVerifiableCredentialBase<T = Record<string, unknown>> = {
 }
 
 export type VeridaVerifiableCredentialUnsavedRecord<
-  T = Record<string, unknown>
+  T = Record<string, unknown>,
 > = VeridaUnsavedRecord<VeridaVerifiableCredentialBase<T>>
 
 export type VeridaVerifiableCredentialRecord<T = Record<string, unknown>> =

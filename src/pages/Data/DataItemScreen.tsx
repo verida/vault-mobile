@@ -11,7 +11,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
-const logger = new Logger('Pages/Data/DataItemScreen')
+const logger = Logger.create('Pages/Data/DataItemScreen')
 
 export interface DataItemScreenParams {
   // TODO: Type the data item

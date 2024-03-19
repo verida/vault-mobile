@@ -138,10 +138,10 @@ export const FormInput = React.forwardRef(
                 errorMessage
                   ? { borderColor: theme.color.error }
                   : focused
-                  ? {
-                      borderColor: theme.color.veridaGreen,
-                    }
-                  : {},
+                    ? {
+                        borderColor: theme.color.veridaGreen,
+                      }
+                    : {},
                 disabled
                   ? {
                       color: theme.color.textGrey100,

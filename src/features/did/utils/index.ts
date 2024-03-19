@@ -5,7 +5,7 @@ import { Logger } from 'features/telemetry'
 
 import AccountManager from 'api/AccountManager'
 
-const logger = new Logger('DID Metadata')
+const logger = Logger.create('DID Metadata')
 
 async function getDidMetadataDatastore() {
   logger.info('Opening DID metadata datastore')

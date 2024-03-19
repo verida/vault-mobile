@@ -19,7 +19,7 @@ import { navigate } from 'navigation/RootNavigator'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Components/ForcedCreateNewAccountModal')
+const logger = Logger.create('Components/ForcedCreateNewAccountModal')
 
 type Props = {
   dismissModal: () => void

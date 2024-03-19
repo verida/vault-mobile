@@ -31,6 +31,7 @@ export const EnvVarsSchema = z
     POLYGON_ID_TESTNET_RPC_URL: z.string().url(),
     POLYGON_ID_MAINNET_RPC_URL: z.string().url(),
     POLYGON_ID_REVOCATION_BASE_URL: z.string().url(),
+    POLYGON_ID_CIRCUITS_DOWNLOAD_URL: z.string().url(),
 
     // WalletConnect
     WALLETCONNECT_PROJECT_ID: z.string(),
@@ -38,14 +39,25 @@ export const EnvVarsSchema = z
 
     // Telemetry
     LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
-    ENABLE_SENTRY: z.enum(['true', 'false']).transform((v) => v === 'true'),
+    HIDE_STACK_TRACES_IN_LOG: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'false'),
+    ENABLE_SENTRY: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().default('local'),
 
     // Dev
-    DISABLE_LOG_BOX: z.enum(['true', 'false']).transform((v) => v === 'true'),
+    DISABLE_LOG_BOX: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER: z
       .enum(['true', 'false'])
+      .default('false')
       .transform((v) => v === 'true'),
   })
   .passthrough()

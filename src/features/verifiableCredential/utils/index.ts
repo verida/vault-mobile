@@ -12,14 +12,17 @@ export function getCredentialValidityStatus(
   return !verificationResult
     ? 'unknown'
     : verificationResult.revoked
-    ? 'revoked'
-    : verificationResult.suspended
-    ? 'suspended'
-    : verificationResult.verified
-    ? 'valid'
-    : verificationResult.error?.message?.match('expired')
-    ? 'expired'
-    : 'invalid'
+      ? 'revoked'
+      : verificationResult.suspended
+        ? 'suspended'
+        : verificationResult.expired ||
+            verificationResult.error?.message?.match('expired')
+          ? 'expired'
+          : verificationResult.verified === false
+            ? 'invalid'
+            : verificationResult.verified === true
+              ? 'valid'
+              : 'unknown'
 }
 
 export function isCredentialsDatabase(folder: Folder) {
