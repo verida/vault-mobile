@@ -47,17 +47,18 @@ export const cryptoWalletApi = createApi({
 
         // map prices and balances to recognized coins list and standardize
         const balances = balanceByChains.results
-        const total = balanceByChains.totalBalance
+        const total = balanceByChains.totalBalance ?? 0
 
         return {
           list: balances.map((tokenBalance) => {
             return {
               ...tokenBalance,
               label: tokenBalance.symbol,
-              price: tokenBalance.quote.USD.price,
-              change: tokenBalance.quote.USD.percent_change_24h,
-              quantity: tokenBalance.balance,
-              amount: tokenBalance.amount,
+              price: tokenBalance.quote.USD.price ?? 0,
+              change: tokenBalance.quote.USD.percent_change_24h ?? 0,
+              balance: tokenBalance.balance ?? 0,
+              quantity: tokenBalance.balance ?? 0,
+              amount: tokenBalance.amount ?? 0,
             }
           }),
           total,
