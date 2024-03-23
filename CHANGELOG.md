@@ -1,3 +1,14 @@
+# 1.2.1 (2024-03-23)
+
+## Bug Fixes
+
+- Fix handling of incorrect crypto wallet data
+- Fix CodePush on Android
+
+## Misc
+
+- Upgrade some dependencies
+
 # 1.2.0 (2024-03-19)
 
 ## Enhancements
