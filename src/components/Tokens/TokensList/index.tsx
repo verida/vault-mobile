@@ -46,11 +46,12 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
         <TokensListItem
           aggregateWalletBannerBalance={item}
           onPress={() => onPressItem(item)}
-          style={styles.bottomBorder}
         />
       ),
-      [onPressItem, styles.bottomBorder]
+      [onPressItem]
     )
+
+  const hasData = aggregateWalletBannerBalances.length > 0
 
   return (
     <FlatList<AggregateWalletBannerBalance>
@@ -59,13 +60,18 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       keyExtractor={keyExtractor}
       onRefresh={onPullToRefresh}
       refreshing={refreshing}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={
+        hasData ? styles.contentContainer : styles.emptyContentContainer
+      }
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
       ListEmptyComponent={() => (
-        <View>
-          <Typography variant='h5SemiBold' style={styles.emptyListTitle}>
+        <View style={styles.emptyMessageContainer}>
+          <Typography variant='h5SemiBold'>
             {error
               ? 'Something went wrong!\nPull down to refresh'
-              : "You don't have any coins yet"}
+              : refreshing
+                ? 'Refreshing the list of coins...'
+                : "You don't have any coins yet"}
           </Typography>
         </View>
       )}
@@ -75,16 +81,22 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    emptyContentContainer: {
+      flex: 1,
+    },
     contentContainer: {
       borderTopWidth: 1,
       borderTopColor: theme.color.lightGrey,
-    },
-    bottomBorder: {
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
     },
-    emptyListTitle: {
-      marginTop: theme.spacing.m,
-      textAlign: 'center',
+    separator: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.color.lightGrey,
+    },
+    emptyMessageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })

@@ -38,15 +38,22 @@ export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
             chain.reference === resource.chainId.reference
         )
 
-        const balance = `${new BigDecimal(balanceInCurrencyUnits).multipliedBy(
-          new BigDecimal(10).pow(decimals)
+        const correctedBalance = balanceInCurrencyUnits ?? 0
+        const correctedDecimals = decimals ?? 18 // FIXME: This is a temporary fix for the rare case of missing decimals, usually because went wrong in Wallet Provider. We should not be defaulting to 18.
+
+        if (correctedBalance === 0) {
+          return []
+        }
+
+        const balance = `${new BigDecimal(correctedBalance).multipliedBy(
+          new BigDecimal(10).pow(correctedDecimals)
         )}` as `${number}`
 
         return [
           {
             resource,
             type: AggregateWalletBannerBalanceType.ERC_20,
-            decimals,
+            decimals: correctedDecimals,
             balance,
             symbol,
             icon,
@@ -55,7 +62,7 @@ export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
               ? balanceByChainResultToValuation({
                   balanceByChainResult,
                   balance,
-                  decimals,
+                  decimals: correctedDecimals,
                 })
               : null,
           },
