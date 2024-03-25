@@ -53,12 +53,13 @@ import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 
+import { AvatarUploader } from '~/components'
+
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import UsernameManager from 'api/UsernameManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
-import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import {
   CustomLinkItem,
@@ -1165,7 +1166,11 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          <ProfileImageLoader />
+          <AvatarUploader
+            style={{
+              marginBottom: 24, // Should avoid inline style but this component is too big, it must be split into smaller components where it's easier to manage a stylesheet
+            }}
+          />
           {enabledVeridaOne && (
             <ProfileUsernameSection
               did={currentAccountDID}
