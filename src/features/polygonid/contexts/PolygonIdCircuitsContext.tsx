@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -41,7 +42,7 @@ export const PolygonIdCircuitsContext =
 export const PolygonIdCircuitsProvider: React.FC = (props) => {
   const { children } = props
 
-  const [initialising, setInitialising] = useState(false)
+  const initialisationRef = useRef(false)
   const [downloading, setDownloading] = useState(false)
 
   const {
@@ -54,36 +55,38 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
   } = usePolygonIdCircuitStates(circuitStorage, REQUIRED_CIRCUIT_IDS)
 
   // Ensure all circuits are downloaded at startup
-  useEffect(() => {
-    if (!areAnyCircuitsUnavailable || initialising) {
-      return
-    }
+  useEffect(
+    function initialiseCircuits() {
+      if (!areAnyCircuitsUnavailable || initialisationRef.current) {
+        return
+      }
 
-    setInitialising(true)
-    initCircuitStorage(
+      initialisationRef.current = true
+      initCircuitStorage(
+        circuitStates,
+        circuitStorage,
+        config.polygonId.common.circuitsDownloadUrl,
+        updateState
+      )
+        .catch((error: unknown) => {
+          logger.error(
+            new Error('There was an error initialising the circuit storage', {
+              cause: error,
+            })
+          )
+        })
+        .finally(() => {
+          initialisationRef.current = false
+        })
+    },
+    [
       circuitStates,
-      circuitStorage,
-      config.polygonId.common.circuitsDownloadUrl,
-      updateState
-    )
-      .catch((error: unknown) => {
-        logger.error(
-          new Error('There was an error initialising the circuit storage', {
-            cause: error,
-          })
-        )
-      })
-      .finally(() => {
-        setInitialising(false)
-      })
-  }, [
-    initialising,
-    circuitStates,
-    areAllCircuitsAvailable,
-    areAnyCircuitsDownloading,
-    areAnyCircuitsUnavailable,
-    updateState,
-  ])
+      areAllCircuitsAvailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsUnavailable,
+      updateState,
+    ]
+  )
 
   const downloadCircuit = useCallback(
     async (circuitId: CircuitId) => {
