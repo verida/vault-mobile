@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
 import {
@@ -49,8 +49,21 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     circuitStates,
     areAllCircuitsAvailable,
     areAnyCircuitsDownloading,
-    downloadAllCircuits,
+    downloadCircuits,
   } = usePolygonIdCircuits()
+
+  const handleRestartEngine = useCallback(async () => {
+    await restartManager()
+  }, [restartManager])
+
+  const handleDownloadCircuits = useCallback(async () => {
+    try {
+      await downloadCircuits()
+    } catch (error) {
+      // TODO: Inform the user
+      // It should not be a download error, but a could be an error if the download is already in progress
+    }
+  }, [downloadCircuits])
 
   const statusItems: StatusListItem[] = useMemo(
     () => [
@@ -165,12 +178,12 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         actions={[
           {
             label: 'Restart engine',
-            onPress: restartManager,
+            onPress: handleRestartEngine,
             color: 'grey',
           },
           {
             label: 'Download circuits',
-            onPress: downloadAllCircuits,
+            onPress: handleDownloadCircuits,
             color: 'grey',
           },
         ]}
