@@ -1,5 +1,5 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
-import { Alert, StatusInfo } from 'components'
+import { BottomActionBar, StatusInfo } from 'components'
 import { usePolygonId } from 'features/polygonid'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
@@ -16,7 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
 
 import AppLogo from 'components/AppLogo'
-import Button from 'components/Button'
 import { Text } from 'components/Typography/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -65,6 +64,11 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
   const handleClose = useCallback(() => {
     navigation.goBack()
   }, [navigation])
+
+  const handleGoToPolygonIdStatus = useCallback(() => {
+    handleClose()
+    navigation.navigate('PolygonIdStatus')
+  }, [handleClose, navigation])
 
   const handleAccept = useCallback(async () => {
     if (!polygonIdManager) {
@@ -222,44 +226,36 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
           )}
         </ScrollView>
 
-        <View style={styles.footer}>
-          {polygonIdNotReady ? (
-            <Alert type='warning' style={styles.footerAlert}>
-              <Text style={styles.footerAlertContent}>
-                The Polygon ID engine is not ready yet. Please wait a moment
-              </Text>
-            </Alert>
-          ) : null}
-          <View style={styles.footerActionsContainer}>
-            {/* TODO: Ensure the buttons have a background */}
-            {processing || error || success ? (
-              <>
-                <Button
-                  onPress={handleClose}
-                  style={styles.actionButton}
-                  disabled={processing}>
-                  Close
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onPress={handleClose}
-                  color='grey'
-                  disabled={processing}
-                  style={[styles.actionButton, styles.mr]}>
-                  Decline
-                </Button>
-                <Button
-                  onPress={handleAccept}
-                  disabled={processButtonDisabled}
-                  style={[styles.actionButton, styles.ml]}>
-                  Accept
-                </Button>
-              </>
-            )}
-          </View>
-        </View>
+        <BottomActionBar
+          alertType='error'
+          alertContent={
+            polygonIdNotReady
+              ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
+              : undefined
+          }
+          alertOnPress={handleGoToPolygonIdStatus}
+          actions={
+            processing || error || success
+              ? [
+                  {
+                    label: 'Close',
+                    onPress: handleClose,
+                  },
+                ]
+              : [
+                  {
+                    label: 'Decline',
+                    onPress: handleClose,
+                    color: 'grey',
+                  },
+                  {
+                    label: 'Accept',
+                    onPress: handleAccept,
+                    disabled: processButtonDisabled,
+                  },
+                ]
+          }
+        />
       </View>
     </>
   )
@@ -367,31 +363,5 @@ const createStyles = (theme: Theme) =>
     },
     statusContainer: {
       marginTop: 104,
-    },
-    footer: {
-      backgroundColor: theme.color.background,
-      paddingHorizontal: theme.spacing.m,
-      paddingVertical: theme.spacing.sm,
-      borderTopColor: theme.color.lightGrey,
-      borderTopWidth: 1,
-    },
-    footerAlert: {
-      marginBottom: theme.spacing.sm,
-    },
-    footerAlertContent: {
-      flexDirection: 'row',
-    },
-    footerActionsContainer: {
-      flexDirection: 'row',
-    },
-    actionButton: {
-      flex: 1,
-      marginBottom: 0,
-    },
-    mr: {
-      marginRight: 10,
-    },
-    ml: {
-      marginLeft: 10,
     },
   })
