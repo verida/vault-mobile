@@ -48,6 +48,8 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
   const {
     circuitStates,
     areAllCircuitsAvailable,
+    areAnyCircuitsInError,
+    areAnyCircuitsUnavailable,
     areAnyCircuitsDownloading,
     downloadCircuits,
   } = usePolygonIdCircuits()
@@ -65,7 +67,7 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     }
   }, [downloadCircuits])
 
-  const statusItems: StatusListItem[] = useMemo(
+  const engineStatusItems: StatusListItem[] = useMemo(
     () => [
       {
         label: isManagerInitialising
@@ -113,11 +115,48 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
     () =>
       isPolygonIdReady
         ? 'success'
-        : statusItems.some((status) => status.status === 'processing') ||
+        : engineStatusItems.some((status) => status.status === 'processing') ||
             circuitsStatusItems.some((status) => status.status === 'processing')
           ? 'processsing'
           : 'error',
-    [isPolygonIdReady, statusItems, circuitsStatusItems]
+    [isPolygonIdReady, engineStatusItems, circuitsStatusItems]
+  )
+
+  const globalStatusMessages = useMemo(
+    (): { title: string; subtitle: string } =>
+      globalStatus === 'success'
+        ? { title: 'Ready', subtitle: 'You can use Polygon ID.' }
+        : areAnyCircuitsInError
+          ? {
+              title: 'Circuits in error',
+              subtitle: 'Try re-downloading the circuits.',
+            }
+          : isManagerInError
+            ? {
+                title: 'Manager in error',
+                subtitle: 'Try restarting the engine.',
+              }
+            : globalStatus === 'processsing'
+              ? {
+                  title: 'Initialising',
+                  subtitle: 'Please wait, it can take moment.',
+                }
+              : areAnyCircuitsUnavailable
+                ? {
+                    title: 'Circuits unavailable',
+                    subtitle: 'Download the circuits.',
+                  }
+                : {
+                    title: 'Something went wrong',
+                    subtitle:
+                      'Try restarting the engine or re-downloading the circuits.',
+                  },
+    [
+      globalStatus,
+      isManagerInError,
+      areAnyCircuitsInError,
+      areAnyCircuitsUnavailable,
+    ]
   )
 
   const sharedContent = manager?.did?.string() ?? null
@@ -132,20 +171,8 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         alwaysBounceVertical={false}>
         <StatusInfo
           statusType={globalStatus}
-          title={
-            globalStatus === 'success'
-              ? 'Ready'
-              : globalStatus === 'processsing'
-                ? 'Initialising'
-                : 'Something went wrong'
-          }
-          subtitle={
-            globalStatus === 'success'
-              ? 'You can use Polygon ID.'
-              : globalStatus === 'processsing'
-                ? 'Please wait, it can take moment.'
-                : 'Try restarting the engine or re-downloading the circuits.'
-          }
+          title={globalStatusMessages.title}
+          subtitle={globalStatusMessages.subtitle}
         />
         <View style={styles.sharedContentContainer}>
           <View style={{ flex: 1 }}>
@@ -161,7 +188,10 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
         <View style={styles.sectionContainer}>
           <View style={styles.section}>
             <Typography variant='h4'>Engine</Typography>
-            <StatusList statusItems={statusItems} style={styles.statusList} />
+            <StatusList
+              statusItems={engineStatusItems}
+              style={styles.statusList}
+            />
           </View>
           <View style={styles.section}>
             <Typography variant='h4'>{`Circuits${areAnyCircuitsDownloading ? ' (downloading...)' : ''}`}</Typography>
