@@ -73,12 +73,14 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
   // Ensure all circuits are downloaded at startup
   useEffect(
     function initialiseCircuits() {
-      if (!areAnyCircuitsUnavailable) {
-        // Ciruits already downloaded
+      if (!config.features.polygonid.downloadCircuitsAutomatically) {
+        // Circuits should not be downloaded automatically
+        logger.info('Circuits should not be downloaded automatically')
         return
       }
-      if (downloadingRef.current) {
-        // Circuits are already being downloaded
+
+      if (!areAnyCircuitsUnavailable || downloadingRef.current) {
+        // Ciruits already downloaded or being downloaded
         return
       }
 

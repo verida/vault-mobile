@@ -52,6 +52,7 @@ export const config = {
       enableCustomNetwork: false,
     },
     polygonid: {
+      downloadCircuitsAutomatically: false,
       enableCredentialStatusCheck: false,
     },
   },
