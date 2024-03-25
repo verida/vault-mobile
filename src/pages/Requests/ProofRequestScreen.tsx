@@ -1,30 +1,28 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import { BottomActionBar, StatusInfo } from 'components'
+import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+import {
+  BottomActionBar,
+  RequestDetailProperty,
+  RequestDetails,
+  RequestHeader,
+  RequestMessage,
+  StatusInfo,
+  Typography,
+} from '~/components'
 import {
   getUserFriendlyAllowedIssuers,
   getUserFriendlyProofRequestRequirements,
   usePolygonId,
-} from 'features/polygonid'
-import type { Protocol } from 'features/protocols'
-import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useState } from 'react'
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Feather from 'react-native-vector-icons/Feather'
-
-import AppLogo from 'components/AppLogo'
-import { Text } from 'components/Typography/Text'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+} from '~/features/polygonid'
+import type { Protocol } from '~/features/protocols'
+import { reduceProtocols } from '~/features/protocols'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export interface ProofRequestScreenParams {
   name: string // TODO: Make it optional and provide a consistent way to representing an unknown requester
@@ -111,44 +109,30 @@ export const ProofRequestScreen: React.FunctionComponent<
     })
   }, [navigation, handleClose])
 
-  const protocols = details.protocols
-    .map((protocol) => {
-      const protocolLogo = getProtocolLogo(protocol, 16)
-      const protocolLabel = getProtocolLabel(protocol)
-      return (
-        <>
-          {protocolLogo} {protocolLabel}
-        </>
-      )
-    })
-    .reduce((prev, curr) => (
-      <>
-        {prev}
-        {', '}
-        {curr}
-      </>
-    ))
+  const protocols = reduceProtocols(details.protocols, 16)
 
-  const detailsView = (
-    <View style={styles.detailsContainer}>
-      <View>
-        <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
-        <Text style={styles.detailsPropertyValue}>
-          {details.requesterId || ' '}
-        </Text>
-      </View>
-      {details.url ? (
-        <View style={styles.detailsPropertySpacing}>
-          <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
-          <Text style={styles.detailsPropertyValue}>{details.url}</Text>
-        </View>
-      ) : null}
-      <View style={styles.detailsPropertySpacing}>
-        <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
-        <Text style={styles.detailsPropertyValue}>{protocols}</Text>
-      </View>
-    </View>
-  )
+  const detailProperties: RequestDetailProperty[] = useMemo(() => {
+    const properties = []
+
+    properties.push({
+      label: 'From',
+      value: details.requesterId,
+    })
+
+    if (details.url) {
+      properties.push({
+        label: 'URL',
+        value: details.url,
+      })
+    }
+
+    properties.push({
+      label: 'Via',
+      value: <>{protocols}</>,
+    })
+
+    return properties
+  }, [details.requesterId, details.url, protocols])
 
   return (
     <>
@@ -167,79 +151,77 @@ export const ProofRequestScreen: React.FunctionComponent<
           contentContainerStyle={styles.containerContent}>
           {!processing && !error && !success ? (
             <>
-              <View style={styles.header}>
-                <AppLogo // TODO: Define the best logo placeholder
-                  url={logo || null}
-                  style={styles.logo}
+              <RequestHeader
+                senderName={name}
+                avatar={logo}
+                timestamp={details.timestamp}
+                isDetailsOpen={detailsOpen}
+                onToggleDetails={handleToggleDetails}
+              />
+              {detailsOpen ? (
+                <RequestDetails
+                  properties={detailProperties}
+                  style={styles.detailsContainer}
                 />
-                <View>
-                  <Text style={styles.name}>{name}</Text>
-                  <TouchableOpacity
-                    onPress={handleToggleDetails}
-                    style={styles.detailsButton}>
-                    <Text style={styles.detailsButtonLabel}>
-                      {(details.timestamp
-                        ? new Date(details.timestamp)
-                        : new Date()
-                      ).toLocaleString()}
-                    </Text>
-                    <Feather
-                      name={detailsOpen ? 'chevron-up' : 'chevron-down'}
-                      size={16}
-                      style={styles.detailsButtonLabelIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {detailsOpen ? detailsView : null}
+              ) : null}
               {details.message ? (
-                <View style={styles.message}>
-                  <Text>{`"${details.message}"`}</Text>
-                </View>
+                <RequestMessage style={styles.messageContainer}>
+                  {details.message}
+                </RequestMessage>
               ) : null}
               <View style={styles.proofContainer}>
-                <Text style={styles.proofMessage}>
+                <Typography variant='h5SemiBold' style={styles.proofMessage}>
                   The following proof is requested
-                </Text>
+                </Typography>
                 {data.body?.scope?.map((item) => (
                   <View style={styles.proofItemContainer} key={item.id}>
-                    <Text style={styles.proofItemTypeLabel}>
+                    <Typography variant='h4'>
                       {item.query.type || 'Credential'}
-                    </Text>
+                    </Typography>
                     <View style={styles.proofItemPropertySpacing}>
-                      <Text style={styles.proofItemPropertyLabel}>
+                      <Typography
+                        variant='bodySemiBold'
+                        style={styles.proofItemPropertyLabel}>
                         Requirements
-                      </Text>
-                      <Text style={styles.proofItemPropertyValue}>
+                      </Typography>
+                      <Typography
+                        variant='bodySemiBold'
+                        style={styles.proofItemPropertyValue}>
                         {getUserFriendlyProofRequestRequirements(
                           item.query
                         ).map((requirement) => (
-                          <Text key={requirement}>{requirement}</Text>
+                          <Typography key={requirement}>
+                            {requirement}
+                          </Typography>
                         ))}
-                      </Text>
+                      </Typography>
                     </View>
                     <View style={styles.proofItemPropertySpacing}>
-                      <Text style={styles.proofItemPropertyLabel}>
+                      <Typography
+                        variant='bodySemiBold'
+                        style={styles.proofItemPropertyLabel}>
                         Allowed issuers
-                      </Text>
-                      <Text style={styles.proofItemPropertyValue}>
+                      </Typography>
+                      <Typography
+                        variant='bodySemiBold'
+                        style={styles.proofItemPropertyValue}>
                         {getUserFriendlyAllowedIssuers(
                           item.query.allowedIssuers as string[]
                         ).map((issuer) => (
-                          <Text key={issuer}>{issuer}</Text>
+                          <Typography key={issuer}>{issuer}</Typography>
                         ))}
-                      </Text>
+                      </Typography>
                     </View>
                   </View>
                 ))}
                 {/* TODO: Handle if there is no proof */}
               </View>
               <View style={styles.infoMessageContainer}>
-                <Text style={styles.infoMessage}>
+                <Typography style={styles.infoMessage}>
                   {/* TODO: Check whether the selective disclosure feature disclose value in clear. If so, identify if the request has selective disclosure and adapt the messages for the user */}
                   No private data will be sent. A zero knowledge proof will be
                   generated by {protocols}
-                </Text>
+                </Typography>
               </View>
             </>
           ) : (
@@ -281,6 +263,7 @@ export const ProofRequestScreen: React.FunctionComponent<
                   {
                     label: 'Close',
                     onPress: handleClose,
+                    disabled: processing,
                   },
                 ]
               : [
@@ -302,7 +285,6 @@ export const ProofRequestScreen: React.FunctionComponent<
   )
 }
 
-// TODO: Use the theme when proper typography is available
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     wrapper: {
@@ -315,73 +297,16 @@ const createStyles = (theme: Theme) =>
     containerContent: {
       padding: theme.spacing.m,
     },
-    header: {
-      flexDirection: 'row',
-      marginTop: theme.spacing.s,
-    },
-    logo: {
-      width: 48,
-      aspectRatio: 1 / 1,
-      borderRadius: 999999,
-      marginRight: theme.spacing.s,
-    },
-    name: {
-      fontSize: 17,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_BOLD,
-    },
-    detailsButton: {
-      marginTop: theme.spacing.xs,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    detailsButtonLabel: {
-      fontSize: 12,
-      lineHeight: 18,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-      color: theme.color.textLightGrey,
-    },
-    detailsButtonLabelIcon: {
-      marginLeft: theme.spacing.xs,
-      color: theme.color.textLightGrey,
-    },
     detailsContainer: {
       marginTop: theme.spacing.m,
-      width: '100%',
-      paddingHorizontal: theme.spacing.m,
-      paddingVertical: theme.spacing.sm,
-      borderWidth: 1,
-      borderRadius: 4,
-      borderColor: theme.color.lightGrey,
     },
-    detailsPropertyLabel: {
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-      color: theme.color.textLightGrey,
-    },
-    detailsPropertyValue: {
-      marginTop: theme.spacing.s,
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-    },
-    detailsPropertySpacing: {
+    messageContainer: {
       marginTop: theme.spacing.l,
-    },
-    message: {
-      marginTop: theme.spacing.l,
-      padding: theme.spacing.m,
-      backgroundColor: '#F5F4FF',
-      borderRadius: theme.roundness.xs,
     },
     proofContainer: {
       marginTop: theme.spacing.xl,
     },
     proofMessage: {
-      fontSize: 16,
-      lineHeight: 24,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
     },
     proofItemContainer: {
@@ -390,29 +315,11 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.color.snow,
       borderRadius: theme.roundness.xs,
     },
-    proofItemTypeLabel: {
-      fontSize: 17,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_BOLD,
-    },
-    proofItemLabel: {
-      marginTop: theme.spacing.s,
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_BOLD,
-      color: theme.color.black700,
-    },
     proofItemPropertyLabel: {
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
     },
     proofItemPropertyValue: {
       marginTop: theme.spacing.s,
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
     },
     proofItemPropertySpacing: {
       marginTop: theme.spacing.l,
@@ -421,8 +328,6 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.m,
     },
     infoMessage: {
-      fontSize: 14,
-      lineHeight: 22,
       color: theme.color.textLightGrey,
     },
     statusContainer: {
