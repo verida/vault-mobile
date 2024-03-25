@@ -1,11 +1,12 @@
-import { useTheme } from 'contexts'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { Alert, AlertType } from 'components/Alert'
-import Button from 'components/Button'
-import { Theme } from 'styles/types'
+import { Alert, AlertType } from '~/components/Alert'
+import Button from '~/components/Button'
+import { IconName } from '~/components/Icon'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 type Action = {
   label: React.ReactNode
@@ -19,6 +20,8 @@ export type BottomActionBarProps = {
   actionsOrientation?: 'row' | 'column'
   alertType?: AlertType
   alertContent?: React.ReactNode | string
+  alertOnPress?: () => void
+  alertActionIcon?: IconName
   hideBorder?: boolean
 } & ViewProps
 
@@ -30,6 +33,8 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
     actionsOrientation = 'row',
     alertType,
     alertContent,
+    alertOnPress,
+    alertActionIcon,
     hideBorder = false,
     ...viewProps
   } = props
@@ -47,6 +52,8 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
         {alertContent ? (
           <Alert
             type={alertType}
+            onPress={alertOnPress}
+            actionIcon={alertActionIcon}
             style={[
               styles.alertContainer,
               actions && actions.length > 0
