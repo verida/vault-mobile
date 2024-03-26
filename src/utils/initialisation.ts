@@ -78,6 +78,7 @@ function printConfig() {
   )
   logger.debug(` `)
   logger.debug(`Verida Wallet Provider: ${config.walletProvider.url}`)
+  logger.debug(`Verida Wallet Provider V2: ${config.walletProvider.v2Url}`)
   logger.debug(` `)
   logger.debug(
     `Polygon Mainnet RPC URL: ${
