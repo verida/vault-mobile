@@ -22,6 +22,7 @@ export const EnvVarsSchema = z
 
     // Verida Wallet
     VERIDA_WALLET_PROVIDER_URL: z.string().url(),
+    VERIDA_WALLET_PROVIDER_V2_URL: z.string().url(),
 
     // Blockchain
     INFURA_API_KEY: z.string(),

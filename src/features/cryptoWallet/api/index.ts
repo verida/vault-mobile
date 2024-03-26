@@ -1,21 +1,15 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
 import { AssetId } from 'caip'
 import { config } from 'config'
-import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
 import { RootState } from 'reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
 
-const baseQuery = retry(
-  fetchBaseQuery({
-    baseUrl: config.walletProvider.url,
-  }),
-  {
-    maxRetries: 2,
-  }
-)
+const baseQuery = fetchBaseQuery({
+  baseUrl: `${config.walletProvider.v2Url}/api`,
+})
 
 export const cryptoWalletApi = createApi({
   reducerPath: 'cryptoWalletApi',
@@ -32,18 +26,22 @@ export const cryptoWalletApi = createApi({
   endpoints: (build) => ({
     getBalances: build.query({
       query: (walletAddresses: string[]) =>
-        `balance/getBalanceByChains?${walletAddresses
+        `v2/balance/getBalanceByChains?${walletAddresses
           .map((address) => `wallet=${address}`)
           .join('&')}`,
       transformResponse: (response: {
-        data: { results: BalanceByChain }
+        data: BalanceByChain
       }): {
         list: BalanceByChain['results']
         total: number
       } => {
-        const balanceByChains = response.data.results
+        // TODO: Validate with Zod
 
-        if (isEmpty(balanceByChains.results)) return { list: [], total: 0 }
+        const balanceByChains = response?.data
+
+        if (!balanceByChains?.results) {
+          return { list: [], total: 0 }
+        }
 
         // map prices and balances to recognized coins list and standardize
         const balances = balanceByChains.results
@@ -65,6 +63,31 @@ export const cryptoWalletApi = createApi({
         }
       },
     }),
+  }),
+})
+
+const legacyBaseQuery = retry(
+  fetchBaseQuery({
+    baseUrl: config.walletProvider.url,
+  }),
+  {
+    maxRetries: 2,
+  }
+)
+
+export const cryptoWalletLegacyApi = createApi({
+  reducerPath: 'cryptoWalletLegacyApi',
+  baseQuery: legacyBaseQuery,
+  // We want to persist/rehydrate this redux api slide
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === REHYDRATE) {
+      return action.payload?.[reducerPath]
+    }
+  },
+  keepUnusedDataFor: 60 * 15, // 15 mins
+  refetchOnMountOrArgChange: true,
+  refetchOnReconnect: true,
+  endpoints: (build) => ({
     // HACK: It is invalid to getTransactionsForToken without specifying a userAddress or asset.
     //       However, the application can technically enter a state where these values are not
     //       defined.
@@ -75,8 +98,7 @@ export const cryptoWalletApi = createApi({
         body,
       }),
       transformResponse: (response: { data: Transaction[] }): Transaction[] => {
-        const transactions = response.data
-        return transactions
+        return response?.data ?? []
       },
     }),
     getTransactionDetails: build.query({
@@ -102,11 +124,12 @@ export const cryptoWalletApi = createApi({
 
 // Query hooks
 
+export const { useGetBalancesQuery } = cryptoWalletApi
+
 export const {
-  useGetBalancesQuery,
   useGetTransactionsForTokenQuery,
   useGetTransactionDetailsQuery,
-} = cryptoWalletApi
+} = cryptoWalletLegacyApi
 
 // Selectors
 
@@ -123,7 +146,7 @@ export const getTransactionsForTokenData = (
   asset: AssetId
 ) => {
   const transactions =
-    cryptoWalletApi.endpoints.getTransactionsForToken.select({
+    cryptoWalletLegacyApi.endpoints.getTransactionsForToken.select({
       userAddress,
       asset,
     })(state)?.data ?? []
