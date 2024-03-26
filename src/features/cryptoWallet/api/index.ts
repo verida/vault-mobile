@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
 import { AssetId } from 'caip'
 import { config } from 'config'
-import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
 import { RootState } from 'reduxStore/types'
@@ -36,9 +35,13 @@ export const cryptoWalletApi = createApi({
         list: BalanceByChain['results']
         total: number
       } => {
-        const balanceByChains = response.data
+        // TODO: Validate with Zod
 
-        if (isEmpty(balanceByChains.results)) return { list: [], total: 0 }
+        const balanceByChains = response?.data
+
+        if (!balanceByChains?.results) {
+          return { list: [], total: 0 }
+        }
 
         // map prices and balances to recognized coins list and standardize
         const balances = balanceByChains.results
@@ -95,8 +98,7 @@ export const cryptoWalletLegacyApi = createApi({
         body,
       }),
       transformResponse: (response: { data: Transaction[] }): Transaction[] => {
-        const transactions = response.data
-        return transactions
+        return response?.data ?? []
       },
     }),
     getTransactionDetails: build.query({
