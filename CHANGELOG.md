@@ -1,3 +1,11 @@
+# 1.2.2 (2024-03-26)
+
+## Bug Fixes
+
+- Fix UI freeze at startup by disabling Polygon ID circuits automatically
+- Fix public profile avatar upload not working
+- Fix crypto wallet token list in error
+
 # 1.2.1 (2024-03-23)
 
 ## Bug Fixes
