@@ -18,29 +18,6 @@ export function createCircuitStorage() {
   return new PolygonIdCircuitStorage(new PolygonIdCircuitDataSource())
 }
 
-export async function initCircuitStorage(
-  circuitStates: CircuitStates,
-  circuitStorage: CircuitStorage,
-  circuitsRemoteBaseUrl: string,
-  updateState: UpdateStateCallback
-) {
-  logger.info('Initialising the circuit storage')
-  const unavailableCircuits = Object.entries(circuitStates)
-    .filter(
-      ([, circuitState]) => circuitState.status === CircuitStatus.UNAVAILABLE
-    )
-    .map(([circuitId]) => circuitId as CircuitId)
-
-  await downloadAndSaveCircuits(
-    unavailableCircuits,
-    circuitStorage,
-    circuitsRemoteBaseUrl,
-    updateState
-  )
-
-  logger.info('Circuit storage initialised')
-}
-
 export async function downloadAndSaveCircuits(
   circuitIds: CircuitId[],
   circuitStorage: CircuitStorage,
@@ -59,6 +36,8 @@ export async function downloadAndSaveCircuits(
       )
     })
   )
+
+  logger.debug('Circuits downloaded', { circuitIds })
 }
 
 export async function downloadAndSaveCircuit(

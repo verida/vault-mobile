@@ -1,11 +1,11 @@
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { StyleSheet, Text, View, ViewProps } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { Theme } from 'styles/types'
+import { Typography } from '~/components'
+import { Theme } from '~/styles/types'
 
-type RequestDetailProperty = {
+export type RequestDetailProperty = {
   label: string
   value?: string | React.ReactNode
   // TODO: Add copy to clipboard as suggested per UX design
@@ -29,38 +29,39 @@ export const RequestDetails: React.FunctionComponent<RequestDetailsProps> = (
         {properties.length > 0 ? (
           properties.map((property) => (
             <View key={property.label} style={styles.propertyWrapper}>
-              <Text
+              <Typography
+                variant='bodySemiBold'
                 style={styles.propertyLabel}
                 numberOfLines={1}
                 ellipsizeMode='tail'>
                 {property.label}
-              </Text>
+              </Typography>
               {!property.value ? (
-                <Text
-                  style={styles.propertyValue}
-                  numberOfLines={1}
+                <Typography
+                  variant='bodySemiBold'
+                  numberOfLines={2}
                   ellipsizeMode='tail'>
                   {'-'}
-                </Text>
+                </Typography>
               ) : typeof property.value === 'string' ? (
-                <Text
-                  style={styles.propertyValue}
-                  numberOfLines={1}
+                <Typography
+                  variant='bodySemiBold'
+                  numberOfLines={2}
                   ellipsizeMode='tail'>
                   {property.value}
-                </Text>
+                </Typography>
               ) : (
-                <Text
-                  style={styles.propertyValue}
-                  numberOfLines={1}
+                <Typography
+                  variant='bodySemiBold'
+                  numberOfLines={2}
                   ellipsizeMode='tail'>
                   {property.value}
-                </Text>
+                </Typography>
               )}
             </View>
           ))
         ) : (
-          <Text>No details available</Text>
+          <Typography>No details available</Typography>
         )}
       </View>
     </View>
@@ -82,15 +83,7 @@ const createStyles = (theme: Theme) =>
       marginVertical: theme.spacing.sm,
     },
     propertyLabel: {
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
       marginBottom: theme.spacing.s,
-    },
-    propertyValue: {
-      fontSize: 14,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
     },
   })

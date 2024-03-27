@@ -17,9 +17,14 @@ export const assetsApi = createApi({
         `nfts/list?${walletAddresses
           .map((address) => `wallet[]=${address}`)
           .join('&')}`,
-      transformResponse: (response: { data: NFT[] }): NFT[] =>
-        response.data.sort((a: any) => (a.metadata?.image ? -1 : 1)),
-      // TODO: Handle error
+      transformResponse: (response: { data: NFT[] }): NFT[] => {
+        // TODO: Validate with Zod
+
+        // TODO: Handle error
+        return (
+          response?.data.sort((a: any) => (a.metadata?.image ? -1 : 1)) ?? []
+        )
+      },
     }),
     // Other assets Apis
   }),
