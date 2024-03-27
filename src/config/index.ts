@@ -52,6 +52,7 @@ export const config = {
       enableCustomNetwork: false,
     },
     polygonid: {
+      downloadCircuitsAutomatically: false,
       enableCredentialStatusCheck: false,
     },
   },
@@ -88,6 +89,7 @@ export const config = {
   },
   walletProvider: {
     url: envVars.VERIDA_WALLET_PROVIDER_URL,
+    v2Url: envVars.VERIDA_WALLET_PROVIDER_V2_URL,
   },
   dataConnector: {
     retyInterval: 5000,

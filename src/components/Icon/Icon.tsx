@@ -36,6 +36,7 @@ type LibIconName =
   | 'wallet'
   | 'clipboard' // TODO: replace the clipboard by copy?
   | 'inbox'
+  | 'info-circle'
   | 'question-circle'
   | 'exclamation-circle'
   | 'check-circle'
@@ -140,6 +141,12 @@ export const Icon = (props: {
           <MaterialCommunityIcon name='email' {...iconProps} />
         </IconWrapper>
       )
+    case 'info-circle':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='infocirlce' {...iconProps} />
+        </IconWrapper>
+      )
     case 'question-circle':
       return (
         <IconWrapper size={size}>
@@ -155,7 +162,7 @@ export const Icon = (props: {
     case 'check-circle':
       return (
         <IconWrapper size={size}>
-          <AntIcon name='checkcircleo' {...iconProps} />
+          <AntIcon name='checkcircle' {...iconProps} />
         </IconWrapper>
       )
     case 'error-circle':
