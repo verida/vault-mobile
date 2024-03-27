@@ -29,7 +29,6 @@ import {
   setSelectedWallet,
   getSelectedWalletId,
   cryptoWalletApi,
-  WALLET_SCHEMA_0_2_0_URI,
   getUniqueWalletAddresses,
   getWallets,
 } from 'features/cryptoWallet'
@@ -52,6 +51,7 @@ import {
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
 import { getDidClientConfigForNetwork } from 'features/verida'
+import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 
 const logger = Logger.create('AccountManager')
 
@@ -326,7 +326,7 @@ class AccountManager extends EventEmitter {
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        WALLET_SCHEMA_0_2_0_URI
+        VAULT_SCHEMA_WALLETS_0_2_0
       )
 
       const wallet = {
@@ -382,7 +382,7 @@ class AccountManager extends EventEmitter {
       }
 
       const datastore = await this.context?.openDatastore(
-        WALLET_SCHEMA_0_2_0_URI
+        VAULT_SCHEMA_WALLETS_0_2_0
       )
 
       const hdWallets: any = await datastore?.getMany(undefined, undefined)

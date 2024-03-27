@@ -2,9 +2,6 @@ import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/blockchain'
 
 import { AggregateWalletBannerBalances } from '../@types'
 
-export const WALLET_SCHEMA_0_2_0_URI =
-  'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
-
 export const DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT: AggregateWalletBannerBalances =
   Object.freeze([])
 

@@ -1,10 +1,8 @@
 import { BlockchainWallet } from 'features/blockchain'
-import {
-  getAllWallets,
-  getSelectedWalletId,
-  WALLET_SCHEMA_0_2_0_URI,
-} from 'features/cryptoWallet'
+import { getAllWallets, getSelectedWalletId } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
+
+import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 
 import AccountManager from 'api/AccountManager'
 import {
@@ -71,7 +69,7 @@ export const importWallet = createAppAsyncThunk(
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          WALLET_SCHEMA_0_2_0_URI
+          VAULT_SCHEMA_WALLETS_0_2_0
         )
 
       const wallet: Partial<BlockchainWallet> = {
@@ -106,7 +104,7 @@ export const addWatchedWallet = createAppAsyncThunk(
     try {
       const walletsDatastore =
         await AccountManager.getInstance().context?.openDatastore(
-          WALLET_SCHEMA_0_2_0_URI
+          VAULT_SCHEMA_WALLETS_0_2_0
         )
 
       if (!walletsDatastore) {
@@ -143,7 +141,7 @@ export const deleteWallet = createAppAsyncThunk(
       const currentlySelectedWallet = getSelectedWalletId(getState())
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          WALLET_SCHEMA_0_2_0_URI
+          VAULT_SCHEMA_WALLETS_0_2_0
         )
       // save to verida store
       await walletDb?.delete(walletId)
@@ -175,7 +173,7 @@ export const renameWallet = createAppAsyncThunk(
     try {
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          WALLET_SCHEMA_0_2_0_URI
+          VAULT_SCHEMA_WALLETS_0_2_0
         )
 
       const row = (await walletDb?.get(walletId, {})) as {

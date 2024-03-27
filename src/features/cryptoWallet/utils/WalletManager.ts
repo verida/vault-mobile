@@ -1,3 +1,4 @@
+import AccountManager from '~/api/AccountManager'
 import {
   BlockchainAccount,
   BlockchainNetwork,
@@ -6,16 +7,13 @@ import {
   getBlockchainNetworks,
   IBlockchain,
   WalletUtilsWallet,
-} from 'features/blockchain'
-import { eip155Blockchain } from 'features/blockchain/eip155'
-import { nearBlockchain } from 'features/blockchain/near'
-import { isSupportedCaipNamespace } from 'features/caip'
-import { Logger } from 'features/telemetry'
-import { store } from 'reduxStore'
-
-import AccountManager from 'api/AccountManager'
-
-import { WALLET_SCHEMA_0_2_0_URI } from '../constants'
+} from '~/features/blockchain'
+import { eip155Blockchain } from '~/features/blockchain/eip155'
+import { nearBlockchain } from '~/features/blockchain/near'
+import { isSupportedCaipNamespace } from '~/features/caip'
+import { Logger } from '~/features/telemetry'
+import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
+import { store } from '~/reduxStore'
 
 const logger = Logger.create('WalletManager')
 
@@ -180,7 +178,7 @@ export class WalletManager {
 
     // save mnemonic to verida store
     const walletDb = await AccountManager.getInstance().context!.openDatastore(
-      WALLET_SCHEMA_0_2_0_URI
+      VAULT_SCHEMA_WALLETS_0_2_0
     )
 
     const wallet = {
