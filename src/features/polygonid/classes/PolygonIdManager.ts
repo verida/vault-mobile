@@ -15,10 +15,10 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { Context } from '@verida/client-rn'
 import Axios, { AxiosRequestConfig } from 'axios'
-import { Logger } from 'features/telemetry'
-import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
 import { config as appConfig } from '~/config'
+import { Logger } from '~/features/telemetry'
+import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from '~/features/veridaVault'
 import { VerificationResult } from '~/features/verifiableCredential'
 
 import { CalculateWitnessFunction, PolygonIdIdentityConfig } from '../types'
