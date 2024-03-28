@@ -1,57 +1,59 @@
-// eslint-disable-next-line simple-import-sort/imports
-import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import Vault from './VaultCommon/vault'
-import * as SecureStore from 'helpers/VeridaSecureStore'
+import { Client } from '@verida/client-rn'
+import { EnvironmentType, IContext } from '@verida/types'
+import EventEmitter from 'events'
 import { isEmpty, merge } from 'lodash'
-import { store } from 'reduxStore'
 
+import { config } from '~/config'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
 import {
-  BlockchainWallet,
+  ACCOUNTS_STORAGE_KEY,
+  SELECTED_ACCOUNT_DID_STORAGE_KEY,
+} from '~/constants/storageKeys'
+import {
   blockchainApi,
+  BlockchainWallet,
   getBlockchainNetworks,
-} from 'features/blockchain'
-import {
-  CreateIdentityStepStatus,
-  CreateIdentityStep,
-  Account,
-  NormalizedAccounts,
-  addAccount,
-  generateIdentityMnemonic,
-  getNetworkFromDID,
-  getPrivateKeyFromMnemonic,
-  setAccounts,
-  setSelectedAccount,
-} from 'features/identities'
+} from '~/features/blockchain'
 import {
   clearCryptoWallets,
-  saveCryptoWallets,
-  setSelectedCryptoWalletId,
+  CRYPTO_WALLETS_STORAGE_KEY,
   cryptoWalletApi,
   getUniqueWalletAddresses,
   getWallets,
   restoreCryptoWallets,
-} from 'features/cryptoWallet'
-import { getCountryCode } from 'helpers/countries'
-import DataConnectorsManager from './DataConnectorsManager'
-
-import { config } from 'config'
-import EventEmitter from 'events'
-import { WalletManager } from '../features/cryptoWallet/utils/WalletManager'
-import { EnvironmentType, IContext } from '@verida/types'
-import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { executeWithTimeout } from 'utils'
+  saveCryptoWallets,
+  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
+  setSelectedCryptoWalletId,
+  WalletManager,
+} from '~/features/cryptoWallet'
 import {
-  ACCOUNTS_STORAGE_KEY,
-  SELECTED_ACCOUNT_DID_STORAGE_KEY,
-  SELECTED_WALLET_STORAGE_KEY,
-  WALLETS_STORAGE_KEY,
-} from 'constants/storageKeys'
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
-import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
-import { getDidClientConfigForNetwork } from 'features/verida'
+  Account,
+  addAccount,
+  CreateIdentityStep,
+  CreateIdentityStepStatus,
+  generateIdentityMnemonic,
+  getNetworkFromDID,
+  getPrivateKeyFromMnemonic,
+  NormalizedAccounts,
+  setAccounts,
+  setSelectedAccount,
+} from '~/features/identities'
+import { fetchAllPublicProfilesData, PublicProfile } from '~/features/profiles'
+import {
+  CONFIG_DB_NAME,
+  SEED_PHRASE_BACKED_UP_CONFIG,
+} from '~/features/settings'
+import { Logger } from '~/features/telemetry'
+import { getDidClientConfigForNetwork } from '~/features/verida'
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
+import { getCountryCode } from '~/helpers/countries'
+import * as SecureStore from '~/helpers/VeridaSecureStore'
+import { store } from '~/reduxStore'
+import { executeWithTimeout } from '~/utils'
+
+import DataConnectorsManager from './DataConnectorsManager'
+import Vault from './VaultCommon/vault'
 
 const logger = Logger.create('AccountManager')
 
@@ -126,8 +128,8 @@ class AccountManager extends EventEmitter {
   private async initCryptoWallets() {
     try {
       const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(SELECTED_WALLET_STORAGE_KEY),
+        SecureStore.getItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
+        SecureStore.getItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
         store.dispatch(
           blockchainApi.endpoints.getBlockchainNetworks.initiate(
             {},
@@ -363,10 +365,10 @@ class AccountManager extends EventEmitter {
       // save wallet state to secure storage
       await Promise.all([
         SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CRYPTO_WALLETS_STORAGE_KEY,
           JSON.stringify(walletData)
         ),
-        SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID),
+        SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletID),
       ])
     } catch (error) {
       logger.error(error)
@@ -527,8 +529,6 @@ class AccountManager extends EventEmitter {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
       store.dispatch(clearCryptoWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {

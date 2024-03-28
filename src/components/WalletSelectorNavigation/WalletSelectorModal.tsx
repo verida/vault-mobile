@@ -4,6 +4,7 @@ import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   getSelectedWalletId,
   getWalletList,
+  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
   setSelectedCryptoWalletId,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -17,7 +18,6 @@ import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { RootState } from 'reduxStore/types'
@@ -53,7 +53,7 @@ const WalletSelectorModal = ({
 
   const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
     onSetSelectedWallet(item._id)
-    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item._id)
+    SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, item._id)
     onCloseModal()
   }
 

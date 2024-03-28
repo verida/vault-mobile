@@ -274,7 +274,7 @@ export class WalletManager {
   }
 
   public static async clearCachedCryptoWallets() {
-    Promise.all([
+    await Promise.all([
       SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
       SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
     ])

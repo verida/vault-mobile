@@ -2,10 +2,6 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
 import AccountManager from '~/api/AccountManager'
-import {
-  SELECTED_WALLET_STORAGE_KEY,
-  WALLETS_STORAGE_KEY,
-} from '~/constants/storageKeys'
 import { logout } from '~/features/auth'
 import {
   BlockchainWallet,
@@ -15,6 +11,10 @@ import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 import * as SecureStore from '~/helpers/VeridaSecureStore'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
+import {
+  CRYPTO_WALLETS_STORAGE_KEY,
+  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
+} from '../constants'
 import { WalletManager } from '../utils'
 import { getAllWallets, getSelectedWalletId } from './selectors'
 
@@ -46,7 +46,7 @@ export const cryptoWalletSlice = createSlice({
     ) => {
       state.wallets = action.payload
     },
-    clearCryptoWallets: () => {
+    clearCryptoWalletsState: () => {
       return initialState
     },
     setSelectedCryptoWalletId: (
@@ -187,7 +187,7 @@ export const cryptoWalletSlice = createSlice({
 export const {
   saveCryptoWallets,
   setSelectedCryptoWalletId,
-  clearCryptoWallets,
+  clearCryptoWalletsState,
 } = cryptoWalletSlice.actions
 
 export const createCryptoWallet = createAppAsyncThunk(
@@ -207,11 +207,11 @@ export const createCryptoWallet = createAppAsyncThunk(
         // save to the secure storage..
         await Promise.all([
           SecureStore.setItemAsync(
-            WALLETS_STORAGE_KEY,
+            CRYPTO_WALLETS_STORAGE_KEY,
             JSON.stringify(wallets)
           ),
           SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
+            SELECTED_CRYPTO_WALLET_STORAGE_KEY,
             selectedWallet._id
           ),
         ])
@@ -363,6 +363,14 @@ export const renameCryptoWallet = createAppAsyncThunk(
   }
 )
 
+export const clearCryptoWallets = createAppAsyncThunk(
+  'cryptoWallets/clearCryptoWallets',
+  async (_undefined: undefined, { dispatch }) => {
+    dispatch(clearCryptoWalletsState())
+    await WalletManager.clearCachedCryptoWallets()
+  }
+)
+
 export const restoreCryptoWallets = createAppAsyncThunk(
   'cryptoWallets/restoreCryptoWallets',
   async (
@@ -372,7 +380,7 @@ export const restoreCryptoWallets = createAppAsyncThunk(
     const currentlySelectedWalletId = getSelectedWalletId(getState())
 
     if (clearWallets) {
-      dispatch(clearCryptoWallets())
+      dispatch(clearCryptoWalletsState())
     }
 
     const { selectedWalletId, wallets } =

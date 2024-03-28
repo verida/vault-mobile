@@ -10,6 +10,7 @@ import {
   getWalletList,
   importCryptoWallet,
   isCryptoWalletsProcessing,
+  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
   setSelectedCryptoWalletId,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -22,7 +23,6 @@ import { Dispatch } from 'redux'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
 import { MainStackParams } from 'navigation/types'
 
 import PlusIcon from '../../assets/plus_icon.svg'
@@ -180,7 +180,7 @@ const ManageWallets = (props: Props) => {
           const selectedWalletID = item._id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
+            SELECTED_CRYPTO_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         } else if (buttonIndex === 2) {
