@@ -12,7 +12,7 @@ import {
 import { createAppAsyncThunk } from 'reduxStore/types'
 
 import { WalletManager } from '../utils'
-import { saveUserWallets, setSelectedWallet } from './'
+import { removeUserWallets, saveUserWallets, setSelectedWallet } from './'
 
 export const createNewWallet = createAppAsyncThunk(
   'wallets/createNewWallet',
@@ -21,10 +21,8 @@ export const createNewWallet = createAppAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const { selectedWallet, wallets } = await WalletManager.createNewWallet(
-        data.phrase,
-        data.name
-      )
+      const { selectedWallet, wallets } =
+        await WalletManager.createCryptoWallet(data.phrase, data.name)
 
       if (wallets) {
         dispatch(saveUserWallets(wallets))
@@ -82,9 +80,8 @@ export const importWallet = createAppAsyncThunk(
 
       const walletId = saved?.id
 
-      // Fully update wallets data
-      await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(walletId))
+      dispatch(restoreCryptoWallets({ clearWallets: false }))
     } catch (error) {
       return rejectWithValue('Could not import wallet')
     }
@@ -125,8 +122,7 @@ export const addWatchedWallet = createAppAsyncThunk(
         throw new Error(walletsDatastore.errors)
       }
 
-      // Fully update wallets data
-      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch(restoreCryptoWallets({ clearWallets: false }))
       dispatch(setSelectedWallet(savedWallet.id))
     } catch (error) {
       return rejectWithValue('Could not add watched wallet')
@@ -156,8 +152,7 @@ export const deleteWallet = createAppAsyncThunk(
         dispatch(setSelectedWallet(nextWalletId))
       }
 
-      // Fully update wallets data
-      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch(restoreCryptoWallets({ clearWallets: false }))
     } catch (error) {
       return rejectWithValue('Could not delete wallet')
     }
@@ -168,7 +163,7 @@ export const renameWallet = createAppAsyncThunk(
   'wallets/renameWallet',
   async (
     { walletId, data }: { walletId: string; data: { name: string } },
-    { rejectWithValue }
+    { rejectWithValue, dispatch }
   ) => {
     try {
       const walletDb =
@@ -185,10 +180,29 @@ export const renameWallet = createAppAsyncThunk(
 
       await walletDb?.save(row, {})
 
-      //Fully update wallets data
-      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch(restoreCryptoWallets({ clearWallets: false }))
     } catch (error) {
       return rejectWithValue('Could not rename wallet')
     }
+  }
+)
+
+export const restoreCryptoWallets = createAppAsyncThunk(
+  'cryptoWallets/restore',
+  async (
+    { clearWallets }: { clearWallets: boolean },
+    { getState, dispatch }
+  ) => {
+    const currentlySelectedWalletId = getSelectedWalletId(getState())
+
+    if (clearWallets) {
+      dispatch(removeUserWallets())
+    }
+
+    const { selectedWalletId, wallets } =
+      await WalletManager.restoreCryptoWallets(currentlySelectedWalletId)
+
+    dispatch(saveUserWallets(wallets))
+    dispatch(setSelectedWallet(selectedWalletId))
   }
 )

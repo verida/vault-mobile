@@ -27,10 +27,10 @@ import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
-  getSelectedWalletId,
   cryptoWalletApi,
   getUniqueWalletAddresses,
   getWallets,
+  restoreCryptoWallets,
 } from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import DataConnectorsManager from './DataConnectorsManager'
@@ -115,7 +115,7 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSelectedAccount(this.selectedAccount))
 
           // Load or restore user wallets from the mnemonic
-          this.initUserWallets()
+          this.initCryptoWallets()
         }
       }
     } catch (error) {
@@ -123,7 +123,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  private async initUserWallets() {
+  private async initCryptoWallets() {
     try {
       const [walletsRaw, selectedWalletId] = await Promise.all([
         SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
@@ -180,7 +180,7 @@ class AccountManager extends EventEmitter {
     }
     this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
-    await this.restoreUserWallet(true)
+    store.dispatch(restoreCryptoWallets({ clearWallets: true }))
   }
 
   public static getInstance(): AccountManager {
@@ -319,9 +319,9 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async setUserWallet() {
+  public async setCryptoWallet() {
     try {
-      await store.dispatch(removeUserWallets())
+      store.dispatch(removeUserWallets())
       const userHDWalletMnemonic = WalletManager.generateMnemonic()
 
       // save mnemonic to verida store
@@ -368,50 +368,6 @@ class AccountManager extends EventEmitter {
         ),
         SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID),
       ])
-    } catch (error) {
-      logger.error(error)
-      throw error
-    }
-  }
-
-  public async restoreUserWallet(clearWallets: boolean) {
-    try {
-      const previouslySelectedWalletId = getSelectedWalletId(store.getState())
-      if (clearWallets) {
-        store.dispatch(removeUserWallets())
-      }
-
-      const datastore = await this.context?.openDatastore(
-        VAULT_SCHEMA_WALLETS_0_2_0
-      )
-
-      const hdWallets: any = await datastore?.getMany(undefined, undefined)
-
-      if (!isEmpty(hdWallets)) {
-        const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
-        store.dispatch(saveUserWallets(wallets))
-
-        // save to storage..
-        await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        )
-
-        const previouslySelectedWallet = previouslySelectedWalletId
-          ? wallets[previouslySelectedWalletId!]
-          : undefined
-
-        const selectedWalletId = previouslySelectedWallet
-          ? previouslySelectedWalletId
-          : hdWallets[0]._id
-
-        store.dispatch(setSelectedWallet(selectedWalletId))
-
-        await SecureStore.setItemAsync(
-          SELECTED_WALLET_STORAGE_KEY,
-          selectedWalletId
-        )
-      }
     } catch (error) {
       logger.error(error)
       throw error
@@ -540,7 +496,7 @@ class AccountManager extends EventEmitter {
 
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
-      this.setUserWallet()
+      this.setCryptoWallet()
       this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')

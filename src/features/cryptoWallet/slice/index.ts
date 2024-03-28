@@ -13,7 +13,7 @@ import {
 
 export interface WalletState {
   walletsData: Record<string, BlockchainWalletWithAccounts>
-  selectedWalletId?: string
+  selectedWalletId: string | null
   walletProcessing: {
     loading: boolean
     error?: string
@@ -22,7 +22,7 @@ export interface WalletState {
 
 const initialState: WalletState = {
   walletsData: {},
-  selectedWalletId: undefined,
+  selectedWalletId: null,
   walletProcessing: {
     loading: false,
     error: undefined,
@@ -42,7 +42,7 @@ export const cryptoWalletSlice = createSlice({
     removeUserWallets: () => {
       return initialState
     },
-    setSelectedWallet: (state, action: PayloadAction<string>) => {
+    setSelectedWallet: (state, action: PayloadAction<string | null>) => {
       state.selectedWalletId = action.payload
     },
   },

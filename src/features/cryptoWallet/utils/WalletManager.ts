@@ -13,7 +13,14 @@ import { nearBlockchain } from '~/features/blockchain/near'
 import { isSupportedCaipNamespace } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
+import * as SecureStore from '~/helpers/VeridaSecureStore'
 import { store } from '~/reduxStore'
+
+import {
+  CRYPTO_WALLETS_STORAGE_KEY,
+  DEFAULT_MULTI_CHAIN_WALLET_LABEL,
+  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
+} from '../constants'
 
 const logger = Logger.create('WalletManager')
 
@@ -23,6 +30,12 @@ const bip39 = require('bip39')
 const NAMESPACES: Record<string, IBlockchain> = {
   eip155: eip155Blockchain,
   near: nearBlockchain,
+}
+
+// TODO: Temporary type, should be replaced with a proper type
+type Result = {
+  selectedWalletId: string | null
+  wallets: Record<string, BlockchainWalletWithAccounts>
 }
 
 export class WalletManager {
@@ -167,16 +180,16 @@ export class WalletManager {
     return bip39.generateMnemonic()
   }
 
-  public static async createNewWallet(
+  public static async createCryptoWallet(
     seedPhrase?: string,
-    name?: string
+    label?: string
   ): Promise<{
     selectedWallet: BlockchainWallet
     wallets: Record<string, BlockchainWalletWithAccounts>
   }> {
     const mnemonic = seedPhrase ? seedPhrase : WalletManager.generateMnemonic()
 
-    // save mnemonic to verida store
+    // TODO: Move the AccountManager out of here
     const walletDb = await AccountManager.getInstance().context!.openDatastore(
       VAULT_SCHEMA_WALLETS_0_2_0
     )
@@ -184,7 +197,7 @@ export class WalletManager {
     const wallet = {
       mnemonic,
       multiChain: true,
-      label: name ? name : 'Multi-chain Wallet',
+      label: label ? label : DEFAULT_MULTI_CHAIN_WALLET_LABEL,
       walletType: 'multi',
       viewOnly: false,
     }
@@ -202,5 +215,68 @@ export class WalletManager {
       selectedWallet: wallets[saved.id],
       wallets,
     }
+  }
+
+  public static async restoreCryptoWallets(
+    previouslySelectedWalletId: string | null
+  ): Promise<Result> {
+    try {
+      // TODO: Move the AccountManager out of here
+      const walletsDatastore =
+        await AccountManager.getInstance().context!.openDatastore(
+          VAULT_SCHEMA_WALLETS_0_2_0
+        )
+
+      const storedWallets: BlockchainWallet[] =
+        (await walletsDatastore?.getMany(
+          undefined,
+          undefined
+        )) as BlockchainWallet[]
+      // TODO: Add zod validation here
+
+      if (storedWallets.length === 0) {
+        return {
+          selectedWalletId: null,
+          wallets: {},
+        }
+      }
+
+      const wallets = await WalletManager.getBlockchainAccounts(storedWallets)
+
+      const previouslySelectedWallet = previouslySelectedWalletId
+        ? wallets[previouslySelectedWalletId!]
+        : undefined
+
+      const selectedWalletId = previouslySelectedWallet
+        ? previouslySelectedWalletId
+        : storedWallets[0]._id
+
+      await Promise.all([
+        SecureStore.setItemAsync(
+          CRYPTO_WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        ),
+        selectedWalletId
+          ? SecureStore.setItemAsync(
+              SELECTED_CRYPTO_WALLET_STORAGE_KEY,
+              selectedWalletId
+            )
+          : SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
+      ])
+
+      return {
+        selectedWalletId: selectedWalletId ?? null,
+        wallets,
+      }
+    } catch (error) {
+      throw new Error('Error restoring crypto wallets', { cause: error })
+    }
+  }
+
+  public static async clearCachedCryptoWallets() {
+    Promise.all([
+      SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
+      SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
+    ])
   }
 }
