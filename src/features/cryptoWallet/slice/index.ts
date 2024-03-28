@@ -11,20 +11,20 @@ import {
   renameWallet,
 } from './actions'
 
-export interface WalletState {
-  walletsData: Record<string, BlockchainWalletWithAccounts>
+export interface CryptoWalletsState {
+  wallets: Record<string, BlockchainWalletWithAccounts>
   selectedWalletId: string | null
-  walletProcessing: {
-    loading: boolean
+  status: {
+    processsing: boolean
     error?: string
   }
 }
 
-const initialState: WalletState = {
-  walletsData: {},
+const initialState: CryptoWalletsState = {
+  wallets: {},
   selectedWalletId: null,
-  walletProcessing: {
-    loading: false,
+  status: {
+    processsing: false,
     error: undefined,
   },
 }
@@ -33,16 +33,19 @@ export const cryptoWalletSlice = createSlice({
   name: 'cryptoWallet',
   initialState,
   reducers: {
-    saveUserWallets: (
+    saveCryptoWallets: (
       state,
       action: PayloadAction<Record<string, BlockchainWalletWithAccounts>>
     ) => {
-      state.walletsData = action.payload
+      state.wallets = action.payload
     },
-    removeUserWallets: () => {
+    clearCryptoWallets: () => {
       return initialState
     },
-    setSelectedWallet: (state, action: PayloadAction<string | null>) => {
+    setSelectedCryptoWalletId: (
+      state,
+      action: PayloadAction<string | null>
+    ) => {
       state.selectedWalletId = action.payload
     },
   },
@@ -53,100 +56,100 @@ export const cryptoWalletSlice = createSlice({
 
       // Create new wallet
       .addCase(createNewWallet.pending, (state) => {
-        state.walletProcessing = {
-          loading: true,
+        state.status = {
+          processsing: true,
           error: undefined,
         }
       })
       .addCase(createNewWallet.fulfilled, (state) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: undefined,
         }
       })
       .addCase(createNewWallet.rejected, (state, action) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: action.payload,
         }
       })
 
       // Import a wallet
       .addCase(importWallet.pending, (state) => {
-        state.walletProcessing = {
-          loading: true,
+        state.status = {
+          processsing: true,
           error: undefined,
         }
       })
       .addCase(importWallet.fulfilled, (state) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: undefined,
         }
       })
       .addCase(importWallet.rejected, (state, action) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: action.payload,
         }
       })
 
       // Add watched wallet
       .addCase(addWatchedWallet.pending, (state) => {
-        state.walletProcessing = {
-          loading: true,
+        state.status = {
+          processsing: true,
           error: undefined,
         }
       })
       .addCase(addWatchedWallet.fulfilled, (state) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: undefined,
         }
       })
       .addCase(addWatchedWallet.rejected, (state, action) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: action.payload,
         }
       })
 
       // Delete Wallet
       .addCase(deleteWallet.pending, (state) => {
-        state.walletProcessing = {
-          loading: true,
+        state.status = {
+          processsing: true,
           error: undefined,
         }
       })
       .addCase(deleteWallet.fulfilled, (state) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: undefined,
         }
       })
       .addCase(deleteWallet.rejected, (state, action) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: action.payload,
         }
       })
 
       // Rename Wallet
       .addCase(renameWallet.pending, (state) => {
-        state.walletProcessing = {
-          loading: true,
+        state.status = {
+          processsing: true,
           error: undefined,
         }
       })
       .addCase(renameWallet.fulfilled, (state) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: undefined,
         }
       })
       .addCase(renameWallet.rejected, (state, action) => {
-        state.walletProcessing = {
-          loading: false,
+        state.status = {
+          processsing: false,
           error: action.payload,
         }
       })
@@ -154,8 +157,11 @@ export const cryptoWalletSlice = createSlice({
 })
 
 // Actions
-export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
-  cryptoWalletSlice.actions
+export const {
+  saveCryptoWallets,
+  setSelectedCryptoWalletId,
+  clearCryptoWallets,
+} = cryptoWalletSlice.actions
 
 export * from './actions'
 

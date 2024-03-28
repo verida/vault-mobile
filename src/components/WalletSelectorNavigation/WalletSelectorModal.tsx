@@ -4,7 +4,7 @@ import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   getSelectedWalletId,
   getWalletList,
-  setSelectedWallet,
+  setSelectedCryptoWalletId,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, { useEffect, useState } from 'react'
@@ -100,7 +100,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onSetSelectedWallet: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
+      dispatch(setSelectedCryptoWalletId(walletID) as any),
   }
 }
 

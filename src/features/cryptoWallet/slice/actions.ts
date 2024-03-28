@@ -12,7 +12,11 @@ import {
 import { createAppAsyncThunk } from 'reduxStore/types'
 
 import { WalletManager } from '../utils'
-import { removeUserWallets, saveUserWallets, setSelectedWallet } from './'
+import {
+  clearCryptoWallets,
+  saveCryptoWallets,
+  setSelectedCryptoWalletId,
+} from './'
 
 export const createNewWallet = createAppAsyncThunk(
   'wallets/createNewWallet',
@@ -25,8 +29,8 @@ export const createNewWallet = createAppAsyncThunk(
         await WalletManager.createCryptoWallet(data.phrase, data.name)
 
       if (wallets) {
-        dispatch(saveUserWallets(wallets))
-        dispatch(setSelectedWallet(selectedWallet._id))
+        dispatch(saveCryptoWallets(wallets))
+        dispatch(setSelectedCryptoWalletId(selectedWallet._id))
 
         // save to the secure storage..
         await Promise.all([
@@ -80,7 +84,7 @@ export const importWallet = createAppAsyncThunk(
 
       const walletId = saved?.id
 
-      dispatch(setSelectedWallet(walletId))
+      dispatch(setSelectedCryptoWalletId(walletId))
       dispatch(restoreCryptoWallets({ clearWallets: false }))
     } catch (error) {
       return rejectWithValue('Could not import wallet')
@@ -123,7 +127,7 @@ export const addWatchedWallet = createAppAsyncThunk(
       }
 
       dispatch(restoreCryptoWallets({ clearWallets: false }))
-      dispatch(setSelectedWallet(savedWallet.id))
+      dispatch(setSelectedCryptoWalletId(savedWallet.id))
     } catch (error) {
       return rejectWithValue('Could not add watched wallet')
     }
@@ -145,11 +149,11 @@ export const deleteWallet = createAppAsyncThunk(
       // update redux store
       const updatedWalletsList = { ...getAllWallets(getState()) }
       delete updatedWalletsList[walletId]
-      dispatch(saveUserWallets(updatedWalletsList))
+      dispatch(saveCryptoWallets(updatedWalletsList))
 
       if (currentlySelectedWallet === walletId) {
         const nextWalletId = Object.keys(updatedWalletsList)[0]
-        dispatch(setSelectedWallet(nextWalletId))
+        dispatch(setSelectedCryptoWalletId(nextWalletId))
       }
 
       dispatch(restoreCryptoWallets({ clearWallets: false }))
@@ -196,13 +200,13 @@ export const restoreCryptoWallets = createAppAsyncThunk(
     const currentlySelectedWalletId = getSelectedWalletId(getState())
 
     if (clearWallets) {
-      dispatch(removeUserWallets())
+      dispatch(clearCryptoWallets())
     }
 
     const { selectedWalletId, wallets } =
       await WalletManager.restoreCryptoWallets(currentlySelectedWalletId)
 
-    dispatch(saveUserWallets(wallets))
-    dispatch(setSelectedWallet(selectedWalletId))
+    dispatch(saveCryptoWallets(wallets))
+    dispatch(setSelectedCryptoWalletId(selectedWalletId))
   }
 )

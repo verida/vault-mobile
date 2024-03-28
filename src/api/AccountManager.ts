@@ -24,9 +24,9 @@ import {
   setSelectedAccount,
 } from 'features/identities'
 import {
-  removeUserWallets,
-  saveUserWallets,
-  setSelectedWallet,
+  clearCryptoWallets,
+  saveCryptoWallets,
+  setSelectedCryptoWalletId,
   cryptoWalletApi,
   getUniqueWalletAddresses,
   getWallets,
@@ -147,8 +147,8 @@ class AccountManager extends EventEmitter {
           await this.connect(false, network)
         }
       } else {
-        store.dispatch(saveUserWallets(wallets))
-        store.dispatch(setSelectedWallet(selectedWalletId!))
+        store.dispatch(saveCryptoWallets(wallets))
+        store.dispatch(setSelectedCryptoWalletId(selectedWalletId!))
       }
 
       const state = store.getState()
@@ -321,7 +321,7 @@ class AccountManager extends EventEmitter {
 
   public async setCryptoWallet() {
     try {
-      store.dispatch(removeUserWallets())
+      store.dispatch(clearCryptoWallets())
       const userHDWalletMnemonic = WalletManager.generateMnemonic()
 
       // save mnemonic to verida store
@@ -357,8 +357,8 @@ class AccountManager extends EventEmitter {
       }
 
       // Update redux wallet states
-      store.dispatch(saveUserWallets(walletData))
-      store.dispatch(setSelectedWallet(walletID))
+      store.dispatch(saveCryptoWallets(walletData))
+      store.dispatch(setSelectedCryptoWalletId(walletID))
 
       // save wallet state to secure storage
       await Promise.all([
@@ -529,7 +529,7 @@ class AccountManager extends EventEmitter {
     try {
       await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
-      await store.dispatch(removeUserWallets())
+      store.dispatch(clearCryptoWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
         delete this.accounts[did]

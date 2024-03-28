@@ -8,9 +8,9 @@ import {
   getSelectedWalletId,
   getWalletCount,
   getWalletList,
-  getWalletProcessingState,
   importWallet,
-  setSelectedWallet,
+  isCryptoWalletsProcessing,
+  setSelectedCryptoWalletId,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
@@ -246,14 +246,14 @@ const mapStateToProps = (state: any) => {
     wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
-    loading: getWalletProcessingState(state),
+    loading: isCryptoWalletsProcessing(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onSetSelectedWalletId: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
+      dispatch(setSelectedCryptoWalletId(walletID) as any),
     onCreateWallet: (args: unknown) =>
       dispatch(createNewWallet(args as any) as any),
     onImportWallet: (args: any) => dispatch(importWallet(args) as any),
