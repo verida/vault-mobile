@@ -11,7 +11,7 @@ import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('RemoveIdentityScreen')
+const logger = Logger.create('RemoveIdentityScreen')
 
 const title = 'Do you want to log out?'
 const info = `Logging out will remove this Identity from your wallet, but you can always add it back by importing your recovery phrase. \n\nVerida has no access to your data and cannnot recover your Identity. \n\nMake sure to backup your recovery phrase or you won't be able to import and recover your Identity.`

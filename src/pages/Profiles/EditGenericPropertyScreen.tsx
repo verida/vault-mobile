@@ -26,7 +26,7 @@ import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
 import InputStyles from '../../styles/inputs'
 
-const logger = new Logger('Pages/Profiles/EditGenericProperty')
+const logger = Logger.create('Pages/Profiles/EditGenericProperty')
 
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140

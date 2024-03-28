@@ -6,6 +6,8 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
+import { Typography } from '~/components'
+
 import { Theme } from 'styles/types'
 
 import { TokensListItem } from './TokensList.Item'
@@ -24,6 +26,7 @@ type TokensListProps = {
     aggregateWalletBannerBalance: AggregateWalletBannerBalance
   ) => void
   readonly refreshing?: boolean
+  readonly error?: Error
 }
 
 export const TokensList: React.FC<TokensListProps> = (props) => {
@@ -32,6 +35,7 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
     onPressItem,
     onPullToRefresh = defaultOnPullToRefresh,
     refreshing = false,
+    error,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
@@ -47,6 +51,8 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       [onPressItem]
     )
 
+  const hasData = aggregateWalletBannerBalances.length > 0
+
   return (
     <FlatList<AggregateWalletBannerBalance>
       data={aggregateWalletBannerBalances}
@@ -54,14 +60,30 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       keyExtractor={keyExtractor}
       onRefresh={onPullToRefresh}
       refreshing={refreshing}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={
+        hasData ? styles.contentContainer : styles.emptyContentContainer
+      }
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ListEmptyComponent={() => (
+        <View style={styles.emptyMessageContainer}>
+          <Typography variant='h5SemiBold'>
+            {error
+              ? 'Something went wrong!\nPull down to refresh'
+              : refreshing
+                ? 'Refreshing the list of coins...'
+                : "You don't have any coins yet"}
+          </Typography>
+        </View>
+      )}
     />
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    emptyContentContainer: {
+      flex: 1,
+    },
     contentContainer: {
       borderTopWidth: 1,
       borderTopColor: theme.color.lightGrey,
@@ -69,7 +91,12 @@ const createStyles = (theme: Theme) =>
       borderBottomColor: theme.color.lightGrey,
     },
     separator: {
-      height: 1,
-      backgroundColor: theme.color.lightGrey,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.color.lightGrey,
+    },
+    emptyMessageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })

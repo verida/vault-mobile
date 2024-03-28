@@ -16,7 +16,7 @@ import {
   VERIDA_ONE_PROFILE_SCHEMA_URL,
 } from '../constants'
 
-const logger = new Logger('VeridaOne')
+const logger = Logger.create('VeridaOne')
 
 const emptyVeridaOneProfile: VeridaOneProfile = {
   _id: 'public',

@@ -7,7 +7,7 @@ import { initializeMMKVFlipper } from 'react-native-mmkv-flipper-plugin'
 
 import { reduxStorage } from 'reduxStore/utils/mmkvPersistStorage'
 
-const logger = new Logger('Initialisation')
+const logger = Logger.create('Initialisation')
 
 /**
  * Global initialisation of the application
@@ -78,6 +78,7 @@ function printConfig() {
   )
   logger.debug(` `)
   logger.debug(`Verida Wallet Provider: ${config.walletProvider.url}`)
+  logger.debug(`Verida Wallet Provider V2: ${config.walletProvider.v2Url}`)
   logger.debug(` `)
   logger.debug(
     `Polygon Mainnet RPC URL: ${

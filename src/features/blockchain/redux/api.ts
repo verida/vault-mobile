@@ -29,10 +29,11 @@ export const blockchainApi = createApi({
       transformResponse: (response: {
         data: Record<'mainnet' | 'testnet', Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
-        const mainnets = response.data.mainnet
-        const testnets = response.data.testnet
+        // TODO: Validate with Zod
 
-        const networkEntries = { ...mainnets, ...testnets }
+        const networkEntries = response?.data
+          ? { ...response.data.mainnet, ...response.data.testnet }
+          : {}
 
         const allNetworks: Record<string, BlockchainNetwork> = {}
         for (const chainId in networkEntries) {

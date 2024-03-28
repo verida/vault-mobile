@@ -4,7 +4,7 @@ import { Logger } from 'features/telemetry'
 import AccountManager from 'api/AccountManager'
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
-const logger = new Logger('Motifications')
+const logger = Logger.create('Motifications')
 
 // TODO: This whole file could be moved to hooks
 

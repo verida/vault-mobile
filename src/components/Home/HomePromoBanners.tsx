@@ -25,7 +25,7 @@ import { Icon } from 'components/Icon'
 import { WHITE_COLOR_OPACITY } from 'constants/color'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('HomePromoBanners')
+const logger = Logger.create('HomePromoBanners')
 
 const AnimatedBannersView = Animated.createAnimatedComponent(PagerView)
 

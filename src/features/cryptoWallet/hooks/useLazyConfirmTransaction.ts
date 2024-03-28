@@ -12,9 +12,9 @@ import {
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
 import { getRpcUrlOrThrow } from 'features/caip'
-import { Stateful } from 'features/polygonid/@types'
 import { Logger } from 'features/telemetry'
 import * as React from 'react'
+import { Stateful } from 'types'
 
 import {
   AggregateWalletBannerBalance,
@@ -29,7 +29,7 @@ import {
 } from '../utils'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
-const logger = new Logger('useLazyConfirmTransaction')
+const logger = Logger.create('useLazyConfirmTransaction')
 
 type ConfirmTransactionCallbackParams<T extends AggregateWalletBannerBalance> =
   {
@@ -200,6 +200,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             minifiedBlockchainAccount,
             rpc,
             decimals,
+            chainId: chainId.toString(),
           })
 
         default:

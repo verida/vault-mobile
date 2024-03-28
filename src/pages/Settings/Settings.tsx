@@ -6,6 +6,7 @@ import { useThemeAwareStyle } from 'hooks'
 import { Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
+import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -40,6 +41,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
+
+  const [walletAppVersion, setWalletAppVersion] = React.useState(
+    `${APP_NAME} ${APP_VERSION_FORMATTED}`
+  )
 
   const handleBack = useCallback(() => {
     navigation.goBack()
@@ -135,16 +140,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       label: 'Polygon ID',
       items: [
         {
-          label: 'Circuits',
+          label: 'Status',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('PolygonIdCircuitsSettings'),
+          onPress: () => navigation.navigate('PolygonIdStatus'),
         },
       ],
     },
   ]
 
-  const walletAppVersion = `${APP_NAME} ${APP_VERSION_FORMATTED}`
+  useEffect(() => {
+    CodePush.getUpdateMetadata().then((metadata) => {
+      metadata &&
+        setWalletAppVersion(
+          `${APP_NAME} ${APP_VERSION_FORMATTED}\nCodePush ${metadata.label}`
+        )
+    })
+  }, [])
 
   return (
     <ScreenWrapper

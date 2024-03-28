@@ -15,6 +15,7 @@ export const sendErc20Eip155 = async ({
   minifiedBlockchainAccount,
   rpc,
   decimals,
+  chainId,
 }: {
   readonly erc20Address: string
   readonly decimals: number
@@ -23,6 +24,7 @@ export const sendErc20Eip155 = async ({
   readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
   readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
   readonly rpc: string
+  chainId: string
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedBlockchainAccount
 
@@ -77,6 +79,7 @@ export const sendErc20Eip155 = async ({
         to: erc20Address,
       },
     ],
+    chainId,
   })
 
   if (typeof maybeTransactionHash !== 'string' || !maybeTransactionHash.length)

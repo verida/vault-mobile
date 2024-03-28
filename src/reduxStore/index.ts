@@ -7,7 +7,11 @@ import {
   blockchainApi,
   blockchainSlice,
 } from 'features/blockchain'
-import { cryptoWalletApi, cryptoWalletSlice } from 'features/cryptoWallet'
+import {
+  cryptoWalletApi,
+  cryptoWalletLegacyApi,
+  cryptoWalletSlice,
+} from 'features/cryptoWallet'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
 import { profilesSlice } from 'features/profiles'
@@ -50,6 +54,7 @@ const persistConfig = {
     // But that's really a nice performance enhancement ATM considering some APIs take an average of 3-10 seconds to load.
     blockchainApi.reducerPath,
     cryptoWalletApi.reducerPath,
+    cryptoWalletLegacyApi.reducerPath,
     assetsApi.reducerPath,
   ],
 }
@@ -67,6 +72,7 @@ export const rootReducer = combineReducers({
   // API reducers
   [blockchainApi.reducerPath]: blockchainApi.reducer,
   [cryptoWalletApi.reducerPath]: cryptoWalletApi.reducer,
+  [cryptoWalletLegacyApi.reducerPath]: cryptoWalletLegacyApi.reducer,
   [assetsApi.reducerPath]: assetsApi.reducer,
 })
 
@@ -93,6 +99,7 @@ export function configureAppStore() {
         .concat(middleware)
         .concat(blockchainApi.middleware)
         .concat(cryptoWalletApi.middleware)
+        .concat(cryptoWalletLegacyApi.middleware)
         .concat(assetsApi.middleware),
     devTools: __DEV__,
     enhancers: [batchedSubscribe(debounceNotify) as any],

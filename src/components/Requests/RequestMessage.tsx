@@ -1,8 +1,9 @@
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { StyleSheet, Text, View, ViewProps } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { Typography } from '~/components'
+import { Theme } from '~/styles/types'
 
 export type RequestMessageProps = {
   children: React.ReactNode
@@ -18,7 +19,7 @@ export const RequestMessage: React.FunctionComponent<RequestMessageProps> = (
   return (
     <View {...viewProps}>
       <View style={styles.message}>
-        <Text>{`"${String(children)}"`}</Text>
+        <Typography>{`"${String(children)}"`}</Typography>
       </View>
     </View>
   )

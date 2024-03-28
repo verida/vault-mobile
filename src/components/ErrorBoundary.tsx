@@ -12,7 +12,7 @@ import Button from './Button'
 import { Caption } from './Typography/Caption'
 import { Label } from './Typography/Label'
 
-const logger = new Logger('Components/ErrorBoundary')
+const logger = Logger.create('Components/ErrorBoundary')
 
 export interface ErrorBoundaryProps extends ErrorBoundaryPropsWithFallback {
   children?: ReactNode

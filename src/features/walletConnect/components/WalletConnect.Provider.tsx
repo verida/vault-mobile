@@ -40,7 +40,7 @@ import {
 } from '../hooks'
 import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
 
-const logger = new Logger('WalletConnect')
+const logger = Logger.create('WalletConnect')
 
 const DEFAULT_ACTIVE_SESSIONS: ActiveSessions = Object.freeze({})
 
