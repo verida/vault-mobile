@@ -4,10 +4,8 @@ import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   getSelectedWalletId,
   getWalletList,
-  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-  setSelectedCryptoWalletId,
+  selectCryptoWallet,
 } from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -28,7 +26,7 @@ interface WalletSelectorModalProps {
   selectedWalletId?: any
   wallets?: BlockchainWalletWithAccounts[]
   chains?: any
-  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
+  onSelectedWallet: (walletId: string) => Promise<void>
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
@@ -38,7 +36,7 @@ const WalletSelectorModal = ({
   wallets,
   selectedWalletId,
   onCloseModal,
-  onSetSelectedWallet,
+  onSelectedWallet,
 }: WalletSelectorModalProps) => {
   const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
     []
@@ -52,8 +50,7 @@ const WalletSelectorModal = ({
   }, [wallets])
 
   const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
-    onSetSelectedWallet(item._id)
-    SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, item._id)
+    onSelectedWallet(item._id)
     onCloseModal()
   }
 
@@ -99,8 +96,8 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onSetSelectedWallet: (walletID: string) =>
-      dispatch(setSelectedCryptoWalletId(walletID) as any),
+    onSelectedWallet: (walletId: string) =>
+      dispatch(selectCryptoWallet(walletId) as any),
   }
 }
 

@@ -190,6 +190,8 @@ export const {
   clearCryptoWalletsState,
 } = cryptoWalletSlice.actions
 
+// There are a lot of thunks because there's the need to manage the persisted data in the secure storage, which is an async operation.
+
 export const createCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/createCryptoWallet',
   async (
@@ -360,6 +362,14 @@ export const renameCryptoWallet = createAppAsyncThunk(
     } catch (error) {
       return rejectWithValue('Could not rename wallet')
     }
+  }
+)
+
+export const selectCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/selectCryptoWallet',
+  async (id: string, { dispatch }) => {
+    dispatch(setSelectedCryptoWalletId(id))
+    await WalletManager.selectCryptoWallet(id)
   }
 )
 

@@ -23,8 +23,8 @@ import {
   getWallets,
   restoreCryptoWallets,
   saveCryptoWallets,
+  selectCryptoWallet,
   SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-  setSelectedCryptoWalletId,
   WalletManager,
 } from '~/features/cryptoWallet'
 import {
@@ -150,7 +150,7 @@ class AccountManager extends EventEmitter {
         }
       } else {
         store.dispatch(saveCryptoWallets(wallets))
-        store.dispatch(setSelectedCryptoWalletId(selectedWalletId!))
+        store.dispatch(selectCryptoWallet(selectedWalletId!))
       }
 
       const state = store.getState()
@@ -360,7 +360,7 @@ class AccountManager extends EventEmitter {
 
       // Update redux wallet states
       store.dispatch(saveCryptoWallets(walletData))
-      store.dispatch(setSelectedCryptoWalletId(walletID))
+      store.dispatch(selectCryptoWallet(walletID))
 
       // save wallet state to secure storage
       await Promise.all([
@@ -368,7 +368,6 @@ class AccountManager extends EventEmitter {
           CRYPTO_WALLETS_STORAGE_KEY,
           JSON.stringify(walletData)
         ),
-        SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletID),
       ])
     } catch (error) {
       logger.error(error)

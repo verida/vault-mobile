@@ -243,12 +243,19 @@ export class WalletManager {
 
       const wallets = await WalletManager.getBlockchainAccounts(storedWallets)
 
-      const previouslySelectedWallet = previouslySelectedWalletId
-        ? wallets[previouslySelectedWalletId!]
+      const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
+        SELECTED_CRYPTO_WALLET_STORAGE_KEY
+      )
+
+      const selectedId =
+        previouslySelectedWalletId || cachedSelectedCryptoWalletId
+
+      const previouslySelectedWallet = selectedId
+        ? wallets[selectedId]
         : undefined
 
       const selectedWalletId = previouslySelectedWallet
-        ? previouslySelectedWalletId
+        ? previouslySelectedWallet._id
         : storedWallets[0]._id
 
       await Promise.all([
@@ -278,5 +285,9 @@ export class WalletManager {
       SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
       SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
     ])
+  }
+
+  public static async selectCryptoWallet(walletId: string) {
+    await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
   }
 }

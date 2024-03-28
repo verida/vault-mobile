@@ -10,10 +10,8 @@ import {
   getWalletList,
   importCryptoWallet,
   isCryptoWalletsProcessing,
-  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-  setSelectedCryptoWalletId,
+  selectCryptoWallet,
 } from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -38,11 +36,11 @@ type Props = {
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
   loading: boolean
-  onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
+  onSelectWallet: (walletId: string) => Promise<void>
   onCreateWallet: () => Promise<void>
   onImportWallet: () => Promise<void>
   onAddWatchedWallet: () => Promise<void>
-  onDeleteWallet: (selectedWalletID: string) => Promise<void>
+  onDeleteWallet: (walletId: string) => Promise<void>
 }
 
 const ManageWallets = (props: Props) => {
@@ -52,7 +50,7 @@ const ManageWallets = (props: Props) => {
     navigation,
     selectedWalletId,
     loading,
-    onSetSelectedWalletId,
+    onSelectWallet,
     onCreateWallet,
     onImportWallet,
     onAddWatchedWallet,
@@ -177,12 +175,7 @@ const ManageWallets = (props: Props) => {
         if (buttonIndex === 0 && !item.viewOnly) {
           navigation.navigate('SingleWallet', { item })
         } else if (buttonIndex === 1) {
-          const selectedWalletID = item._id
-          onSetSelectedWalletId(selectedWalletID)
-          SecureStore.setItemAsync(
-            SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-            selectedWalletID
-          )
+          onSelectWallet(item._id)
         } else if (buttonIndex === 2) {
           if (walletCount <= 1) {
             showDeleteAlert()
@@ -252,8 +245,8 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onSetSelectedWalletId: (walletID: string) =>
-      dispatch(setSelectedCryptoWalletId(walletID) as any),
+    onSelectWallet: (walletId: string) =>
+      dispatch(selectCryptoWallet(walletId) as any),
     onCreateWallet: (args: unknown) =>
       dispatch(createCryptoWallet(args as any) as any),
     onImportWallet: (args: any) => dispatch(importCryptoWallet(args) as any),
