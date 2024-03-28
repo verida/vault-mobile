@@ -5,9 +5,9 @@ import AccountManager from '~/api/AccountManager'
 import { logout } from '~/features/auth'
 import { BlockchainWalletWithAccounts } from '~/features/blockchain'
 import { Logger } from '~/features/telemetry'
-import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
+import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
 import { WalletManager } from '../utils'
 import { getSelectedWalletId } from './selectors'
 
