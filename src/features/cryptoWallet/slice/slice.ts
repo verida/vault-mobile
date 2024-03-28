@@ -218,11 +218,12 @@ export const cryptoWalletSlice = createSlice({
   },
 })
 
-// TODO: Remove the export when the thunk are providing similar functions
-export const { saveCryptoWallets } = cryptoWalletSlice.actions
-
-const { setSelectedCryptoWalletId, clearCryptoWalletsState } =
-  cryptoWalletSlice.actions
+// Not exposing the reducer because the need to keep the Vault and local storage in sync. See other comment below.
+const {
+  saveCryptoWallets,
+  setSelectedCryptoWalletId,
+  clearCryptoWalletsState,
+} = cryptoWalletSlice.actions
 
 // There are a lot of thunks because there's the need to manage the persisted data in both the Vault and the local secure storage, which are async operations
 
@@ -245,7 +246,7 @@ export const clearCryptoWallets = createAppAsyncThunk(
 export const createCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/createCryptoWallet',
   async (
-    data: { phrase: string; name: string },
+    data: { phrase?: string; name?: string },
     { rejectWithValue, dispatch }
   ) => {
     try {

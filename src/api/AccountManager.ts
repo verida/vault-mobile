@@ -11,21 +11,9 @@ import {
   SELECTED_ACCOUNT_DID_STORAGE_KEY,
 } from '~/constants/storageKeys'
 import {
-  blockchainApi,
-  BlockchainWallet,
-  getBlockchainNetworks,
-} from '~/features/blockchain'
-import {
   clearCryptoWallets,
-  CRYPTO_WALLETS_STORAGE_KEY,
-  cryptoWalletApi,
-  getUniqueWalletAddresses,
-  getWallets,
+  createCryptoWallet,
   restoreCryptoWallets,
-  saveCryptoWallets,
-  selectCryptoWallet,
-  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-  WalletManager,
 } from '~/features/cryptoWallet'
 import {
   Account,
@@ -46,7 +34,6 @@ import {
 } from '~/features/settings'
 import { Logger } from '~/features/telemetry'
 import { getDidClientConfigForNetwork } from '~/features/verida'
-import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 import { getCountryCode } from '~/helpers/countries'
 import * as SecureStore from '~/helpers/VeridaSecureStore'
 import { store } from '~/reduxStore'
@@ -115,52 +102,8 @@ class AccountManager extends EventEmitter {
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
-
-          // Load or restore user wallets from the mnemonic
-          this.initCryptoWallets()
         }
       }
-    } catch (error) {
-      logger.error(error)
-    }
-  }
-
-  private async initCryptoWallets() {
-    try {
-      const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
-        store.dispatch(
-          blockchainApi.endpoints.getBlockchainNetworks.initiate(
-            {},
-            {
-              forceRefetch: false,
-            }
-          )
-        ),
-      ])
-
-      const wallets = JSON.parse(walletsRaw || '{}')
-
-      if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
-        const selectedAccount = this.getSelectedAccount()
-        if (selectedAccount) {
-          const network = getNetworkFromDID(selectedAccount.did)
-          await this.connect(false, network)
-        }
-      } else {
-        store.dispatch(saveCryptoWallets(wallets))
-        store.dispatch(selectCryptoWallet(selectedWalletId!))
-      }
-
-      const state = store.getState()
-      const storedWallet = getWallets(state)
-      const addresses = getUniqueWalletAddresses(storedWallet)
-      store.dispatch(
-        cryptoWalletApi.endpoints.getBalances.initiate(addresses, {
-          forceRefetch: false,
-        })
-      )
     } catch (error) {
       logger.error(error)
     }
@@ -321,60 +264,6 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async setCryptoWallet() {
-    try {
-      store.dispatch(clearCryptoWallets())
-      const userHDWalletMnemonic = WalletManager.generateMnemonic()
-
-      // save mnemonic to verida store
-      const walletDb = await this.context?.openDatastore(
-        VAULT_SCHEMA_WALLETS_0_2_0
-      )
-
-      const wallet = {
-        mnemonic: userHDWalletMnemonic,
-        walletType: 'multi',
-        label: 'Multi-chain Wallet',
-        multiChain: true, // Set this's a multi-chain wallet
-      }
-
-      const saved: any = await walletDb?.save(wallet, undefined)
-
-      const walletID = saved?.id as string
-
-      // generate wallets and save to redux state
-      const blockchainNetworks = getBlockchainNetworks(store.getState())
-
-      const userGeneratedWallets = WalletManager.generateAccountsForWallet(
-        { ...wallet } as BlockchainWallet,
-        blockchainNetworks
-      )
-
-      const walletData = {
-        [walletID]: {
-          ...wallet,
-          _id: walletID, // wallet saved id
-          accounts: userGeneratedWallets,
-        },
-      }
-
-      // Update redux wallet states
-      store.dispatch(saveCryptoWallets(walletData))
-      store.dispatch(selectCryptoWallet(walletID))
-
-      // save wallet state to secure storage
-      await Promise.all([
-        SecureStore.setItemAsync(
-          CRYPTO_WALLETS_STORAGE_KEY,
-          JSON.stringify(walletData)
-        ),
-      ])
-    } catch (error) {
-      logger.error(error)
-      throw error
-    }
-  }
-
   public async createAccount(
     userData: PublicProfile,
     country: string,
@@ -497,7 +386,7 @@ class AccountManager extends EventEmitter {
 
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
-      this.setCryptoWallet()
+      store.dispatch(createCryptoWallet({}))
       this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')

@@ -22,7 +22,7 @@ import {
   SELECTED_CRYPTO_WALLET_STORAGE_KEY,
 } from '../constants'
 
-const logger = Logger.create('WalletManager')
+const logger = Logger.create('CryptoWallets')
 
 const bip39 = require('bip39')
 
@@ -44,7 +44,7 @@ export class WalletManager {
     data: {
       phrase?: string
       label?: string
-    }
+    } // TODO: Type as a subset of the wallet model
     // TODO: Add optional blockchain namespace
   ): Promise<Result> {
     const mnemonic = data.phrase
@@ -81,7 +81,7 @@ export class WalletManager {
       phrase: string
       walletType: string
       privateKey: string
-    }
+    } // TODO: Type as a subset of the wallet model
   ): Promise<Result> {
     const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
     const privateKey =
@@ -116,7 +116,7 @@ export class WalletManager {
       label: string
       blockchain: string
       publicAddress: string
-    }
+    } // TODO: Type as a subset of the wallet model
   ): Promise<Result> {
     // TODO: Add a type
     const wallet = {
@@ -155,7 +155,7 @@ export class WalletManager {
   public static async renameCryptoWallet(
     walletsDatastore: IDatastore,
     walletId: string,
-    data: { name: string }
+    data: { name: string } // TODO: Type as a subset of the wallet model
   ): Promise<Result> {
     const foundRecord: any = await walletsDatastore.get(walletId, {})
     if (!foundRecord) {
