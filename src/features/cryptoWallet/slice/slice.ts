@@ -3,20 +3,17 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import AccountManager from '~/api/AccountManager'
 import { logout } from '~/features/auth'
-import {
-  BlockchainWallet,
-  BlockchainWalletWithAccounts,
-} from '~/features/blockchain'
+import { BlockchainWalletWithAccounts } from '~/features/blockchain'
 import { Logger } from '~/features/telemetry'
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import { WalletManager } from '../utils'
-import { getAllWallets, getSelectedWalletId } from './selectors'
+import { getSelectedWalletId } from './selectors'
 
 const logger = Logger.create('CryptoWallets')
 
-export interface CryptoWalletsState {
+export type CryptoWalletsState = {
   wallets: Record<string, BlockchainWalletWithAccounts>
   selectedWalletId: string | null
   status: {
@@ -159,6 +156,46 @@ export const cryptoWalletSlice = createSlice({
         }
       })
 
+      // Select a wallets
+      .addCase(selectCryptoWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(selectCryptoWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(selectCryptoWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Clear the state the wallets
+      .addCase(clearCryptoWallets.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(clearCryptoWallets.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(clearCryptoWallets.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
       // Restore the wallets
       .addCase(restoreCryptoWallets.pending, (state) => {
         state.status = {
@@ -182,13 +219,28 @@ export const cryptoWalletSlice = createSlice({
 })
 
 // TODO: Remove the export when the thunk are providing similar functions
-export const {
-  saveCryptoWallets,
-  setSelectedCryptoWalletId,
-  clearCryptoWalletsState,
-} = cryptoWalletSlice.actions
+export const { saveCryptoWallets } = cryptoWalletSlice.actions
 
-// There are a lot of thunks because there's the need to manage the persisted data in the secure storage, which is an async operation.
+const { setSelectedCryptoWalletId, clearCryptoWalletsState } =
+  cryptoWalletSlice.actions
+
+// There are a lot of thunks because there's the need to manage the persisted data in both the Vault and the local secure storage, which are async operations
+
+export const selectCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/selectCryptoWallet',
+  async (id: string, { dispatch }) => {
+    dispatch(setSelectedCryptoWalletId(id))
+    await WalletManager.selectCryptoWallet(id)
+  }
+)
+
+export const clearCryptoWallets = createAppAsyncThunk(
+  'cryptoWallets/clearCryptoWallets',
+  async (_undefined: undefined, { dispatch }) => {
+    dispatch(clearCryptoWalletsState())
+    await WalletManager.clearCachedCryptoWallets()
+  }
+)
 
 export const createCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/createCryptoWallet',
@@ -197,8 +249,14 @@ export const createCryptoWallet = createAppAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
+      const walletsDatastore = await getWalletsDatastore()
+
       const { selectedWalletId, wallets } =
-        await WalletManager.createCryptoWallet(data.phrase, data.name)
+        await WalletManager.createCryptoWallet(walletsDatastore, {
+          phrase: data.phrase,
+          label: data.name,
+        })
+
       dispatch(saveCryptoWallets(wallets))
       dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
@@ -223,31 +281,18 @@ export const importCryptoWallet = createAppAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
-      const privateKey =
-        data.inputSwitch === 'privateKey' ? data.privateKey : null
-      const walletType = data.walletType
+      const walletsDatastore = await getWalletsDatastore()
 
-      // save mnemonic to verida store
-      const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
-          VAULT_SCHEMA_WALLETS_0_2_0
-        )
+      const { selectedWalletId, wallets } =
+        await WalletManager.importCryptoWallet(walletsDatastore, data)
 
-      const wallet: Partial<BlockchainWallet> = {
-        walletType,
-        label: data.name,
-      }
-      if (mnemonic) wallet.mnemonic = mnemonic
-      if (privateKey) wallet.privateKey = privateKey
-      const saved = (await walletDb?.save(wallet, {})) as { id: string } // FIXME: Temp, this is not optimal, should be able specified by a generic type
-
-      const walletId = saved?.id
-
-      dispatch(setSelectedCryptoWalletId(walletId))
-      dispatch(restoreCryptoWallets({ clearWallets: false }))
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
-      return rejectWithValue('Could not import wallet')
+      logger.error(
+        new Error('Failed to import crypto wallet', { cause: error })
+      )
+      return rejectWithValue('Failed to import crypto wallet')
     }
   }
 )
@@ -263,33 +308,18 @@ export const addWatchedCryptoWallet = createAppAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const walletsDatastore =
-        await AccountManager.getInstance().context?.openDatastore(
-          VAULT_SCHEMA_WALLETS_0_2_0
-        )
+      const walletsDatastore = await getWalletsDatastore()
 
-      if (!walletsDatastore) {
-        throw new Error('Cannot get wallets datastore')
-      }
+      const { selectedWalletId, wallets } =
+        await WalletManager.addWatchedCryptoWallet(walletsDatastore, data)
 
-      const wallet = {
-        label: data.label,
-        walletType: data.blockchain,
-        address: data.publicAddress,
-      }
-
-      const savedWallet = (await walletsDatastore.save(wallet, {})) as {
-        id: string
-      } // FIXME: Temp, this is not optimal, should be able specified by a generic type
-
-      if (!savedWallet) {
-        throw new Error(walletsDatastore.errors)
-      }
-
-      dispatch(restoreCryptoWallets({ clearWallets: false }))
-      dispatch(setSelectedCryptoWalletId(savedWallet.id))
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
-      return rejectWithValue('Could not add watched wallet')
+      logger.error(
+        new Error('Failed to add watched crypto wallet', { cause: error })
+      )
+      return rejectWithValue('Failed to add watched crypto wallet')
     }
   }
 )
@@ -298,28 +328,24 @@ export const deleteCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/deleteCryptoWallet',
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
     try {
+      const walletsDatastore = await getWalletsDatastore()
+
       const currentlySelectedWallet = getSelectedWalletId(getState())
 
-      const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
-          VAULT_SCHEMA_WALLETS_0_2_0
+      const { selectedWalletId, wallets } =
+        await WalletManager.deleteCryptoWallet(
+          walletsDatastore,
+          walletId,
+          currentlySelectedWallet
         )
-      // save to verida store
-      await walletDb?.delete(walletId)
 
-      // update redux store
-      const updatedWalletsList = { ...getAllWallets(getState()) }
-      delete updatedWalletsList[walletId]
-      dispatch(saveCryptoWallets(updatedWalletsList))
-
-      if (currentlySelectedWallet === walletId) {
-        const nextWalletId = Object.keys(updatedWalletsList)[0]
-        dispatch(setSelectedCryptoWalletId(nextWalletId))
-      }
-
-      dispatch(restoreCryptoWallets({ clearWallets: false }))
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
-      return rejectWithValue('Could not delete wallet')
+      logger.error(
+        new Error('Failed to delete crypto wallet', { cause: error })
+      )
+      return rejectWithValue('Failed to delete crypto wallet')
     }
   }
 )
@@ -330,60 +356,51 @@ export const renameCryptoWallet = createAppAsyncThunk(
     { walletId, data }: { walletId: string; data: { name: string } },
     { rejectWithValue, dispatch }
   ) => {
+    // TODO: Change this function to edit instead of just rename, but still control what properties are being edited.
+
     try {
-      const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
-          VAULT_SCHEMA_WALLETS_0_2_0
-        )
+      const walletsDatastore = await getWalletsDatastore()
 
-      const row = (await walletDb?.get(walletId, {})) as {
-        id: string
-        label: string
-      } // FIXME: Temp, this is not optimal, should be able specified by a generic type
+      const { selectedWalletId, wallets } =
+        await WalletManager.renameCryptoWallet(walletsDatastore, walletId, data)
 
-      row.label = data.name
-
-      await walletDb?.save(row, {})
-
-      dispatch(restoreCryptoWallets({ clearWallets: false }))
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
-      return rejectWithValue('Could not rename wallet')
+      logger.error(
+        new Error('Failed to rename crypto wallet', { cause: error })
+      )
+      return rejectWithValue('Failed to rename crypto wallet')
     }
-  }
-)
-
-export const selectCryptoWallet = createAppAsyncThunk(
-  'cryptoWallets/selectCryptoWallet',
-  async (id: string, { dispatch }) => {
-    dispatch(setSelectedCryptoWalletId(id))
-    await WalletManager.selectCryptoWallet(id)
-  }
-)
-
-export const clearCryptoWallets = createAppAsyncThunk(
-  'cryptoWallets/clearCryptoWallets',
-  async (_undefined: undefined, { dispatch }) => {
-    dispatch(clearCryptoWalletsState())
-    await WalletManager.clearCachedCryptoWallets()
   }
 )
 
 export const restoreCryptoWallets = createAppAsyncThunk(
   'cryptoWallets/restoreCryptoWallets',
-  async (
-    { clearWallets }: { clearWallets: boolean },
-    { getState, dispatch }
-  ) => {
+  async (_undefined: undefined, { getState, dispatch }) => {
+    const walletsDatastore = await getWalletsDatastore()
+
     const currentlySelectedWalletId = getSelectedWalletId(getState())
 
-    if (clearWallets) {
-      dispatch(clearCryptoWalletsState())
-    }
-
     const { selectedWalletId, wallets } =
-      await WalletManager.restoreCryptoWallets(currentlySelectedWalletId)
+      await WalletManager.restoreCryptoWallets(
+        walletsDatastore,
+        currentlySelectedWalletId
+      )
 
     dispatch(saveCryptoWallets(wallets))
     dispatch(setSelectedCryptoWalletId(selectedWalletId))
   }
 )
+
+async function getWalletsDatastore() {
+  // AccountManager is a singleton outside the React tree, switching identities are not properly handled, so need to reftech the current context
+  const walletsDatastore =
+    await AccountManager.getInstance().context?.openDatastore(
+      VAULT_SCHEMA_WALLETS_0_2_0
+    )
+  if (!walletsDatastore) {
+    throw new Error('Failed to open wallets datastore')
+  }
+  return walletsDatastore
+}

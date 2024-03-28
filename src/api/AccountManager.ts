@@ -182,7 +182,7 @@ class AccountManager extends EventEmitter {
     }
     this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
-    store.dispatch(restoreCryptoWallets({ clearWallets: true }))
+    store.dispatch(restoreCryptoWallets())
   }
 
   public static getInstance(): AccountManager {
