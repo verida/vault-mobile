@@ -116,7 +116,7 @@ export const cryptoWalletSlice = createSlice({
         }
       })
 
-      // Delete a dallet
+      // Delete a wallet
       .addCase(deleteCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
@@ -156,7 +156,7 @@ export const cryptoWalletSlice = createSlice({
         }
       })
 
-      // Select a wallets
+      // Select a wallet
       .addCase(selectCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
@@ -176,7 +176,7 @@ export const cryptoWalletSlice = createSlice({
         }
       })
 
-      // Clear the state the wallets
+      // Clear the state and local storage
       .addCase(clearCryptoWallets.pending, (state) => {
         state.status = {
           processsing: true,
@@ -218,14 +218,14 @@ export const cryptoWalletSlice = createSlice({
   },
 })
 
-// Not exposing the reducer because the need to keep the Vault and local storage in sync. See other comment below.
+// Not exposing the reducer externally because it's not as simple as updating the redux state. We also need to keep the local storage and Vault datastore in sync. So using the thunks below instead.
 const {
   saveCryptoWallets,
   setSelectedCryptoWalletId,
   clearCryptoWalletsState,
 } = cryptoWalletSlice.actions
 
-// There are a lot of thunks because there's the need to manage the persisted data in both the Vault and the local secure storage, which are async operations
+// There are a lot of thunks because we're dealing with asynchronous operations to keep the Vault datastore and the local storage in sync.
 
 export const selectCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/selectCryptoWallet',
