@@ -2,13 +2,13 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
-  addWatchedWallet,
-  createNewWallet,
-  deleteWallet,
+  addWatchedCryptoWallet,
+  createCryptoWallet,
+  deleteCryptoWallet,
   getSelectedWalletId,
   getWalletCount,
   getWalletList,
-  importWallet,
+  importCryptoWallet,
   isCryptoWalletsProcessing,
   setSelectedCryptoWalletId,
 } from 'features/cryptoWallet'
@@ -255,11 +255,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onSetSelectedWalletId: (walletID: string) =>
       dispatch(setSelectedCryptoWalletId(walletID) as any),
     onCreateWallet: (args: unknown) =>
-      dispatch(createNewWallet(args as any) as any),
-    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
-    onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
+      dispatch(createCryptoWallet(args as any) as any),
+    onImportWallet: (args: any) => dispatch(importCryptoWallet(args) as any),
+    onAddWatchedWallet: (args: any) =>
+      dispatch(addWatchedCryptoWallet(args) as any),
     onDeleteWallet: (walletId: string) =>
-      dispatch(deleteWallet(walletId) as any),
+      dispatch(deleteCryptoWallet(walletId) as any),
   }
 }
 

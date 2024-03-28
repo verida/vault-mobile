@@ -61,20 +61,20 @@ export const cryptoWalletSlice = createSlice({
       // Log out
       .addCase(logout, () => initialState)
 
-      // Create new wallet
-      .addCase(createNewWallet.pending, (state) => {
+      // Create a wallet
+      .addCase(createCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(createNewWallet.fulfilled, (state) => {
+      .addCase(createCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(createNewWallet.rejected, (state, action) => {
+      .addCase(createCryptoWallet.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
@@ -82,79 +82,99 @@ export const cryptoWalletSlice = createSlice({
       })
 
       // Import a wallet
-      .addCase(importWallet.pending, (state) => {
+      .addCase(importCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(importWallet.fulfilled, (state) => {
+      .addCase(importCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(importWallet.rejected, (state, action) => {
+      .addCase(importCryptoWallet.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
         }
       })
 
-      // Add watched wallet
-      .addCase(addWatchedWallet.pending, (state) => {
+      // Add a watched wallet
+      .addCase(addWatchedCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(addWatchedWallet.fulfilled, (state) => {
+      .addCase(addWatchedCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(addWatchedWallet.rejected, (state, action) => {
+      .addCase(addWatchedCryptoWallet.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
         }
       })
 
-      // Delete Wallet
-      .addCase(deleteWallet.pending, (state) => {
+      // Delete a dallet
+      .addCase(deleteCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(deleteWallet.fulfilled, (state) => {
+      .addCase(deleteCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(deleteWallet.rejected, (state, action) => {
+      .addCase(deleteCryptoWallet.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
         }
       })
 
-      // Rename Wallet
-      .addCase(renameWallet.pending, (state) => {
+      // Rename a wallet
+      .addCase(renameCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(renameWallet.fulfilled, (state) => {
+      .addCase(renameCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(renameWallet.rejected, (state, action) => {
+      .addCase(renameCryptoWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Restore the wallets
+      .addCase(restoreCryptoWallets.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(restoreCryptoWallets.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(restoreCryptoWallets.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
@@ -163,14 +183,15 @@ export const cryptoWalletSlice = createSlice({
   },
 })
 
+// TODO: Remove the export when the thunk are providing similar functions
 export const {
   saveCryptoWallets,
   setSelectedCryptoWalletId,
   clearCryptoWallets,
 } = cryptoWalletSlice.actions
 
-export const createNewWallet = createAppAsyncThunk(
-  'cryptoWallets/createNewWallet',
+export const createCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/createCryptoWallet',
   async (
     data: { phrase: string; name: string },
     { rejectWithValue, dispatch }
@@ -201,8 +222,8 @@ export const createNewWallet = createAppAsyncThunk(
   }
 )
 
-export const importWallet = createAppAsyncThunk(
-  'cryptoWallets/importWallet',
+export const importCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/importCryptoWallet',
   async (
     data: {
       name: string
@@ -243,8 +264,8 @@ export const importWallet = createAppAsyncThunk(
   }
 )
 
-export const addWatchedWallet = createAppAsyncThunk(
-  'cryptoWallets/addWatchedWallet',
+export const addWatchedCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/addWatchedCryptoWallet',
   async (
     data: {
       label: string
@@ -285,8 +306,8 @@ export const addWatchedWallet = createAppAsyncThunk(
   }
 )
 
-export const deleteWallet = createAppAsyncThunk(
-  'cryptoWallets/deleteWallet',
+export const deleteCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/deleteCryptoWallet',
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
     try {
       const currentlySelectedWallet = getSelectedWalletId(getState())
@@ -314,8 +335,8 @@ export const deleteWallet = createAppAsyncThunk(
   }
 )
 
-export const renameWallet = createAppAsyncThunk(
-  'cryptoWallets/renameWallet',
+export const renameCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/renameCryptoWallet',
   async (
     { walletId, data }: { walletId: string; data: { name: string } },
     { rejectWithValue, dispatch }
