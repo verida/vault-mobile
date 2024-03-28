@@ -7,16 +7,14 @@ import {
   BlockchainWallet,
   BlockchainWalletWithAccounts,
 } from '~/features/blockchain'
+import { Logger } from '~/features/telemetry'
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
-import * as SecureStore from '~/helpers/VeridaSecureStore'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
-import {
-  CRYPTO_WALLETS_STORAGE_KEY,
-  SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-} from '../constants'
 import { WalletManager } from '../utils'
 import { getAllWallets, getSelectedWalletId } from './selectors'
+
+const logger = Logger.create('CryptoWallets')
 
 export interface CryptoWalletsState {
   wallets: Record<string, BlockchainWalletWithAccounts>
@@ -199,27 +197,15 @@ export const createCryptoWallet = createAppAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const { selectedWallet, wallets } =
+      const { selectedWalletId, wallets } =
         await WalletManager.createCryptoWallet(data.phrase, data.name)
-
-      if (wallets) {
-        dispatch(saveCryptoWallets(wallets))
-        dispatch(setSelectedCryptoWalletId(selectedWallet._id))
-
-        // save to the secure storage..
-        await Promise.all([
-          SecureStore.setItemAsync(
-            CRYPTO_WALLETS_STORAGE_KEY,
-            JSON.stringify(wallets)
-          ),
-          SecureStore.setItemAsync(
-            SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-            selectedWallet._id
-          ),
-        ])
-      }
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
     } catch (error) {
-      return rejectWithValue('Could not create wallet')
+      logger.error(
+        new Error('Failed to create crypto wallet', { cause: error })
+      )
+      return rejectWithValue('Failed to create crypto wallet')
     }
   }
 )
@@ -313,6 +299,7 @@ export const deleteCryptoWallet = createAppAsyncThunk(
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
     try {
       const currentlySelectedWallet = getSelectedWalletId(getState())
+
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
           VAULT_SCHEMA_WALLETS_0_2_0

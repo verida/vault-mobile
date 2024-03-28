@@ -183,17 +183,17 @@ export class WalletManager {
   public static async createCryptoWallet(
     seedPhrase?: string,
     label?: string
-  ): Promise<{
-    selectedWallet: BlockchainWallet
-    wallets: Record<string, BlockchainWalletWithAccounts>
-  }> {
+    // TODO: Add optional blockchain namespace
+  ): Promise<Result> {
     const mnemonic = seedPhrase ? seedPhrase : WalletManager.generateMnemonic()
 
     // TODO: Move the AccountManager out of here
-    const walletDb = await AccountManager.getInstance().context!.openDatastore(
-      VAULT_SCHEMA_WALLETS_0_2_0
-    )
+    const walletsDatastore =
+      await AccountManager.getInstance().context!.openDatastore(
+        VAULT_SCHEMA_WALLETS_0_2_0
+      )
 
+    // TODO: Add a type
     const wallet = {
       mnemonic,
       multiChain: true,
@@ -202,17 +202,28 @@ export class WalletManager {
       viewOnly: false,
     }
 
-    const saved: any = await walletDb!.save(wallet, undefined)
+    const saved: any = await walletsDatastore!.save(wallet, undefined)
     if (!saved) {
-      throw new Error(`Unable to save wallet: ${walletDb.errors[0].message}`)
+      throw new Error(`Error saving crypto wallet to Vault datastore`)
     }
 
-    const wallets = await WalletManager.getBlockchainAccounts(
-      (await walletDb!.getMany(undefined, undefined)) as BlockchainWallet[]
-    )
+    const storedWallets = (await walletsDatastore!.getMany(
+      undefined,
+      undefined
+    )) as BlockchainWallet[]
+
+    const wallets = await WalletManager.getBlockchainAccounts(storedWallets)
+
+    await Promise.all([
+      SecureStore.setItemAsync(
+        CRYPTO_WALLETS_STORAGE_KEY,
+        JSON.stringify(wallets)
+      ),
+      SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, saved.id),
+    ])
 
     return {
-      selectedWallet: wallets[saved.id],
+      selectedWalletId: saved.id,
       wallets,
     }
   }

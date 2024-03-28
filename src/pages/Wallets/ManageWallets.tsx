@@ -92,8 +92,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const selectedWalletID = item._id
-            onDeleteWallet(selectedWalletID)
+            onDeleteWallet(item._id)
           },
         },
       ]
