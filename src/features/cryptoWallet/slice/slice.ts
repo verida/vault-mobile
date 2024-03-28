@@ -1,25 +1,176 @@
-import { BlockchainWallet } from 'features/blockchain'
-import { getAllWallets, getSelectedWalletId } from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
-
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
 import {
   SELECTED_WALLET_STORAGE_KEY,
   WALLETS_STORAGE_KEY,
-} from 'constants/storageKeys'
-import { createAppAsyncThunk } from 'reduxStore/types'
+} from '~/constants/storageKeys'
+import { logout } from '~/features/auth'
+import {
+  BlockchainWallet,
+  BlockchainWalletWithAccounts,
+} from '~/features/blockchain'
+import { VAULT_SCHEMA_WALLETS_0_2_0 } from '~/features/veridaVault'
+import * as SecureStore from '~/helpers/VeridaSecureStore'
+import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import { WalletManager } from '../utils'
-import {
-  clearCryptoWallets,
+import { getAllWallets, getSelectedWalletId } from './selectors'
+
+export interface CryptoWalletsState {
+  wallets: Record<string, BlockchainWalletWithAccounts>
+  selectedWalletId: string | null
+  status: {
+    processsing: boolean
+    error?: string
+  }
+}
+
+const initialState: CryptoWalletsState = {
+  wallets: {},
+  selectedWalletId: null,
+  status: {
+    processsing: false,
+    error: undefined,
+  },
+}
+
+export const cryptoWalletSlice = createSlice({
+  name: 'cryptoWallet',
+  initialState,
+  reducers: {
+    saveCryptoWallets: (
+      state,
+      action: PayloadAction<Record<string, BlockchainWalletWithAccounts>>
+    ) => {
+      state.wallets = action.payload
+    },
+    clearCryptoWallets: () => {
+      return initialState
+    },
+    setSelectedCryptoWalletId: (
+      state,
+      action: PayloadAction<string | null>
+    ) => {
+      state.selectedWalletId = action.payload
+    },
+  },
+  extraReducers(builder) {
+    builder
+      // Log out
+      .addCase(logout, () => initialState)
+
+      // Create new wallet
+      .addCase(createNewWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(createNewWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(createNewWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Import a wallet
+      .addCase(importWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(importWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(importWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Add watched wallet
+      .addCase(addWatchedWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(addWatchedWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(addWatchedWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Delete Wallet
+      .addCase(deleteWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(deleteWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(deleteWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+
+      // Rename Wallet
+      .addCase(renameWallet.pending, (state) => {
+        state.status = {
+          processsing: true,
+          error: undefined,
+        }
+      })
+      .addCase(renameWallet.fulfilled, (state) => {
+        state.status = {
+          processsing: false,
+          error: undefined,
+        }
+      })
+      .addCase(renameWallet.rejected, (state, action) => {
+        state.status = {
+          processsing: false,
+          error: action.payload,
+        }
+      })
+  },
+})
+
+export const {
   saveCryptoWallets,
   setSelectedCryptoWalletId,
-} from './'
+  clearCryptoWallets,
+} = cryptoWalletSlice.actions
 
 export const createNewWallet = createAppAsyncThunk(
-  'wallets/createNewWallet',
+  'cryptoWallets/createNewWallet',
   async (
     data: { phrase: string; name: string },
     { rejectWithValue, dispatch }
@@ -51,7 +202,7 @@ export const createNewWallet = createAppAsyncThunk(
 )
 
 export const importWallet = createAppAsyncThunk(
-  'wallets/importWallet',
+  'cryptoWallets/importWallet',
   async (
     data: {
       name: string
@@ -93,7 +244,7 @@ export const importWallet = createAppAsyncThunk(
 )
 
 export const addWatchedWallet = createAppAsyncThunk(
-  'wallets/addWatchedWallet',
+  'cryptoWallets/addWatchedWallet',
   async (
     data: {
       label: string
@@ -135,7 +286,7 @@ export const addWatchedWallet = createAppAsyncThunk(
 )
 
 export const deleteWallet = createAppAsyncThunk(
-  'wallets/deleteWallet',
+  'cryptoWallets/deleteWallet',
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
     try {
       const currentlySelectedWallet = getSelectedWalletId(getState())
@@ -164,7 +315,7 @@ export const deleteWallet = createAppAsyncThunk(
 )
 
 export const renameWallet = createAppAsyncThunk(
-  'wallets/renameWallet',
+  'cryptoWallets/renameWallet',
   async (
     { walletId, data }: { walletId: string; data: { name: string } },
     { rejectWithValue, dispatch }
@@ -192,7 +343,7 @@ export const renameWallet = createAppAsyncThunk(
 )
 
 export const restoreCryptoWallets = createAppAsyncThunk(
-  'cryptoWallets/restore',
+  'cryptoWallets/restoreCryptoWallets',
   async (
     { clearWallets }: { clearWallets: boolean },
     { getState, dispatch }
