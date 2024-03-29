@@ -181,6 +181,11 @@ export class WalletManager {
     walletIdToSelect: string | null
   ): Promise<Result> {
     try {
+      // Clearing the local storage, mostly to clean up the now unused data
+      // The wallet used to be locally stored under the key CRYPTO_WALLETS_STORAGE_KEY
+      // But it's now longer used, so we don't want to keep this orphan data around, especially as it contains sensitive info
+      await WalletManager.clearCachedCryptoWallets()
+
       const storedWallets: BlockchainWallet[] =
         (await walletsDatastore?.getMany(
           undefined,
@@ -211,18 +216,14 @@ export class WalletManager {
         ? previouslySelectedWallet._id
         : storedWallets[0]._id
 
-      await Promise.all([
+      if (selectedWalletId) {
         SecureStore.setItemAsync(
-          CRYPTO_WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        ),
-        selectedWalletId
-          ? SecureStore.setItemAsync(
-              SELECTED_CRYPTO_WALLET_STORAGE_KEY,
-              selectedWalletId
-            )
-          : SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
-      ])
+          SELECTED_CRYPTO_WALLET_STORAGE_KEY,
+          selectedWalletId
+        )
+      } else {
+        SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY)
+      }
 
       return {
         selectedWalletId: selectedWalletId ?? null,
@@ -236,6 +237,8 @@ export class WalletManager {
   public static async clearCachedCryptoWallets() {
     await Promise.all([
       SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
+
+      // CRYPTO_WALLETS_STORAGE_KEY is no longer used, but we want to clean up potential remaining data from olver versions.
       SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
     ])
   }
