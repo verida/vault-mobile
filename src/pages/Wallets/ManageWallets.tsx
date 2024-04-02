@@ -2,17 +2,16 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
-  addWatchedWallet,
-  createNewWallet,
-  deleteWallet,
+  addWatchedCryptoWallet,
+  createCryptoWallet,
+  deleteCryptoWallet,
   getSelectedWalletId,
   getWalletCount,
   getWalletList,
-  getWalletProcessingState,
-  importWallet,
-  setSelectedWallet,
+  importCryptoWallet,
+  isCryptoWalletsProcessing,
+  selectCryptoWallet,
 } from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -22,7 +21,6 @@ import { Dispatch } from 'redux'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
 import { MainStackParams } from 'navigation/types'
 
 import PlusIcon from '../../assets/plus_icon.svg'
@@ -38,11 +36,11 @@ type Props = {
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
   loading: boolean
-  onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
+  onSelectWallet: (walletId: string) => Promise<void>
   onCreateWallet: () => Promise<void>
   onImportWallet: () => Promise<void>
   onAddWatchedWallet: () => Promise<void>
-  onDeleteWallet: (selectedWalletID: string) => Promise<void>
+  onDeleteWallet: (walletId: string) => Promise<void>
 }
 
 const ManageWallets = (props: Props) => {
@@ -52,7 +50,7 @@ const ManageWallets = (props: Props) => {
     navigation,
     selectedWalletId,
     loading,
-    onSetSelectedWalletId,
+    onSelectWallet,
     onCreateWallet,
     onImportWallet,
     onAddWatchedWallet,
@@ -94,8 +92,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const selectedWalletID = item._id
-            onDeleteWallet(selectedWalletID)
+            onDeleteWallet(item._id)
           },
         },
       ]
@@ -177,12 +174,7 @@ const ManageWallets = (props: Props) => {
         if (buttonIndex === 0 && !item.viewOnly) {
           navigation.navigate('SingleWallet', { item })
         } else if (buttonIndex === 1) {
-          const selectedWalletID = item._id
-          onSetSelectedWalletId(selectedWalletID)
-          SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
-            selectedWalletID
-          )
+          onSelectWallet(item._id)
         } else if (buttonIndex === 2) {
           if (walletCount <= 1) {
             showDeleteAlert()
@@ -246,20 +238,21 @@ const mapStateToProps = (state: any) => {
     wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
-    loading: getWalletProcessingState(state),
+    loading: isCryptoWalletsProcessing(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onSetSelectedWalletId: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
+    onSelectWallet: (walletId: string) =>
+      dispatch(selectCryptoWallet(walletId) as any),
     onCreateWallet: (args: unknown) =>
-      dispatch(createNewWallet(args as any) as any),
-    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
-    onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
+      dispatch(createCryptoWallet(args as any) as any),
+    onImportWallet: (args: any) => dispatch(importCryptoWallet(args) as any),
+    onAddWatchedWallet: (args: any) =>
+      dispatch(addWatchedCryptoWallet(args) as any),
     onDeleteWallet: (walletId: string) =>
-      dispatch(deleteWallet(walletId) as any),
+      dispatch(deleteCryptoWallet(walletId) as any),
   }
 }
 

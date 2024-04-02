@@ -51,8 +51,7 @@ export const selectSingleTokenData = (
   }
 }
 
-export const getAllWallets = (state: RootState) =>
-  state.cryptoWallets.walletsData
+export const getAllWallets = (state: RootState) => state.cryptoWallets.wallets
 
 export const getSelectedWalletId = (state: RootState) =>
   state.cryptoWallets.selectedWalletId
@@ -110,8 +109,8 @@ export const getSelectedWalletById = (state: RootState) => {
   return selectedWallet as BlockchainWalletWithAccounts
 }
 
-export const getWalletProcessingState = (state: RootState) => {
-  return state.cryptoWallets.walletProcessing.loading
+export const isCryptoWalletsProcessing = (state: RootState) => {
+  return state.cryptoWallets.status.processsing
 }
 
 export const getWalletCount = (state: RootState) => {
@@ -134,7 +133,7 @@ export const getWallets = createSelector(
 )
 
 export const getWalletObjectById = (state: RootState, id: string) => {
-  return state.cryptoWallets.walletsData[id] || {}
+  return state.cryptoWallets.wallets[id] || {}
 }
 
 export const selectNativeTokenBalance = (
