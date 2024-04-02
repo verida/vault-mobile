@@ -81,7 +81,7 @@ export type BalanceByChainResultData = BalanceByChainAmount & {
   symbol: string
   balance: number
   asset: AssetId
-  quote: AssetQuote
+  quote: AssetQuote // FIXME: Coming from Wallet Provider, quote is potentially undefined. But this type is not dedicated to the Wallet Provider, it is used elsewhere where quote is required. We should split the type, have a dedicated Wallet Provider type and an internal type on how we want to the data to be.
   token: SupportedTokenObject
 }
 

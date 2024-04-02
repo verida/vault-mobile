@@ -35,6 +35,7 @@ export const cryptoWalletApi = createApi({
         list: BalanceByChain['results']
         total: number
       } => {
+        // TODO: Create a different type for the response from Wallet Provider
         // TODO: Validate with Zod
 
         const balanceByChains = response?.data
@@ -52,8 +53,8 @@ export const cryptoWalletApi = createApi({
             return {
               ...tokenBalance,
               label: tokenBalance.symbol,
-              price: tokenBalance.quote.USD.price ?? 0,
-              change: tokenBalance.quote.USD.percent_change_24h ?? 0,
+              price: tokenBalance.quote?.USD?.price ?? 0,
+              change: tokenBalance.quote?.USD?.percent_change_24h ?? 0,
               balance: tokenBalance.balance ?? 0,
               quantity: tokenBalance.balance ?? 0,
               amount: tokenBalance.amount ?? 0,
