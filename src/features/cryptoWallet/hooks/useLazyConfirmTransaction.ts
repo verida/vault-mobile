@@ -1,4 +1,4 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 import { ethers } from 'ethers'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
@@ -179,7 +179,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
       const { namespace } = chainId
 
-      const maybeErc20Address = new AssetId(resource).assetName?.reference
+      const maybeErc20Address = new AssetType(resource).assetName?.reference
 
       switch (namespace) {
         case SupportedBlockchainNamespace.EIP_155:

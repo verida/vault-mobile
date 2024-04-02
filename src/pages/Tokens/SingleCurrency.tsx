@@ -65,7 +65,7 @@ const SingleCurrency = () => {
         resource,
       })
     )
-  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
+  const assetType = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
@@ -96,7 +96,7 @@ const SingleCurrency = () => {
 
   // HACK: We'll only be returning assetIds for resources which the
   //       WalletProvider has an a-priori awareness of.
-  const isAssetSupportedByWalletProvider = Boolean(assetId)
+  const isAssetSupportedByWalletProvider = Boolean(assetType)
 
   const {
     loading: isLoadingTransactions,
@@ -104,7 +104,7 @@ const SingleCurrency = () => {
     transactions,
     error: errorTransactions,
   } = useTransactionsForMaybeAssetId({
-    assetId,
+    assetType,
   })
 
   const error =
