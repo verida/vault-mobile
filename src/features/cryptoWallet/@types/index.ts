@@ -1,5 +1,5 @@
 import BigDecimal from 'bignumber.js'
-import { AccountId, AssetId, AssetIdParams, ChainIdParams } from 'caip'
+import { AccountId, AssetType, AssetTypeParams, ChainIdParams } from 'caip'
 import {
   BlockchainAccount,
   BlockchainNetwork,
@@ -41,7 +41,7 @@ export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
 export type BasicTokenData = WithMaybeIcon<{
   name: string
   symbol: string
-  asset: AssetId
+  asset: AssetType
   chainName: ChainNameType
 
   // TODO: Clarify what "cmc" is
@@ -80,7 +80,7 @@ export type BalanceByChainAmount<T extends number = number> = {
 export type BalanceByChainResultData = BalanceByChainAmount & {
   symbol: string
   balance: number
-  asset: AssetId
+  asset: AssetType
   quote: AssetQuote // FIXME: Coming from Wallet Provider, quote is potentially undefined. But this type is not dedicated to the Wallet Provider, it is used elsewhere where quote is required. We should split the type, have a dedicated Wallet Provider type and an internal type on how we want to the data to be.
   token: SupportedTokenObject
 }
@@ -229,18 +229,18 @@ export enum AggregateWalletBannerBalanceType {
 }
 
 // TODO: Move somewhere more general, we do this a lot
-export type ResourceParams = ChainIdParams | AssetIdParams
+export type ResourceParams = ChainIdParams | AssetTypeParams
 
-export function isAssetIdResourceParams(
+export function isAssetTypeResourceParams(
   resourceParams: ResourceParams
-): resourceParams is AssetIdParams {
-  return 'tokenId' in resourceParams && 'assetName' in resourceParams
+): resourceParams is AssetTypeParams {
+  return 'assetName' in resourceParams
 }
 
 export function isChainIdResourceParams(
   resourceParams: ResourceParams
 ): resourceParams is ChainIdParams {
-  return !isAssetIdResourceParams(resourceParams)
+  return !isAssetTypeResourceParams(resourceParams)
 }
 
 type AbstractAggregateWalletBannerBalance<
@@ -274,7 +274,7 @@ export type AggregateWalletBannerBalanceNativeCurrency =
 
 export type AggregateWalletBannerBalanceErc20 =
   AbstractAggregateWalletBannerBalance<
-    AssetIdParams,
+    AssetTypeParams,
     AggregateWalletBannerBalanceType.ERC_20
   >
 

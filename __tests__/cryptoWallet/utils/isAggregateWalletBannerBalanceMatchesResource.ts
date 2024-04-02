@@ -5,7 +5,7 @@ import { AssetIdParams, ChainIdParams } from 'caip'
 import { SupportedBlockchainNamespace } from '../../../src/features/blockchain/@types'
 import {
   AggregateWalletBannerBalance,
-  isAssetIdResourceParams,
+  isAssetTypeResourceParams,
   isChainIdResourceParams,
 } from '../../../src/features/cryptoWallet/@types'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../../../src/features/cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource'
@@ -76,17 +76,17 @@ describe('cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource', () 
     }
 
     expect(isChainIdResourceParams(chainResource)).toBeTruthy()
-    expect(isAssetIdResourceParams(chainResource)).toBeFalsy()
+    expect(isAssetTypeResourceParams(chainResource)).toBeFalsy()
 
     expect(isChainIdResourceParams(assetResource)).toBeFalsy()
-    expect(isAssetIdResourceParams(assetResource)).toBeTruthy()
+    expect(isAssetTypeResourceParams(assetResource)).toBeTruthy()
 
     expect(
       isChainIdResourceParams(AGGREGATE_WALLET_BANNER_BALANCES_USDC.resource)
     ).toBeFalsy()
 
     expect(
-      isAssetIdResourceParams(AGGREGATE_WALLET_BANNER_BALANCES_USDC.resource)
+      isAssetTypeResourceParams(AGGREGATE_WALLET_BANNER_BALANCES_USDC.resource)
     ).toBeTruthy()
 
     expect(
@@ -94,7 +94,7 @@ describe('cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource', () 
     ).toBeTruthy()
 
     expect(
-      isAssetIdResourceParams(AGGREGATE_WALLET_BANNER_BALANCES_ETH.resource)
+      isAssetTypeResourceParams(AGGREGATE_WALLET_BANNER_BALANCES_ETH.resource)
     ).toBeFalsy()
 
     expect(

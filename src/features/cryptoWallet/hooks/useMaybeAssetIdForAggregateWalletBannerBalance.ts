@@ -1,9 +1,9 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 import * as React from 'react'
 
 import {
   AggregateWalletBannerBalance,
-  isAssetIdResourceParams,
+  isAssetTypeResourceParams,
   isChainIdResourceParams,
   ResourceParams,
 } from '../@types'
@@ -11,8 +11,8 @@ import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceBy
 
 // TODO: Move this somewhere.
 const maybeNormalizeResourceParams = (e: ResourceParams) => {
-  if (isAssetIdResourceParams(e)) {
-    const asset = new AssetId(e)
+  if (isAssetTypeResourceParams(e)) {
+    const asset = new AssetType(e)
 
     if (asset.assetName.namespace === 'slip44') return new ChainId(e.chainId)
 
@@ -38,11 +38,11 @@ export function useMaybeAssetIdForAggregateWalletBannerBalance({
     | AggregateWalletBannerBalance
     | null
     | undefined
-}): AssetId | undefined {
+}): AssetType | undefined {
   const { balanceByChainResults } =
     useBalanceByChainResultsForUniqueWalletAddresses()
 
-  return React.useMemo<AssetId | undefined>(() => {
+  return React.useMemo<AssetType | undefined>(() => {
     if (!maybeAggregateWalletBannerBalance) return undefined
 
     const { resource } = maybeAggregateWalletBannerBalance
