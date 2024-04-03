@@ -1,17 +1,18 @@
 import { ChainId } from 'caip'
 import { ethers } from 'ethers'
+
 import {
   BlockchainAccount,
   SupportedBlockchainNamespace,
-} from 'features/blockchain'
-import { isSupportedCaipNamespace } from 'features/caip'
-import { Logger } from 'features/telemetry'
+} from '~/features/blockchain'
+import { isSupportedCaipNamespace } from '~/features/caip'
+import { Logger } from '~/features/telemetry'
 
 import {
   MinifiedBlockchainAccount,
   MinifiedBlockchainAccountEip155,
   MinifiedBlockchainAccountNear,
-} from '../@types'
+} from '../types'
 
 const logger = Logger.create('veridaAccountMaybeToMinifiedVeridaAccount')
 

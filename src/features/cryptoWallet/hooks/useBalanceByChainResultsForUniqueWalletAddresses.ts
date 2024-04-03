@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux'
 
-import { BalanceByChainResult, isBalanceByChainResult } from '../@types'
 import { useGetBalancesQuery } from '../api'
 import { getUniqueWalletAddresses, getWallets } from '../slice'
+import { BalanceByChainResult, isBalanceByChainResult } from '../types'
 
 export function useBalanceByChainResultsForUniqueWalletAddresses() {
   const wallets = useSelector(getWallets)

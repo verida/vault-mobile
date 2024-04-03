@@ -1,9 +1,10 @@
 import { AssetId, ChainId } from 'caip'
 import * as ethers from 'ethers'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
-import { Logger } from 'features/telemetry'
 
-import { ImportedSeedPhrase } from '../@types'
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
+import { Logger } from '~/features/telemetry'
+
+import { ImportedSeedPhrase } from '../types'
 
 const bip39 = require('bip39')
 

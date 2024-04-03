@@ -1,10 +1,14 @@
 import { ethers } from 'ethers'
+
+import {
+  ConfirmTransactionCallbackResult,
+  MinifiedBlockchainAccount,
+} from '~/features/cryptoWallet'
+
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from 'features/blockchain/@types'
-import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
+} from '../../@types'
 
 export const sendNativeCurrencyEip155 = async ({
   value,

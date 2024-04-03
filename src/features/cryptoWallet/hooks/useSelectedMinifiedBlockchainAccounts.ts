@@ -1,10 +1,7 @@
 import { ethers } from 'ethers'
 import * as React from 'react'
 
-import {
-  MinifiedBlockchainAccount,
-  MinifiedBlockchainAccounts,
-} from '../@types'
+import { MinifiedBlockchainAccount, MinifiedBlockchainAccounts } from '../types'
 import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
 import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
 

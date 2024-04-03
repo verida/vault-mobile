@@ -1,10 +1,11 @@
 import { ChainId } from 'caip'
-import { isSupportedCaipNamespace } from 'features/caip'
+
+import { isSupportedCaipNamespace } from '~/features/caip'
 
 import {
   AggregateWalletBannerBalance,
   MinifiedBlockchainAccounts,
-} from '../@types'
+} from '../types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'
 import { getWalletAddressForChainId } from './tokens'
 

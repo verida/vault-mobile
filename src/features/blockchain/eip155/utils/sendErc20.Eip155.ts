@@ -1,11 +1,15 @@
 import { ethers } from 'ethers'
+
+import {
+  ConfirmTransactionCallbackResult,
+  MinifiedBlockchainAccount,
+  numericAmountToFixedPointCrypto,
+} from '~/features/cryptoWallet'
+
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from 'features/blockchain/@types'
-import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
-import { numericAmountToFixedPointCrypto } from 'features/cryptoWallet/utils/numericAmountToFixedPointCrypto'
+} from '../../@types'
 
 export const sendErc20Eip155 = async ({
   erc20Address,

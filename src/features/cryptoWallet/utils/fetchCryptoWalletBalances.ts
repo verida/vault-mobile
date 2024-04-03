@@ -1,12 +1,13 @@
 import { ChainId } from 'caip'
+
 import {
   getBalanceEip155,
   getBalanceNear,
   SupportedBlockchainNamespace,
-} from 'features/blockchain'
-import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
+} from '~/features/blockchain'
+import { ChainMetadatas, getRpcUrlOrThrow } from '~/features/caip'
 
-import { CryptoWalletBalances, MinifiedBlockchainAccounts } from '../@types'
+import { CryptoWalletBalances, MinifiedBlockchainAccounts } from '../types'
 
 export async function fetchCryptoWalletBalances({
   chainMetadatas,

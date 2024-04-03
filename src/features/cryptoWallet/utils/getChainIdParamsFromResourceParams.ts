@@ -1,6 +1,6 @@
 import { ChainId, ChainIdParams } from 'caip'
 
-import { isChainIdResourceParams, ResourceParams } from '../@types'
+import { isChainIdResourceParams, ResourceParams } from '../types'
 
 export function getChainIdParamsFromResourceParams(
   resourceParams: ResourceParams

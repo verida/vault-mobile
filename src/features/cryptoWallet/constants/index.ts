@@ -1,6 +1,6 @@
 import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/blockchain'
 
-import { AggregateWalletBannerBalances } from '../@types'
+import { AggregateWalletBannerBalances } from '../types'
 
 export const VAULT_SCHEMA_WALLETS_0_2_0 =
   'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'

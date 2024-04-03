@@ -1,11 +1,12 @@
-import { isSupportedCaipNamespace } from 'features/caip'
+import * as React from 'react'
+
+import { isSupportedCaipNamespace } from '~/features/caip'
+
 import {
   MinifiedBlockchainAccount,
   MinifiedBlockchainAccounts,
   VeridaWalletAccountOption,
-} from 'features/cryptoWallet/@types'
-import * as React from 'react'
-
+} from '../types'
 import {
   getLabelForMinifiedBlockchainAccount,
   getMinifiedBlockchainAccountId,

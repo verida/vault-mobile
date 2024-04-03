@@ -1,21 +1,26 @@
 import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import * as React from 'react'
 
-import { useAppSelector } from 'reduxStore/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { useAppSelector } from '~/reduxStore/types'
 
+import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
+import { useCryptoWalletBalanceContext } from '../contexts'
+import { getWallets } from '../slice'
 import {
   AggregateWalletBannerBalances,
   UseAggregateWalletBannerBalancesParams,
   UseAggregateWalletBannerBalancesState,
-} from '../@types'
-import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
-import { useCryptoWalletBalanceContext } from '../contexts'
-import { getWallets } from '../slice'
-import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
-import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
-import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
+} from '../types'
+import {
+  balanceByChainResultsToErc20AggregateWalletBannerBalance,
+  chainMetadataToAggregateWalletBannerBalance,
+  isAggregateWalletBannerBalanceMatchesResource,
+} from '../utils'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
 

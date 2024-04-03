@@ -1,9 +1,12 @@
 import BigDecimal from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { AggregateWalletBannerBalanceType } from 'features/cryptoWallet'
-import { AggregateWalletBannerBalance } from 'features/cryptoWallet/@types'
-import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils'
 import * as React from 'react'
+
+import {
+  AggregateWalletBannerBalance,
+  AggregateWalletBannerBalanceType,
+  fixedPointCryptoAsBigDecimal,
+} from '~/features/cryptoWallet'
 
 import { CurrencyFormat } from '../@types'
 import { convertFromCryptoToFiat, convertFromFiatToCrypto } from '../utils'
