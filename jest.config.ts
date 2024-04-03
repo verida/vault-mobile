@@ -12,6 +12,7 @@ export default async (): Promise<Config> => ({
     'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation)',
   ],
   moduleNameMapper: {
+    '^~/(.*)$': ['<rootDir>/src/$1'],
     '^features(.*)$': ['<rootDir>/src/features$1'],
   },
 })
