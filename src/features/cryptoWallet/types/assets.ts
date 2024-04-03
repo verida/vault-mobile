@@ -8,15 +8,10 @@ import {
 
 import { Option } from 'components/Select'
 
-// Types copied from the Wallet-Provider
-// TODO: Should be able to auto generated or import types directly from wallet provider module
-export type ChainNameType = 'near' | 'algorand' | 'ethereum' | 'polygon'
-
 export type BasicTokenData = WithMaybeIcon<{
   name: string
   symbol: string
   asset: AssetType
-  chainName: ChainNameType
 
   // TODO: Clarify what "cmc" is
   cmcId?: number // if we have the CMC ID it is better because of duplicate symbols
