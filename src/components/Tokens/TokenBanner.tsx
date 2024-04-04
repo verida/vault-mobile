@@ -1,7 +1,7 @@
 import BigDecimal from 'bignumber.js'
 import { useTheme } from 'contexts'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
+  BlockchainWalletWithAccounts,
   Currency,
   DetailedValuation,
   fixedPointCryptoAsBigDecimal,

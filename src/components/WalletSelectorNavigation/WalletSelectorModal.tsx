@@ -9,8 +9,8 @@ import AppModal from '~/components/modal/AppModal'
 import WalletList from '~/components/WalletList'
 import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS } from '~/constants/text'
-import { BlockchainWalletWithAccounts } from '~/features/blockchain'
 import {
+  BlockchainWalletWithAccounts,
   selectCryptoWallet,
   useCryptoWalletsAsList,
   useSelectedWalletId,

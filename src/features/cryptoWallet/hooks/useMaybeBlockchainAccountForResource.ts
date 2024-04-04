@@ -1,5 +1,6 @@
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import * as React from 'react'
+
+import { BlockchainWalletWithAccounts } from '~/features/cryptoWallet'
 
 import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
 import { useCryptoWallets } from './useCryptoWallets'

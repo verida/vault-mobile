@@ -1,9 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { AssetType, AssetTypeParams, ChainIdParams } from 'caip'
-import {
-  BlockchainNetwork,
-  SupportedBlockchainNamespace,
-} from 'features/blockchain'
+import { BlockchainNetwork } from 'features/blockchain'
 
 import { Option } from 'components/Select'
 
@@ -95,31 +92,6 @@ export interface BalanceByChain {
   results: Array<BalanceByChainResult>
 }
 
-export enum TransactionType {
-  SENT = 'sent',
-  RECEIVED = 'received',
-}
-
-export interface Transaction {
-  id: string
-  type: TransactionType
-  address: string
-  quantity: bigint
-  pending: boolean
-}
-
-export interface DetailedTransaction {
-  id: string
-  type: string
-  address: string
-  quantity: bigint
-  pending: boolean
-  fee: string
-  feeDecimal: number
-  feeSymbol: string
-  blockNumber: string
-  time: string
-}
 // End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option
@@ -130,29 +102,6 @@ export type ImportedSeedPhrase = {
   readonly blockchainNetwork: BlockchainNetwork | null | undefined
   readonly inputSwitch: string
 }
-
-type AbstractMinifiedBlockchainAccount<
-  Namespace extends SupportedBlockchainNamespace,
-> = {
-  readonly address: string
-  readonly namespace: Namespace
-}
-
-export type MinifiedBlockchainAccountEip155 =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.EIP_155> & {
-    readonly privateKey: string
-  }
-
-export type MinifiedBlockchainAccountNear =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.NEAR> & {
-    readonly privateKey: string
-  }
-
-export type MinifiedBlockchainAccount =
-  | MinifiedBlockchainAccountEip155
-  | MinifiedBlockchainAccountNear
-
-export type MinifiedBlockchainAccounts = readonly MinifiedBlockchainAccount[]
 
 export enum Currency {
   USD = 'USD',

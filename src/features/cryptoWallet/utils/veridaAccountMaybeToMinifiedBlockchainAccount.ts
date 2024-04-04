@@ -1,14 +1,12 @@
 import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 
-import {
-  BlockchainAccount,
-  SupportedBlockchainNamespace,
-} from '~/features/blockchain'
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
 import { isSupportedCaipNamespace } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 
 import {
+  BlockchainAccount,
   MinifiedBlockchainAccount,
   MinifiedBlockchainAccountEip155,
   MinifiedBlockchainAccountNear,

@@ -1,6 +1,8 @@
 import { useTheme } from 'contexts/ThemeContext'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
-import { getTruncatedWalletAddress } from 'features/cryptoWallet'
+import {
+  BlockchainWalletWithAccounts,
+  getTruncatedWalletAddress,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 

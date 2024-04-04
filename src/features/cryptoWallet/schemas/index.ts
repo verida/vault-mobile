@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { VeridaBaseRecordSchema } from '~/features/verida'
 
-export const BaseCryptoWalletSchema = z.object({
+export const BaseCryptoWalletRecordSchema = z.object({
   label: z.string(),
   walletType: z.string(),
   mnemonic: z.string().optional(),
@@ -11,7 +11,7 @@ export const BaseCryptoWalletSchema = z.object({
 })
 
 export const CryptoWalletRecordSchema = VeridaBaseRecordSchema.extend(
-  BaseCryptoWalletSchema.shape
+  BaseCryptoWalletRecordSchema.shape
 ).passthrough()
 
 export const CryptoWalletRecordsSchema = CryptoWalletRecordSchema.array()

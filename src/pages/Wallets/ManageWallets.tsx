@@ -10,10 +10,10 @@ import LoadingView from '~/components/LoadingView'
 import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import WalletList from '~/components/WalletList'
 import { BLACK_COLOR } from '~/constants/color'
-import { BlockchainWalletWithAccounts } from '~/features/blockchain'
 import {
   AddWatchedCryptoWallet,
   addWatchedCryptoWallet,
+  BlockchainWalletWithAccounts,
   createCryptoWallet,
   CreateCryptoWalletData,
   deleteCryptoWallet,

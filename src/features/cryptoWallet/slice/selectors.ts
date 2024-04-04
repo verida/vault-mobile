@@ -1,13 +1,11 @@
 import { AssetType } from 'caip'
 
-import {
-  BlockchainNetwork,
-  BlockchainWalletWithAccounts,
-} from '~/features/blockchain'
+import { BlockchainNetwork } from '~/features/blockchain'
 import { RootState } from '~/reduxStore/types'
 
 import { getBalancesData } from '../api'
 import {
+  BlockchainWalletWithAccounts,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
 } from '../types'

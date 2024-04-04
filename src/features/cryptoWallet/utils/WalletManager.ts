@@ -2,9 +2,7 @@ import { IDatastore } from '@verida/types'
 import * as bip39 from 'bip39'
 
 import {
-  BlockchainAccount,
   BlockchainNetwork,
-  BlockchainWalletWithAccounts,
   getBlockchainNetworks,
   IBlockchain,
   WalletUtilsWallet,
@@ -23,10 +21,15 @@ import {
   DEFAULT_SINGLE_CHAIN_WALLET_LABEL,
   SELECTED_CRYPTO_WALLET_STORAGE_KEY,
 } from '../constants'
-import { BaseCryptoWalletSchema, CryptoWalletRecordsSchema } from '../schemas'
+import {
+  BaseCryptoWalletRecordSchema,
+  CryptoWalletRecordsSchema,
+} from '../schemas'
 import {
   AddWatchedCryptoWallet,
-  BaseCryptoWallet,
+  BaseCryptoWalletRecord,
+  BlockchainAccount,
+  BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   CryptoWalletRecord,
   ImportCryptoWalletData,
@@ -43,9 +46,9 @@ const NAMESPACES: Record<string, IBlockchain> = {
 
 async function saveCryptoWalletRecord(
   walletsDatastore: IDatastore,
-  wallet: BaseCryptoWallet | CryptoWalletRecord
+  wallet: BaseCryptoWalletRecord | CryptoWalletRecord
 ) {
-  BaseCryptoWalletSchema.parse(wallet) // TODO: Handle validation errors
+  BaseCryptoWalletRecordSchema.parse(wallet) // TODO: Handle validation errors
 
   const result: VeridaSaveRecordResult = (await walletsDatastore.save(
     wallet,
@@ -66,7 +69,7 @@ export class WalletManager {
   ) {
     const { label, walletType, mnemonic } = data
 
-    const wallet: BaseCryptoWallet = {
+    const wallet: BaseCryptoWalletRecord = {
       ...data,
       label: label
         ? label
@@ -89,7 +92,7 @@ export class WalletManager {
   ) {
     const { label, walletType } = data
 
-    const wallet: BaseCryptoWallet = {
+    const wallet: BaseCryptoWalletRecord = {
       ...data,
       label: label
         ? label
@@ -111,7 +114,7 @@ export class WalletManager {
   ) {
     const { label, walletType } = data
 
-    const wallet: BaseCryptoWallet = {
+    const wallet: BaseCryptoWalletRecord = {
       ...data,
       label: label
         ? label

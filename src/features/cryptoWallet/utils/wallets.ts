@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 
-import { BlockchainWalletWithAccounts } from '~/features/blockchain'
+import { BlockchainWalletWithAccounts } from '../types'
 
 export const getUniqueWalletAddresses = (
   wallet: BlockchainWalletWithAccounts | null
