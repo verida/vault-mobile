@@ -2,14 +2,13 @@ import { useNavigation } from '@react-navigation/native'
 import { Icon, Typography } from 'components'
 import { useTheme } from 'contexts'
 import {
-  getWallets,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
+  useSelectedWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, View, ViewProps } from 'react-native'
-import { useSelector } from 'react-redux'
 
 import { NumberFiat } from 'components/Numbers'
 import { Theme } from 'styles/types'
@@ -25,7 +24,7 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
   const styles = useThemeAwareStyle(createStyles)
 
   const navigation = useNavigation()
-  const currentWallet = useSelector(getWallets)
+  const currentWallet = useSelectedWallet()
   const cachedAggregateWalletBannerBalances =
     useAggregateWalletBannerBalancesWithResultCaching()
   const { result: aggregateWalletBannerBalances } =

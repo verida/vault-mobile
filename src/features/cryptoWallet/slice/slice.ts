@@ -15,7 +15,7 @@ import {
   UpdateCryptoWalletData,
 } from '../types'
 import { WalletManager } from '../utils'
-import { getSelectedWalletId } from './selectors'
+import { getSelectedCryptoWalletId } from './selectors'
 
 const logger = Logger.create('CryptoWallets')
 
@@ -315,7 +315,7 @@ export const deleteCryptoWallet = createAppAsyncThunk(
     try {
       const walletsDatastore = await getWalletsDatastore()
 
-      const currentlySelectedWallet = getSelectedWalletId(getState())
+      const currentlySelectedWallet = getSelectedCryptoWalletId(getState())
 
       const { selectedWalletId, wallets } =
         await WalletManager.deleteCryptoWallet(
@@ -362,19 +362,26 @@ export const updateCryptoWallet = createAppAsyncThunk(
 
 export const restoreCryptoWallets = createAppAsyncThunk(
   'cryptoWallets/restoreCryptoWallets',
-  async (_undefined: undefined, { getState, dispatch }) => {
-    const walletsDatastore = await getWalletsDatastore()
+  async (_undefined: undefined, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const walletsDatastore = await getWalletsDatastore()
 
-    const currentlySelectedWalletId = getSelectedWalletId(getState())
+      const currentlySelectedWalletId = getSelectedCryptoWalletId(getState())
 
-    const { selectedWalletId, wallets } =
-      await WalletManager.restoreCryptoWallets(
-        walletsDatastore,
-        currentlySelectedWalletId
+      const { selectedWalletId, wallets } =
+        await WalletManager.restoreCryptoWallets(
+          walletsDatastore,
+          currentlySelectedWalletId
+        )
+
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
+    } catch (error) {
+      logger.error(
+        new Error('Failed to restore crypto wallets', { cause: error })
       )
-
-    dispatch(saveCryptoWallets(wallets))
-    dispatch(setSelectedCryptoWalletId(selectedWalletId))
+      return rejectWithValue('Failed to restore crypto wallets')
+    }
   }
 )
 

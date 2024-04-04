@@ -17,17 +17,17 @@ import {
   createCryptoWallet,
   CreateCryptoWalletData,
   deleteCryptoWallet,
-  getSelectedWalletId,
-  getWalletCount,
-  getWalletList,
   importCryptoWallet,
   ImportCryptoWalletData,
-  isCryptoWalletsProcessing,
   selectCryptoWallet,
+  useCryptoWalletsAsList,
+  useCryptoWalletsCount,
+  useCryptoWalletsStatus,
+  useSelectedWalletId,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackParams } from '~/navigation/types'
-import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
+import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
@@ -41,10 +41,10 @@ type Props = {
 const ManageWallets = (props: Props) => {
   const { navigation } = props
 
-  const wallets = useAppSelector(getWalletList)
-  const walletCount = useAppSelector(getWalletCount)
-  const selectedWalletId = useAppSelector(getSelectedWalletId)
-  const loading = useAppSelector(isCryptoWalletsProcessing)
+  const wallets = useCryptoWalletsAsList()
+  const walletCount = useCryptoWalletsCount()
+  const selectedWalletId = useSelectedWalletId()
+  const { processsing } = useCryptoWalletsStatus()
 
   const dispatch = useAppDispatch()
 
@@ -189,7 +189,7 @@ const ManageWallets = (props: Props) => {
         if (item.viewOnly) buttonIndex++
 
         if (buttonIndex === 0 && !item.viewOnly) {
-          navigation.navigate('SingleWallet', { item })
+          navigation.navigate('SingleWallet', { walletId: item._id })
         } else if (buttonIndex === 1) {
           handleSelectWallet(item._id)
         } else if (buttonIndex === 2) {
@@ -214,7 +214,7 @@ const ManageWallets = (props: Props) => {
           action: navigationActionHandler,
         }}
       />
-      {loading ? (
+      {processsing ? (
         <LoadingView />
       ) : (
         <View style={{ flex: 1 }}>

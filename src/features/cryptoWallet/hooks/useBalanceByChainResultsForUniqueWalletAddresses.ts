@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { useSelector } from 'react-redux'
 
 import { useGetBalancesQuery } from '../api'
-import { getUniqueWalletAddresses, getWallets } from '../slice'
 import { BalanceByChainResult, isBalanceByChainResult } from '../types'
+import { getUniqueWalletAddresses } from '../utils'
+import { useSelectedWallet } from './useSelectedWallet'
 
 export function useBalanceByChainResultsForUniqueWalletAddresses() {
-  const wallets = useSelector(getWallets)
+  const currentCryptoWallet = useSelectedWallet()
 
   const {
     data,
@@ -15,7 +15,10 @@ export function useBalanceByChainResultsForUniqueWalletAddresses() {
     error: cause,
     refetch,
   } = useGetBalancesQuery(
-    React.useMemo(() => getUniqueWalletAddresses(wallets), [wallets])
+    React.useMemo(
+      () => getUniqueWalletAddresses(currentCryptoWallet),
+      [currentCryptoWallet]
+    )
   )
 
   const loading = isLoading || isFetching

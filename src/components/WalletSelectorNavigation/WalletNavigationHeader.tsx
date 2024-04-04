@@ -10,7 +10,7 @@ import { Avatar } from 'components/Images'
 import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: BlockchainWalletWithAccounts
+  selectedWallet: BlockchainWalletWithAccounts | null
   openWalletModal: () => void
 }
 

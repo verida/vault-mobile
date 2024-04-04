@@ -3,7 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   useChainIdForResourceParams,
-  useMaybeSelectedWallet,
+  useSelectedWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -40,7 +40,7 @@ const ReceiveToken = () => {
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const selectedWallet = useMaybeSelectedWallet()
+  const selectedWallet = useSelectedWallet()
   const accounts = Object.values(selectedWallet?.accounts || {})
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())

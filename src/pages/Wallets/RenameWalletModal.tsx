@@ -2,6 +2,8 @@ import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
+import { UpdateCryptoWalletData } from '~/features/cryptoWallet'
+
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -10,16 +12,18 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  onPressRename: (name: string, data: any) => void
+  onPressRename: (id: string, data: UpdateCryptoWalletData) => void
   hideModal: () => void
   data: { id: string; label: string }
 }
 
 export default (props: Props) => {
   const { visible, hideModal, data, onPressRename } = props
-  const [name, setName] = useState(data.label)
+
+  const [label, setLabel] = useState(data.label)
+
   const onPressSave = () => {
-    onPressRename(data.id, { name })
+    onPressRename(data.id, { label })
     hideModal()
   }
 
@@ -37,17 +41,17 @@ export default (props: Props) => {
       />
       <Layout withKeyboardAvoidingView style={styles.container}>
         <View style={styles.content}>
-          <Label>Wallet name</Label>
+          <Label>Wallet label</Label>
           <TextInput
-            value={name}
+            value={label}
             autoFocus={true}
             multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
-            onChangeText={setName}
+            onChangeText={setLabel}
             style={[InputStyles.input]}
-            placeholder={'eg. Friendly wallet name'}
+            placeholder={'eg. Friendly wallet label'}
           />
         </View>
         <View style={styles.footer}>
@@ -60,7 +64,7 @@ export default (props: Props) => {
           <Button
             style={styles.saveButton}
             color='primary'
-            disabled={!name}
+            disabled={!label}
             onPress={onPressSave}>
             Save
           </Button>

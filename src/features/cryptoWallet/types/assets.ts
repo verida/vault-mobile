@@ -1,7 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { AssetType, AssetTypeParams, ChainIdParams } from 'caip'
 import {
-  BlockchainAccount,
   BlockchainNetwork,
   SupportedBlockchainNamespace,
 } from 'features/blockchain'
@@ -124,8 +123,6 @@ export interface DetailedTransaction {
 // End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option
-
-export type WalletsData = Record<string, BlockchainAccount>
 
 export type ImportedSeedPhrase = {
   readonly phrase: string

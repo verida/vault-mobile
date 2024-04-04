@@ -2,16 +2,16 @@ import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import * as React from 'react'
 
 import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
+import { useCryptoWallets } from './useCryptoWallets'
 import { useMaybeFromAddressForResource } from './useMaybeFromAddressForResource'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
-import { useWalletsData } from './useWalletsData'
 
 export function useMaybeBlockchainAccountForResource(
   params: Parameters<typeof useMaybeFromAddressForResource>[0]
 ): BlockchainWalletWithAccounts | null {
   const maybeFromAddress = useMaybeFromAddressForResource(params)
 
-  const walletsData = useWalletsData()
+  const wallets = useCryptoWallets()
 
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
@@ -27,7 +27,7 @@ export function useMaybeBlockchainAccountForResource(
 
     if (!maybeMinifiedVeridaAccount) return null
 
-    const maybeMatchingAccount = Object.values(walletsData).find(
+    const maybeMatchingAccount = Object.values(wallets).find(
       (e: BlockchainWalletWithAccounts) =>
         Object.values(e.accounts).find(
           (f) =>
@@ -38,5 +38,5 @@ export function useMaybeBlockchainAccountForResource(
     )
 
     return maybeMatchingAccount || null
-  }, [maybeFromAddress, selectedMinifiedBlockchainAccounts, walletsData])
+  }, [maybeFromAddress, selectedMinifiedBlockchainAccounts, wallets])
 }

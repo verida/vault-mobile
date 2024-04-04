@@ -18,7 +18,7 @@ import { Typography } from 'components/Typography'
 import { Theme } from 'styles/types'
 
 export type TokenBannerProps = {
-  readonly selectedWallet?: BlockchainWalletWithAccounts
+  readonly selectedWallet: BlockchainWalletWithAccounts | null
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void

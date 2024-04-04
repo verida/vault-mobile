@@ -3,7 +3,7 @@ import * as React from 'react'
 
 import { MinifiedBlockchainAccount, MinifiedBlockchainAccounts } from '../types'
 import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
-import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
+import { useSelectedWallet } from './useSelectedWallet'
 
 export const getMinifiedBlockchainAccountId = (
   minifiedBlockchainAccount: MinifiedBlockchainAccount
@@ -29,7 +29,7 @@ export const getLabelForMinifiedBlockchainAccount = (
 // and greatly increase the exposure - without actually having to migrate
 // the existing persistence model.
 export function useSelectedMinifiedBlockchainAccounts(): MinifiedBlockchainAccounts {
-  const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+  const maybeVeridaWalletAccounts = useSelectedWallet()?.accounts
 
   return React.useMemo<readonly MinifiedBlockchainAccount[]>(() => {
     // First, minify the accounts so they just consist of raw signing information,

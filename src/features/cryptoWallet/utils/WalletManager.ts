@@ -180,16 +180,17 @@ export class WalletManager {
       )
 
       // TODO: Handle validation errors
-      const validWallets = CryptoWalletRecordsSchema.parse(storedWallets)
+      const validRecords = CryptoWalletRecordsSchema.parse(storedWallets)
 
-      if (validWallets.length === 0) {
+      if (validRecords.length === 0) {
         return {
           selectedWalletId: null,
           wallets: {},
         }
       }
 
-      const wallets = await WalletManager.getBlockchainAccounts(validWallets)
+      const wallets =
+        await WalletManager.transformRecordToCryptoWallets(validRecords)
 
       const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
         SELECTED_CRYPTO_WALLET_STORAGE_KEY
@@ -203,7 +204,7 @@ export class WalletManager {
 
       const selectedWalletId = previouslySelectedWallet
         ? previouslySelectedWallet._id
-        : validWallets[0]._id
+        : validRecords[0]._id
 
       if (selectedWalletId) {
         SecureStore.setItemAsync(
@@ -236,31 +237,40 @@ export class WalletManager {
     await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
   }
 
-  private static async getBlockchainAccounts(
-    walletRecords: CryptoWalletRecord[]
+  private static async transformRecordToCryptoWallets(
+    records: CryptoWalletRecord[]
   ): Promise<Record<string, BlockchainWalletWithAccounts>> {
     const blockchainNetworks = getBlockchainNetworks(store.getState()) // TODO: Deal with how to handle it in a pure function
     if (!blockchainNetworks) return {} // TODO: better way to handle this case
 
     const wallets: Record<string, BlockchainWalletWithAccounts> = {}
 
-    walletRecords.forEach((walletRecord) => {
-      const chainId = getChainIdFromWalletType(walletRecord.walletType)
+    records.forEach((record) => {
+      const chainId = getChainIdFromWalletType(record.walletType)
+
+      const blockchainNetwork =
+        record.walletType !== 'multi' ? blockchainNetworks[chainId] : undefined
+
+      const accounts = WalletManager.generateAccountsForWallet(
+        record,
+        Object.values(blockchainNetworks)
+      )
+
+      const addresses = Object.values(accounts).map((account) => {
+        return account.address
+      })
 
       const wallet: BlockchainWalletWithAccounts = {
-        _id: walletRecord._id,
-        label: walletRecord.label,
-        accounts: WalletManager.generateAccountsForWallet(
-          walletRecord,
-          Object.values(blockchainNetworks)
-        ),
-        multiChain: walletRecord.walletType === 'multi',
-        walletType: walletRecord.walletType,
-        viewOnly: !walletRecord.mnemonic && !walletRecord.privateKey,
-        blockchainNetwork:
-          walletRecord.walletType !== 'multi'
-            ? blockchainNetworks[chainId]
-            : undefined,
+        _id: record._id,
+        label: record.label,
+        walletType: record.walletType,
+        multiChain: record.walletType === 'multi',
+        viewOnly: !record.mnemonic && !record.privateKey,
+        count: Object.keys(accounts).length,
+        icon: blockchainNetwork?.icon,
+        address: addresses.length === 1 ? addresses[0] : undefined,
+        accounts,
+        blockchainNetwork,
         // asset: blockchainNetworks[chainId]?.asset,
       }
 
