@@ -207,7 +207,7 @@ export class WalletManager {
 
       const selectedWalletId = previouslySelectedWallet
         ? previouslySelectedWallet._id
-        : validRecords[0]._id
+        : validRecords[0]._id // TODO: Replace with the wallets variable when it's an array
 
       if (selectedWalletId) {
         SecureStore.setItemAsync(
@@ -267,14 +267,11 @@ export class WalletManager {
         _id: record._id,
         label: record.label,
         walletType: record.walletType,
-        multiChain: record.walletType === 'multi',
         viewOnly: !record.mnemonic && !record.privateKey,
         count: Object.keys(accounts).length,
         icon: blockchainNetwork?.icon,
         address: addresses.length === 1 ? addresses[0] : undefined,
         accounts,
-        blockchainNetwork,
-        // asset: blockchainNetworks[chainId]?.asset,
       }
 
       wallets[wallet._id] = wallet
@@ -285,92 +282,73 @@ export class WalletManager {
 
   private static generateAccountsForWallet(
     walletRecord: CryptoWalletRecord,
-    // TODO: We are misusing this type - we should just use use the result of getBlockchainNetworks()
-    maybeBlockchainNetworks:
-      | BlockchainNetwork[]
-      | Record<string, BlockchainNetwork>
-      | undefined
+    blockchainNetworks: BlockchainNetwork[] = []
   ) {
     const walletChainId = getChainIdFromWalletType(walletRecord.walletType)
-
-    const blockchainNetworks = maybeBlockchainNetworks || {}
-
     const accounts: Record<string, BlockchainAccount> = {}
 
-    Object.values(blockchainNetworks).forEach(
-      (blockchainNetwork: BlockchainNetwork): void => {
-        // HACK: It is possible that a user may have access to unsupported
-        //       wallets, for example, an algorand wallet, which was
-        //       previously supported. Here we filter out the unsupported wallet
-        //       to prevent the application from having to deal with instances
-        //       it doesn't support natively further downstream.
-        if (!isSupportedCaipNamespace(blockchainNetwork.namespace)) {
-          logger.warn(
-            `Refusing to process "${blockchainNetwork.chainId}", since it is no longer supported.`
-          )
-          return
-        }
-
-        if (
-          walletRecord.walletType !== 'multi' &&
-          blockchainNetwork.chainId !== walletChainId
-        ) {
-          return
-        }
-
-        // If we have a watch only wallet, simply return it
-        if (
-          walletRecord.address &&
-          !walletRecord.privateKey &&
-          !walletRecord.mnemonic
-        ) {
-          const blockchainAccount: BlockchainAccount = {
-            blockchainNetwork,
-            chainId: blockchainNetwork.chainId,
-            derivationPath: blockchainNetwork.derivationPath,
-            address: walletRecord.address,
-          }
-
-          accounts[blockchainNetwork.chainId] = blockchainAccount
-          return
-        }
-
-        if (!NAMESPACES[blockchainNetwork.namespace]) {
-          throw new Error(blockchainNetwork.chainId + 'is not supported')
-        }
-
-        const namespaceChain = NAMESPACES[blockchainNetwork.namespace]
-
-        let walletDetails: WalletUtilsWallet
-
-        if (walletRecord.privateKey) {
-          walletDetails = namespaceChain.buildAccountFromPrivateKey(
-            walletRecord.privateKey
-          )
-        } else if (walletRecord.mnemonic) {
-          walletDetails = namespaceChain.buildAccountFromMnemonic(
-            walletRecord.mnemonic,
-            blockchainNetwork.derivationPath,
-            Boolean(walletRecord.walletType === 'multi')
-          )
-        } else {
-          throw new Error(
-            'Unexpected wallet (No address, private key or mnemonic)'
-          )
-        }
-
-        const blockchainAccount: BlockchainAccount = {
-          blockchainNetwork,
-          chainId: blockchainNetwork.chainId,
-          derivationPath: blockchainNetwork.derivationPath,
-          address: walletDetails.address,
-          mnemonic: walletDetails.mnemonic,
-          privateKey: walletDetails.privateKey,
-        }
-
-        accounts[blockchainNetwork.chainId] = blockchainAccount
+    blockchainNetworks.forEach((blockchain): void => {
+      if (!isSupportedCaipNamespace(blockchain.namespace)) {
+        logger.warn(
+          `Refusing to process "${blockchain.chainId}", since it is no longer supported.`
+        )
+        return
       }
-    )
+
+      if (
+        walletRecord.walletType !== 'multi' &&
+        blockchain.chainId !== walletChainId
+      ) {
+        return
+      }
+
+      // If we have a watch only wallet, simply return it
+      if (
+        walletRecord.address &&
+        !walletRecord.privateKey &&
+        !walletRecord.mnemonic
+      ) {
+        const blockchainAccount: BlockchainAccount = {
+          chainId: blockchain.chainId,
+          address: walletRecord.address,
+        }
+
+        accounts[blockchain.chainId] = blockchainAccount
+        return
+      }
+
+      if (!NAMESPACES[blockchain.namespace]) {
+        throw new Error(blockchain.chainId + 'is not supported')
+      }
+
+      const namespaceChain = NAMESPACES[blockchain.namespace]
+
+      let walletDetails: WalletUtilsWallet
+
+      if (walletRecord.privateKey) {
+        walletDetails = namespaceChain.buildAccountFromPrivateKey(
+          walletRecord.privateKey
+        )
+      } else if (walletRecord.mnemonic) {
+        walletDetails = namespaceChain.buildAccountFromMnemonic(
+          walletRecord.mnemonic,
+          blockchain.derivationPath,
+          Boolean(walletRecord.walletType === 'multi')
+        )
+      } else {
+        throw new Error(
+          'Unexpected wallet (No address, private key or mnemonic)'
+        )
+      }
+
+      const blockchainAccount: BlockchainAccount = {
+        chainId: blockchain.chainId,
+        address: walletDetails.address,
+        privateKey: walletDetails.privateKey,
+      }
+
+      accounts[blockchain.chainId] = blockchainAccount
+    })
 
     return accounts
   }

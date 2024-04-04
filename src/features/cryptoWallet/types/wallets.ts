@@ -1,9 +1,6 @@
 import { z } from 'zod'
 
-import {
-  BlockchainNetwork,
-  SupportedBlockchainNamespace,
-} from '~/features/blockchain'
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
 
 import {
   BaseCryptoWalletRecordSchema,
@@ -41,31 +38,17 @@ export type UpdateCryptoWalletData = Partial<
 export type BlockchainAccount = {
   privateKey?: string
   address?: string
-  publicKey?: string
-  mnemonic?: string
   chainId?: string
-  derivationPath?: string
-  blockchainNetwork?: BlockchainNetwork
 }
 
 export type BlockchainWalletWithAccounts = {
   _id: string
   label: string
-  multiChain: boolean
   viewOnly?: boolean
   walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
-
-  privateKey?: string
   address?: string
-  publicKey?: string
   mnemonic?: string
-  chainId?: string
-  derivationPath?: string
-  blockchainNetwork?: BlockchainNetwork
-
   accounts: Record<string, BlockchainAccount>
-
-  // Transient fields for displaying
   icon?: string
   count?: number
 }
