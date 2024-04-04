@@ -1,9 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import {
-  BlockchainNetwork,
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from 'features/blockchain'
 import { Icon } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import {
@@ -14,28 +9,34 @@ import {
   View,
 } from 'react-native'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useAppSelector } from 'reduxStore/types'
-import InputStyles from 'styles/inputs'
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import DropDownPicker from '~/components/Select'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import {
+  BlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from '~/features/blockchain'
+import { AddWatchedCryptoWallet } from '~/features/cryptoWallet'
+import { useAppSelector } from '~/reduxStore/types'
+import InputStyles from '~/styles/inputs'
 
-type Props = {
+export type AddWatchedWalletModalProps = {
   visible: boolean
-  onAddWatchedWallet: (data: any) => void // TODO: Enforce Wallet type
+  onAddWatchedWallet: (data: AddWatchedCryptoWallet) => void
   hideModal: () => void
 }
 
 const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
   Object.freeze({})
 
-export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
-  props
-) => {
+export const AddWatchedWalletModal: React.FunctionComponent<
+  AddWatchedWalletModalProps
+> = (props) => {
   const { visible, hideModal, onAddWatchedWallet } = props
 
   // const defaultBlockchain = 'eip155:1'
@@ -69,8 +70,12 @@ export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
   }, [])
 
   const handlePressSubmit = useCallback(() => {
-    // TODO: Should we add a check on the address pattern according to the blockchain?
-    onAddWatchedWallet({ label, blockchain, publicAddress })
+    // TODO: Add a check on the address pattern according to the blockchain?
+    onAddWatchedWallet({
+      label,
+      walletType: blockchain,
+      address: publicAddress,
+    })
     hideModal()
   }, [blockchain, hideModal, label, onAddWatchedWallet, publicAddress])
 

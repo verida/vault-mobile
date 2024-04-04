@@ -1,7 +1,7 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
 import { BlockchainAccount } from 'features/blockchain'
-import { getWalletObjectById, renameCryptoWallet } from 'features/cryptoWallet'
+import { getWalletObjectById, updateCryptoWallet } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -45,7 +45,14 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
 
   const onRenameWallet = async (walletId: string, data: { name: string }) => {
     setLoading(true)
-    await dispatch(renameCryptoWallet({ walletId, data }))
+    await dispatch(
+      updateCryptoWallet({
+        walletId,
+        data: {
+          label: data.name,
+        },
+      })
+    )
     setLoading(false)
   }
   useEffect(() => {
