@@ -1,16 +1,16 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 import * as React from 'react'
 
 import { useGetTransactionsForTokenQuery } from '../api'
 import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
 
 export function useTransactionsForMaybeAssetId({
-  assetId: maybeAssetId,
+  assetType: maybeAssetType,
 }: {
-  readonly assetId: AssetId | null | undefined
+  readonly assetType: AssetType | null | undefined
 }) {
-  const chainId = maybeAssetId?.chainId
-    ? new ChainId(maybeAssetId.chainId).toString()
+  const chainId = maybeAssetType?.chainId
+    ? new ChainId(maybeAssetType.chainId).toString()
     : null
 
   const selectedWallet = useMaybeSelectedWallet()
@@ -20,7 +20,7 @@ export function useTransactionsForMaybeAssetId({
     : undefined
 
   const userAddress = account?.address || null
-  const asset = maybeAssetId || null
+  const asset = maybeAssetType || null
 
   const skip = !userAddress || !asset
 
