@@ -16,6 +16,7 @@ export const CRYPTO_WALLETS_STORAGE_KEY = 'wallets-v4'
 export const SELECTED_CRYPTO_WALLET_STORAGE_KEY = 'selected-wallet'
 
 export const DEFAULT_MULTI_CHAIN_WALLET_LABEL = 'Multi-chain Wallet'
+export const DEFAULT_SINGLE_CHAIN_WALLET_LABEL = 'Crypto Wallet'
 
 export const DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT: AggregateWalletBannerBalances =
   Object.freeze([])
