@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
-import { AssetId } from 'caip'
+import { AssetId, AssetType } from 'caip'
 import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
 
@@ -93,7 +93,10 @@ export const cryptoWalletLegacyApi = createApi({
     //       However, the application can technically enter a state where these values are not
     //       defined.
     getTransactionsForToken: build.query({
-      query: (body: { userAddress: string | null; asset: AssetId | null }) => ({
+      query: (body: {
+        userAddress: string | null
+        asset: AssetType | null
+      }) => ({
         url: 'transaction/list',
         method: 'POST',
         body,
@@ -106,7 +109,7 @@ export const cryptoWalletLegacyApi = createApi({
       query: (body: {
         transactionId: string
         userAddress: string | null | undefined
-        asset: AssetId | null | undefined
+        asset: AssetType | null | undefined
       }) => ({
         url: 'transaction/get',
         method: 'POST',

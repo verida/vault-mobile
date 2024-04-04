@@ -1,4 +1,4 @@
-import { AssetId } from 'caip'
+import { AssetType } from 'caip'
 import {
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
@@ -25,7 +25,7 @@ const createDefaultErrorResponse = (): SelectSingleTokenDataFailureCase => ({
 // TODO: @cawfree If there was a `tokenType` field, it should be created here.
 export const selectSingleTokenData = (
   state: RootState,
-  asset: AssetId | undefined
+  asset: AssetType | undefined
 ): SelectSingleTokenData => {
   if (!asset) return createDefaultErrorResponse()
 
@@ -34,7 +34,9 @@ export const selectSingleTokenData = (
   const { list } = getBalancesData(state, addresses)
 
   const tokenBalance = list?.find((item) => {
-    return new AssetId(item.asset).toString() === new AssetId(asset).toString()
+    return (
+      new AssetType(item.asset).toString() === new AssetType(asset).toString()
+    )
   })
 
   // We should always find a token balance, so this shouldn't happen
