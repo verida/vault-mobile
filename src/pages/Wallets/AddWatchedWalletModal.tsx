@@ -18,6 +18,7 @@ import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
 import {
   AddWatchedCryptoWalletData,
+  getWalletTypeLongLabel,
   WALLET_TYPES,
   WalletType,
 } from '~/features/cryptoWallet'
@@ -43,7 +44,7 @@ export const AddWatchedWalletModal: React.FunctionComponent<
   const walletTypeItems = Object.values(WALLET_TYPES).map(
     (type: WalletType) => {
       return {
-        label: type, // TODO: Get proper label of the blockchain namespace
+        label: getWalletTypeLongLabel(type),
         value: type,
       }
     }

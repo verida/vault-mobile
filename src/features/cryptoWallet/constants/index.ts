@@ -1,4 +1,7 @@
-import { BLOCKCHAIN_NAMESPACES } from '~/features/blockchain'
+import {
+  BLOCKCHAIN_NAMESPACE_DEFINITIONS,
+  BLOCKCHAIN_NAMESPACES,
+} from '~/features/blockchain'
 
 import { AggregateWalletBannerBalances } from '../types'
 
@@ -27,4 +30,12 @@ export const SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES = [
   ...BLOCKCHAIN_NAMESPACES,
 ]
 
+// Keep WALLET_TYPES and WALLET_TYPE_DEFINITIONS in sync
 export const WALLET_TYPES = ['multi', ...BLOCKCHAIN_NAMESPACES] as const
+export const WALLET_TYPE_DEFINITIONS = {
+  ...BLOCKCHAIN_NAMESPACE_DEFINITIONS,
+  multi: {
+    shortLabel: 'Multi-chain Wallet',
+    longLabel: 'Multi-chain Wallet',
+  },
+}

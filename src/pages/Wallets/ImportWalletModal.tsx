@@ -18,6 +18,7 @@ import DropDownPicker from '~/components/Select'
 import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
 import {
+  getWalletTypeLongLabel,
   ImportCryptoWalletData,
   isValidMnemonic,
   isValidPrivateKey,
@@ -32,7 +33,7 @@ export type ImportWalletModalProps = {
   hideModal: () => void
 }
 
-const walletTypesAllowingPrivateKey: WalletType[] = ['eip155'] // TODO: Move into blockchain feature
+const walletTypesAllowingPrivateKey: WalletType[] = ['eip155'] // TODO: Move into blockchain or crypto wallet feature
 
 const defaultWalletType: WalletType = 'multi'
 
@@ -51,7 +52,7 @@ export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
   const walletTypeItems = Object.values(WALLET_TYPES).map(
     (type: WalletType) => {
       return {
-        label: type, // TODO: Get proper label of the blockchain namespace
+        label: getWalletTypeLongLabel(type),
         value: type,
       }
     }

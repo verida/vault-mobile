@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash'
 
-import { BlockchainWalletWithAccounts } from '../types'
+import { WALLET_TYPE_DEFINITIONS } from '../constants'
+import { BlockchainWalletWithAccounts, WalletType } from '../types'
 
 export const getUniqueWalletAddresses = (
   wallet: BlockchainWalletWithAccounts | null
@@ -20,4 +21,12 @@ export const getUniqueWalletAddresses = (
   ]
 
   return addresses
+}
+
+export function getWalletTypeShortLabel(walletType: WalletType) {
+  return WALLET_TYPE_DEFINITIONS[walletType].shortLabel
+}
+
+export function getWalletTypeLongLabel(walletType: WalletType) {
+  return WALLET_TYPE_DEFINITIONS[walletType].longLabel
 }
