@@ -34,6 +34,7 @@ import {
   CryptoWalletRecord,
   ImportCryptoWalletData,
   UpdateCryptoWalletData,
+  WalletType,
 } from '../types'
 
 const logger = Logger.create('CryptoWallets')
@@ -63,6 +64,19 @@ async function saveCryptoWalletRecord(
 }
 
 export class WalletManager {
+  public static async clearCachedCryptoWallets() {
+    await Promise.all([
+      SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
+
+      // CRYPTO_WALLETS_STORAGE_KEY is no longer used, but we want to clean up potential remaining data from olver versions.
+      SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
+    ])
+  }
+
+  public static async selectCryptoWallet(walletId: string) {
+    await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
+  }
+
   public static async createCryptoWallet(
     walletsDatastore: IDatastore,
     data: CreateCryptoWalletData
@@ -227,19 +241,6 @@ export class WalletManager {
     }
   }
 
-  public static async clearCachedCryptoWallets() {
-    await Promise.all([
-      SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
-
-      // CRYPTO_WALLETS_STORAGE_KEY is no longer used, but we want to clean up potential remaining data from olver versions.
-      SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
-    ])
-  }
-
-  public static async selectCryptoWallet(walletId: string) {
-    await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
-  }
-
   private static async transformRecordToCryptoWallets(
     records: CryptoWalletRecord[]
   ): Promise<Record<string, BlockchainWalletWithAccounts>> {
@@ -249,10 +250,8 @@ export class WalletManager {
     const wallets: Record<string, BlockchainWalletWithAccounts> = {}
 
     records.forEach((record) => {
-      const chainId = getChainIdFromWalletType(record.walletType)
-
-      const blockchainNetwork =
-        record.walletType !== 'multi' ? blockchainNetworks[chainId] : undefined
+      // TODO: We need to migrate the wallet type to the new format for existing records
+      const newWalletType = getWalletTypeFromLegacy(record.walletType)
 
       const accounts = WalletManager.generateAccountsForWallet(
         record,
@@ -266,10 +265,9 @@ export class WalletManager {
       const wallet: BlockchainWalletWithAccounts = {
         _id: record._id,
         label: record.label,
-        walletType: record.walletType,
+        walletType: newWalletType,
         viewOnly: !record.mnemonic && !record.privateKey,
         count: Object.keys(accounts).length,
-        icon: blockchainNetwork?.icon,
         address: addresses.length === 1 ? addresses[0] : undefined,
         accounts,
       }
@@ -284,21 +282,26 @@ export class WalletManager {
     walletRecord: CryptoWalletRecord,
     blockchainNetworks: BlockchainNetwork[] = []
   ) {
-    const walletChainId = getChainIdFromWalletType(walletRecord.walletType)
     const accounts: Record<string, BlockchainAccount> = {}
 
+    const newWalletType = getWalletTypeFromLegacy(walletRecord.walletType)
+
     blockchainNetworks.forEach((blockchain): void => {
-      if (!isSupportedCaipNamespace(blockchain.namespace)) {
-        logger.warn(
-          `Refusing to process "${blockchain.chainId}", since it is no longer supported.`
-        )
+      if (
+        newWalletType !== 'multi' &&
+        !isSupportedCaipNamespace(newWalletType)
+      ) {
+        logger.warn(`Blockchain namespace not supported: "${newWalletType}"`)
         return
       }
 
-      if (
-        walletRecord.walletType !== 'multi' &&
-        blockchain.chainId !== walletChainId
-      ) {
+      if (!NAMESPACES[blockchain.namespace]) {
+        throw new Error(
+          `Blockchain namespace not supported: "${blockchain.namespace}"`
+        )
+      }
+
+      if (newWalletType !== 'multi' && blockchain.namespace !== newWalletType) {
         return
       }
 
@@ -315,10 +318,6 @@ export class WalletManager {
 
         accounts[blockchain.chainId] = blockchainAccount
         return
-      }
-
-      if (!NAMESPACES[blockchain.namespace]) {
-        throw new Error(blockchain.chainId + 'is not supported')
       }
 
       const namespaceChain = NAMESPACES[blockchain.namespace]
@@ -354,21 +353,13 @@ export class WalletManager {
   }
 }
 
-/**
- * Convert old values of walletType to chainId
- */
-function getChainIdFromWalletType(walletType: string) {
-  // Convert imported testnet wallets using the old format
-  // to proper CAIP addresses
-  // This is for wallets created between 4 May 2023 and the next release
-  switch (walletType) {
-    case 'ethereum':
-      return 'eip155:5'
-    case 'polygon':
-      return 'eip155:80001'
-    case 'near':
-      return 'near:testnet'
-    default:
-      return walletType
+function getWalletTypeFromLegacy(walletType: string): WalletType {
+  if (walletType.startsWith('eip155')) {
+    return 'eip155'
+  } else if (walletType.startsWith('near')) {
+    return 'near'
+  } else if (walletType === 'multi') {
+    return 'multi'
   }
+  throw new Error(`Unsupported wallet type: ${walletType}`)
 }

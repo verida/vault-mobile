@@ -1,11 +1,14 @@
 import { z } from 'zod'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain'
+import { BlockchainNamespace } from '~/features/blockchain'
 
+import { WALLET_TYPES } from '../constants'
 import {
   BaseCryptoWalletRecordSchema,
   CryptoWalletRecordSchema,
 } from '../schemas'
+
+export type WalletType = (typeof WALLET_TYPES)[number]
 
 export type BaseCryptoWalletRecord = z.infer<
   typeof BaseCryptoWalletRecordSchema
@@ -33,7 +36,7 @@ export type UpdateCryptoWalletData = Partial<
   Pick<BaseCryptoWalletRecord, 'label'>
 >
 
-// ------
+// ------ To refactor ------
 
 export type BlockchainAccount = {
   privateKey?: string
@@ -45,7 +48,7 @@ export type BlockchainWalletWithAccounts = {
   _id: string
   label: string
   viewOnly?: boolean
-  walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
+  walletType: WalletType
   address?: string
   mnemonic?: string
   accounts: Record<string, BlockchainAccount>
@@ -53,22 +56,19 @@ export type BlockchainWalletWithAccounts = {
   count?: number
 }
 
-// ------
-
-type AbstractMinifiedBlockchainAccount<
-  Namespace extends SupportedBlockchainNamespace,
-> = {
-  readonly address: string
-  readonly namespace: Namespace
-}
+type AbstractMinifiedBlockchainAccount<Namespace extends BlockchainNamespace> =
+  {
+    readonly address: string
+    readonly namespace: Namespace
+  }
 
 export type MinifiedBlockchainAccountEip155 =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.EIP_155> & {
+  AbstractMinifiedBlockchainAccount<'eip155'> & {
     readonly privateKey: string
   }
 
 export type MinifiedBlockchainAccountNear =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.NEAR> & {
+  AbstractMinifiedBlockchainAccount<'near'> & {
     readonly privateKey: string
   }
 

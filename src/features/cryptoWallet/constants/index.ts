@@ -1,4 +1,4 @@
-import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/blockchain'
+import { BLOCKCHAIN_NAMESPACES } from '~/features/blockchain'
 
 import { AggregateWalletBannerBalances } from '../types'
 
@@ -24,5 +24,7 @@ export const DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT: AggregateWalletBan
 // TODO: Register this scheme on iOS and Android for deep links
 export const SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES = [
   'ethereum',
-  ...SUPPORTED_BLOCKCHAIN_NAMESPACES,
+  ...BLOCKCHAIN_NAMESPACES,
 ]
+
+export const WALLET_TYPES = ['multi', ...BLOCKCHAIN_NAMESPACES] as const

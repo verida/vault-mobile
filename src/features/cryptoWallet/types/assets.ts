@@ -1,6 +1,5 @@
 import BigDecimal from 'bignumber.js'
 import { AssetType, AssetTypeParams, ChainIdParams } from 'caip'
-import { BlockchainNetwork } from 'features/blockchain'
 
 import { Option } from 'components/Select'
 
@@ -95,13 +94,6 @@ export interface BalanceByChain {
 // End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option
-
-export type ImportedSeedPhrase = {
-  readonly phrase: string
-  readonly privateKey: string
-  readonly blockchainNetwork: BlockchainNetwork | null | undefined
-  readonly inputSwitch: string
-}
 
 export enum Currency {
   USD = 'USD',
