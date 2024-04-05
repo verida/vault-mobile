@@ -8,7 +8,7 @@ import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
 import {
-  AddWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
   BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   ImportCryptoWalletData,
@@ -291,7 +291,7 @@ export const importCryptoWallet = createAppAsyncThunk(
 
 export const addWatchedCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/addWatchedCryptoWallet',
-  async (data: AddWatchedCryptoWallet, { rejectWithValue, dispatch }) => {
+  async (data: AddWatchedCryptoWalletData, { rejectWithValue, dispatch }) => {
     try {
       const walletsDatastore = await getWalletsDatastore()
 

@@ -26,7 +26,7 @@ import {
   CryptoWalletRecordsSchema,
 } from '../schemas'
 import {
-  AddWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
   BaseCryptoWalletRecord,
   BlockchainAccount,
   BlockchainWalletWithAccounts,
@@ -124,7 +124,7 @@ export class WalletManager {
 
   public static async addWatchedCryptoWallet(
     walletsDatastore: IDatastore,
-    data: AddWatchedCryptoWallet
+    data: AddWatchedCryptoWalletData
   ) {
     const { label, walletType } = data
 

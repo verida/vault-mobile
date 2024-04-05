@@ -27,7 +27,7 @@ export type ImportCryptoWalletData = Partial<
   >
 >
 
-export type AddWatchedCryptoWallet = Partial<
+export type AddWatchedCryptoWalletData = Partial<
   Pick<BaseCryptoWalletRecord, 'label'>
 > &
   Required<Pick<BaseCryptoWalletRecord, 'walletType' | 'address'>>

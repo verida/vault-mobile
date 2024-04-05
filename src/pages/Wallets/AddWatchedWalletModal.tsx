@@ -17,7 +17,7 @@ import DropDownPicker from '~/components/Select'
 import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
 import {
-  AddWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
   WALLET_TYPES,
   WalletType,
 } from '~/features/cryptoWallet'
@@ -25,7 +25,7 @@ import InputStyles from '~/styles/inputs'
 
 export type AddWatchedWalletModalProps = {
   visible: boolean
-  onAddWatchedWallet: (data: AddWatchedCryptoWallet) => void
+  onAddWatchedWallet: (data: AddWatchedCryptoWalletData) => void
   hideModal: () => void
 }
 

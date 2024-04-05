@@ -11,8 +11,8 @@ import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import WalletList from '~/components/WalletList'
 import { BLACK_COLOR } from '~/constants/color'
 import {
-  AddWatchedCryptoWallet,
   addWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
   BlockchainWalletWithAccounts,
   createCryptoWallet,
   CreateCryptoWalletData,
@@ -70,7 +70,7 @@ const ManageWallets = (props: Props) => {
   )
 
   const handleAddWatchedWallet = useCallback(
-    (data: AddWatchedCryptoWallet) => {
+    (data: AddWatchedCryptoWalletData) => {
       dispatch(addWatchedCryptoWallet(data))
     },
     [dispatch]
