@@ -1,9 +1,14 @@
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types'
-import { $enum } from 'ts-enum-util'
+import { $enum } from 'ts-enum-util' // TODO: Uninstall when no longer needed
 
+/**
+ * @deprecated use `BLOCKCHAIN_NAMESPACES` instead
+ */
 export const SUPPORTED_BLOCKCHAIN_NAMESPACES = [
   ...$enum(SupportedBlockchainNamespace).values(),
 ]
+
+export const BLOCKCHAIN_NAMESPACES = ['eip155', 'near'] as const
 
 export const CUSTOM_BLOCKCHAIN_SCHEMA_URL =
   'https://vault.schemas.verida.io/blockchain/custom-networks/v0.1.0/schema.json'

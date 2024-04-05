@@ -3,7 +3,11 @@ import { AssetId } from 'caip'
 import { ChainMetadata } from 'features/caip'
 import { z } from 'zod'
 
+import { BLOCKCHAIN_NAMESPACES } from '../constants'
+
 export * from './enums'
+
+export type BlockchainNamespace = (typeof BLOCKCHAIN_NAMESPACES)[number]
 
 /**
  * A blockchain network (ie: goerli)
