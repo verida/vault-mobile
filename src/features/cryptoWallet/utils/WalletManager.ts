@@ -206,8 +206,10 @@ export class WalletManager {
         }
       }
 
-      const wallets =
-        await WalletManager.transformRecordToCryptoWallets(validRecords)
+      const wallets = await WalletManager.transformRecordToCryptoWallets(
+        validRecords,
+        walletsDatastore
+      )
 
       const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
         SELECTED_CRYPTO_WALLET_STORAGE_KEY
@@ -242,7 +244,8 @@ export class WalletManager {
   }
 
   private static async transformRecordToCryptoWallets(
-    records: CryptoWalletRecord[]
+    records: CryptoWalletRecord[],
+    walletsDatastore: IDatastore
   ): Promise<Record<string, BlockchainWalletWithAccounts>> {
     const blockchainNetworks = getBlockchainNetworks(store.getState()) // TODO: Deal with how to handle it in a pure function
     if (!blockchainNetworks) return {} // TODO: better way to handle this case
@@ -250,8 +253,12 @@ export class WalletManager {
     const wallets: Record<string, BlockchainWalletWithAccounts> = {}
 
     records.forEach((record) => {
-      // TODO: We need to migrate the wallet type to the new format for existing records
-      const newWalletType = getWalletTypeFromLegacy(record.walletType)
+      // Handle legacy wallet type values
+      const walletType = getWalletTypeFromLegacy(record.walletType)
+      if (record.walletType !== walletType) {
+        record.walletType = walletType
+        saveCryptoWalletRecord(walletsDatastore, record)
+      }
 
       const accounts = WalletManager.generateAccountsForWallet(
         record,
@@ -265,7 +272,7 @@ export class WalletManager {
       const wallet: BlockchainWalletWithAccounts = {
         _id: record._id,
         label: record.label,
-        walletType: newWalletType,
+        walletType: walletType,
         viewOnly: !record.mnemonic && !record.privateKey,
         count: Object.keys(accounts).length,
         address: addresses.length === 1 ? addresses[0] : undefined,
@@ -284,14 +291,12 @@ export class WalletManager {
   ) {
     const accounts: Record<string, BlockchainAccount> = {}
 
-    const newWalletType = getWalletTypeFromLegacy(walletRecord.walletType)
+    // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
+    const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
 
     blockchainNetworks.forEach((blockchain): void => {
-      if (
-        newWalletType !== 'multi' &&
-        !isSupportedCaipNamespace(newWalletType)
-      ) {
-        logger.warn(`Blockchain namespace not supported: "${newWalletType}"`)
+      if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
+        logger.warn(`Blockchain namespace not supported: "${walletType}"`)
         return
       }
 
@@ -301,7 +306,7 @@ export class WalletManager {
         )
       }
 
-      if (newWalletType !== 'multi' && blockchain.namespace !== newWalletType) {
+      if (walletType !== 'multi' && blockchain.namespace !== walletType) {
         return
       }
 
