@@ -60,8 +60,8 @@ export function useAggregateWalletBannerBalances(
   const currentWallet = useSelectedWallet()
 
   const currentChainIds = React.useMemo(() => {
-    return Object.entries(currentWallet?.accounts ?? {}).map(
-      ([key, account]) => new ChainId(account.chainId || key)
+    return (currentWallet?.accounts || []).map(
+      (account) => new ChainId(account.chainId)
     )
   }, [currentWallet])
 

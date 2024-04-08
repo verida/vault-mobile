@@ -288,8 +288,8 @@ export class WalletManager {
   private static generateAccountsForWallet(
     walletRecord: CryptoWalletRecord,
     blockchainNetworks: BlockchainNetwork[] = []
-  ) {
-    const accounts: Record<string, LegacyCryptoWalletAccount> = {}
+  ): LegacyCryptoWalletAccount[] {
+    const accounts: LegacyCryptoWalletAccount[] = []
 
     // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
     const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
@@ -321,7 +321,7 @@ export class WalletManager {
           address: walletRecord.address,
         }
 
-        accounts[blockchain.chainId] = legacyCryptoWalletAccount
+        accounts.push(legacyCryptoWalletAccount)
         return
       }
 
@@ -351,7 +351,7 @@ export class WalletManager {
         privateKey: walletDetails.privateKey,
       }
 
-      accounts[blockchain.chainId] = legacyCryptoWalletAccount
+      accounts.push(legacyCryptoWalletAccount)
     })
 
     return accounts

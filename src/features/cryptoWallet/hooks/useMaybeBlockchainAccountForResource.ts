@@ -18,7 +18,9 @@ export function useMaybeBlockchainAccountForResource(
     useSelectedMinifiedBlockchainAccounts()
 
   return React.useMemo<LegacyCryptoWallet | null>(() => {
-    if (!maybeFromAddress) return null
+    if (!maybeFromAddress) {
+      return null
+    }
 
     const { namespace, fromAddress } = maybeFromAddress
 
@@ -26,11 +28,13 @@ export function useMaybeBlockchainAccountForResource(
       (e) => e.namespace === namespace && e.address === fromAddress
     )
 
-    if (!maybeMinifiedVeridaAccount) return null
+    if (!maybeMinifiedVeridaAccount) {
+      return null
+    }
 
     const maybeMatchingAccount = Object.values(wallets).find(
       (e: LegacyCryptoWallet) =>
-        Object.values(e.accounts).find(
+        e.accounts.find(
           (f) =>
             // TODO: this is slow and inefficient, fix
             JSON.stringify(

@@ -14,7 +14,7 @@ export function useTransactionsForMaybeAssetId({
     : null
 
   const selectedWallet = useSelectedWallet()
-  const accounts = Object.values(selectedWallet?.accounts || {})
+  const accounts = selectedWallet?.accounts || []
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId)
     : undefined

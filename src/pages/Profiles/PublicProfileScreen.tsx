@@ -249,7 +249,10 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
             accAddresses: VeridaOneWalletAddress[],
             wallet: LegacyCryptoWallet
           ) => {
-            const account = wallet.accounts[blockchainNetwork.chainId]
+            const account = wallet.accounts.find(
+              (a) => a.chainId === blockchainNetwork.chainId
+            )
+
             if (account) {
               accAddresses.push({
                 address: account.address!,

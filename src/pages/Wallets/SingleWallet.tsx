@@ -126,7 +126,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
           </View>
           <Text style={styles.listLabel}>Addresses</Text>
           <ChainsAddressesList
-            list={Object.values(cryptoWallet.accounts || {})}
+            list={cryptoWallet.accounts || []}
             onPressSeedPhrase={(seedPhrase: string) => {
               showSeedPhrase(seedPhrase)
             }}

@@ -35,7 +35,7 @@ const TransactionDetails = () => {
   const chainId = useChainIdForResourceParams({ resource })
 
   const selectedWallet = useSelectedWallet()
-  const accounts = Object.values(selectedWallet?.accounts || {})
+  const accounts = selectedWallet?.accounts || []
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
     : undefined

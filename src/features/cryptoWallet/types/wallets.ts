@@ -47,8 +47,8 @@ export type CryptoWalletAccounts = readonly CryptoWalletAccount[]
  */
 export type LegacyCryptoWalletAccount = {
   privateKey?: string
-  address?: string
-  chainId?: string
+  address: string
+  chainId: string
 }
 
 // If we ever get rid of the "multi" wallet type, this CryptoWallet type can be merged with the CryptoWalletAccount type because the only reason `accounts` is an array is because of the "multi" wallet type.
@@ -72,7 +72,7 @@ export type LegacyCryptoWallet = {
   walletType: WalletType
   address?: string
   mnemonic?: string
-  accounts: Record<string, LegacyCryptoWalletAccount>
+  accounts: LegacyCryptoWalletAccount[]
   icon?: string
   count?: number
 }

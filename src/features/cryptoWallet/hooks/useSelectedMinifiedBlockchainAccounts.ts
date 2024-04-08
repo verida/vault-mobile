@@ -32,13 +32,13 @@ export const getCryptoWalletAccountAddress = (
 // and greatly increase the exposure - without actually having to migrate
 // the existing persistence model.
 export function useSelectedMinifiedBlockchainAccounts(): CryptoWalletAccounts {
-  const maybeVeridaWalletAccounts = useSelectedWallet()?.accounts
+  const currentCryptoWalletAccounts = useSelectedWallet()?.accounts
 
   return React.useMemo<CryptoWalletAccounts>(() => {
     // First, minify the accounts so they just consist of raw signing information,
     // and have no presumptions about a specific chain.
-    const cryptoWalletAccounts = Object.entries(maybeVeridaWalletAccounts || {})
-      .map(([, blockchainAccount]) =>
+    const cryptoWalletAccounts = (currentCryptoWalletAccounts || [])
+      .map((blockchainAccount) =>
         transformLegacyWalletAccountToCryptoWalletAccount(blockchainAccount)
       )
       .flatMap((maybeMinifiedAccount) =>
@@ -54,5 +54,5 @@ export function useSelectedMinifiedBlockchainAccounts(): CryptoWalletAccounts {
     return cryptoWalletAccounts.filter(
       (_, i) => hashes.indexOf(hashes[i]) === i
     )
-  }, [maybeVeridaWalletAccounts])
+  }, [currentCryptoWalletAccounts])
 }
