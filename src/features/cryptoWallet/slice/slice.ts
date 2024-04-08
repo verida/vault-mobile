@@ -3,13 +3,19 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import AccountManager from '~/api/AccountManager'
 import { logout } from '~/features/auth'
-import { BlockchainWalletWithAccounts } from '~/features/blockchain'
 import { Logger } from '~/features/telemetry'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
+import {
+  AddWatchedCryptoWallet,
+  BlockchainWalletWithAccounts,
+  CreateCryptoWalletData,
+  ImportCryptoWalletData,
+  UpdateCryptoWalletData,
+} from '../types'
 import { WalletManager } from '../utils'
-import { getSelectedWalletId } from './selectors'
+import { getSelectedCryptoWalletId } from './selectors'
 
 const logger = Logger.create('CryptoWallets')
 
@@ -32,7 +38,7 @@ const initialState: CryptoWalletsState = {
 }
 
 export const cryptoWalletSlice = createSlice({
-  name: 'cryptoWallet',
+  name: 'cryptoWallets',
   initialState,
   reducers: {
     saveCryptoWallets: (
@@ -136,20 +142,20 @@ export const cryptoWalletSlice = createSlice({
         }
       })
 
-      // Rename a wallet
-      .addCase(renameCryptoWallet.pending, (state) => {
+      // Update a wallet
+      .addCase(updateCryptoWallet.pending, (state) => {
         state.status = {
           processsing: true,
           error: undefined,
         }
       })
-      .addCase(renameCryptoWallet.fulfilled, (state) => {
+      .addCase(updateCryptoWallet.fulfilled, (state) => {
         state.status = {
           processsing: false,
           error: undefined,
         }
       })
-      .addCase(renameCryptoWallet.rejected, (state, action) => {
+      .addCase(updateCryptoWallet.rejected, (state, action) => {
         state.status = {
           processsing: false,
           error: action.payload,
@@ -245,18 +251,12 @@ export const clearCryptoWallets = createAppAsyncThunk(
 
 export const createCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/createCryptoWallet',
-  async (
-    data: { phrase?: string; name?: string },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: CreateCryptoWalletData, { rejectWithValue, dispatch }) => {
     try {
       const walletsDatastore = await getWalletsDatastore()
 
       const { selectedWalletId, wallets } =
-        await WalletManager.createCryptoWallet(walletsDatastore, {
-          phrase: data.phrase,
-          label: data.name,
-        })
+        await WalletManager.createCryptoWallet(walletsDatastore, data)
 
       dispatch(saveCryptoWallets(wallets))
       dispatch(setSelectedCryptoWalletId(selectedWalletId))
@@ -271,16 +271,7 @@ export const createCryptoWallet = createAppAsyncThunk(
 
 export const importCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/importCryptoWallet',
-  async (
-    data: {
-      name: string
-      inputSwitch: string
-      phrase: string
-      walletType: string
-      privateKey: string
-    },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: ImportCryptoWalletData, { rejectWithValue, dispatch }) => {
     try {
       const walletsDatastore = await getWalletsDatastore()
 
@@ -300,14 +291,7 @@ export const importCryptoWallet = createAppAsyncThunk(
 
 export const addWatchedCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/addWatchedCryptoWallet',
-  async (
-    data: {
-      label: string
-      blockchain: string
-      publicAddress: string
-    },
-    { rejectWithValue, dispatch }
-  ) => {
+  async (data: AddWatchedCryptoWallet, { rejectWithValue, dispatch }) => {
     try {
       const walletsDatastore = await getWalletsDatastore()
 
@@ -331,7 +315,7 @@ export const deleteCryptoWallet = createAppAsyncThunk(
     try {
       const walletsDatastore = await getWalletsDatastore()
 
-      const currentlySelectedWallet = getSelectedWalletId(getState())
+      const currentlySelectedWallet = getSelectedCryptoWalletId(getState())
 
       const { selectedWalletId, wallets } =
         await WalletManager.deleteCryptoWallet(
@@ -351,10 +335,10 @@ export const deleteCryptoWallet = createAppAsyncThunk(
   }
 )
 
-export const renameCryptoWallet = createAppAsyncThunk(
-  'cryptoWallets/renameCryptoWallet',
+export const updateCryptoWallet = createAppAsyncThunk(
+  'cryptoWallets/updateCryptoWallet',
   async (
-    { walletId, data }: { walletId: string; data: { name: string } },
+    { walletId, data }: { walletId: string; data: UpdateCryptoWalletData },
     { rejectWithValue, dispatch }
   ) => {
     // TODO: Change this function to edit instead of just rename, but still control what properties are being edited.
@@ -363,7 +347,7 @@ export const renameCryptoWallet = createAppAsyncThunk(
       const walletsDatastore = await getWalletsDatastore()
 
       const { selectedWalletId, wallets } =
-        await WalletManager.renameCryptoWallet(walletsDatastore, walletId, data)
+        await WalletManager.updateCryptoWallet(walletsDatastore, walletId, data)
 
       dispatch(saveCryptoWallets(wallets))
       dispatch(setSelectedCryptoWalletId(selectedWalletId))
@@ -378,19 +362,26 @@ export const renameCryptoWallet = createAppAsyncThunk(
 
 export const restoreCryptoWallets = createAppAsyncThunk(
   'cryptoWallets/restoreCryptoWallets',
-  async (_undefined: undefined, { getState, dispatch }) => {
-    const walletsDatastore = await getWalletsDatastore()
+  async (_undefined: undefined, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const walletsDatastore = await getWalletsDatastore()
 
-    const currentlySelectedWalletId = getSelectedWalletId(getState())
+      const currentlySelectedWalletId = getSelectedCryptoWalletId(getState())
 
-    const { selectedWalletId, wallets } =
-      await WalletManager.restoreCryptoWallets(
-        walletsDatastore,
-        currentlySelectedWalletId
+      const { selectedWalletId, wallets } =
+        await WalletManager.restoreCryptoWallets(
+          walletsDatastore,
+          currentlySelectedWalletId
+        )
+
+      dispatch(saveCryptoWallets(wallets))
+      dispatch(setSelectedCryptoWalletId(selectedWalletId))
+    } catch (error) {
+      logger.error(
+        new Error('Failed to restore crypto wallets', { cause: error })
       )
-
-    dispatch(saveCryptoWallets(wallets))
-    dispatch(setSelectedCryptoWalletId(selectedWalletId))
+      return rejectWithValue('Failed to restore crypto wallets')
+    }
   }
 )
 

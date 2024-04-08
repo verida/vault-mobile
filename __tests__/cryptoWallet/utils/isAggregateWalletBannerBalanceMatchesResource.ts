@@ -7,7 +7,7 @@ import {
   AggregateWalletBannerBalance,
   isAssetTypeResourceParams,
   isChainIdResourceParams,
-} from '../../../src/features/cryptoWallet/@types'
+} from '../../../src/features/cryptoWallet/types'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../../../src/features/cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource'
 
 const AGGREGATE_WALLET_BANNER_BALANCES_ETH = {

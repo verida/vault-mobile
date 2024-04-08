@@ -1,23 +1,27 @@
 import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import * as React from 'react'
 
-import { useAppSelector } from 'reduxStore/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
 
+import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
+import { useCryptoWalletBalanceContext } from '../contexts'
 import {
   AggregateWalletBannerBalances,
   UseAggregateWalletBannerBalancesParams,
   UseAggregateWalletBannerBalancesState,
-} from '../@types'
-import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
-import { useCryptoWalletBalanceContext } from '../contexts'
-import { getWallets } from '../slice'
-import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
-import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
-import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
+} from '../types'
+import {
+  balanceByChainResultsToErc20AggregateWalletBannerBalance,
+  chainMetadataToAggregateWalletBannerBalance,
+  isAggregateWalletBannerBalanceMatchesResource,
+} from '../utils'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
+import { useSelectedWallet } from './useSelectedWallet'
 
 export const getAggregateWalletBannerBalanceError = (
   state: UseAggregateWalletBannerBalancesState
@@ -53,7 +57,7 @@ export function useAggregateWalletBannerBalances(
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const currentWallet = useAppSelector(getWallets)
+  const currentWallet = useSelectedWallet()
 
   const currentChainIds = React.useMemo(() => {
     return Object.entries(currentWallet?.accounts ?? {}).map(

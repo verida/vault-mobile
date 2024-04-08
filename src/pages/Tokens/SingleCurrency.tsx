@@ -3,13 +3,13 @@ import { RouteProp } from '@react-navigation/native'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getAggregateWalletBannerBalanceResult,
-  getSelectedWalletById,
   ResourceParams,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
+  useSelectedWallet,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
@@ -17,7 +17,6 @@ import { Icon } from 'native-base'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
-import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
@@ -44,7 +43,7 @@ const SingleCurrency = () => {
   const navigation = useMainNavigation()
 
   // TODO: idk what to do about this yet
-  const selectedWallet = useSelector(getSelectedWalletById)
+  const selectedWallet = useSelectedWallet()
 
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = useParams<SingleCurrencyScreenProps>()

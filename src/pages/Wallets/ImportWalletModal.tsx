@@ -1,10 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import {
-  BlockchainNetwork,
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from 'features/blockchain'
-import { isValidSeedPhrase } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -16,36 +10,52 @@ import {
   View,
 } from 'react-native'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useAppSelector } from 'reduxStore/types'
-import InputStyles from 'styles/inputs'
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import DropDownPicker from '~/components/Select'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import {
+  BlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from '~/features/blockchain'
+import {
+  ImportCryptoWalletData,
+  isValidSeedPhrase,
+} from '~/features/cryptoWallet'
+import { useAppSelector } from '~/reduxStore/types'
+import InputStyles from '~/styles/inputs'
 
-type Props = {
+export type ImportWalletModalProps = {
   visible: boolean
-  onImportWallet: (data: any) => void
+  onImportWallet: (data: ImportCryptoWalletData) => void
   hideModal: () => void
 }
 
 const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
   Object.freeze({})
 
-const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
-  const privateKeyEnabledNetworks = ['eip155']
+const privateKeyEnabledNetworks = ['eip155'] // TODO: Move into blockchain feature
+
+export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
+  const { visible, hideModal, onImportWallet } = props
+
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
   const [privateKey, setPrivateKey] = useState('')
   const [blockchain, setBlockchain] = useState('multi')
-  const [inputSwitch, setInputSwitch] = useState('seedPhrase')
+  const [inputSwitch, setInputSwitch] = useState<'seedPhrase' | 'privateKey'>(
+    'seedPhrase'
+  )
 
   const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
+
   const blockchainNetworks =
     maybeBlockchainNetworks || defaultBlockchainNetworks
+
   const blockchainItems = Object.values(blockchainNetworks).map(
     (network: BlockchainNetwork) => {
       return {
@@ -97,12 +107,10 @@ const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
       isValidSeedPhrase({ phrase, privateKey, blockchainNetwork, inputSwitch })
     ) {
       onImportWallet({
-        phrase,
-        name,
+        label: name,
         walletType: blockchain,
-        blockchainNetwork,
-        privateKey,
-        inputSwitch,
+        mnemonic: inputSwitch === 'seedPhrase' ? phrase : undefined,
+        privateKey: inputSwitch === 'privateKey' ? privateKey : undefined,
       })
       hideModal()
     } else {
@@ -253,5 +261,3 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
-
-export default ImportModal

@@ -1,12 +1,11 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { BlockchainNetwork, getBlockchainNetworks } from 'features/blockchain'
 import {
-  BlockchainNetwork,
   BlockchainWalletWithAccounts,
-  getBlockchainNetworks,
-} from 'features/blockchain'
-import { getAllWallets } from 'features/cryptoWallet'
+  useCryptoWallets,
+} from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
@@ -160,7 +159,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   const [loading, setLoading] = useState(false)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
-  const wallets = useSelector(getAllWallets)
+  const wallets = useCryptoWallets()
 
   const selectedAccount = useSelector(selectSelectedAccount)!
   const currentAccountDID = selectedAccount?.did

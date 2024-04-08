@@ -2,7 +2,7 @@ import { AssetType, ChainId } from 'caip'
 import * as React from 'react'
 
 import { useGetTransactionsForTokenQuery } from '../api'
-import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
+import { useSelectedWallet } from './useSelectedWallet'
 
 export function useTransactionsForMaybeAssetId({
   assetType: maybeAssetType,
@@ -13,7 +13,7 @@ export function useTransactionsForMaybeAssetId({
     ? new ChainId(maybeAssetType.chainId).toString()
     : null
 
-  const selectedWallet = useMaybeSelectedWallet()
+  const selectedWallet = useSelectedWallet()
   const accounts = Object.values(selectedWallet?.accounts || {})
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId)

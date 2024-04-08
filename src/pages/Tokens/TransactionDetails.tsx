@@ -4,7 +4,7 @@ import {
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeSelectedWallet,
+  useSelectedWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -34,7 +34,7 @@ const TransactionDetails = () => {
   const { resource } = aggregateWalletBannerBalance
   const chainId = useChainIdForResourceParams({ resource })
 
-  const selectedWallet = useMaybeSelectedWallet()
+  const selectedWallet = useSelectedWallet()
   const accounts = Object.values(selectedWallet?.accounts || {})
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())

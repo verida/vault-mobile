@@ -1,7 +1,9 @@
 import { Icon } from 'components'
 import { useTheme } from 'contexts'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
-import { getTruncatedWalletAddress } from 'features/cryptoWallet'
+import {
+  BlockchainWalletWithAccounts,
+  getTruncatedWalletAddress,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
@@ -10,7 +12,7 @@ import { Avatar } from 'components/Images'
 import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: BlockchainWalletWithAccounts
+  selectedWallet: BlockchainWalletWithAccounts | null
   openWalletModal: () => void
 }
 

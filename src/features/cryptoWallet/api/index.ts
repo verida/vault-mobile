@@ -5,7 +5,7 @@ import { REHYDRATE } from 'redux-persist'
 
 import { RootState } from 'reduxStore/types'
 
-import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
+import { BalanceByChain, DetailedTransaction, Transaction } from '../types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${config.walletProvider.v2Url}/api`,
