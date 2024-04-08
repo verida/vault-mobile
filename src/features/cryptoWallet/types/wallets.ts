@@ -57,7 +57,7 @@ export type CryptoWallet = {
   id: string
   label: string
   mnemonic?: string // How does it work for wallet imported with private keys?
-  // readOnly?: boolean // Do we need a readOnly flag? Probably
+  readOnly: boolean
   // icon?: string // Do we need an icon? No, because the persistence schema doesn't have it yet, and the goal of the `accounts` field is to be chain-agnostic, so we can't tie the wallet to a specific chain, so we can't get the icon from the chain.
   accounts: readonly CryptoWalletAccount[]
 }
@@ -68,7 +68,7 @@ export type CryptoWallet = {
 export type LegacyCryptoWallet = {
   _id: string
   label: string
-  viewOnly?: boolean
+  readOnly: boolean
   walletType: WalletType
   address?: string
   mnemonic?: string

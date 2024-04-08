@@ -165,7 +165,7 @@ const ManageWallets = (props: Props) => {
 
   const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
-    if (item.viewOnly) {
+    if (item.readOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
     } else {
       options = [
@@ -184,11 +184,15 @@ const ManageWallets = (props: Props) => {
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (typeof buttonIndex !== 'number') return
+        if (typeof buttonIndex !== 'number') {
+          return
+        }
 
-        if (item.viewOnly) buttonIndex++
+        if (item.readOnly) {
+          buttonIndex++
+        }
 
-        if (buttonIndex === 0 && !item.viewOnly) {
+        if (buttonIndex === 0 && !item.readOnly) {
           navigation.navigate('SingleWallet', { walletId: item._id })
         } else if (buttonIndex === 1) {
           handleSelectWallet(item._id)

@@ -158,7 +158,7 @@ export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
         </View>
         <View style={styles.separator} />
         <View style={styles.actions}>
-          {Boolean(selectedWallet && !selectedWallet.viewOnly) && (
+          {Boolean(selectedWallet && !selectedWallet.readOnly) && (
             <TouchableOpacity
               disabled={!maybeSendButtonAction}
               onPress={maybeSendButtonAction}
