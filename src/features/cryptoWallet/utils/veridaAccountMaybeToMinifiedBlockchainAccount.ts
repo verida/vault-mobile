@@ -29,6 +29,7 @@ const transformLegacyWalletAccountToEip155CryptoWalletAccount = (
     namespace: SupportedBlockchainNamespace.EIP_155,
     address,
     privateKey,
+    derivationIndex: 0,
   }
 }
 
@@ -49,6 +50,7 @@ const transformLegacyWalletAccountToNearCryptoWalletAccount = (
     namespace: SupportedBlockchainNamespace.NEAR,
     privateKey,
     address,
+    derivationIndex: 0,
   }
 }
 

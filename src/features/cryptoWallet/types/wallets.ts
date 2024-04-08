@@ -21,7 +21,7 @@ export type AbstractCryptoWalletAccount<Namespace extends BlockchainNamespace> =
     // Intentionally not following accountId (CAIP-10) format as we want to dynamically adapt to multiple chainId references
     readonly namespace: Namespace
     readonly address: string
-    // readonly derivationIndex: number // Index of the account in the derivation path
+    readonly derivationIndex: number // Index of the account in the derivation path
   }
 
 export type CryptoWalletAccountEip155 =
