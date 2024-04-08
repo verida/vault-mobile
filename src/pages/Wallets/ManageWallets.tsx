@@ -13,12 +13,12 @@ import { BLACK_COLOR } from '~/constants/color'
 import {
   addWatchedCryptoWallet,
   AddWatchedCryptoWalletData,
-  BlockchainWalletWithAccounts,
   createCryptoWallet,
   CreateCryptoWalletData,
   deleteCryptoWallet,
   importCryptoWallet,
   ImportCryptoWalletData,
+  LegacyCryptoWallet,
   selectCryptoWallet,
   useCryptoWalletsAsList,
   useCryptoWalletsCount,
@@ -96,7 +96,7 @@ const ManageWallets = (props: Props) => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
   }
 
-  const showConfirmationAlert = (item: BlockchainWalletWithAccounts) =>
+  const showConfirmationAlert = (item: LegacyCryptoWallet) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -163,7 +163,7 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const handlePressWalletListItem = (item: BlockchainWalletWithAccounts) => {
+  const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
     if (item.viewOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']

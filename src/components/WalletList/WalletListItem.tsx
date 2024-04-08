@@ -1,7 +1,7 @@
 import { useTheme } from 'contexts/ThemeContext'
 import {
-  BlockchainWalletWithAccounts,
   getTruncatedWalletAddress,
+  LegacyCryptoWallet,
 } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -18,9 +18,9 @@ import {
 import { NUNITO_SANS } from 'constants/text'
 
 interface WalletListItemProps {
-  item: BlockchainWalletWithAccounts
+  item: LegacyCryptoWallet
   selected: boolean
-  onPressItem?: (item: BlockchainWalletWithAccounts) => void
+  onPressItem?: (item: LegacyCryptoWallet) => void
   leftIconType: 'checked' | 'dots'
 }
 

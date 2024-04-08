@@ -1,8 +1,8 @@
 import { Icon } from 'components'
 import { useTheme } from 'contexts'
 import {
-  BlockchainWalletWithAccounts,
   getTruncatedWalletAddress,
+  LegacyCryptoWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -12,7 +12,7 @@ import { Avatar } from 'components/Images'
 import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: BlockchainWalletWithAccounts | null
+  selectedWallet: LegacyCryptoWallet | null
   openWalletModal: () => void
 }
 

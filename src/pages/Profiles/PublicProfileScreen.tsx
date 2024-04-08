@@ -2,10 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlockchainNetwork, getBlockchainNetworks } from 'features/blockchain'
-import {
-  BlockchainWalletWithAccounts,
-  useCryptoWallets,
-} from 'features/cryptoWallet'
+import { LegacyCryptoWallet, useCryptoWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
@@ -250,7 +247,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
         const sameChainAdresses = Object.values(wallets).reduce(
           (
             accAddresses: VeridaOneWalletAddress[],
-            wallet: BlockchainWalletWithAccounts
+            wallet: LegacyCryptoWallet
           ) => {
             const account = wallet.accounts[blockchainNetwork.chainId]
             if (account) {

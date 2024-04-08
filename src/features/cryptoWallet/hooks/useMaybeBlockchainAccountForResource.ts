@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { BlockchainWalletWithAccounts } from '~/features/cryptoWallet'
+import { LegacyCryptoWallet } from '~/features/cryptoWallet'
 
 import { transformLegacyWalletAccountToCryptoWalletAccount } from '../utils'
 import { useCryptoWallets } from './useCryptoWallets'
@@ -9,7 +9,7 @@ import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBloc
 
 export function useMaybeBlockchainAccountForResource(
   params: Parameters<typeof useMaybeFromAddressForResource>[0]
-): BlockchainWalletWithAccounts | null {
+): LegacyCryptoWallet | null {
   const maybeFromAddress = useMaybeFromAddressForResource(params)
 
   const wallets = useCryptoWallets()
@@ -17,7 +17,7 @@ export function useMaybeBlockchainAccountForResource(
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
 
-  return React.useMemo<BlockchainWalletWithAccounts | null>(() => {
+  return React.useMemo<LegacyCryptoWallet | null>(() => {
     if (!maybeFromAddress) return null
 
     const { namespace, fromAddress } = maybeFromAddress
@@ -29,7 +29,7 @@ export function useMaybeBlockchainAccountForResource(
     if (!maybeMinifiedVeridaAccount) return null
 
     const maybeMatchingAccount = Object.values(wallets).find(
-      (e: BlockchainWalletWithAccounts) =>
+      (e: LegacyCryptoWallet) =>
         Object.values(e.accounts).find(
           (f) =>
             // TODO: this is slow and inefficient, fix

@@ -1,11 +1,9 @@
 import { isEmpty } from 'lodash'
 
 import { WALLET_TYPE_DEFINITIONS } from '../constants'
-import { BlockchainWalletWithAccounts, WalletType } from '../types'
+import { LegacyCryptoWallet, WalletType } from '../types'
 
-export const getUniqueWalletAddresses = (
-  wallet: BlockchainWalletWithAccounts | null
-) => {
+export const getUniqueWalletAddresses = (wallet: LegacyCryptoWallet | null) => {
   if (!wallet || isEmpty(wallet) || isEmpty(wallet.accounts)) return []
 
   const addresses: string[] = [

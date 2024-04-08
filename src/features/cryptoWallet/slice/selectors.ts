@@ -5,7 +5,7 @@ import { RootState } from '~/reduxStore/types'
 
 import { getBalancesData } from '../api'
 import {
-  BlockchainWalletWithAccounts,
+  LegacyCryptoWallet,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
 } from '../types'
@@ -21,7 +21,7 @@ export const getCryptoWallets = (state: RootState) => {
 
 export const getCryptoWalletAsList = (
   state: RootState
-): BlockchainWalletWithAccounts[] => {
+): LegacyCryptoWallet[] => {
   const wallets = getCryptoWallets(state)
   return Object.values(wallets)
 }

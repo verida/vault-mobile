@@ -10,7 +10,7 @@ import WalletList from '~/components/WalletList'
 import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS } from '~/constants/text'
 import {
-  BlockchainWalletWithAccounts,
+  LegacyCryptoWallet,
   selectCryptoWallet,
   useCryptoWalletsAsList,
   useSelectedWalletId,
@@ -37,7 +37,7 @@ const WalletSelectorModal = ({
 
   const dispatch = useAppDispatch()
 
-  const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
+  const handleWalletSelection = (item: LegacyCryptoWallet) => {
     dispatch(selectCryptoWallet(item._id))
     onCloseModal()
   }

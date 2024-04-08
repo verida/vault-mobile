@@ -1,10 +1,10 @@
 import BigDecimal from 'bignumber.js'
 import { useTheme } from 'contexts'
 import {
-  BlockchainWalletWithAccounts,
   Currency,
   DetailedValuation,
   fixedPointCryptoAsBigDecimal,
+  LegacyCryptoWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -18,7 +18,7 @@ import { Typography } from 'components/Typography'
 import { Theme } from 'styles/types'
 
 export type TokenBannerProps = {
-  readonly selectedWallet: BlockchainWalletWithAccounts | null
+  readonly selectedWallet: LegacyCryptoWallet | null
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void

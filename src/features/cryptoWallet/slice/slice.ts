@@ -9,9 +9,9 @@ import { createAppAsyncThunk } from '~/reduxStore/types'
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
 import {
   AddWatchedCryptoWalletData,
-  BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   ImportCryptoWalletData,
+  LegacyCryptoWallet,
   UpdateCryptoWalletData,
 } from '../types'
 import { WalletManager } from '../utils'
@@ -20,7 +20,7 @@ import { getSelectedCryptoWalletId } from './selectors'
 const logger = Logger.create('CryptoWallets')
 
 export type CryptoWalletsState = {
-  wallets: Record<string, BlockchainWalletWithAccounts>
+  wallets: Record<string, LegacyCryptoWallet>
   selectedWalletId: string | null
   status: {
     processsing: boolean
@@ -43,7 +43,7 @@ export const cryptoWalletSlice = createSlice({
   reducers: {
     saveCryptoWallets: (
       state,
-      action: PayloadAction<Record<string, BlockchainWalletWithAccounts>>
+      action: PayloadAction<Record<string, LegacyCryptoWallet>>
     ) => {
       state.wallets = action.payload
     },

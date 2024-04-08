@@ -28,10 +28,10 @@ import {
 import {
   AddWatchedCryptoWalletData,
   BaseCryptoWalletRecord,
-  BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   CryptoWalletRecord,
   ImportCryptoWalletData,
+  LegacyCryptoWallet,
   LegacyCryptoWalletAccount,
   UpdateCryptoWalletData,
   WalletType,
@@ -183,7 +183,7 @@ export class WalletManager {
     walletIdToSelect: string | null
   ): Promise<{
     selectedWalletId: string | null
-    wallets: Record<string, BlockchainWalletWithAccounts>
+    wallets: Record<string, LegacyCryptoWallet>
   }> {
     try {
       // Clearing the local storage, mostly to clean up the now unused data
@@ -246,11 +246,11 @@ export class WalletManager {
   private static async transformRecordToCryptoWallets(
     records: CryptoWalletRecord[],
     walletsDatastore: IDatastore
-  ): Promise<Record<string, BlockchainWalletWithAccounts>> {
+  ): Promise<Record<string, LegacyCryptoWallet>> {
     const blockchainNetworks = getBlockchainNetworks(store.getState()) // TODO: Deal with how to handle it in a pure function
     if (!blockchainNetworks) return {} // TODO: better way to handle this case
 
-    const wallets: Record<string, BlockchainWalletWithAccounts> = {}
+    const wallets: Record<string, LegacyCryptoWallet> = {}
 
     records.forEach((record) => {
       // Handle legacy wallet type values
@@ -269,7 +269,7 @@ export class WalletManager {
         return account.address
       })
 
-      const wallet: BlockchainWalletWithAccounts = {
+      const wallet: LegacyCryptoWallet = {
         _id: record._id,
         label: record.label,
         walletType: walletType,
