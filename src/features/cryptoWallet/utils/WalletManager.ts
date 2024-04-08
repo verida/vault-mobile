@@ -28,11 +28,11 @@ import {
 import {
   AddWatchedCryptoWalletData,
   BaseCryptoWalletRecord,
-  BlockchainAccount,
   BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   CryptoWalletRecord,
   ImportCryptoWalletData,
+  LegacyCryptoWalletAccount,
   UpdateCryptoWalletData,
   WalletType,
 } from '../types'
@@ -289,7 +289,7 @@ export class WalletManager {
     walletRecord: CryptoWalletRecord,
     blockchainNetworks: BlockchainNetwork[] = []
   ) {
-    const accounts: Record<string, BlockchainAccount> = {}
+    const accounts: Record<string, LegacyCryptoWalletAccount> = {}
 
     // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
     const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
@@ -316,12 +316,12 @@ export class WalletManager {
         !walletRecord.privateKey &&
         !walletRecord.mnemonic
       ) {
-        const blockchainAccount: BlockchainAccount = {
+        const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
           chainId: blockchain.chainId,
           address: walletRecord.address,
         }
 
-        accounts[blockchain.chainId] = blockchainAccount
+        accounts[blockchain.chainId] = legacyCryptoWalletAccount
         return
       }
 
@@ -345,13 +345,13 @@ export class WalletManager {
         )
       }
 
-      const blockchainAccount: BlockchainAccount = {
+      const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
         chainId: blockchain.chainId,
         address: walletDetails.address,
         privateKey: walletDetails.privateKey,
       }
 
-      accounts[blockchain.chainId] = blockchainAccount
+      accounts[blockchain.chainId] = legacyCryptoWalletAccount
     })
 
     return accounts

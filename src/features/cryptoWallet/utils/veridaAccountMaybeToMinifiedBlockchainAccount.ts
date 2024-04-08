@@ -6,18 +6,18 @@ import { isSupportedCaipNamespace } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 
 import {
-  BlockchainAccount,
-  MinifiedBlockchainAccount,
-  MinifiedBlockchainAccountEip155,
-  MinifiedBlockchainAccountNear,
+  CryptoWalletAccount,
+  CryptoWalletAccountEip155,
+  CryptoWalletAccountNear,
+  LegacyCryptoWalletAccount,
 } from '../types'
 
 const logger = Logger.create('veridaAccountMaybeToMinifiedVeridaAccount')
 
-const veridaAccountToMinifiedBlockchainAccountEip155 = (
-  blockchainAccount: BlockchainAccount
-): MinifiedBlockchainAccountEip155 | undefined => {
-  const { address, privateKey } = blockchainAccount
+const transformLegacyWalletAccountToEip155CryptoWalletAccount = (
+  legacyCryptoWalletAccount: LegacyCryptoWalletAccount
+): CryptoWalletAccountEip155 | undefined => {
+  const { address, privateKey } = legacyCryptoWalletAccount
 
   if (typeof address !== 'string' || !ethers.utils.isAddress(address))
     throw new Error(`Expected Ethereum address, encountered "${address}".`)
@@ -32,13 +32,14 @@ const veridaAccountToMinifiedBlockchainAccountEip155 = (
   }
 }
 
-const veridaAccountToMinifiedBlockchainAccountNear = ({
-  address: signerId,
-  privateKey,
-}: BlockchainAccount): MinifiedBlockchainAccountNear | undefined => {
-  if (typeof signerId !== 'string' || !signerId.length)
+const transformLegacyWalletAccountToNearCryptoWalletAccount = (
+  legacyCryptoWalletAccount: LegacyCryptoWalletAccount
+): CryptoWalletAccountNear | undefined => {
+  const { address, privateKey } = legacyCryptoWalletAccount
+
+  if (typeof address !== 'string' || !address.length)
     throw new Error(
-      `Expected non-empty string signerId, encountered "${String(signerId)}".`
+      `Expected non-empty string address, encountered "${String(address)}".`
     )
 
   // Ignore watched wallets.
@@ -47,14 +48,14 @@ const veridaAccountToMinifiedBlockchainAccountNear = ({
   return {
     namespace: SupportedBlockchainNamespace.NEAR,
     privateKey,
-    address: signerId,
+    address,
   }
 }
 
-export function veridaAccountMaybeToMinifiedBlockchainAccount(
-  blockchainAccount: BlockchainAccount
-): MinifiedBlockchainAccount | undefined {
-  const { chainId } = blockchainAccount
+export function transformLegacyWalletAccountToCryptoWalletAccount(
+  legacyCryptoWalletAccount: LegacyCryptoWalletAccount
+): CryptoWalletAccount | undefined {
+  const { chainId } = legacyCryptoWalletAccount
 
   if (typeof chainId !== 'string' || !chainId.length)
     throw new Error(
@@ -64,9 +65,13 @@ export function veridaAccountMaybeToMinifiedBlockchainAccount(
   const { namespace } = new ChainId(chainId)
 
   if (namespace === SupportedBlockchainNamespace.EIP_155) {
-    return veridaAccountToMinifiedBlockchainAccountEip155(blockchainAccount)
+    return transformLegacyWalletAccountToEip155CryptoWalletAccount(
+      legacyCryptoWalletAccount
+    )
   } else if (namespace === SupportedBlockchainNamespace.NEAR) {
-    return veridaAccountToMinifiedBlockchainAccountNear(blockchainAccount)
+    return transformLegacyWalletAccountToNearCryptoWalletAccount(
+      legacyCryptoWalletAccount
+    )
   }
 
   logger.warn(

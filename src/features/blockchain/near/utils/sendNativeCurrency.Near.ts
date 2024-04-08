@@ -5,7 +5,7 @@ import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 
 import {
   ConfirmTransactionCallbackResult,
-  MinifiedBlockchainAccount,
+  CryptoWalletAccount,
 } from '~/features/cryptoWallet'
 
 import {
@@ -27,7 +27,7 @@ export const sendNativeCurrencyNear = async ({
   readonly value: number
   readonly near_signAndSendTransaction: BlockchainRequestHandlerCallback<NearAccountBundle>
   readonly rpc: string
-  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
+  readonly minifiedBlockchainAccount: CryptoWalletAccount
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedBlockchainAccount
 

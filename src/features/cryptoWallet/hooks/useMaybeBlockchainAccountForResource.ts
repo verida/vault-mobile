@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { BlockchainWalletWithAccounts } from '~/features/cryptoWallet'
 
-import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
+import { transformLegacyWalletAccountToCryptoWalletAccount } from '../utils'
 import { useCryptoWallets } from './useCryptoWallets'
 import { useMaybeFromAddressForResource } from './useMaybeFromAddressForResource'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
@@ -33,8 +33,9 @@ export function useMaybeBlockchainAccountForResource(
         Object.values(e.accounts).find(
           (f) =>
             // TODO: this is slow and inefficient, fix
-            JSON.stringify(veridaAccountMaybeToMinifiedBlockchainAccount(f)) ===
-            JSON.stringify(maybeMinifiedVeridaAccount)
+            JSON.stringify(
+              transformLegacyWalletAccountToCryptoWalletAccount(f)
+            ) === JSON.stringify(maybeMinifiedVeridaAccount)
         )
     )
 

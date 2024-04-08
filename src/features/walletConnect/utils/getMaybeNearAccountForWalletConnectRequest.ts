@@ -2,7 +2,7 @@ import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
-import { MinifiedBlockchainAccounts } from 'features/cryptoWallet'
+import { CryptoWalletAccounts } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeMinifiedBlockchainAccountForWalletConnectRequest } from './getMaybeMinifiedBlockchainAccountForWalletConnectRequest'
@@ -51,7 +51,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  readonly minifiedBlockchainAccounts: CryptoWalletAccounts
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
@@ -89,7 +89,7 @@ export async function getNearAccountForWalletConnectRequestOrThrow({
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  readonly minifiedBlockchainAccounts: CryptoWalletAccounts
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({

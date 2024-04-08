@@ -1,7 +1,7 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
-  MinifiedBlockchainAccount,
-  MinifiedBlockchainAccounts,
+  CryptoWalletAccount,
+  CryptoWalletAccounts,
 } from 'features/cryptoWallet'
 
 import { ActiveSession, ActiveSessions } from '../@types'
@@ -14,8 +14,8 @@ export function getMaybeMinifiedBlockchainAccountForWalletConnectRequest({
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
-}): MinifiedBlockchainAccount | undefined {
+  readonly minifiedBlockchainAccounts: CryptoWalletAccounts
+}): CryptoWalletAccount | undefined {
   const activeSessions: ActiveSessions = web3wallet.getActiveSessions()
 
   const maybeActiveSession: ActiveSession = activeSessions?.[request.topic]
@@ -36,7 +36,7 @@ export function getMinifiedBlockchainAccountForWalletConnectRequestOrThrow({
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  readonly minifiedBlockchainAccounts: CryptoWalletAccounts
 }) {
   const maybeWallet = getMaybeMinifiedBlockchainAccountForWalletConnectRequest({
     web3wallet,
