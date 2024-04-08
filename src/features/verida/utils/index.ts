@@ -70,7 +70,7 @@ export function getSupportedVeridaNetworks(): EnvironmentType[] {
 
 export function getDefaultVeridaNetwork(): EnvironmentType {
   return config.dev.devMode
-    ? EnvironmentType.DEVNET
+    ? EnvironmentType.DEVNET // TODO: Should we change to testnet/banksia? As the wallet dev should use a testnet
     : config.features.veridaMainnet.enabled
       ? EnvironmentType.MAINNET
       : EnvironmentType.TESTNET

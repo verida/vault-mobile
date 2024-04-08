@@ -66,6 +66,7 @@ export const config = {
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.DEVNET]: {
+      // TODO: Update the devnet variables
       rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
       dataConnectorServerUrl: envVars.VERIDA_DEVNET_DATA_CONNECTOR_URL,
@@ -73,18 +74,20 @@ export const config = {
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.TESTNET]: {
-      rpcUrl: envVars.VERIDA_TESTNET_RPC_URL,
-      notificationServerUrls: [envVars.VERIDA_TESTNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: envVars.VERIDA_TESTNET_DATA_CONNECTOR_URL,
+      // TODO: Change it to Banksia
+      rpcUrl: envVars.VERIDA_BANKSIA_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_BANKSIA_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_BANKSIA_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        envVars.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_BANKSIA_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.MAINNET]: {
-      rpcUrl: envVars.VERIDA_MAINNET_RPC_URL,
-      notificationServerUrls: [envVars.VERIDA_MAINNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: envVars.VERIDA_MAINNET_DATA_CONNECTOR_URL,
+      // TODO: Change it to Myrtle
+      rpcUrl: envVars.VERIDA_MYRTLE_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_MYRTLE_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_MYRTLE_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        envVars.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_MYRTLE_META_TRANSACTION_SERVER_URL,
     },
   },
   walletProvider: {
