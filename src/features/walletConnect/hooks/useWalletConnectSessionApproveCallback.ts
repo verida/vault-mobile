@@ -1,12 +1,12 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getChainMetadataByCaipTypeOrThrow,
+  getMaybeChainMetadatas,
   isSupportedCaipNamespace,
-} from 'features/caip'
+  SupportedBlockchainNamespace,
+  useChainMetadatas,
+} from 'features/blockchain'
 import * as React from 'react'
-
-import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 import { SupportedCaipProtocolSessionHandlers } from '../types'
 import {
