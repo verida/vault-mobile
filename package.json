@@ -210,7 +210,6 @@
     "use-layout-animation": "^0.0.2",
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
-    "web3": "1.8.1",
     "zod": "^3.22.4",
     "zod-validation-error": "^1.5.0"
   },
