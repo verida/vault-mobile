@@ -1,11 +1,12 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import axios from 'axios'
 import { ethers } from 'ethers'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { useChainMetadatasCustom } from 'features/blockchain/hooks'
 import { ChainMetadatas } from 'features/caip'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
+
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 import {
   AddEthereumChainRequestParams,

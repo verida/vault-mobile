@@ -9,7 +9,7 @@ import {
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from '../../@types'
+} from '../../types'
 
 export const sendErc20Eip155 = async ({
   erc20Address,

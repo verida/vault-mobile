@@ -2,7 +2,7 @@ import 'jest'
 
 import { AssetIdParams, ChainIdParams } from 'caip'
 
-import { SupportedBlockchainNamespace } from '../../../src/features/blockchain/@types'
+import { SupportedBlockchainNamespace } from '../../../src/features/blockchain/types'
 import {
   AggregateWalletBannerBalance,
   isAssetTypeResourceParams,

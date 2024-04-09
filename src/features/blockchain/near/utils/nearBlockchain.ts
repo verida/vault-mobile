@@ -1,7 +1,7 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as ethers from 'ethers'
 
-import { IBlockchain, WalletUtilsWallet } from '../../@types'
+import { IBlockchain, WalletUtilsWallet } from '../../types'
 
 class NearBlockchain implements IBlockchain {
   public buildAccountFromMnemonic(

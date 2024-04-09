@@ -21,11 +21,6 @@ import { useAuth } from 'hooks/useAuth'
 import { MainStackParams } from 'navigation/types'
 
 import {
-  ActiveSessions,
-  CreatePairingCallback,
-  WalletConnectContextValue,
-} from '../@types'
-import {
   isWalletConnectConnection,
   isWalletConnectV2Connection,
 } from '../constants'
@@ -38,6 +33,11 @@ import {
   useWalletConnectCustomNetworks,
   useWalletConnectSessionRequestCallback,
 } from '../hooks'
+import {
+  ActiveSessions,
+  CreatePairingCallback,
+  WalletConnectContextValue,
+} from '../types'
 import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
 
 const logger = Logger.create('WalletConnect')

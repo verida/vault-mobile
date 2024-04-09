@@ -1,6 +1,6 @@
 import 'jest'
 
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,

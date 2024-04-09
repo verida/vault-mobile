@@ -1,6 +1,6 @@
 import type { ChainMetadata } from 'features/caip'
 
-import { CustomBlockchainNetwork } from '../@types'
+import { CustomBlockchainNetwork } from '../types'
 
 export function chainMetadataToMaybeCustomBlockchainNetwork({
   chainMetadata: {

@@ -4,7 +4,7 @@ import {
   AddEthereumChainRequestParam,
   Eip155RpcMethod,
 } from '../../blockchain/eip155/@types'
-import { WalletConnectRequestParams } from '../@types'
+import { WalletConnectRequestParams } from '../types'
 
 export function mockAddEthereumChainRequest({
   chainId,

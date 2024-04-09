@@ -1,6 +1,6 @@
 import 'jest'
 
-import { CustomBlockchainNetwork } from '../../../src/features/blockchain/@types'
+import { CustomBlockchainNetwork } from '../../../src/features/blockchain/types'
 import {
   chainMetadataToMaybeCustomBlockchainNetwork,
   customBlockchainNetworkToMaybeChainMetadata,

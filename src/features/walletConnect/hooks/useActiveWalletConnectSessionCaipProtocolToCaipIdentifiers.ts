@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CaipProtocolToCaipIdentifiers, Namespaces } from '../@types'
+import { CaipProtocolToCaipIdentifiers, Namespaces } from '../types'
 import { getAccountsForMaybeNamespace } from './useActiveWalletConnectSessionChainAccounts'
 import { useActiveWalletConnectSessionChains } from './useActiveWalletConnectSessionChains'
 import { getNamespaceForChain } from './useActiveWalletConnectSessionNamespace'

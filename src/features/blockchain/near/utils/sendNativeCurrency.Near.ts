@@ -11,7 +11,7 @@ import {
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from '../../@types'
+} from '../../types'
 import { NearAccountBundle } from '../@types'
 
 export const sendNativeCurrencyNear = async ({

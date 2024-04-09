@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Namespaces } from '../@types'
+import { Namespaces } from '../types'
 import { useActiveWalletConnectSession } from './useActiveWalletConnectSession'
 
 export function useActiveWalletConnectSessionNamespaces({

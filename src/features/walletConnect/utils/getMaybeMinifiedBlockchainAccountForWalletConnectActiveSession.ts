@@ -5,7 +5,7 @@ import {
   CryptoWalletAccounts,
 } from 'features/cryptoWallet'
 
-import { ActiveSession } from '../@types'
+import { ActiveSession } from '../types'
 
 export function getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
   activeSession,
