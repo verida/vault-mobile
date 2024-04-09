@@ -49,9 +49,3 @@ export type ChainMetadata = z.infer<typeof ChainMetadataSchema>
 // for example, a custom Ethereum Mainnet configuration and the default Ethereum Mainnet
 // configuration.
 export type ChainMetadatas = readonly ChainMetadata[]
-
-export type UseChainMetadataState = {
-  readonly loading: boolean
-  readonly result?: ChainMetadatas
-  readonly error?: Error
-}

@@ -6,11 +6,11 @@ import {
   BlockchainNetwork,
   getBlockchainNetworks,
   IBlockchain,
+  isSupportedCaipNamespace,
   WalletUtilsWallet,
 } from '~/features/blockchain'
 import { eip155Blockchain } from '~/features/blockchain/eip155'
 import { nearBlockchain } from '~/features/blockchain/near'
-import { isSupportedCaipNamespace } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 import { VeridaSaveRecordResult } from '~/features/verida'
 import * as SecureStore from '~/helpers/VeridaSecureStore'

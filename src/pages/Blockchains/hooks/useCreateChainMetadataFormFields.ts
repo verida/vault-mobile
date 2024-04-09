@@ -1,12 +1,13 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
+import * as React from 'react'
+import { ZodError } from 'zod-validation-error'
+
 import {
   ChainMetadata,
   ChainMetadataSchema,
   HACK__getFirstRpcUrl,
   isSupportedCaipNamespace,
-} from 'features/caip'
-import * as React from 'react'
-import { ZodError } from 'zod-validation-error'
+  SupportedBlockchainNamespace,
+} from '~/features/blockchain'
 
 type EvaluationResult = {
   readonly data: ChainMetadata | null

@@ -1,6 +1,6 @@
 import { AccountId, AssetId, ChainId } from 'caip'
 
-import { ChainMetadatas, isSupportedCaipNamespace } from '~/features/caip'
+import { ChainMetadatas, isSupportedCaipNamespace } from '~/features/blockchain'
 
 import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from '../constants'
 import {

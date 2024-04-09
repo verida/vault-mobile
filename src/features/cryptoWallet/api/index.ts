@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
 import { AssetId, AssetType } from 'caip'
-import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
 
-import { RootState } from 'reduxStore/types'
+import { config } from '~/config'
+import { RootState } from '~/reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../types'
 

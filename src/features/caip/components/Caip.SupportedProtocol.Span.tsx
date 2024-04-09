@@ -1,8 +1,10 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/caip'
 import * as React from 'react'
 
-import { getSupportedCaipProtocolFriendlyName } from '../utils'
+import {
+  ChainMetadatas,
+  getSupportedCaipProtocolFriendlyName,
+} from '~/features/blockchain'
 
 export const CaipSupportedProtocolSpan = React.memo(
   function CaipWalletTypeSpan({

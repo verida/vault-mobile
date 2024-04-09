@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 
-import { isSupportedCaipNamespace } from '~/features/caip'
+import { isSupportedCaipNamespace } from '~/features/blockchain'
 
 import { AggregateWalletBannerBalance, CryptoWalletAccounts } from '../types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'

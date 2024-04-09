@@ -1,8 +1,10 @@
 import { AssetId, AssetIdParams, ChainId } from 'caip'
 import { BigNumberish, utils } from 'ethers'
 
-import { BlockchainNetwork } from '~/features/blockchain'
-import { isSupportedCaipNamespace } from '~/features/caip'
+import {
+  BlockchainNetwork,
+  isSupportedCaipNamespace,
+} from '~/features/blockchain'
 
 import { CryptoWalletAccounts, SupportedTokenObject } from '../types'
 import { isNativeToken } from './isNativeToken'

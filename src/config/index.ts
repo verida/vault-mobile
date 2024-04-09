@@ -3,7 +3,7 @@ import { EnvironmentType } from '@verida/types'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
-import { APP_PACKAGE, APP_VERSION_WITH_BUILD } from 'constants/application'
+import { APP_PACKAGE, APP_VERSION_WITH_BUILD } from '~/constants/application'
 
 import { EnvVarsSchema } from './schema'
 

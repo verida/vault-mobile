@@ -1,7 +1,9 @@
 import { ethers } from 'ethers'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain'
-import { isSupportedCaipNamespace } from '~/features/caip'
+import {
+  isSupportedCaipNamespace,
+  SupportedBlockchainNamespace,
+} from '~/features/blockchain'
 import { Logger } from '~/features/telemetry'
 
 import {

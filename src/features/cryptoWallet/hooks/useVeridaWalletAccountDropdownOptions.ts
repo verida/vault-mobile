@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { isSupportedCaipNamespace } from '~/features/caip'
+import { isSupportedCaipNamespace } from '~/features/blockchain'
 
 import {
   CryptoWalletAccount,

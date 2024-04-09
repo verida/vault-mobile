@@ -1,7 +1,8 @@
 import { ChainId, ChainIdParams } from 'caip'
 import { connect, keyStores } from 'near-api-js'
 
-import { ChainMetadatas, getRpcUrlOrThrow } from '~/features/caip'
+import { ChainMetadatas } from '../../types'
+import { getRpcUrlOrThrow } from '../../utils'
 
 // TODO: It is not ideal to work this way (knowing a specific reference), however the implementation of Near protocol demands we do this for when we generate NEAR metadata URLs.
 export const NEAR_TESTNET_CAIP: ChainIdParams = {

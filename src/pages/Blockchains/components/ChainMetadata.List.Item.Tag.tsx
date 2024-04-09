@@ -1,5 +1,8 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
-import { ChainMetadata, isSupportedCaipNamespace } from 'features/caip'
+import {
+  ChainMetadata,
+  isSupportedCaipNamespace,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
