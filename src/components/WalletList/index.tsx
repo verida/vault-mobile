@@ -35,7 +35,7 @@ const WalletList = ({
             item={data.item}
             onPressItem={onPressItem}
             leftIconType={leftIconType}
-            selected={selectedWalletId === data.item._id}
+            selected={selectedWalletId === data.item.id}
           />
         </View>
       )}

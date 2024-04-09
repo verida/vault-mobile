@@ -38,7 +38,7 @@ const WalletSelectorModal = ({
   const dispatch = useAppDispatch()
 
   const handleWalletSelection = (item: LegacyCryptoWallet) => {
-    dispatch(selectCryptoWallet(item._id))
+    dispatch(selectCryptoWallet(item.id))
     onCloseModal()
   }
 

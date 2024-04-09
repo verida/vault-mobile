@@ -218,11 +218,11 @@ export class WalletManager {
       const selectedId = walletIdToSelect || cachedSelectedCryptoWalletId
 
       const previouslySelectedWallet = selectedId
-        ? wallets.find((wallet) => wallet._id === selectedId)
+        ? wallets.find((wallet) => wallet.id === selectedId)
         : undefined
 
       const selectedWalletId = previouslySelectedWallet
-        ? previouslySelectedWallet._id
+        ? previouslySelectedWallet.id
         : validRecords[0]._id // TODO: Replace with the wallets variable when it's an array
 
       if (selectedWalletId) {
@@ -267,14 +267,13 @@ export class WalletManager {
         Object.values(blockchainNetworks)
       )
 
-      const addresses = Object.values(accounts).map((account) => {
+      const addresses = accounts.map((account) => {
         return account.address
       })
 
       const wallet: LegacyCryptoWallet = {
-        _id: record._id,
+        id: record._id,
         label: record.label,
-        walletType: walletType,
         readOnly: !record.mnemonic && !record.privateKey,
         count: Object.keys(accounts).length,
         address: addresses.length === 1 ? addresses[0] : undefined,

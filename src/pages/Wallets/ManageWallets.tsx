@@ -109,7 +109,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            handleDeleteWallet(item._id)
+            handleDeleteWallet(item.id)
           },
         },
       ]
@@ -193,9 +193,9 @@ const ManageWallets = (props: Props) => {
         }
 
         if (buttonIndex === 0 && !item.readOnly) {
-          navigation.navigate('SingleWallet', { walletId: item._id })
+          navigation.navigate('SingleWallet', { walletId: item.id })
         } else if (buttonIndex === 1) {
-          handleSelectWallet(item._id)
+          handleSelectWallet(item.id)
         } else if (buttonIndex === 2) {
           if (walletCount <= 1) {
             showDeleteAlert()

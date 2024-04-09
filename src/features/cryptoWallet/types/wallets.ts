@@ -56,8 +56,9 @@ export type LegacyCryptoWalletAccount = {
 export type CryptoWallet = {
   id: string
   label: string
-  mnemonic?: string // How does it work for wallet imported with private keys?
   readOnly: boolean
+  // walletType: WalletType // TODO: Do we need this field? Probably not
+  mnemonic?: string // How does it work for wallet imported with private keys?
   // icon?: string // Do we need an icon? No, because the persistence schema doesn't have it yet, and the goal of the `accounts` field is to be chain-agnostic, so we can't tie the wallet to a specific chain, so we can't get the icon from the chain.
   accounts: readonly CryptoWalletAccount[]
 }
@@ -66,14 +67,13 @@ export type CryptoWallet = {
  * @deprecated replace by CryptoWallet
  */
 export type LegacyCryptoWallet = {
-  _id: string
+  id: string
   label: string
   readOnly: boolean
-  walletType: WalletType
   address?: string
   mnemonic?: string
   accounts: LegacyCryptoWalletAccount[]
-  icon?: string
+  icon?: string // kept for now but not set
   count?: number
 }
 

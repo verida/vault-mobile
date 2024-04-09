@@ -47,7 +47,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
   const cryptoWallets = useCryptoWallets()
-  const cryptoWallet = cryptoWallets.find((wallet) => wallet._id === walletId)
+  const cryptoWallet = cryptoWallets.find((wallet) => wallet.id === walletId)
 
   const onRenameWallet = async (id: string, data: UpdateCryptoWalletData) => {
     setLoading(true)
@@ -138,7 +138,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
             hideModal={() => setRenameModalVisible(false)}
             visible={renameModalVisible}
             onPressRename={onRenameWallet as any}
-            data={{ id: cryptoWallet._id, label: cryptoWallet.label }}
+            data={{ id: cryptoWallet.id, label: cryptoWallet.label }}
           />
           <SeedPhraseWarningModal
             hideModal={() => setSeedPhraseModalVisible(false)}

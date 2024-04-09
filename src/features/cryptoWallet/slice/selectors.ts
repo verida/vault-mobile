@@ -33,7 +33,7 @@ export const getSelectedCryptoWallet = (state: RootState) => {
     return null
   }
   const wallets = getCryptoWallets(state)
-  return wallets?.find((wallet) => wallet._id === selectedWalletId) || null
+  return wallets?.find((wallet) => wallet.id === selectedWalletId) || null
 }
 
 export const getCryptoWalletStatus = (state: RootState) => {
