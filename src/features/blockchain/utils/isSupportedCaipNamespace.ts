@@ -1,13 +1,10 @@
-import { $enum } from 'ts-enum-util'
-
+import { BLOCKCHAIN_NAMESPACES } from '../constants'
 import { SupportedBlockchainNamespace } from '../types/enums'
 
 export function isSupportedCaipNamespace(
-  maybeSupportedCaipProtocol: string | undefined
-): maybeSupportedCaipProtocol is SupportedBlockchainNamespace {
-  if (!maybeSupportedCaipProtocol) return false
+  blockchainNamespace: string | undefined
+): blockchainNamespace is SupportedBlockchainNamespace {
+  if (!blockchainNamespace) return false
 
-  return [...$enum(SupportedBlockchainNamespace).values()]
-    .map(String)
-    .includes(maybeSupportedCaipProtocol)
+  return BLOCKCHAIN_NAMESPACES.includes(blockchainNamespace as any)
 }
