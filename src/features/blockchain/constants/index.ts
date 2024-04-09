@@ -2,6 +2,8 @@ import { $enum } from 'ts-enum-util' // TODO: Uninstall when no longer needed
 
 import { SupportedBlockchainNamespace } from '~/features/blockchain/types'
 
+export const BLOCKCHAIN_SLICE_NAME = 'blockchain'
+
 /**
  * @deprecated use `BLOCKCHAIN_NAMESPACES` instead
  */

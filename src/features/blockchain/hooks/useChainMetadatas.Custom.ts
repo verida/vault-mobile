@@ -1,16 +1,16 @@
 import { ChainId } from 'caip'
+import * as React from 'react'
+import { useDispatch, useStore } from 'react-redux'
+
 import {
   ChainMetadata,
   ChainMetadatas,
   UseChainMetadataState,
-} from 'features/caip'
-import * as React from 'react'
-import { useDispatch, useStore } from 'react-redux'
+} from '~/features/caip'
+import { RootState, useAppSelector } from '~/reduxStore/types'
 
-import { RootState, useAppSelector } from 'reduxStore/types'
-
+import { BLOCKCHAIN_SLICE_NAME } from '../constants'
 import { addCustomNetwork, removeCustomNetwork } from '../redux'
-import { BLOCKCHAIN_SLICE_NAME } from '../types'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
   readonly addCustomNetworks: (
