@@ -9,7 +9,7 @@ import {
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useSelectedWallet,
+  useSelectedCryptoWallet,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
@@ -43,7 +43,7 @@ const SingleCurrency = () => {
   const navigation = useMainNavigation()
 
   // TODO: idk what to do about this yet
-  const selectedWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = useParams<SingleCurrencyScreenProps>()
@@ -68,7 +68,7 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  const accounts = selectedWallet?.accounts || []
+  const accounts = selectedCryptoWallet?.accounts || []
   const account = chainId
     ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
     : undefined
@@ -135,7 +135,7 @@ const SingleCurrency = () => {
         title={title}
       />
       <TokenBanner
-        selectedWallet={selectedWallet}
+        selectedWallet={selectedCryptoWallet}
         decimals={maybeAggregateWalletBannerBalance?.decimals}
         tokenBalance={maybeAggregateWalletBannerBalance?.balance}
         tokenBalanceValue={value}

@@ -1,6 +1,6 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { TabScreenHeader } from 'components'
-import { useSelectedWallet } from 'features/cryptoWallet'
+import { useSelectedCryptoWallet } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -48,7 +48,7 @@ type AssetsScreenProps = TabsScreenProps<'Assets'>
 export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const { navigation } = props
 
-  const selectedWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
   const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const layout = useWindowDimensions()
@@ -66,11 +66,11 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
-        selectedWallet={selectedWallet}
+        selectedWallet={selectedCryptoWallet}
         openWalletModal={openWalletModal}
       />
     ),
-    [openWalletModal, selectedWallet]
+    [openWalletModal, selectedCryptoWallet]
   )
 
   useEffect(() => {

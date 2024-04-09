@@ -23,7 +23,7 @@ import {
   useCryptoWallets,
   useCryptoWalletsCount,
   useCryptoWalletsStatus,
-  useSelectedWalletId,
+  useSelectedCryptoWalletId,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackParams } from '~/navigation/types'
@@ -41,9 +41,9 @@ type Props = {
 const ManageWallets = (props: Props) => {
   const { navigation } = props
 
-  const wallets = useCryptoWallets()
-  const walletCount = useCryptoWalletsCount()
-  const selectedWalletId = useSelectedWalletId()
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWalletCount = useCryptoWalletsCount()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
   const { processsing } = useCryptoWalletsStatus()
 
   const dispatch = useAppDispatch()
@@ -197,7 +197,7 @@ const ManageWallets = (props: Props) => {
         } else if (buttonIndex === 1) {
           handleSelectWallet(item.id)
         } else if (buttonIndex === 2) {
-          if (walletCount <= 1) {
+          if (cryptoWalletCount <= 1) {
             showDeleteAlert()
           } else {
             showConfirmationAlert(item)
@@ -225,8 +225,8 @@ const ManageWallets = (props: Props) => {
           <Content style={styles.content}>
             <List>
               <WalletList
-                list={wallets}
-                selectedWalletId={selectedWalletId}
+                list={cryptoWallets}
+                selectedWalletId={selectedCryptoWalletId}
                 onPressItem={handlePressWalletListItem}
               />
             </List>

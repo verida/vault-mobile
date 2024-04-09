@@ -4,7 +4,7 @@ import { useTheme } from 'contexts'
 import {
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
-  useSelectedWallet,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -24,7 +24,7 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
   const styles = useThemeAwareStyle(createStyles)
 
   const navigation = useNavigation()
-  const currentWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
   const cachedAggregateWalletBannerBalances =
     useAggregateWalletBannerBalancesWithResultCaching()
   const { result: aggregateWalletBannerBalances } =
@@ -34,7 +34,7 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
       aggregateWalletBannerBalances,
     })
 
-  const displayedLabel = currentWallet?.label || 'Crypto Wallet'
+  const displayedLabel = selectedCryptoWallet?.label || 'Crypto Wallet'
 
   const handlePress = () => {
     navigation.navigate('Assets' as never)

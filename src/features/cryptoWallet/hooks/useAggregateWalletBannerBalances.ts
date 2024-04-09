@@ -21,7 +21,7 @@ import {
 } from '../utils'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
-import { useSelectedWallet } from './useSelectedWallet'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 export const getAggregateWalletBannerBalanceError = (
   state: UseAggregateWalletBannerBalancesState
@@ -57,13 +57,13 @@ export function useAggregateWalletBannerBalances(
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const currentWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   const currentChainIds = React.useMemo(() => {
-    return (currentWallet?.accounts || []).map(
+    return (selectedCryptoWallet?.accounts || []).map(
       (account) => new ChainId(account.chainId)
     )
-  }, [currentWallet])
+  }, [selectedCryptoWallet])
 
   const { resource: maybeResource } = params
 

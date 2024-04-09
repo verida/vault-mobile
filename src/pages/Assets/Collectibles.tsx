@@ -4,7 +4,7 @@ import { useTheme } from 'contexts/ThemeContext'
 import { NFT, useGetNFTsQuery } from 'features/assets'
 import {
   getUniqueWalletAddresses,
-  useSelectedWallet,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
 // import { getNFTImageUri } from 'helpers/nft'
@@ -37,8 +37,8 @@ const Collectibles = () => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
-  const selectedWallet = useSelectedWallet()
-  const addresses = getUniqueWalletAddresses(selectedWallet)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const addresses = getUniqueWalletAddresses(selectedCryptoWallet)
   const { data, isLoading, isFetching, refetch } = useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
 
   const isEmptyList = !data || data.length === 0

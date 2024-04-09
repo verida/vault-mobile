@@ -3,7 +3,7 @@ import * as React from 'react'
 
 import { CryptoWalletAccount, CryptoWalletAccounts } from '../types'
 import { transformLegacyWalletAccountToCryptoWalletAccount } from '../utils'
-import { useSelectedWallet } from './useSelectedWallet'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 // TODO: Move to utils
 export const getCryptoWalletAccountId = (
@@ -32,7 +32,7 @@ export const getCryptoWalletAccountAddress = (
 // and greatly increase the exposure - without actually having to migrate
 // the existing persistence model.
 export function useSelectedMinifiedBlockchainAccounts(): CryptoWalletAccounts {
-  const currentCryptoWalletAccounts = useSelectedWallet()?.accounts
+  const currentCryptoWalletAccounts = useSelectedCryptoWallet()?.accounts
 
   return React.useMemo<CryptoWalletAccounts>(() => {
     // First, minify the accounts so they just consist of raw signing information,

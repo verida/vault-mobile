@@ -3,10 +3,10 @@ import * as React from 'react'
 import { useGetBalancesQuery } from '../api'
 import { BalanceByChainResult, isBalanceByChainResult } from '../types'
 import { getUniqueWalletAddresses } from '../utils'
-import { useSelectedWallet } from './useSelectedWallet'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 export function useBalanceByChainResultsForUniqueWalletAddresses() {
-  const currentCryptoWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   const {
     data,
@@ -16,8 +16,8 @@ export function useBalanceByChainResultsForUniqueWalletAddresses() {
     refetch,
   } = useGetBalancesQuery(
     React.useMemo(
-      () => getUniqueWalletAddresses(currentCryptoWallet),
-      [currentCryptoWallet]
+      () => getUniqueWalletAddresses(selectedCryptoWallet),
+      [selectedCryptoWallet]
     )
   )
 
