@@ -244,7 +244,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
       blockchainNetworks
     ).reduce(
       (acc: VeridaOneWalletAddress[], blockchainNetwork: BlockchainNetwork) => {
-        const sameChainAdresses = Object.values(wallets).reduce(
+        const sameChainAdresses = wallets.reduce(
           (
             accAddresses: VeridaOneWalletAddress[],
             wallet: LegacyCryptoWallet

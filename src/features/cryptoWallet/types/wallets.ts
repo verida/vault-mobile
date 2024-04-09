@@ -77,6 +77,15 @@ export type LegacyCryptoWallet = {
   count?: number
 }
 
+export type CryptoWalletsReduxState = {
+  wallets: LegacyCryptoWallet[]
+  selectedWalletId: string | null
+  status: {
+    processsing: boolean
+    error?: string
+  }
+}
+
 // --- Crypto requests
 
 export type CreateCryptoWalletData = Partial<

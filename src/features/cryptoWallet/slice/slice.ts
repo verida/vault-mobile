@@ -10,8 +10,8 @@ import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
 import {
   AddWatchedCryptoWalletData,
   CreateCryptoWalletData,
+  CryptoWalletsReduxState,
   ImportCryptoWalletData,
-  LegacyCryptoWallet,
   UpdateCryptoWalletData,
 } from '../types'
 import { WalletManager } from '../utils'
@@ -19,17 +19,8 @@ import { getSelectedCryptoWalletId } from './selectors'
 
 const logger = Logger.create('CryptoWallets')
 
-export type CryptoWalletsState = {
-  wallets: Record<string, LegacyCryptoWallet>
-  selectedWalletId: string | null
-  status: {
-    processsing: boolean
-    error?: string
-  }
-}
-
-const initialState: CryptoWalletsState = {
-  wallets: {},
+const initialState: CryptoWalletsReduxState = {
+  wallets: [],
   selectedWalletId: null,
   status: {
     processsing: false,
@@ -43,7 +34,7 @@ export const cryptoWalletSlice = createSlice({
   reducers: {
     saveCryptoWallets: (
       state,
-      action: PayloadAction<Record<string, LegacyCryptoWallet>>
+      action: PayloadAction<CryptoWalletsReduxState['wallets']>
     ) => {
       state.wallets = action.payload
     },
@@ -52,7 +43,7 @@ export const cryptoWalletSlice = createSlice({
     },
     setSelectedCryptoWalletId: (
       state,
-      action: PayloadAction<string | null>
+      action: PayloadAction<CryptoWalletsReduxState['selectedWalletId']>
     ) => {
       state.selectedWalletId = action.payload
     },

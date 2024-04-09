@@ -20,7 +20,7 @@ import {
   ImportCryptoWalletData,
   LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWalletsAsList,
+  useCryptoWallets,
   useCryptoWalletsCount,
   useCryptoWalletsStatus,
   useSelectedWalletId,
@@ -41,7 +41,7 @@ type Props = {
 const ManageWallets = (props: Props) => {
   const { navigation } = props
 
-  const wallets = useCryptoWalletsAsList()
+  const wallets = useCryptoWallets()
   const walletCount = useCryptoWalletsCount()
   const selectedWalletId = useSelectedWalletId()
   const { processsing } = useCryptoWalletsStatus()

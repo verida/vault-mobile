@@ -183,7 +183,7 @@ export class WalletManager {
     walletIdToSelect: string | null
   ): Promise<{
     selectedWalletId: string | null
-    wallets: Record<string, LegacyCryptoWallet>
+    wallets: LegacyCryptoWallet[]
   }> {
     try {
       // Clearing the local storage, mostly to clean up the now unused data
@@ -202,7 +202,7 @@ export class WalletManager {
       if (validRecords.length === 0) {
         return {
           selectedWalletId: null,
-          wallets: {},
+          wallets: [],
         }
       }
 
@@ -218,7 +218,7 @@ export class WalletManager {
       const selectedId = walletIdToSelect || cachedSelectedCryptoWalletId
 
       const previouslySelectedWallet = selectedId
-        ? wallets[selectedId]
+        ? wallets.find((wallet) => wallet._id === selectedId)
         : undefined
 
       const selectedWalletId = previouslySelectedWallet
@@ -246,11 +246,13 @@ export class WalletManager {
   private static async transformRecordToCryptoWallets(
     records: CryptoWalletRecord[],
     walletsDatastore: IDatastore
-  ): Promise<Record<string, LegacyCryptoWallet>> {
+  ): Promise<LegacyCryptoWallet[]> {
     const blockchainNetworks = getBlockchainNetworks(store.getState()) // TODO: Deal with how to handle it in a pure function
-    if (!blockchainNetworks) return {} // TODO: better way to handle this case
+    if (!blockchainNetworks) {
+      return [] // TODO: better way to handle this case
+    }
 
-    const wallets: Record<string, LegacyCryptoWallet> = {}
+    const wallets: LegacyCryptoWallet[] = []
 
     records.forEach((record) => {
       // Handle legacy wallet type values
@@ -279,7 +281,7 @@ export class WalletManager {
         accounts,
       }
 
-      wallets[wallet._id] = wallet
+      wallets.push(wallet)
     })
 
     return wallets

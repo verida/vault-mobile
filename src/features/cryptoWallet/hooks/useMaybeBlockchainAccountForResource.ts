@@ -32,15 +32,14 @@ export function useMaybeBlockchainAccountForResource(
       return null
     }
 
-    const maybeMatchingAccount = Object.values(wallets).find(
-      (e: LegacyCryptoWallet) =>
-        e.accounts.find(
-          (f) =>
-            // TODO: this is slow and inefficient, fix
-            JSON.stringify(
-              transformLegacyWalletAccountToCryptoWalletAccount(f)
-            ) === JSON.stringify(maybeMinifiedVeridaAccount)
-        )
+    const maybeMatchingAccount = wallets.find((e: LegacyCryptoWallet) =>
+      e.accounts.find(
+        (f) =>
+          // TODO: this is slow and inefficient, fix
+          JSON.stringify(
+            transformLegacyWalletAccountToCryptoWalletAccount(f)
+          ) === JSON.stringify(maybeMinifiedVeridaAccount)
+      )
     )
 
     return maybeMatchingAccount || null

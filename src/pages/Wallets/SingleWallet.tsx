@@ -2,7 +2,7 @@ import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import {
   updateCryptoWallet,
   UpdateCryptoWalletData,
-  useCryptoWalletsAsList,
+  useCryptoWallets,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -46,8 +46,8 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
-  const wallets = useCryptoWalletsAsList()
-  const cryptoWallet = wallets.find((wallet) => wallet._id === walletId)
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWallet = cryptoWallets.find((wallet) => wallet._id === walletId)
 
   const onRenameWallet = async (id: string, data: UpdateCryptoWalletData) => {
     setLoading(true)

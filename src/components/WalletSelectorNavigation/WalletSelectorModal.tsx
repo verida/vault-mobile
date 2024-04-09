@@ -12,7 +12,7 @@ import { NUNITO_SANS } from '~/constants/text'
 import {
   LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWalletsAsList,
+  useCryptoWallets,
   useSelectedWalletId,
 } from '~/features/cryptoWallet'
 import { MainStackParams } from '~/navigation/types'
@@ -30,7 +30,7 @@ const WalletSelectorModal = ({
   modalVisible,
   onCloseModal,
 }: WalletSelectorModalProps) => {
-  const wallets = useCryptoWalletsAsList()
+  const wallets = useCryptoWallets()
   const selectedWalletId = useSelectedWalletId()
 
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()

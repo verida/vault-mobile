@@ -5,7 +5,6 @@ import { RootState } from '~/reduxStore/types'
 
 import { getBalancesData } from '../api'
 import {
-  LegacyCryptoWallet,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
 } from '../types'
@@ -19,16 +18,9 @@ export const getCryptoWallets = (state: RootState) => {
   return state.cryptoWallets.wallets
 }
 
-export const getCryptoWalletAsList = (
-  state: RootState
-): LegacyCryptoWallet[] => {
-  const wallets = getCryptoWallets(state)
-  return Object.values(wallets)
-}
-
 export const getCryptoWalletsCount = (state: RootState) => {
   const wallets = getCryptoWallets(state)
-  return Object.keys(wallets).length || 0
+  return wallets.length || 0
 }
 
 export const getSelectedCryptoWalletId = (state: RootState) => {
@@ -41,7 +33,7 @@ export const getSelectedCryptoWallet = (state: RootState) => {
     return null
   }
   const wallets = getCryptoWallets(state)
-  return wallets?.[selectedWalletId] || null
+  return wallets?.find((wallet) => wallet._id === selectedWalletId) || null
 }
 
 export const getCryptoWalletStatus = (state: RootState) => {
