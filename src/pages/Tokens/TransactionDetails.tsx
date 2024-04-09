@@ -32,12 +32,15 @@ const TransactionDetails = () => {
     useParams<TransactionDetailsScreenProps>()
 
   const { resource } = aggregateWalletBannerBalance
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
+  // TODO: Factorise this as it's also implemented in ReceiveToken.tsx and SingleCurrency.tsx
   const selectedCryptoWallet = useSelectedCryptoWallet()
   const accounts = selectedCryptoWallet?.accounts || []
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
 
   const address = account?.address || null

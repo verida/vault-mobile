@@ -42,20 +42,17 @@ export type SingleCurrencyScreenProps = {
 const SingleCurrency = () => {
   const navigation = useMainNavigation()
 
-  // TODO: idk what to do about this yet
-  const selectedCryptoWallet = useSelectedCryptoWallet()
-
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = useParams<SingleCurrencyScreenProps>()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
   const chain = chainMetadatas.find(
     (chainMetadata) =>
-      chainMetadata.namespace === chainId.namespace &&
-      chainMetadata.reference === chainId.reference
+      chainMetadata.namespace === resourceChainId.namespace &&
+      chainMetadata.reference === resourceChainId.reference
   )
 
   const [maybeAggregateWalletBannerBalance] =
@@ -68,12 +65,15 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
+  // TODO: Factorise this as it's also implemented in TransactionDetails.tsx and ReceiveToken.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
   const accounts = selectedCryptoWallet?.accounts || []
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
-
-  const maybeAddress = account?.address || null
+  const address = account?.address || null
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -157,9 +157,11 @@ const SingleCurrency = () => {
           })
         }}
         copyButtonAction={() => {
-          if (!maybeAddress) return
+          if (!address) {
+            return
+          }
 
-          Clipboard.setString(maybeAddress)
+          Clipboard.setString(address)
 
           Toast.show('Address copied', {
             duration: Toast.durations.LONG,

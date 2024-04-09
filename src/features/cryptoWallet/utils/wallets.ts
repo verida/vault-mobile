@@ -1,24 +1,31 @@
+import { AccountId } from 'caip'
+
+import { BlockchainNetwork } from '~/features/blockchain'
+
 import { WALLET_TYPE_DEFINITIONS } from '../constants'
 import { LegacyCryptoWallet, WalletType } from '../types'
 
-export const getUniqueWalletAddresses = (wallet: LegacyCryptoWallet | null) => {
-  if (!wallet || !wallet.accounts || wallet.accounts.length === 0) {
-    return []
-  }
+export function getCryptoWalletAccountIds(
+  wallet: LegacyCryptoWallet,
+  blockchains: BlockchainNetwork[]
+): AccountId[] {
+  const accountIds: AccountId[] = []
 
-  const addresses: string[] = [
-    ...new Set(
-      wallet.accounts.flatMap((account) => {
-        // Ensure a valid chainId.
-        if (typeof account.chainId !== 'string' || !account.chainId.length)
-          return []
+  blockchains.forEach((blockchain) => {
+    const account = wallet.accounts.find(
+      (item) => item.namespace === blockchain.namespace
+    )
+    if (account) {
+      accountIds.push(
+        new AccountId({
+          chainId: blockchain.chainId,
+          address: account.address,
+        })
+      )
+    }
+  })
 
-        return [`${account.chainId}:${account.address}`]
-      })
-    ),
-  ]
-
-  return addresses
+  return accountIds
 }
 
 export function getWalletTypeShortLabel(walletType: WalletType) {

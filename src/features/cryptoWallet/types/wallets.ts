@@ -46,9 +46,9 @@ export type CryptoWalletAccounts = readonly CryptoWalletAccount[]
  * @deprecated replace by CryptoWalletAccount
  */
 export type LegacyCryptoWalletAccount = {
+  namespace: BlockchainNamespace
   privateKey?: string
   address: string
-  chainId: string
 }
 
 // If we ever get rid of the "multi" wallet type, this CryptoWallet type can be merged with the CryptoWalletAccount type because the only reason `accounts` is an array is because of the "multi" wallet type.

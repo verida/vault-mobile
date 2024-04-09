@@ -1,4 +1,3 @@
-import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 
 import { SupportedBlockchainNamespace } from '~/features/blockchain'
@@ -57,14 +56,12 @@ const transformLegacyWalletAccountToNearCryptoWalletAccount = (
 export function transformLegacyWalletAccountToCryptoWalletAccount(
   legacyCryptoWalletAccount: LegacyCryptoWalletAccount
 ): CryptoWalletAccount | undefined {
-  const { chainId } = legacyCryptoWalletAccount
+  const { namespace } = legacyCryptoWalletAccount
 
-  if (typeof chainId !== 'string' || !chainId.length)
+  if (typeof namespace !== 'string' || !namespace)
     throw new Error(
-      `Expected non-empty string chainId, encountered "${chainId}".`
+      `Expected non-empty string namespace, encountered "${namespace}".`
     )
-
-  const { namespace } = new ChainId(chainId)
 
   if (namespace === SupportedBlockchainNamespace.EIP_155) {
     return transformLegacyWalletAccountToEip155CryptoWalletAccount(

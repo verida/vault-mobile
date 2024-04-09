@@ -2,6 +2,7 @@ import { IDatastore } from '@verida/types'
 import * as bip39 from 'bip39'
 
 import {
+  BlockchainNamespace,
   BlockchainNetwork,
   getBlockchainNetworks,
   IBlockchain,
@@ -295,17 +296,20 @@ export class WalletManager {
     // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
     const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
 
-    blockchainNetworks.forEach((blockchain): void => {
-      if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
-        logger.warn(`Blockchain namespace not supported: "${walletType}"`)
-        return
-      }
+    if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
+      logger.warn(`Blockchain namespace not supported: "${walletType}"`)
+      return accounts
+    }
 
+    blockchainNetworks.forEach((blockchain): void => {
       if (!NAMESPACES[blockchain.namespace]) {
         throw new Error(
           `Blockchain namespace not supported: "${blockchain.namespace}"`
         )
       }
+
+      // TODO: Refactor blockchain type
+      const namespace = blockchain.namespace as BlockchainNamespace
 
       if (walletType !== 'multi' && blockchain.namespace !== walletType) {
         return
@@ -318,7 +322,7 @@ export class WalletManager {
         !walletRecord.mnemonic
       ) {
         const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
-          chainId: blockchain.chainId,
+          namespace: namespace,
           address: walletRecord.address,
         }
 
@@ -347,7 +351,7 @@ export class WalletManager {
       }
 
       const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
-        chainId: blockchain.chainId,
+        namespace: namespace,
         address: walletDetails.address,
         privateKey: walletDetails.privateKey,
       }

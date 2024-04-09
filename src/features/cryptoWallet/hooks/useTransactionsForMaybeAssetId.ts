@@ -9,20 +9,22 @@ export function useTransactionsForMaybeAssetId({
 }: {
   readonly assetType: AssetType | null | undefined
 }) {
-  const chainId = maybeAssetType?.chainId
-    ? new ChainId(maybeAssetType.chainId).toString()
+  const assetChainId = maybeAssetType?.chainId
+    ? new ChainId(maybeAssetType.chainId)
     : null
 
   const selectedCryptoWallet = useSelectedCryptoWallet()
   const accounts = selectedCryptoWallet?.accounts || []
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId)
+  const account = assetChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === assetChainId.namespace
+      )
     : undefined
+  const address = account?.address || null
 
-  const userAddress = account?.address || null
   const asset = maybeAssetType || null
 
-  const skip = !userAddress || !asset
+  const skip = !address || !asset
 
   const {
     data,
@@ -31,7 +33,7 @@ export function useTransactionsForMaybeAssetId({
     refetch,
   } = useGetTransactionsForTokenQuery(
     {
-      userAddress,
+      userAddress: address,
       asset,
     },
     {

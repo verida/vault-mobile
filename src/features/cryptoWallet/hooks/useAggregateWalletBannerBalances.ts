@@ -59,9 +59,9 @@ export function useAggregateWalletBannerBalances(
 
   const selectedCryptoWallet = useSelectedCryptoWallet()
 
-  const currentChainIds = React.useMemo(() => {
+  const selectedCryptoWalletNamespaces = React.useMemo(() => {
     return (selectedCryptoWallet?.accounts || []).map(
-      (account) => new ChainId(account.chainId)
+      (account) => account.namespace as string
     )
   }, [selectedCryptoWallet])
 
@@ -129,11 +129,9 @@ export function useAggregateWalletBannerBalances(
             ? aggregateWalletBannerBalance.resource.chainId
             : aggregateWalletBannerBalance.resource
         )
-        const isOnCurrentlySelectedChain = currentChainIds.find(
-          (chainId) =>
-            itemChainId.namespace === chainId.namespace &&
-            itemChainId.reference === chainId.reference
-        )
+        const isOnCurrentlySelectedChain =
+          selectedCryptoWalletNamespaces.includes(itemChainId.namespace)
+
         if (!isOnCurrentlySelectedChain) return false
 
         // If we didn't define a resource to filter against, then assume all match.
@@ -156,7 +154,7 @@ export function useAggregateWalletBannerBalances(
       result: resultForOnlyMatchingChains,
     }
   }, [
-    currentChainIds,
+    selectedCryptoWalletNamespaces,
     errorWalletProvider,
     isLoadingWalletProvider,
     chainMetadatas,
