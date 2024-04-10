@@ -1,4 +1,4 @@
-import { NearAccountPointer, NearTransaction } from '../@types'
+import { NearAccountPointer, NearTransaction } from '../types'
 
 export function nearMaybeAccountForTransactionSignatory({
   nearAccountPointers,

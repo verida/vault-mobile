@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { z } from 'zod'
 
-import { BlockchainRequestHandlers } from '~/features/blockchain/types'
+import { BlockchainRequestHandlers } from '../../types'
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-v2/src/data/EIP155Data.ts#L95
 export enum Eip155RpcMethod {
