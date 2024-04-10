@@ -2,6 +2,7 @@ import { MainStackParams, TabsScreenParams } from 'navigation/types'
 
 export type HomeScreenPromoBanner = {
   key: string
+  order: number
   buttonLabel: string
   image: any
   screen?: keyof MainStackParams | keyof TabsScreenParams
