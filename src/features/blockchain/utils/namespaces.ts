@@ -1,5 +1,5 @@
-import { BlockchainNamespace } from '../@types'
 import { BLOCKCHAIN_NAMESPACE_DEFINITIONS } from '../constants'
+import { BlockchainNamespace } from '../types'
 
 export function getBlockchainNamespaceShortLabel(
   namespace: BlockchainNamespace

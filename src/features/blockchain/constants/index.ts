@@ -1,5 +1,6 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types'
 import { $enum } from 'ts-enum-util' // TODO: Uninstall when no longer needed
+
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types'
 
 /**
  * @deprecated use `BLOCKCHAIN_NAMESPACES` instead

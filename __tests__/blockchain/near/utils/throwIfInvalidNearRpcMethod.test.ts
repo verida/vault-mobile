@@ -1,8 +1,9 @@
 import 'jest'
 
-import { NearRpcMethod } from 'features/blockchain/near/@types'
-import { throwIfInvalidNearRpcMethod } from 'features/blockchain/near/utils/throwIfInvalidNearRpcMethod'
 import { $enum } from 'ts-enum-util'
+
+import { NearRpcMethod } from '~/features/blockchain/near/types'
+import { throwIfInvalidNearRpcMethod } from '~/features/blockchain/near/utils/throwIfInvalidNearRpcMethod'
 
 describe('throwIfInvalidNearRpcMethod', () => {
   it('throws for invalid rpc methods', () => {

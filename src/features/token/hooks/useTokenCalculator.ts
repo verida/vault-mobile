@@ -8,7 +8,7 @@ import {
   fixedPointCryptoAsBigDecimal,
 } from '~/features/cryptoWallet'
 
-import { CurrencyFormat } from '../@types'
+import { CurrencyFormat } from '../types'
 import { convertFromCryptoToFiat, convertFromFiatToCrypto } from '../utils'
 
 type State = {

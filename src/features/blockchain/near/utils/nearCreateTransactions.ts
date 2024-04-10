@@ -1,6 +1,6 @@
 import { providers, transactions, utils } from 'near-api-js'
 
-import { NearAccount, NearAccountPointer, NearTransaction } from '../@types'
+import { NearAccount, NearAccountPointer, NearTransaction } from '../types'
 import { nearCreateViewAccessKey } from './nearCreateViewAccessKey'
 
 export async function nearCreateTransactions({

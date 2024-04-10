@@ -1,6 +1,6 @@
 import 'jest'
 
-import { AddEthereumChainRequestParam } from '../../../src/features/blockchain/eip155/@types'
+import { AddEthereumChainRequestParam } from '~/features/blockchain/eip155/types'
 
 describe('blockchain/eip155/@types', () => {
   it('AddEthereumChainRequestParam', () => {

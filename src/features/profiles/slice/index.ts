@@ -6,7 +6,7 @@ import { Logger } from 'features/telemetry'
 
 import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
-import { PublicProfile } from '../@types'
+import { PublicProfile } from '../types'
 import { getPublicProfile } from '../utils'
 
 const logger = Logger.create('Profiles')

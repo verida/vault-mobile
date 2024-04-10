@@ -4,7 +4,7 @@ import {
   CryptoWalletAccounts,
 } from 'features/cryptoWallet'
 
-import { ActiveSession, ActiveSessions } from '../@types'
+import { ActiveSession, ActiveSessions } from '../types'
 import { getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession } from './getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession'
 
 export function getMaybeMinifiedBlockchainAccountForWalletConnectRequest({

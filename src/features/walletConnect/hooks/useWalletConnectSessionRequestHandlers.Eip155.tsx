@@ -15,7 +15,7 @@ import { $enum } from 'ts-enum-util'
 import {
   EthereumSessionRequestHandlers,
   WalletConnectSessionRequestCallbackParams,
-} from '../@types'
+} from '../types'
 import {
   extractWalletConnectRpcOrThrow,
   getMinifiedBlockchainAccountForWalletConnectRequestOrThrow,

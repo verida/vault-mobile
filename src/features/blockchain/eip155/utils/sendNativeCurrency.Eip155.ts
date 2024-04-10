@@ -8,7 +8,7 @@ import {
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from '../../@types'
+} from '../../types'
 
 export const sendNativeCurrencyEip155 = async ({
   value,

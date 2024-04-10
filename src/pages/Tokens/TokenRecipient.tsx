@@ -1,7 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { BigNumber, ethers } from 'ethers'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
   AggregateWalletBannerBalance,
   isValidWalletAddressForChainId,
@@ -17,6 +16,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
 
 import Button from 'components/Button'
 import Label from 'components/Label'
