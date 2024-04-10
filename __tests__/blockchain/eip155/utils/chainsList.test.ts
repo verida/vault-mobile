@@ -1,15 +1,14 @@
 import 'jest'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
+import axios from 'axios'
+import MockAdapter from 'axios-mock-adapter'
 
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,
   fetchChainsList,
   getMaybeAddEthereumChainRequestParamByChainId,
-} from '../../../../src/features/blockchain/eip155/utils/chainsList'
-
-const axios = require('axios')
-const MockAdapter = require('axios-mock-adapter')
+} from '~/features/blockchain/eip155/utils/chainsList'
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 const mock = new MockAdapter(axios)
 

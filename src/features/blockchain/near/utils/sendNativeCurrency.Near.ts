@@ -12,7 +12,7 @@ import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
 } from '../../types'
-import { NearAccountBundle } from '../@types'
+import { NearAccountBundle } from '../types'
 
 export const sendNativeCurrencyNear = async ({
   chainId: caipChainId,

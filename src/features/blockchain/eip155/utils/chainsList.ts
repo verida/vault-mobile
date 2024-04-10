@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { ChainId } from 'caip'
 
-import { ChainMetadatas } from '../../../caip/types'
-import { SupportedBlockchainNamespace } from '../../types/enums'
+import { ChainMetadatas } from '~/features/caip'
+
+import { SupportedBlockchainNamespace } from '../../types'
 import {
   AddEthereumChainRequestParam,
   AddEthereumChainRequestParamBlockExplorerUrls,
   AddEthereumChainRequestParamRpcUrls,
   ChainsList,
   ChainsListItem,
-} from '../@types'
+} from '../types'
 
 export async function fetchChainsList(): Promise<ChainsList> {
   const { data } = await axios({
