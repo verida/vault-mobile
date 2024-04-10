@@ -93,26 +93,28 @@ export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
     return null
   }
 
-  const banners = promoBanners.map((banner) => (
-    <View key={banner.key} style={styles.bannerContainer}>
-      <ImageBackground
-        source={banner.image}
-        resizeMode='cover'
-        borderRadius={theme.roundness.xs}
-        style={styles.bannerContent}>
-        <Pressable
-          style={styles.bannerButton}
-          onPress={() => handleBannerPress(banner)}>
-          <Text style={styles.bannerButtonLabel}>{banner.buttonLabel}</Text>
-          <Icon
-            name='chevron-forward'
-            color={theme.color.onPrimary}
-            size={24}
-          />
-        </Pressable>
-      </ImageBackground>
-    </View>
-  ))
+  const banners = [...promoBanners]
+    .sort((a, b) => a.order - b.order) // TODO: Prefer toSorted if supported
+    .map((banner) => (
+      <View key={banner.key} style={styles.bannerContainer}>
+        <ImageBackground
+          source={banner.image}
+          resizeMode='cover'
+          borderRadius={theme.roundness.xs}
+          style={styles.bannerContent}>
+          <Pressable
+            style={styles.bannerButton}
+            onPress={() => handleBannerPress(banner)}>
+            <Text style={styles.bannerButtonLabel}>{banner.buttonLabel}</Text>
+            <Icon
+              name='chevron-forward'
+              color={theme.color.onPrimary}
+              size={24}
+            />
+          </Pressable>
+        </ImageBackground>
+      </View>
+    ))
 
   // When one banner returns a simple version without the animation and dots
   if (promoBanners.length === 1) {
