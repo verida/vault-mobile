@@ -4,6 +4,5 @@
 export * from './countries'
 export * from './emitter'
 export * from './inbox'
-export * from './networks'
 export * from './nft'
 export * from './VeridaSecureStore'
