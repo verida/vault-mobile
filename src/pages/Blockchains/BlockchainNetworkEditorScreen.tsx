@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
 import { BottomActionBar, ScreenWrapper } from 'components'
 import {
+  ChainMetadata,
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'

@@ -4,10 +4,8 @@ import { ethers } from 'ethers'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
 
-import { ChainMetadatas } from '~/features/caip'
-
 import { useChainMetadatasCustom } from '../../hooks'
-import { SupportedBlockchainNamespace } from '../../types'
+import { ChainMetadatas, SupportedBlockchainNamespace } from '../../types'
 import {
   AddEthereumChainRequestParams,
   BlockchainRequestHandlersEip155,

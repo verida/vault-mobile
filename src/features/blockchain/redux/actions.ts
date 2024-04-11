@@ -2,14 +2,13 @@ import { IDatastore } from '@verida/types'
 import { ChainId } from 'caip'
 
 import AccountManager from '~/api/AccountManager'
-import { ChainMetadata } from '~/features/caip'
 import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import {
   BLOCKCHAIN_SLICE_NAME,
   CUSTOM_BLOCKCHAIN_SCHEMA_URL,
 } from '../constants'
-import { CustomBlockchainNetwork } from '../types'
+import { ChainMetadata, CustomBlockchainNetwork } from '../types'
 import {
   chainMetadataToMaybeCustomBlockchainNetwork,
   customBlockchainNetworkToMaybeChainMetadata,

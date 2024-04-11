@@ -5,7 +5,7 @@ import { convertPredictedTransactionFeeToString } from 'features/token/utils/con
 import * as React from 'react'
 import { ActivityIndicator } from 'react-native'
 
-import { ChainMetadata } from '~/features/caip'
+import { ChainMetadata } from '~/features/blockchain'
 import { DetailedValuation } from '~/features/cryptoWallet'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'

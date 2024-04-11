@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { ChainMetadata } from 'features/caip'
 import { DetailedValuation } from 'features/cryptoWallet'
 import {
   convertFromCryptoIntegerToMaybeDecimalFiat,
@@ -10,6 +9,8 @@ import { useThemeAwareStyle } from 'hooks'
 import React, { useMemo } from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 import { getSignificantDecimalsFromPrice } from 'utils'
+
+import { ChainMetadata } from '~/features/blockchain'
 
 import { NumberCrypto, NumberFiat } from 'components/Numbers'
 import { Typography } from 'components/Typography'

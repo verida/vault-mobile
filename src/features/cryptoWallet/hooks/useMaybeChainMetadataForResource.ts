@@ -1,10 +1,10 @@
 import * as React from 'react'
 
 import {
+  ChainMetadata,
   getMaybeChainMetadatas,
   useChainMetadatas,
 } from '~/features/blockchain'
-import { ChainMetadata } from '~/features/caip'
 
 import { ResourceParams } from '../types'
 import { getChainIdParamsFromResourceParams } from '../utils'

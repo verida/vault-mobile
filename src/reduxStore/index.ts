@@ -45,17 +45,17 @@ const persistConfig = {
   migrate: createMigrate(reduxPersistMigrations, { debug: config.dev.devMode }),
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
-    BLOCKCHAIN_SLICE_NAME,
+    // BLOCKCHAIN_SLICE_NAME,
 
     'settings',
     'profiles',
 
     // TODO: Revisit, maybe we shouldn't persist API results in the first place.
     // But that's really a nice performance enhancement ATM considering some APIs take an average of 3-10 seconds to load.
-    blockchainApi.reducerPath,
-    cryptoWalletApi.reducerPath,
-    cryptoWalletLegacyApi.reducerPath,
-    assetsApi.reducerPath,
+    // blockchainApi.reducerPath,
+    // cryptoWalletApi.reducerPath,
+    // cryptoWalletLegacyApi.reducerPath,
+    // assetsApi.reducerPath,
   ],
 }
 

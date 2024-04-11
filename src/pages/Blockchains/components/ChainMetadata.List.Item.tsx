@@ -1,7 +1,6 @@
 import { Logo } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
-import { useChainMetadataDetails } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
+import { ChainMetadata, useChainMetadataDetails } from 'features/blockchain'
 import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'

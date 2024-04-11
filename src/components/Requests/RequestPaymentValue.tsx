@@ -1,6 +1,5 @@
 import BigDecimal from 'bignumber.js'
 import { Logo, Typography } from 'components'
-import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
   fixedPointCryptoAsBigDecimal,
@@ -9,6 +8,8 @@ import { convertFromCryptoIntegerToMaybeDecimalFiat } from 'features/token'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
+
+import { ChainMetadata } from '~/features/blockchain'
 
 import { NumberCrypto, NumberFiat } from 'components/Numbers'
 import { CONFUSED_FACE } from 'constants/strings'

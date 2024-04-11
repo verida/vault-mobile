@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/caip'
-import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
+
+import { ChainMetadata } from '~/features/blockchain'
+import { fixedPointCryptoAsBigDecimal } from '~/features/cryptoWallet'
 
 import { AmountWithSymbol } from '../types'
 

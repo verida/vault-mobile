@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/caip'
 import { connect, keyStores } from 'near-api-js'
 
+import { ChainMetadatas } from '../../types'
 import { getNearNetworkConfig } from '../constants'
 
 export async function nearCreateConnection({

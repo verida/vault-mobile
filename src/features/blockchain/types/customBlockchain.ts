@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { ChainMetadata } from '~/features/caip'
+import { ChainMetadata } from './blockchain'
 
 const CustomBlockchainNetworkLabel = z.string()
 

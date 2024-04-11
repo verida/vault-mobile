@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/caip'
 import { keyStores } from 'near-api-js'
 
+import { ChainMetadatas } from '../../types'
 import { nearCreateConnection } from './nearCreateConnection'
 
 export async function getBalanceNear({

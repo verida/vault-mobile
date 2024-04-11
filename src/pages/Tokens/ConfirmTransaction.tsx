@@ -1,6 +1,5 @@
 import { RouteProp } from '@react-navigation/native'
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
   getWalletAddressForChainId,
@@ -12,6 +11,8 @@ import {
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+
+import { ChainMetadata } from '~/features/blockchain'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
