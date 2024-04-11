@@ -6,7 +6,7 @@ import { REHYDRATE } from 'redux-persist'
 
 import { RootState } from 'reduxStore/types'
 
-import { BlockchainNetwork } from '../@types'
+import { BlockchainNetwork } from '../types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: config.walletProvider.url,

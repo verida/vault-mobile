@@ -5,7 +5,7 @@ import { getDidClientConfigForNetwork, isValidVeridaDid } from 'features/verida'
 
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
-import { PublicProfile } from '../@types'
+import { PublicProfile } from '../types'
 
 const logger = Logger.create('Profiles')
 

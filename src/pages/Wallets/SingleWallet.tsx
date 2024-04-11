@@ -2,7 +2,7 @@ import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import {
   updateCryptoWallet,
   UpdateCryptoWalletData,
-  useCryptoWalletsAsList,
+  useCryptoWallets,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -46,8 +46,8 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
-  const wallets = useCryptoWalletsAsList()
-  const cryptoWallet = wallets.find((wallet) => wallet._id === walletId)
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWallet = cryptoWallets.find((wallet) => wallet.id === walletId)
 
   const onRenameWallet = async (id: string, data: UpdateCryptoWalletData) => {
     setLoading(true)
@@ -126,7 +126,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
           </View>
           <Text style={styles.listLabel}>Addresses</Text>
           <ChainsAddressesList
-            list={Object.values(cryptoWallet.accounts || {})}
+            list={cryptoWallet.accounts || []}
             onPressSeedPhrase={(seedPhrase: string) => {
               showSeedPhrase(seedPhrase)
             }}
@@ -138,7 +138,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
             hideModal={() => setRenameModalVisible(false)}
             visible={renameModalVisible}
             onPressRename={onRenameWallet as any}
-            data={{ id: cryptoWallet._id, label: cryptoWallet.label }}
+            data={{ id: cryptoWallet.id, label: cryptoWallet.label }}
           />
           <SeedPhraseWarningModal
             hideModal={() => setSeedPhraseModalVisible(false)}

@@ -8,9 +8,9 @@ import { createAppAsyncThunk } from '~/reduxStore/types'
 
 import { VAULT_SCHEMA_WALLETS_0_2_0 } from '../constants'
 import {
-  AddWatchedCryptoWallet,
-  BlockchainWalletWithAccounts,
+  AddWatchedCryptoWalletData,
   CreateCryptoWalletData,
+  CryptoWalletsReduxState,
   ImportCryptoWalletData,
   UpdateCryptoWalletData,
 } from '../types'
@@ -19,17 +19,8 @@ import { getSelectedCryptoWalletId } from './selectors'
 
 const logger = Logger.create('CryptoWallets')
 
-export type CryptoWalletsState = {
-  wallets: Record<string, BlockchainWalletWithAccounts>
-  selectedWalletId: string | null
-  status: {
-    processsing: boolean
-    error?: string
-  }
-}
-
-const initialState: CryptoWalletsState = {
-  wallets: {},
+const initialState: CryptoWalletsReduxState = {
+  wallets: [],
   selectedWalletId: null,
   status: {
     processsing: false,
@@ -43,7 +34,7 @@ export const cryptoWalletSlice = createSlice({
   reducers: {
     saveCryptoWallets: (
       state,
-      action: PayloadAction<Record<string, BlockchainWalletWithAccounts>>
+      action: PayloadAction<CryptoWalletsReduxState['wallets']>
     ) => {
       state.wallets = action.payload
     },
@@ -52,7 +43,7 @@ export const cryptoWalletSlice = createSlice({
     },
     setSelectedCryptoWalletId: (
       state,
-      action: PayloadAction<string | null>
+      action: PayloadAction<CryptoWalletsReduxState['selectedWalletId']>
     ) => {
       state.selectedWalletId = action.payload
     },
@@ -291,7 +282,7 @@ export const importCryptoWallet = createAppAsyncThunk(
 
 export const addWatchedCryptoWallet = createAppAsyncThunk(
   'cryptoWallets/addWatchedCryptoWallet',
-  async (data: AddWatchedCryptoWallet, { rejectWithValue, dispatch }) => {
+  async (data: AddWatchedCryptoWalletData, { rejectWithValue, dispatch }) => {
     try {
       const walletsDatastore = await getWalletsDatastore()
 

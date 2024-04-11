@@ -2,6 +2,7 @@ import { IDatastore } from '@verida/types'
 import * as bip39 from 'bip39'
 
 import {
+  BlockchainNamespace,
   BlockchainNetwork,
   getBlockchainNetworks,
   IBlockchain,
@@ -26,14 +27,15 @@ import {
   CryptoWalletRecordsSchema,
 } from '../schemas'
 import {
-  AddWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
   BaseCryptoWalletRecord,
-  BlockchainAccount,
-  BlockchainWalletWithAccounts,
   CreateCryptoWalletData,
   CryptoWalletRecord,
   ImportCryptoWalletData,
+  LegacyCryptoWallet,
+  LegacyCryptoWalletAccount,
   UpdateCryptoWalletData,
+  WalletType,
 } from '../types'
 
 const logger = Logger.create('CryptoWallets')
@@ -63,6 +65,19 @@ async function saveCryptoWalletRecord(
 }
 
 export class WalletManager {
+  public static async clearCachedCryptoWallets() {
+    await Promise.all([
+      SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
+
+      // CRYPTO_WALLETS_STORAGE_KEY is no longer used, but we want to clean up potential remaining data from olver versions.
+      SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
+    ])
+  }
+
+  public static async selectCryptoWallet(walletId: string) {
+    await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
+  }
+
   public static async createCryptoWallet(
     walletsDatastore: IDatastore,
     data: CreateCryptoWalletData
@@ -110,7 +125,7 @@ export class WalletManager {
 
   public static async addWatchedCryptoWallet(
     walletsDatastore: IDatastore,
-    data: AddWatchedCryptoWallet
+    data: AddWatchedCryptoWalletData
   ) {
     const { label, walletType } = data
 
@@ -169,7 +184,7 @@ export class WalletManager {
     walletIdToSelect: string | null
   ): Promise<{
     selectedWalletId: string | null
-    wallets: Record<string, BlockchainWalletWithAccounts>
+    wallets: LegacyCryptoWallet[]
   }> {
     try {
       // Clearing the local storage, mostly to clean up the now unused data
@@ -188,12 +203,14 @@ export class WalletManager {
       if (validRecords.length === 0) {
         return {
           selectedWalletId: null,
-          wallets: {},
+          wallets: [],
         }
       }
 
-      const wallets =
-        await WalletManager.transformRecordToCryptoWallets(validRecords)
+      const wallets = await WalletManager.transformRecordToCryptoWallets(
+        validRecords,
+        walletsDatastore
+      )
 
       const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
         SELECTED_CRYPTO_WALLET_STORAGE_KEY
@@ -202,11 +219,11 @@ export class WalletManager {
       const selectedId = walletIdToSelect || cachedSelectedCryptoWalletId
 
       const previouslySelectedWallet = selectedId
-        ? wallets[selectedId]
+        ? wallets.find((wallet) => wallet.id === selectedId)
         : undefined
 
       const selectedWalletId = previouslySelectedWallet
-        ? previouslySelectedWallet._id
+        ? previouslySelectedWallet.id
         : validRecords[0]._id // TODO: Replace with the wallets variable when it's an array
 
       if (selectedWalletId) {
@@ -227,54 +244,44 @@ export class WalletManager {
     }
   }
 
-  public static async clearCachedCryptoWallets() {
-    await Promise.all([
-      SecureStore.deleteItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY),
-
-      // CRYPTO_WALLETS_STORAGE_KEY is no longer used, but we want to clean up potential remaining data from olver versions.
-      SecureStore.deleteItemAsync(CRYPTO_WALLETS_STORAGE_KEY),
-    ])
-  }
-
-  public static async selectCryptoWallet(walletId: string) {
-    await SecureStore.setItemAsync(SELECTED_CRYPTO_WALLET_STORAGE_KEY, walletId)
-  }
-
   private static async transformRecordToCryptoWallets(
-    records: CryptoWalletRecord[]
-  ): Promise<Record<string, BlockchainWalletWithAccounts>> {
+    records: CryptoWalletRecord[],
+    walletsDatastore: IDatastore
+  ): Promise<LegacyCryptoWallet[]> {
     const blockchainNetworks = getBlockchainNetworks(store.getState()) // TODO: Deal with how to handle it in a pure function
-    if (!blockchainNetworks) return {} // TODO: better way to handle this case
+    if (!blockchainNetworks) {
+      return [] // TODO: better way to handle this case
+    }
 
-    const wallets: Record<string, BlockchainWalletWithAccounts> = {}
+    const wallets: LegacyCryptoWallet[] = []
 
     records.forEach((record) => {
-      const chainId = getChainIdFromWalletType(record.walletType)
-
-      const blockchainNetwork =
-        record.walletType !== 'multi' ? blockchainNetworks[chainId] : undefined
+      // Handle legacy wallet type values
+      const walletType = getWalletTypeFromLegacy(record.walletType)
+      if (record.walletType !== walletType) {
+        record.walletType = walletType
+        saveCryptoWalletRecord(walletsDatastore, record)
+      }
 
       const accounts = WalletManager.generateAccountsForWallet(
         record,
         Object.values(blockchainNetworks)
       )
 
-      const addresses = Object.values(accounts).map((account) => {
+      const addresses = accounts.map((account) => {
         return account.address
       })
 
-      const wallet: BlockchainWalletWithAccounts = {
-        _id: record._id,
+      const wallet: LegacyCryptoWallet = {
+        id: record._id,
         label: record.label,
-        walletType: record.walletType,
-        viewOnly: !record.mnemonic && !record.privateKey,
+        readOnly: !record.mnemonic && !record.privateKey,
         count: Object.keys(accounts).length,
-        icon: blockchainNetwork?.icon,
         address: addresses.length === 1 ? addresses[0] : undefined,
         accounts,
       }
 
-      wallets[wallet._id] = wallet
+      wallets.push(wallet)
     })
 
     return wallets
@@ -283,22 +290,28 @@ export class WalletManager {
   private static generateAccountsForWallet(
     walletRecord: CryptoWalletRecord,
     blockchainNetworks: BlockchainNetwork[] = []
-  ) {
-    const walletChainId = getChainIdFromWalletType(walletRecord.walletType)
-    const accounts: Record<string, BlockchainAccount> = {}
+  ): LegacyCryptoWalletAccount[] {
+    const accounts: LegacyCryptoWalletAccount[] = []
+
+    // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
+    const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
+
+    if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
+      logger.warn(`Blockchain namespace not supported: "${walletType}"`)
+      return accounts
+    }
 
     blockchainNetworks.forEach((blockchain): void => {
-      if (!isSupportedCaipNamespace(blockchain.namespace)) {
-        logger.warn(
-          `Refusing to process "${blockchain.chainId}", since it is no longer supported.`
+      if (!NAMESPACES[blockchain.namespace]) {
+        throw new Error(
+          `Blockchain namespace not supported: "${blockchain.namespace}"`
         )
-        return
       }
 
-      if (
-        walletRecord.walletType !== 'multi' &&
-        blockchain.chainId !== walletChainId
-      ) {
+      // TODO: Refactor blockchain type
+      const namespace = blockchain.namespace as BlockchainNamespace
+
+      if (walletType !== 'multi' && blockchain.namespace !== walletType) {
         return
       }
 
@@ -308,17 +321,13 @@ export class WalletManager {
         !walletRecord.privateKey &&
         !walletRecord.mnemonic
       ) {
-        const blockchainAccount: BlockchainAccount = {
-          chainId: blockchain.chainId,
+        const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
+          namespace: namespace,
           address: walletRecord.address,
         }
 
-        accounts[blockchain.chainId] = blockchainAccount
+        accounts.push(legacyCryptoWalletAccount)
         return
-      }
-
-      if (!NAMESPACES[blockchain.namespace]) {
-        throw new Error(blockchain.chainId + 'is not supported')
       }
 
       const namespaceChain = NAMESPACES[blockchain.namespace]
@@ -341,34 +350,26 @@ export class WalletManager {
         )
       }
 
-      const blockchainAccount: BlockchainAccount = {
-        chainId: blockchain.chainId,
+      const legacyCryptoWalletAccount: LegacyCryptoWalletAccount = {
+        namespace: namespace,
         address: walletDetails.address,
         privateKey: walletDetails.privateKey,
       }
 
-      accounts[blockchain.chainId] = blockchainAccount
+      accounts.push(legacyCryptoWalletAccount)
     })
 
     return accounts
   }
 }
 
-/**
- * Convert old values of walletType to chainId
- */
-function getChainIdFromWalletType(walletType: string) {
-  // Convert imported testnet wallets using the old format
-  // to proper CAIP addresses
-  // This is for wallets created between 4 May 2023 and the next release
-  switch (walletType) {
-    case 'ethereum':
-      return 'eip155:5'
-    case 'polygon':
-      return 'eip155:80001'
-    case 'near':
-      return 'near:testnet'
-    default:
-      return walletType
+function getWalletTypeFromLegacy(walletType: string): WalletType {
+  if (walletType.startsWith('eip155')) {
+    return 'eip155'
+  } else if (walletType.startsWith('near')) {
+    return 'near'
+  } else if (walletType === 'multi') {
+    return 'multi'
   }
+  throw new Error(`Unsupported wallet type: ${walletType}`)
 }

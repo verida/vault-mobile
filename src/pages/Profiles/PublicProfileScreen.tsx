@@ -2,10 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlockchainNetwork, getBlockchainNetworks } from 'features/blockchain'
-import {
-  BlockchainWalletWithAccounts,
-  useCryptoWallets,
-} from 'features/cryptoWallet'
+import { LegacyCryptoWallet, useCryptoWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
@@ -247,25 +244,28 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
       blockchainNetworks
     ).reduce(
       (acc: VeridaOneWalletAddress[], blockchainNetwork: BlockchainNetwork) => {
-        const sameChainAdresses = Object.values(wallets).reduce(
+        const sameChainAdresses = wallets.reduce(
           (
             accAddresses: VeridaOneWalletAddress[],
-            wallet: BlockchainWalletWithAccounts
+            wallet: LegacyCryptoWallet
           ) => {
-            const account = wallet.accounts[blockchainNetwork.chainId]
+            const account = wallet.accounts.find(
+              (a) => a.namespace === blockchainNetwork.namespace
+            )
+
             if (account) {
               accAddresses.push({
-                address: account.address!,
+                address: account.address,
                 chainId: blockchainNetwork.chainId,
-                label: getPublicName(account.address!, blockchainNetwork),
+                label: getPublicName(account.address, blockchainNetwork),
                 order: getPublicAddressOrder(
-                  account.address!,
+                  account.address,
                   blockchainNetwork.chainId
                 ),
 
                 // Infered value for displaying
                 veridaWalletName: wallet.label,
-                isPublic: isPublic(account.address!, blockchainNetwork.chainId),
+                isPublic: isPublic(account.address, blockchainNetwork.chainId),
                 icon: blockchainNetwork.icon,
               })
             }

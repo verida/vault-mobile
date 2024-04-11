@@ -3,8 +3,8 @@ import { useTheme } from 'contexts/ThemeContext'
 // import { NFT, NFTCollection, NFTMetadata } from 'features/assets'
 import { NFT, useGetNFTsQuery } from 'features/assets'
 import {
-  getUniqueWalletAddresses,
-  useSelectedWallet,
+  getCryptoWalletAccountIds,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
 // import { getNFTImageUri } from 'helpers/nft'
@@ -16,6 +16,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+
+import { getBlockchainNetworks } from '~/features/blockchain'
+import { useAppSelector } from '~/reduxStore/types'
 
 // import FastImage from 'react-native-fast-image'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
@@ -37,8 +40,16 @@ const Collectibles = () => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
-  const selectedWallet = useSelectedWallet()
-  const addresses = getUniqueWalletAddresses(selectedWallet)
+  const blockchains = useAppSelector(getBlockchainNetworks)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accountIds = selectedCryptoWallet
+    ? getCryptoWalletAccountIds(
+        selectedCryptoWallet,
+        Object.values(blockchains)
+      )
+    : []
+  const addresses = accountIds.map((accountId) => accountId.toString())
+
   const { data, isLoading, isFetching, refetch } = useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
 
   const isEmptyList = !data || data.length === 0

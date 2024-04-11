@@ -2,10 +2,7 @@ import { ChainId } from 'caip'
 
 import { isSupportedCaipNamespace } from '~/features/caip'
 
-import {
-  AggregateWalletBannerBalance,
-  MinifiedBlockchainAccounts,
-} from '../types'
+import { AggregateWalletBannerBalance, CryptoWalletAccounts } from '../types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'
 import { getWalletAddressForChainId } from './tokens'
 
@@ -14,7 +11,7 @@ export function getMaybeFromAddressForResource({
   selectedMinifiedAccounts,
 }: {
   readonly resource: AggregateWalletBannerBalance['resource']
-  readonly selectedMinifiedAccounts: MinifiedBlockchainAccounts
+  readonly selectedMinifiedAccounts: CryptoWalletAccounts
 }) {
   const chainIdParams = getChainIdParamsFromResourceParams(resource)
 
@@ -37,7 +34,7 @@ export function getFromAddressForResourceOrThrow({
   selectedMinifiedAccounts,
 }: {
   readonly resource: AggregateWalletBannerBalance['resource']
-  readonly selectedMinifiedAccounts: MinifiedBlockchainAccounts
+  readonly selectedMinifiedAccounts: CryptoWalletAccounts
 }) {
   const maybeResult = getMaybeFromAddressForResource({
     resource,

@@ -1,23 +1,37 @@
-import { isEmpty } from 'lodash'
+import { AccountId } from 'caip'
 
-import { BlockchainWalletWithAccounts } from '../types'
+import { BlockchainNetwork } from '~/features/blockchain'
 
-export const getUniqueWalletAddresses = (
-  wallet: BlockchainWalletWithAccounts | null
-) => {
-  if (!wallet || isEmpty(wallet) || isEmpty(wallet.accounts)) return []
+import { WALLET_TYPE_DEFINITIONS } from '../constants'
+import { LegacyCryptoWallet, WalletType } from '../types'
 
-  const addresses: string[] = [
-    ...new Set(
-      Object.values(wallet.accounts).flatMap((account) => {
-        // Ensure a valid chainId.
-        if (typeof account.chainId !== 'string' || !account.chainId.length)
-          return []
+export function getCryptoWalletAccountIds(
+  wallet: LegacyCryptoWallet,
+  blockchains: BlockchainNetwork[]
+): AccountId[] {
+  const accountIds: AccountId[] = []
 
-        return [`${account.chainId}:${account.address}`]
-      })
-    ),
-  ]
+  blockchains.forEach((blockchain) => {
+    const account = wallet.accounts.find(
+      (item) => item.namespace === blockchain.namespace
+    )
+    if (account) {
+      accountIds.push(
+        new AccountId({
+          chainId: blockchain.chainId,
+          address: account.address,
+        })
+      )
+    }
+  })
 
-  return addresses
+  return accountIds
+}
+
+export function getWalletTypeShortLabel(walletType: WalletType) {
+  return WALLET_TYPE_DEFINITIONS[walletType].shortLabel
+}
+
+export function getWalletTypeLongLabel(walletType: WalletType) {
+  return WALLET_TYPE_DEFINITIONS[walletType].longLabel
 }

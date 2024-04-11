@@ -10,10 +10,10 @@ import WalletList from '~/components/WalletList'
 import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS } from '~/constants/text'
 import {
-  BlockchainWalletWithAccounts,
+  LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWalletsAsList,
-  useSelectedWalletId,
+  useCryptoWallets,
+  useSelectedCryptoWalletId,
 } from '~/features/cryptoWallet'
 import { MainStackParams } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
@@ -30,15 +30,15 @@ const WalletSelectorModal = ({
   modalVisible,
   onCloseModal,
 }: WalletSelectorModalProps) => {
-  const wallets = useCryptoWalletsAsList()
-  const selectedWalletId = useSelectedWalletId()
+  const cryptoWallets = useCryptoWallets()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
 
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const dispatch = useAppDispatch()
 
-  const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
-    dispatch(selectCryptoWallet(item._id))
+  const handleWalletSelection = (item: LegacyCryptoWallet) => {
+    dispatch(selectCryptoWallet(item.id))
     onCloseModal()
   }
 
@@ -65,9 +65,9 @@ const WalletSelectorModal = ({
       footer={ModalFooter}>
       <View style={styles.walletList}>
         <WalletList
-          list={wallets}
+          list={cryptoWallets}
           leftIconType='checked'
-          selectedWalletId={selectedWalletId}
+          selectedWalletId={selectedCryptoWalletId}
           onPressItem={handleWalletSelection}
         />
       </View>

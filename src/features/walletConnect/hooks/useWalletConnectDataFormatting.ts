@@ -1,7 +1,8 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import * as React from 'react'
 
-import { WalletConnectSessionRequestCallbackParams } from '../@types'
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
+
+import { WalletConnectSessionRequestCallbackParams } from '../types'
 import { extractWalletConnectChainIdOrThrow } from '../utils'
 import { useWalletConnectDataFormattingNearLike } from './useWalletConnectDataFormatting.NearLike'
 

@@ -2,13 +2,13 @@ import 'jest'
 
 import { AssetIdParams, ChainIdParams } from 'caip'
 
-import { SupportedBlockchainNamespace } from '../../../src/features/blockchain/@types'
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types'
 import {
   AggregateWalletBannerBalance,
   isAssetTypeResourceParams,
   isChainIdResourceParams,
-} from '../../../src/features/cryptoWallet/types'
-import { isAggregateWalletBannerBalanceMatchesResource } from '../../../src/features/cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource'
+} from '~/features/cryptoWallet/types'
+import { isAggregateWalletBannerBalanceMatchesResource } from '~/features/cryptoWallet/utils/isAggregateWalletBannerBalanceMatchesResource'
 
 const AGGREGATE_WALLET_BANNER_BALANCES_ETH = {
   balance: '0',

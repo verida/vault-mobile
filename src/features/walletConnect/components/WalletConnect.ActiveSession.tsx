@@ -11,7 +11,6 @@ import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { text } from 'styles'
 
-import { CaipProtocolToCaipIdentifiers } from '../@types'
 import {
   useActiveWalletConnectSession,
   useActiveWalletConnectSessionCaipProtocolToCaipIdentifiers,
@@ -19,6 +18,7 @@ import {
   useActiveWalletConnectSessionNamespaces,
   useActiveWalletConnectSessionPeerId,
 } from '../hooks'
+import { CaipProtocolToCaipIdentifiers } from '../types'
 
 export const WalletConnectActiveSession = React.memo(
   function WalletConnectActiveSession({

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { BLOCKCHAIN_SLICE_NAME, CustomChains } from '../@types'
+import { BLOCKCHAIN_SLICE_NAME, CustomChains } from '../types'
 import { addCustomNetwork, removeCustomNetwork } from './actions'
 
 export type BlockchainSliceState = {

@@ -21,7 +21,7 @@ import {
 } from '../utils'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
-import { useSelectedWallet } from './useSelectedWallet'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 export const getAggregateWalletBannerBalanceError = (
   state: UseAggregateWalletBannerBalancesState
@@ -57,13 +57,13 @@ export function useAggregateWalletBannerBalances(
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const currentWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
-  const currentChainIds = React.useMemo(() => {
-    return Object.entries(currentWallet?.accounts ?? {}).map(
-      ([key, account]) => new ChainId(account.chainId || key)
+  const selectedCryptoWalletNamespaces = React.useMemo(() => {
+    return (selectedCryptoWallet?.accounts || []).map(
+      (account) => account.namespace as string
     )
-  }, [currentWallet])
+  }, [selectedCryptoWallet])
 
   const { resource: maybeResource } = params
 
@@ -129,11 +129,9 @@ export function useAggregateWalletBannerBalances(
             ? aggregateWalletBannerBalance.resource.chainId
             : aggregateWalletBannerBalance.resource
         )
-        const isOnCurrentlySelectedChain = currentChainIds.find(
-          (chainId) =>
-            itemChainId.namespace === chainId.namespace &&
-            itemChainId.reference === chainId.reference
-        )
+        const isOnCurrentlySelectedChain =
+          selectedCryptoWalletNamespaces.includes(itemChainId.namespace)
+
         if (!isOnCurrentlySelectedChain) return false
 
         // If we didn't define a resource to filter against, then assume all match.
@@ -156,7 +154,7 @@ export function useAggregateWalletBannerBalances(
       result: resultForOnlyMatchingChains,
     }
   }, [
-    currentChainIds,
+    selectedCryptoWalletNamespaces,
     errorWalletProvider,
     isLoadingWalletProvider,
     chainMetadatas,

@@ -18,15 +18,13 @@ import DropDownPicker from '~/components/Select'
 import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
 import {
-  BlockchainNetwork,
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from '~/features/blockchain'
-import {
+  getWalletTypeLongLabel,
   ImportCryptoWalletData,
-  isValidSeedPhrase,
+  isValidMnemonic,
+  isValidPrivateKey,
+  WALLET_TYPES,
+  WalletType,
 } from '~/features/cryptoWallet'
-import { useAppSelector } from '~/reduxStore/types'
 import InputStyles from '~/styles/inputs'
 
 export type ImportWalletModalProps = {
@@ -35,54 +33,50 @@ export type ImportWalletModalProps = {
   hideModal: () => void
 }
 
-const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
-  Object.freeze({})
+const walletTypesAllowingPrivateKey: WalletType[] = ['eip155'] // TODO: Move into blockchain or crypto wallet feature
 
-const privateKeyEnabledNetworks = ['eip155'] // TODO: Move into blockchain feature
+const defaultWalletType: WalletType = 'multi'
 
 export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
   const { visible, hideModal, onImportWallet } = props
 
-  const [name, setName] = useState('')
-  const [phrase, setPhrase] = useState('')
+  const [label, setLabel] = useState('')
+  const [mnemonic, setMnemonic] = useState('')
   const [privateKey, setPrivateKey] = useState('')
-  const [blockchain, setBlockchain] = useState('multi')
-  const [inputSwitch, setInputSwitch] = useState<'seedPhrase' | 'privateKey'>(
-    'seedPhrase'
+  const [walletType, setWalletType] = useState<WalletType>(defaultWalletType)
+
+  const [inputSwitch, setInputSwitch] = useState<'mnemonic' | 'privateKey'>(
+    'mnemonic'
   )
 
-  const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
-
-  const blockchainNetworks =
-    maybeBlockchainNetworks || defaultBlockchainNetworks
-
-  const blockchainItems = Object.values(blockchainNetworks).map(
-    (network: BlockchainNetwork) => {
+  const walletTypeItems = Object.values(WALLET_TYPES).map(
+    (type: WalletType) => {
       return {
-        label: getBlockchainNetworkLabel(network),
-        value: network.chainId,
+        label: getWalletTypeLongLabel(type),
+        value: type,
       }
     }
   )
-  blockchainItems.unshift({ label: 'Multi-chain Wallet', value: 'multi' })
 
   const onBlockchainChange = (option: any) => {
-    const network = blockchainNetworks[option.value]
+    const value = option.value
 
-    if (option.value === 'multi') {
-      setInputSwitch('seedPhrase')
-    } else if (privateKeyEnabledNetworks.includes(network.namespace)) {
+    if (value === 'multi') {
+      setInputSwitch('mnemonic')
+    } else if (walletTypesAllowingPrivateKey.includes(value)) {
       setInputSwitch('privateKey')
     } else {
-      setInputSwitch('seedPhrase')
+      setInputSwitch('mnemonic')
     }
 
-    setBlockchain(option.value)
+    setWalletType(value)
   }
+
   const onSwitchChange = (option: any) => setInputSwitch(option.value)
+
   const isDisabled = () => {
-    if (!name) return true
-    if (inputSwitch === 'seedPhrase' && !phrase) return true
+    if (!label) return true
+    if (inputSwitch === 'mnemonic' && !mnemonic) return true
     if (inputSwitch === 'privateKey' && !privateKey) return true
     return false
   }
@@ -90,32 +84,35 @@ export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
-    if (inputSwitch === 'seedPhrase') {
-      setPhrase(clipboardData)
+    if (inputSwitch === 'mnemonic') {
+      setMnemonic(clipboardData)
     } else {
       setPrivateKey(clipboardData)
     }
   }
 
-  const showAlert = () =>
-    Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
-
   const onPressSend = () => {
-    const blockchainNetwork =
-      blockchain === 'multi' ? undefined : blockchainNetworks[blockchain]
-    if (
-      isValidSeedPhrase({ phrase, privateKey, blockchainNetwork, inputSwitch })
-    ) {
-      onImportWallet({
-        label: name,
-        walletType: blockchain,
-        mnemonic: inputSwitch === 'seedPhrase' ? phrase : undefined,
-        privateKey: inputSwitch === 'privateKey' ? privateKey : undefined,
-      })
-      hideModal()
-    } else {
-      showAlert()
+    const isValid =
+      inputSwitch === 'mnemonic'
+        ? isValidMnemonic(walletType, mnemonic)
+        : isValidPrivateKey(walletType, privateKey)
+
+    if (!isValid) {
+      Alert.alert(
+        'Invalid value',
+        inputSwitch === 'mnemonic'
+          ? `The seed phrase is not valid`
+          : `The private key is not valid`
+      )
     }
+
+    onImportWallet({
+      label,
+      walletType,
+      mnemonic: inputSwitch === 'mnemonic' ? mnemonic : undefined,
+      privateKey: inputSwitch === 'privateKey' ? privateKey : undefined,
+    })
+    hideModal()
   }
 
   return (
@@ -132,61 +129,58 @@ export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
-          <Label>Wallet name</Label>
+          <Label>Wallet label</Label>
           <TextInput
-            value={name}
+            value={label}
             autoFocus={true}
             multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
-            onChangeText={setName}
+            onChangeText={setLabel}
             style={[InputStyles.input]}
-            placeholder={'eg. Friendly wallet name'}
+            placeholder={'eg. Friendly wallet label'}
           />
 
-          <Label>Blockchain</Label>
+          <Label>Wallet type</Label>
           <DropDownPicker
             showArrow={true}
-            placeholder=''
-            defaultValue='multi'
-            items={blockchainItems}
+            defaultValue={defaultWalletType}
+            items={walletTypeItems}
             containerStyle={InputStyles.select}
             onChangeItem={onBlockchainChange}
             zIndex={6000}
           />
 
-          {privateKeyEnabledNetworks.includes(blockchain.split(':')[0]) ? (
+          {walletTypesAllowingPrivateKey.includes(walletType) ? (
             <>
               <Label>Import using</Label>
               <DropDownPicker
                 showArrow={true}
                 placeholder=''
-                defaultValue='seedPhrase'
+                defaultValue='mnemonic' // TODO: Get it according to wallet type
                 items={[
-                  { label: 'Seed Phrase', value: 'seedPhrase' },
+                  { label: 'Seed Phrase', value: 'mnemonic' },
                   { label: 'Private Key', value: 'privateKey' },
                 ]}
                 containerStyle={InputStyles.select}
                 onChangeItem={onSwitchChange}
               />
             </>
-          ) : (
-            <></>
-          )}
+          ) : null}
 
-          {inputSwitch === 'seedPhrase' && (
+          {inputSwitch === 'mnemonic' && (
             <>
               <Label>Enter seed phrase</Label>
               <TextInput
-                value={phrase}
+                value={mnemonic}
                 multiline
                 editable
                 autoCorrect={false}
                 autoCapitalize='none'
-                onChangeText={setPhrase}
+                onChangeText={setMnemonic}
                 style={[InputStyles.textarea]}
-                placeholder={'eg. Open despair creek road again ice least'}
+                placeholder={'eg. Open despair creek road ...'}
               />
             </>
           )}

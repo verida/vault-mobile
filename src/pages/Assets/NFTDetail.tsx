@@ -2,7 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { NFTMetadata } from 'features/assets'
-import { useSelectedWallet } from 'features/cryptoWallet'
+import { useSelectedCryptoWallet } from 'features/cryptoWallet'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -123,7 +123,7 @@ const NFTDetail = () => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
-  const currentWallet = useSelectedWallet()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
@@ -199,7 +199,7 @@ const NFTDetail = () => {
             right={
               <IconWithText
                 icon={<Icon size={theme.iconSize.s} name='wallet' />}
-                text={currentWallet?.label}
+                text={selectedCryptoWallet?.label}
               />
             }
           />

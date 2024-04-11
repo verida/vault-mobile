@@ -3,25 +3,25 @@ import * as React from 'react'
 import { isSupportedCaipNamespace } from '~/features/caip'
 
 import {
-  MinifiedBlockchainAccount,
-  MinifiedBlockchainAccounts,
+  CryptoWalletAccount,
+  CryptoWalletAccounts,
   VeridaWalletAccountOption,
 } from '../types'
 import {
-  getLabelForMinifiedBlockchainAccount,
-  getMinifiedBlockchainAccountId,
+  getCryptoWalletAccountAddress,
+  getCryptoWalletAccountId,
 } from './useSelectedMinifiedBlockchainAccounts'
 
 export const minifiedBlockchainAccountsToDropdownOptions = ({
   selectedMinifiedBlockchainAccounts,
   onlyMatchingNamespaces,
 }: {
-  readonly selectedMinifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  readonly selectedMinifiedBlockchainAccounts: CryptoWalletAccounts
   readonly onlyMatchingNamespaces: readonly string[] | null
 }): readonly VeridaWalletAccountOption[] => {
   return selectedMinifiedBlockchainAccounts.flatMap(
     (
-      minifiedBlockchainAccount: MinifiedBlockchainAccount
+      minifiedBlockchainAccount: CryptoWalletAccount
     ): readonly VeridaWalletAccountOption[] => {
       const { namespace } = minifiedBlockchainAccount
 
@@ -40,8 +40,8 @@ export const minifiedBlockchainAccountsToDropdownOptions = ({
         return []
 
       const option: VeridaWalletAccountOption = {
-        label: getLabelForMinifiedBlockchainAccount(minifiedBlockchainAccount),
-        value: getMinifiedBlockchainAccountId(minifiedBlockchainAccount),
+        label: getCryptoWalletAccountAddress(minifiedBlockchainAccount),
+        value: getCryptoWalletAccountId(minifiedBlockchainAccount),
         disabled: false,
       }
 
@@ -54,7 +54,7 @@ export function useVeridaWalletAccountDropdownOptions({
   selectedMinifiedBlockchainAccounts,
   onlyMatchingNamespaces = null,
 }: {
-  readonly selectedMinifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  readonly selectedMinifiedBlockchainAccounts: CryptoWalletAccounts
   readonly onlyMatchingNamespaces?: readonly string[] | null
 }) {
   return React.useMemo<readonly VeridaWalletAccountOption[]>(

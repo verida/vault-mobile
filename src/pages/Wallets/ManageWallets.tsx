@@ -11,19 +11,19 @@ import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import WalletList from '~/components/WalletList'
 import { BLACK_COLOR } from '~/constants/color'
 import {
-  AddWatchedCryptoWallet,
   addWatchedCryptoWallet,
-  BlockchainWalletWithAccounts,
+  AddWatchedCryptoWalletData,
   createCryptoWallet,
   CreateCryptoWalletData,
   deleteCryptoWallet,
   importCryptoWallet,
   ImportCryptoWalletData,
+  LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWalletsAsList,
+  useCryptoWallets,
   useCryptoWalletsCount,
   useCryptoWalletsStatus,
-  useSelectedWalletId,
+  useSelectedCryptoWalletId,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackParams } from '~/navigation/types'
@@ -41,9 +41,9 @@ type Props = {
 const ManageWallets = (props: Props) => {
   const { navigation } = props
 
-  const wallets = useCryptoWalletsAsList()
-  const walletCount = useCryptoWalletsCount()
-  const selectedWalletId = useSelectedWalletId()
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWalletCount = useCryptoWalletsCount()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
   const { processsing } = useCryptoWalletsStatus()
 
   const dispatch = useAppDispatch()
@@ -70,7 +70,7 @@ const ManageWallets = (props: Props) => {
   )
 
   const handleAddWatchedWallet = useCallback(
-    (data: AddWatchedCryptoWallet) => {
+    (data: AddWatchedCryptoWalletData) => {
       dispatch(addWatchedCryptoWallet(data))
     },
     [dispatch]
@@ -96,7 +96,7 @@ const ManageWallets = (props: Props) => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
   }
 
-  const showConfirmationAlert = (item: BlockchainWalletWithAccounts) =>
+  const showConfirmationAlert = (item: LegacyCryptoWallet) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -109,7 +109,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            handleDeleteWallet(item._id)
+            handleDeleteWallet(item.id)
           },
         },
       ]
@@ -163,9 +163,9 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const handlePressWalletListItem = (item: BlockchainWalletWithAccounts) => {
+  const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
-    if (item.viewOnly) {
+    if (item.readOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
     } else {
       options = [
@@ -184,16 +184,20 @@ const ManageWallets = (props: Props) => {
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (typeof buttonIndex !== 'number') return
+        if (typeof buttonIndex !== 'number') {
+          return
+        }
 
-        if (item.viewOnly) buttonIndex++
+        if (item.readOnly) {
+          buttonIndex++
+        }
 
-        if (buttonIndex === 0 && !item.viewOnly) {
-          navigation.navigate('SingleWallet', { walletId: item._id })
+        if (buttonIndex === 0 && !item.readOnly) {
+          navigation.navigate('SingleWallet', { walletId: item.id })
         } else if (buttonIndex === 1) {
-          handleSelectWallet(item._id)
+          handleSelectWallet(item.id)
         } else if (buttonIndex === 2) {
-          if (walletCount <= 1) {
+          if (cryptoWalletCount <= 1) {
             showDeleteAlert()
           } else {
             showConfirmationAlert(item)
@@ -221,8 +225,8 @@ const ManageWallets = (props: Props) => {
           <Content style={styles.content}>
             <List>
               <WalletList
-                list={wallets}
-                selectedWalletId={selectedWalletId}
+                list={cryptoWallets}
+                selectedWalletId={selectedCryptoWalletId}
                 onPressItem={handlePressWalletListItem}
               />
             </List>
