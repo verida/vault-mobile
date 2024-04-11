@@ -1,15 +1,16 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/index'
 import { ChainId, ChainIdParams } from 'caip'
-import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
-import { isSupportedCaipNamespace } from 'features/caip/utils/isSupportedCaipNamespace'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
+import { ChainsList, ChainsListItem } from '~/features/blockchain/eip155'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
   ChainMetadataRpcs,
   ChainMetadatas,
-} from '~/features/caip/types'
+  SupportedBlockchainNamespace,
+} from '~/features/blockchain/types' // HACK: Have to use `.../types` path to make the unit tests work, other wise they fail with importing stuff not required for the tests.
+// It's either something to fix in the tests or it's a barrel file problem, should we challenge using them?
+import { isSupportedCaipNamespace } from '~/features/blockchain/utils'
 
 // WalletConnect proposals may optionally define rpcUrls for the connecting
 // DApp, which may be used if the DApp has never encountered the chain before.
