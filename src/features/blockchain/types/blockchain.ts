@@ -1,4 +1,3 @@
-import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AssetId } from 'caip'
 import { z } from 'zod'
 
@@ -95,21 +94,4 @@ export interface IBlockchain {
   ): WalletUtilsWallet
 
   buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet
-}
-
-export type BlockchainRequestHandlerCallbackParams<Context> = {
-  readonly params: Web3WalletTypes.EventArguments['session_request']['params']['request']['params']
-  readonly context: Context
-  chainId?: string
-}
-
-export type BlockchainRequestHandlerCallback<Context> = (
-  params: BlockchainRequestHandlerCallbackParams<Context>
-) => Promise<unknown>
-
-export type BlockchainRequestHandlers<
-  T extends string | number | symbol,
-  Context,
-> = {
-  readonly [key in T]: BlockchainRequestHandlerCallback<Context>
 }
