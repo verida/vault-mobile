@@ -1,7 +1,8 @@
 import BigDecimal from 'bignumber.js'
 import { ChainId, ChainIdParams } from 'caip'
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/caip'
+
+import { ChainMetadata } from '~/features/caip'
 
 import {
   AggregateWalletBannerBalanceNativeCurrency,
@@ -9,7 +10,7 @@ import {
   BalanceByChainResult,
   CryptoWalletBalance,
   CryptoWalletBalances,
-} from '../@types'
+} from '../types'
 import { chainMetadataToMaybeValuation } from './chainMetadataToMaybeValuation'
 import { isNativeToken } from './isNativeToken'
 

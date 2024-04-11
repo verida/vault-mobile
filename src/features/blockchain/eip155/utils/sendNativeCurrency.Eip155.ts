@@ -1,10 +1,14 @@
 import { ethers } from 'ethers'
+
+import {
+  ConfirmTransactionCallbackResult,
+  CryptoWalletAccount,
+} from '~/features/cryptoWallet'
+
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from 'features/blockchain/@types'
-import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
+} from '../../types'
 
 export const sendNativeCurrencyEip155 = async ({
   value,
@@ -16,7 +20,7 @@ export const sendNativeCurrencyEip155 = async ({
   readonly to: string
   readonly value: number
   readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
-  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
+  readonly minifiedBlockchainAccount: CryptoWalletAccount
   readonly rpc: string
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedBlockchainAccount

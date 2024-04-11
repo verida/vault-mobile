@@ -1,12 +1,13 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import Clipboard from '@react-native-community/clipboard'
-import { BlockchainAccount } from 'features/blockchain'
-import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
+import {
+  updateCryptoWallet,
+  UpdateCryptoWalletData,
+  useCryptoWallets,
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import Container from 'components/Container'
@@ -17,16 +18,21 @@ import Text from 'components/Text'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
+import { useAppDispatch } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 
+export type SingleWalletScreenParams = {
+  walletId: string
+}
+
 type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
-const SingleWallet = (props: SingleWalletScreenProps) => {
+const SingleWalletScreen = (props: SingleWalletScreenProps) => {
   const { navigation, route } = props
-  const { item } = route.params
+  const { walletId } = route.params
+
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
@@ -39,15 +45,21 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
   const [privateKeyData, setPrivateKeyData] = useState('')
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
-  const wallets = useAppSelector((state) =>
-    getWalletObjectById(state, item._id)
-  )
 
-  const onRenameWallet = async (walletId: string, data: { name: string }) => {
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWallet = cryptoWallets.find((wallet) => wallet.id === walletId)
+
+  const onRenameWallet = async (id: string, data: UpdateCryptoWalletData) => {
     setLoading(true)
-    await dispatch(renameWallet({ walletId, data }))
+    await dispatch(
+      updateCryptoWallet({
+        walletId: id,
+        data,
+      })
+    )
     setLoading(false)
   }
+
   useEffect(() => {
     const initUserPin = async () => {
       const status = await hasUserSetPinCode()
@@ -63,18 +75,11 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
     setSeedPhraseData(data)
     toggleCopySeedPhraseModal(true)
   }
+
   const showPrivateKey = (data: any) => {
     setPrivateKeyData(data)
     toggleCopyPrivateKeyModal(true)
   }
-
-  // @todo
-  const singleWallet: BlockchainAccount | undefined =
-    undefined as unknown as BlockchainAccount
-
-  const isChainTypeEvm = singleWallet
-    ? Object.keys(wallets.accounts)[0] === 'evm'
-    : null
 
   if (pinCodeStatus && !isPinCorrect) {
     return (
@@ -96,7 +101,7 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
   return (
     <Container withLoadingView showLoading={loading}>
       <NavigationHeader
-        title={wallets.label}
+        title={cryptoWallet?.label}
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -109,80 +114,60 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
           </View>
         }
       />
-      <View style={styles.actionButtons}>
-        {singleWallet ? (
-          <>
-            {singleWallet.address && (
-              <TouchableOpacity
-                onPress={() => Clipboard.setString(singleWallet.address!)}
-                style={styles.actionButton}>
-                <CopyIcon />
-                <Text style={styles.actionButtonText}>Copy address</Text>
-              </TouchableOpacity>
-            )}
-            {singleWallet.mnemonic && (
-              <TouchableOpacity
-                onPress={() => showSeedPhrase(singleWallet.mnemonic)}
-                style={styles.actionButton}>
-                <ExportSeedphraseSvg />
-                <Text style={styles.actionButtonText}>Seed phrase</Text>
-              </TouchableOpacity>
-            )}
-            {isChainTypeEvm && singleWallet.privateKey && (
-              <TouchableOpacity
-                onPress={() => showPrivateKey(singleWallet.privateKey)}
-                style={styles.actionButton}>
-                <ExportSeedphraseSvg />
-                <Text style={styles.actionButtonText}>Private key</Text>
-              </TouchableOpacity>
-            )}
-          </>
-        ) : (
-          <TouchableOpacity
-            onPress={() => setSeedPhraseModalVisible(true)}
-            style={styles.actionButton}>
-            <ExportSeedphraseSvg />
-            <Text style={styles.actionButtonText}>Seed phrase</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      <Text style={styles.listLabel}>Addresses</Text>
-      <ChainsAddressesList
-        list={Object.values(wallets.accounts)}
-        singleWallet={singleWallet}
-        onPressSeedPhrase={(seedPhrase: string) => {
-          showSeedPhrase(seedPhrase)
-        }}
-        onPressPrivateKey={(privateKey: string) => {
-          showPrivateKey(privateKey)
-        }}
-      />
-      <RenameWalletModal
-        hideModal={() => setRenameModalVisible(false)}
-        visible={renameModalVisible}
-        onPressRename={onRenameWallet as any}
-        data={{ id: wallets._id, label: wallets.label }}
-      />
-      <SeedPhraseWarningModal
-        hideModal={() => setSeedPhraseModalVisible(false)}
-        visible={seedPhraseModalVisible}
-        type='seed_phrase'
-        onPressButton={() => showSeedPhrase(wallets.mnemonic)}
-      />
-      <CopySeedPhraseModal
-        visible={copySeedPhraseModalVisible}
-        phrase={seedPhraseData}
-        toggleConfirmModal={() =>
-          toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
-        }
-      />
-      <PrivateKeyModal
-        visible={copyPrivateKeyModalVisible}
-        phrase={privateKeyData}
-        toggleConfirmModal={() =>
-          toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
-        }
-      />
+      {cryptoWallet ? (
+        <>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              onPress={() => setSeedPhraseModalVisible(true)}
+              style={styles.actionButton}>
+              <ExportSeedphraseSvg />
+              <Text style={styles.actionButtonText}>Seed phrase</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.listLabel}>Addresses</Text>
+          <ChainsAddressesList
+            list={cryptoWallet.accounts || []}
+            onPressSeedPhrase={(seedPhrase: string) => {
+              showSeedPhrase(seedPhrase)
+            }}
+            onPressPrivateKey={(privateKey: string) => {
+              showPrivateKey(privateKey)
+            }}
+          />
+          <RenameWalletModal
+            hideModal={() => setRenameModalVisible(false)}
+            visible={renameModalVisible}
+            onPressRename={onRenameWallet as any}
+            data={{ id: cryptoWallet.id, label: cryptoWallet.label }}
+          />
+          <SeedPhraseWarningModal
+            hideModal={() => setSeedPhraseModalVisible(false)}
+            visible={seedPhraseModalVisible}
+            type='seed_phrase'
+            onPressButton={() => showSeedPhrase(cryptoWallet.mnemonic)}
+          />
+          <CopySeedPhraseModal
+            visible={copySeedPhraseModalVisible}
+            phrase={seedPhraseData}
+            toggleConfirmModal={() =>
+              toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
+            }
+          />
+          <PrivateKeyModal
+            visible={copyPrivateKeyModalVisible}
+            phrase={privateKeyData}
+            toggleConfirmModal={() =>
+              toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
+            }
+          />
+        </>
+      ) : (
+        <Text
+        // TODO: Add proper styling
+        >
+          Wallet not found
+        </Text>
+      )}
     </Container>
   )
 }
@@ -230,4 +215,4 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-export default SingleWallet
+export default SingleWalletScreen

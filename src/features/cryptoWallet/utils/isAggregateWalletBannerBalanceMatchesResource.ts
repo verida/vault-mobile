@@ -5,7 +5,7 @@ import {
   isAssetTypeResourceParams,
   isChainIdResourceParams,
   ResourceParams,
-} from '../@types'
+} from '../types'
 
 export function isAggregateWalletBannerBalanceMatchesResource({
   aggregateWalletBannerBalance: { resource: maybeMatchingResource },

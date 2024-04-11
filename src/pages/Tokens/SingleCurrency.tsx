@@ -3,13 +3,13 @@ import { RouteProp } from '@react-navigation/native'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getAggregateWalletBannerBalanceResult,
-  getSelectedWalletById,
   ResourceParams,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
+  useSelectedCryptoWallet,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
@@ -17,7 +17,6 @@ import { Icon } from 'native-base'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
-import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
@@ -43,20 +42,17 @@ export type SingleCurrencyScreenProps = {
 const SingleCurrency = () => {
   const navigation = useMainNavigation()
 
-  // TODO: idk what to do about this yet
-  const selectedWallet = useSelector(getSelectedWalletById)
-
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = useParams<SingleCurrencyScreenProps>()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
   const chain = chainMetadatas.find(
     (chainMetadata) =>
-      chainMetadata.namespace === chainId.namespace &&
-      chainMetadata.reference === chainId.reference
+      chainMetadata.namespace === resourceChainId.namespace &&
+      chainMetadata.reference === resourceChainId.reference
   )
 
   const [maybeAggregateWalletBannerBalance] =
@@ -69,12 +65,15 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  const accounts = Object.values(selectedWallet?.accounts || {})
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  // TODO: Factorise this as it's also implemented in TransactionDetails.tsx and ReceiveToken.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
-
-  const maybeAddress = account?.address || null
+  const address = account?.address || null
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -136,7 +135,7 @@ const SingleCurrency = () => {
         title={title}
       />
       <TokenBanner
-        selectedWallet={selectedWallet}
+        selectedWallet={selectedCryptoWallet}
         decimals={maybeAggregateWalletBannerBalance?.decimals}
         tokenBalance={maybeAggregateWalletBannerBalance?.balance}
         tokenBalanceValue={value}
@@ -158,9 +157,11 @@ const SingleCurrency = () => {
           })
         }}
         copyButtonAction={() => {
-          if (!maybeAddress) return
+          if (!address) {
+            return
+          }
 
-          Clipboard.setString(maybeAddress)
+          Clipboard.setString(address)
 
           Toast.show('Address copied', {
             duration: Toast.durations.LONG,

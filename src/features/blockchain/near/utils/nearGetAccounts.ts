@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 import { keyStores } from 'near-api-js'
 
-import { NearAccountPointer } from '../@types'
+import { NearAccountPointer } from '../types'
 
 export async function nearGetAccounts({
   keystore,

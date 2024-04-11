@@ -4,7 +4,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   AggregateWalletBannerBalances,
   UseAggregateWalletBannerBalancesParams,
-} from '../@types'
+} from '../types'
 import {
   getAggregateWalletBannerBalanceError,
   getAggregateWalletBannerBalanceResult,

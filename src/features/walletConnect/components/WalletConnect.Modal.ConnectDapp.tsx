@@ -4,7 +4,7 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { AccountId } from 'caip'
 import { Spacer } from 'components'
 import {
-  getMinifiedBlockchainAccountId,
+  getCryptoWalletAccountId,
   useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
@@ -134,7 +134,7 @@ export const WalletConnectModalConnectDapp = React.memo(
         // Find the account for the given identifier.
         const matchingAccount = selectedMinifiedBlockchainAccounts.find(
           (minifiedBlockchainAccount) =>
-            getMinifiedBlockchainAccountId(minifiedBlockchainAccount) ===
+            getCryptoWalletAccountId(minifiedBlockchainAccount) ===
             minifiedWalletId
         )
 

@@ -1,11 +1,11 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AccountId, ChainId } from 'caip'
 import {
-  MinifiedBlockchainAccount,
-  MinifiedBlockchainAccounts,
+  CryptoWalletAccount,
+  CryptoWalletAccounts,
 } from 'features/cryptoWallet'
 
-import { ActiveSession } from '../@types'
+import { ActiveSession } from '../types'
 
 export function getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
   activeSession,
@@ -14,8 +14,8 @@ export function getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
 }: {
   readonly activeSession: ActiveSession | null | undefined
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
-}): MinifiedBlockchainAccount | undefined {
+  readonly minifiedBlockchainAccounts: CryptoWalletAccounts
+}): CryptoWalletAccount | undefined {
   if (!activeSession) return undefined
 
   const requiredCaip = new ChainId(request.params.chainId)
@@ -55,7 +55,7 @@ export function getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
     ({
       address: maybeAddress,
       namespace: maybeNamespace,
-    }: MinifiedBlockchainAccount): boolean =>
+    }: CryptoWalletAccount): boolean =>
       maybeNamespace === requiredCaip.namespace && maybeAddress === address
   )
 

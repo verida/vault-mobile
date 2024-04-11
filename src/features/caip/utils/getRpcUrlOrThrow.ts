@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadataRpc, ChainMetadatas } from '../@types'
+import { ChainMetadataRpc, ChainMetadatas } from '../types'
 import { getChainMetadataByCaipTypeOrThrow } from './getChainMetadataByCaipTypeOrThrow'
 
 // HACK: This is used to normalize all of our attempts to access

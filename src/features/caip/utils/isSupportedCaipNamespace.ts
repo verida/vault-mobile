@@ -1,5 +1,6 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { $enum } from 'ts-enum-util'
+
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 export function isSupportedCaipNamespace(
   maybeSupportedCaipProtocol: string | undefined

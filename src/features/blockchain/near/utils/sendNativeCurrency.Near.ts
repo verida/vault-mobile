@@ -1,15 +1,18 @@
 import { BN } from 'bn.js'
 import { ChainId } from 'caip'
-import {
-  BlockchainRequestHandlerCallback,
-  SupportedBlockchainNamespace,
-} from 'features/blockchain/@types'
-import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
 import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
 import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 
-import { NearAccountBundle } from '../@types'
+import {
+  ConfirmTransactionCallbackResult,
+  CryptoWalletAccount,
+} from '~/features/cryptoWallet'
+
+import {
+  BlockchainRequestHandlerCallback,
+  SupportedBlockchainNamespace,
+} from '../../types'
+import { NearAccountBundle } from '../types'
 
 export const sendNativeCurrencyNear = async ({
   chainId: caipChainId,
@@ -24,7 +27,7 @@ export const sendNativeCurrencyNear = async ({
   readonly value: number
   readonly near_signAndSendTransaction: BlockchainRequestHandlerCallback<NearAccountBundle>
   readonly rpc: string
-  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
+  readonly minifiedBlockchainAccount: CryptoWalletAccount
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedBlockchainAccount
 
