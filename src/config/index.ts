@@ -39,7 +39,6 @@ export const config = {
   },
   features: {
     veridaMainnet: {
-      enabled: true,
       enableMigration: true,
       enableDeletionAfterMigration: true,
     },

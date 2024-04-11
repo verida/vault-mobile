@@ -55,11 +55,9 @@ export function getDidClientConfigForNetwork(
  */
 export function getSupportedVeridaNetworks(): EnvironmentType[] {
   const networks: EnvironmentType[] = []
-  if (config.features.veridaMainnet.enabled) {
-    networks.push(EnvironmentType.MAINNET)
-  }
 
-  networks.push(EnvironmentType.TESTNET)
+  networks.push(EnvironmentType.MAINNET)
+  // TODO: Add Banksia when available
 
   if (config.dev.devMode) {
     networks.push(EnvironmentType.DEVNET)
@@ -70,8 +68,6 @@ export function getSupportedVeridaNetworks(): EnvironmentType[] {
 
 export function getDefaultVeridaNetwork(): EnvironmentType {
   return config.dev.devMode
-    ? EnvironmentType.DEVNET
-    : config.features.veridaMainnet.enabled
-      ? EnvironmentType.MAINNET
-      : EnvironmentType.TESTNET
+    ? EnvironmentType.DEVNET // TODO: Change to Banksia when available
+    : EnvironmentType.MAINNET
 }
