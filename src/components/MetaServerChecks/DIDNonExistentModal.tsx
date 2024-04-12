@@ -46,8 +46,9 @@ const isAcaciaTestnetDid = (did: string) => {
 
 // TODO: remove
 const acaciaTestnetInfo = {
-  title: 'Acacia Testnet is shutdown',
-  description: 'Acacia Testnet is shutdown, please remove the identity.\n\n',
+  title: 'Acacia Testnet has been shutdown',
+  description:
+    'The Acacia Testnet has been shutdown, This identity is no longer operational. You can remove it from your wallet.\n\n',
 }
 
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
