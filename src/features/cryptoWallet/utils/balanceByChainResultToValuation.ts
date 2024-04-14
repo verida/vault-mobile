@@ -5,7 +5,7 @@ import {
   Currency,
   DetailedValuation,
   Interval,
-} from '../@types'
+} from '../types'
 import { fixedPointCryptoAsBigDecimal } from './fixedPointCryptoAsBigDecimal'
 
 export function balanceByChainResultToValuation({

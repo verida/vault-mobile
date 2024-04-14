@@ -12,12 +12,7 @@ import { store } from 'reduxStore'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
-export default ({
-  item,
-  singleWallet,
-  onPressSeedPhrase,
-  onPressPrivateKey,
-}) => {
+export default ({ item, onPressSeedPhrase, onPressPrivateKey }) => {
   const { showActionSheetWithOptions } = useActionSheet()
   const blockchainNetworks = getBlockchainNetworks(store.getState())
   const network = blockchainNetworks[item.chainId]
@@ -33,7 +28,6 @@ export default ({
     <ListItem
       button
       onPress={() => {
-        if (singleWallet) return
         showActionSheetWithOptions(
           {
             options: options,
@@ -62,7 +56,9 @@ export default ({
           <Text note>{`${item.address}`}</Text>
         </Body>
       </Left>
-      <Right>{!singleWallet && <RightArrowSvg />}</Right>
+      <Right>
+        <RightArrowSvg />
+      </Right>
     </ListItem>
   )
 }

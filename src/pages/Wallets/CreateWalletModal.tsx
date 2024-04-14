@@ -1,26 +1,29 @@
 import { Icon } from 'native-base'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import InputStyles from 'styles/inputs'
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import { CreateCryptoWalletData } from '~/features/cryptoWallet'
+import InputStyles from '~/styles/inputs'
 
-type Props = {
+export type CreateWalletModalProps = {
   visible: boolean
-  onCreateNewWallet: (data: any) => void
+  onCreateNewWallet: (data: CreateCryptoWalletData) => void
   hideModal: () => void
 }
 
-export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
-  const [name, setName] = useState('')
+export const CreateWalletModal: React.FC<CreateWalletModalProps> = (props) => {
+  const { visible, hideModal, onCreateNewWallet } = props
 
-  const onPressSend = () => {
-    onCreateNewWallet({ name })
+  const [label, setLabel] = useState('')
+
+  const onPressSend = useCallback(() => {
+    onCreateNewWallet({ label })
     hideModal()
-  }
+  }, [onCreateNewWallet, hideModal, label])
 
   return (
     <Modal
@@ -36,24 +39,24 @@ export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
       />
       <Layout withKeyboardAvoidingView style={styles.container}>
         <View style={styles.content}>
-          <Label>Wallet name</Label>
+          <Label>Wallet label</Label>
           <TextInput
-            value={name}
+            value={label}
             autoFocus={true}
             multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
-            onChangeText={setName}
+            onChangeText={setLabel}
             style={[InputStyles.input]}
-            placeholder={'eg. Friendly wallet name'}
+            placeholder={'eg. Friendly wallet label'}
           />
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.addWalletButton}
             color='primary'
-            disabled={!name}
+            disabled={!label}
             onPress={onPressSend}>
             Create Wallet
           </Button>

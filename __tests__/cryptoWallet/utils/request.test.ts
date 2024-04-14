@@ -1,8 +1,8 @@
 /* eslint-disable import/first */
 import 'jest'
 
-import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/blockchain/constants'
-import { isSupportedCaipNamespace } from 'features/caip/utils/isSupportedCaipNamespace'
+import { BLOCKCHAIN_NAMESPACES } from '~/features/blockchain/constants'
+import { isSupportedCaipNamespace } from '~/features/caip/utils/isSupportedCaipNamespace'
 
 // Required as request.ts imports a simple function from features/caip but the whole internal module is loaded even though it's unnecessary for these unit tests
 jest.mock('features/caip', () => ({
@@ -11,7 +11,7 @@ jest.mock('features/caip', () => ({
 
 // Required as request.ts imports a simple constants from features/blockchain but the whole internal module is loaded even though it's unnecessary for these unit tests
 jest.mock('features/blockchain', () => ({
-  SUPPORTED_BLOCKCHAIN_NAMESPACES,
+  BLOCKCHAIN_NAMESPACES,
 }))
 
 import { CryptoWalletRawRequest } from 'features/cryptoWallet'

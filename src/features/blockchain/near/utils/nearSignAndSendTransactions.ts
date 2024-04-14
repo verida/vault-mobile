@@ -1,6 +1,6 @@
 import { providers, transactions } from 'near-api-js'
 
-import { NearAccount } from '../@types'
+import { NearAccount } from '../types'
 import { nearSignTransactions } from './nearSignTransactions'
 
 export const nearSignAndSendTransactions = async ({

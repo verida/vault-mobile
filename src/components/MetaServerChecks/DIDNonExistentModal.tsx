@@ -40,12 +40,25 @@ type Props = {
   dismissModal: () => void
 }
 
+const isAcaciaTestnetDid = (did: string) => {
+  return did.startsWith('did:vda:testnet')
+}
+
+// TODO: remove
+const acaciaTestnetInfo = {
+  title: 'Acacia Testnet has been shutdown',
+  description:
+    'The Acacia Testnet has been shutdown, This identity is no longer operational. You can remove it from your wallet.\n\n',
+}
+
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false)
   const { refresh: retry } = useAuth()
+  const currentDID =
+    AccountManager.getInstance().getSelectedAccount()?.did ?? ''
 
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
@@ -119,7 +132,11 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
         </LinearGradient>
         <View style={styles.container}>
           <View style={styles.card}>
-            <Title style={styles.title}>Identity Not Found</Title>
+            <Title style={styles.title}>
+              {isAcaciaTestnetDid(currentDID)
+                ? acaciaTestnetInfo.title
+                : `Identity Not Found`}
+            </Title>
             <Spacer vertical='m' />
             <View style={styles.hline} />
             <Spacer vertical='m' />
@@ -127,30 +144,34 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
               <Paragraph>
-                {`This Identity is not available at the moment. This can be due to a Network or Blockchain issue. Please wait a moment.\nIf you think this Identity doesn't exist anymore, you can remove it from your Wallet.\nIdentities cannot be recovered without the Seed Phrase, please make a backup first.\n\n`}
-                <Paragraph style={{ color: theme.color.black800 }}>
-                  {`Identity ${
-                    AccountManager.getInstance().getSelectedAccount()?.did
-                  }`}
+                {isAcaciaTestnetDid(currentDID)
+                  ? acaciaTestnetInfo.description
+                  : `This Identity is not available at the moment. This can be due to a Network or Blockchain issue. Please wait a moment.\nIf you think this Identity doesn't exist anymore, you can remove it from your Wallet.\nIdentities cannot be recovered without the Seed Phrase, please make a backup first.\n\n`}
+                <Paragraph style={{ color: theme.color.primary }}>
+                  {`${currentDID}`}
                 </Paragraph>
               </Paragraph>
             </ScrollView>
             <View style={styles.footer}>
-              <Button
-                color='primary'
-                onPress={() => {
-                  dismissModal()
-                  retry()
-                }}>
-                Try Again
-              </Button>
-              <Button
-                color='grey'
-                onPress={() => {
-                  setShowSeedPhraseModal(true)
-                }}>
-                Backup Seed Phrase
-              </Button>
+              {!isAcaciaTestnetDid(currentDID) && (
+                <>
+                  <Button
+                    color='primary'
+                    onPress={() => {
+                      dismissModal()
+                      retry()
+                    }}>
+                    Try Again
+                  </Button>
+                  <Button
+                    color='grey'
+                    onPress={() => {
+                      setShowSeedPhraseModal(true)
+                    }}>
+                    Backup Seed Phrase
+                  </Button>
+                </>
+              )}
               <Button
                 color='warning'
                 style={{
@@ -158,8 +179,6 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
                   borderColor: LIGHTGREY_COLOR,
                 }}
                 onPress={async () => {
-                  const currentDID =
-                    AccountManager.getInstance().getSelectedAccount()?.did
                   const otherDids = Object.keys(
                     AccountManager.getInstance().accounts
                   )?.filter((did) => did !== currentDID)

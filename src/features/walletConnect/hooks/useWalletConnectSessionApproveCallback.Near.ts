@@ -2,7 +2,7 @@ import { throwIfInvalidNearRpcMethod } from 'features/blockchain/near'
 import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import * as React from 'react'
 
-import { WalletConnectSessionRequestCallbackParams } from '../@types'
+import { WalletConnectSessionRequestCallbackParams } from '../types'
 import { getMaybeNearAccountForWalletConnectRequest } from '../utils'
 import { useWalletConnectSessionRequestHandlersNear } from './useWalletConnectSessionRequestHandlers.Near'
 

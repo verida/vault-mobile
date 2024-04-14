@@ -1,10 +1,10 @@
 import 'jest'
 
-import { CustomBlockchainNetwork } from '../../../src/features/blockchain/@types'
+import { CustomBlockchainNetwork } from '~/features/blockchain/types'
 import {
   chainMetadataToMaybeCustomBlockchainNetwork,
   customBlockchainNetworkToMaybeChainMetadata,
-} from '../../../src/features/blockchain/utils'
+} from '~/features/blockchain/utils'
 
 describe('blockchain/utils/customBlockchainNetworkToMaybeChainMetadata', () => {
   it('customBlockchainNetworkToMaybeChainMetadata', () => {

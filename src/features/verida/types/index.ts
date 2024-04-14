@@ -17,6 +17,12 @@ export type VeridaBaseRecord = z.infer<typeof VeridaBaseRecordSchema>
 
 export type VeridaRecord<T = Record<string, unknown>> = VeridaBaseRecord & T
 
+export type VeridaSaveRecordResult = {
+  id: string
+  ok: boolean
+  rev: string
+}
+
 // TODO: Rework all the message types, create schemas for the different types of message and infer the Types from
 
 export type SimpleMessage = {

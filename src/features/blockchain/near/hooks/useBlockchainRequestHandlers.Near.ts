@@ -6,7 +6,7 @@ import {
   NearAccountPointer,
   NearRpcMethod,
   NearTransaction,
-} from '../@types'
+} from '../types'
 import {
   nearCreateAction,
   nearCreateTransactions,
