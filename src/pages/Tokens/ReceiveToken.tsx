@@ -3,7 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   useChainIdForResourceParams,
-  useMaybeSelectedWallet,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -38,17 +38,19 @@ const ReceiveToken = () => {
 
   const { resource } = aggregateWalletBannerBalance
 
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
-  const selectedWallet = useMaybeSelectedWallet()
-  const accounts = Object.values(selectedWallet?.accounts || {})
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  // TODO: Factorise this as it's also implemented in TransactionDetails.tsx and SingleCurrency.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
+  const address = account?.address || null
 
-  const maybeAddress = account?.address || null
-
-  const hasAddress = typeof maybeAddress === 'string' && Boolean(maybeAddress)
+  const hasAddress = typeof address === 'string' && Boolean(address)
 
   return (
     <Container>
@@ -63,7 +65,7 @@ const ReceiveToken = () => {
         <View style={styles.content}>
           {hasAddress && (
             <>
-              <Text style={styles.address} children={maybeAddress} />
+              <Text style={styles.address} children={address} />
               <View style={styles.qr}>
                 <QRCode
                   logo={LogoImg}
@@ -72,7 +74,7 @@ const ReceiveToken = () => {
                   codeStyle='dot'
                   innerEyeStyle='circle'
                   padding={0.5}
-                  content={maybeAddress}
+                  content={address}
                 />
               </View>
             </>
@@ -90,7 +92,7 @@ const ReceiveToken = () => {
             {hasAddress && (
               <TouchableOpacity
                 onPress={() => {
-                  Clipboard.setString(maybeAddress)
+                  Clipboard.setString(address)
                   Toast.show('Address copied', {
                     duration: Toast.durations.LONG,
                     position: -130,
@@ -110,7 +112,7 @@ const ReceiveToken = () => {
               <TouchableOpacity
                 onPress={() =>
                   Share.share({
-                    message: `My address to receive ${aggregateWalletBannerBalance.symbol} \r${maybeAddress}`,
+                    message: `My address to receive ${aggregateWalletBannerBalance.symbol} \r${address}`,
                   })
                 }
                 style={styles.actionButton}>

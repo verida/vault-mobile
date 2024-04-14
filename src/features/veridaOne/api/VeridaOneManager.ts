@@ -5,16 +5,16 @@ import { Logger } from 'features/telemetry'
 import AccountManager from 'api/AccountManager'
 
 import {
+  VERIDA_ONE_CONTEXT_NAME,
+  VERIDA_ONE_PROFILE_SCHEMA_URL,
+} from '../constants'
+import {
   VeridaOneCustomLink,
   VeridaOneFeaturedAsset,
   VeridaOnePlatformLink,
   VeridaOneProfile,
   VeridaOneWalletAddress,
-} from '../@types'
-import {
-  VERIDA_ONE_CONTEXT_NAME,
-  VERIDA_ONE_PROFILE_SCHEMA_URL,
-} from '../constants'
+} from '../types'
 
 const logger = Logger.create('VeridaOne')
 

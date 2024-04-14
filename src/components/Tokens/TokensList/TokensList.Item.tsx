@@ -70,7 +70,13 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
           </View>
           <View style={styles.tokenDetails}>
             <View style={styles.tokenNameAndBalance}>
-              <Typography variant='h4'>{label}</Typography>
+              <Typography
+                variant='h4'
+                ellipsizeMode='tail'
+                numberOfLines={1}
+                style={styles.tokenLabel}>
+                {label}
+              </Typography>
               <NumberCrypto
                 value={fixedPointCryptoAsBigDecimal({
                   amount: balance,
@@ -128,6 +134,10 @@ const createStyles = (theme: Theme) =>
     tokenNameAndBalance: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      gap: theme.spacing.m,
+    },
+    tokenLabel: {
+      flex: 1,
     },
     testnetTag: {
       alignSelf: 'flex-start',

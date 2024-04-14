@@ -1,4 +1,4 @@
-import { VeridaOnePlatformMetadata, VeridaOnePlatforms } from '../@types'
+import { VeridaOnePlatformMetadata, VeridaOnePlatforms } from '../types'
 
 const FacebookIcon = require('assets/social_icons/facebook.png')
 const TwitterIcon = require('assets/social_icons/twitter.png')

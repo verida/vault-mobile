@@ -4,7 +4,7 @@ import {
   AggregateWalletBannerBalances,
   Currency,
   ValuedAtWithAccuracy,
-} from '../@types'
+} from '../types'
 
 // TODO: add tests
 export function computeValuationForAggregateWalletBannerBalances({

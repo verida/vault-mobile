@@ -1,48 +1,12 @@
 import BigDecimal from 'bignumber.js'
-import { AccountId, AssetId, AssetIdParams, ChainIdParams } from 'caip'
-import {
-  BlockchainAccount,
-  BlockchainNetwork,
-  SupportedBlockchainNamespace,
-} from 'features/blockchain'
+import { AssetType, AssetTypeParams, ChainIdParams } from 'caip'
 
 import { Option } from 'components/Select'
-
-// Types copied from the Wallet-Provider
-// TODO: Should be able to auto generated or import types directly from wallet provider module
-export type ChainNameType = 'near' | 'algorand' | 'ethereum' | 'polygon'
-
-export type CryptoWalletRequestAction = 'pay'
-export type CryptoWalletRequestFunction = 'transfer'
-
-export type CryptoWalletRequestParams = {
-  value?: string
-  uint256?: string
-  address?: string
-  message?: string
-}
-
-export type CryptoWalletRawRequest = {
-  chainNamespace: string
-  chainReference: string
-  action: CryptoWalletRequestAction
-  address: string
-  function?: CryptoWalletRequestFunction
-  params: CryptoWalletRequestParams
-}
-
-export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
-  action: A
-  resource: ResourceParams
-  recipientAccount: AccountId
-  amount: undefined | number // TODO: Should probably be a string for big numbers
-}
 
 export type BasicTokenData = WithMaybeIcon<{
   name: string
   symbol: string
-  asset: AssetId
-  chainName: ChainNameType
+  asset: AssetType
 
   // TODO: Clarify what "cmc" is
   cmcId?: number // if we have the CMC ID it is better because of duplicate symbols
@@ -80,8 +44,8 @@ export type BalanceByChainAmount<T extends number = number> = {
 export type BalanceByChainResultData = BalanceByChainAmount & {
   symbol: string
   balance: number
-  asset: AssetId
-  quote: AssetQuote
+  asset: AssetType
+  quote: AssetQuote // FIXME: Coming from Wallet Provider, quote is potentially undefined. But this type is not dedicated to the Wallet Provider, it is used elsewhere where quote is required. We should split the type, have a dedicated Wallet Provider type and an internal type on how we want to the data to be.
   token: SupportedTokenObject
 }
 
@@ -127,66 +91,9 @@ export interface BalanceByChain {
   results: Array<BalanceByChainResult>
 }
 
-export enum TransactionType {
-  SENT = 'sent',
-  RECEIVED = 'received',
-}
-
-export interface Transaction {
-  id: string
-  type: TransactionType
-  address: string
-  quantity: bigint
-  pending: boolean
-}
-
-export interface DetailedTransaction {
-  id: string
-  type: string
-  address: string
-  quantity: bigint
-  pending: boolean
-  fee: string
-  feeDecimal: number
-  feeSymbol: string
-  blockNumber: string
-  time: string
-}
 // End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option
-
-export type WalletsData = Record<string, BlockchainAccount>
-
-export type ImportedSeedPhrase = {
-  readonly phrase: string
-  readonly privateKey: string
-  readonly blockchainNetwork: BlockchainNetwork | null | undefined
-  readonly inputSwitch: string
-}
-
-type AbstractMinifiedBlockchainAccount<
-  Namespace extends SupportedBlockchainNamespace,
-> = {
-  readonly address: string
-  readonly namespace: Namespace
-}
-
-export type MinifiedBlockchainAccountEip155 =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.EIP_155> & {
-    readonly privateKey: string
-  }
-
-export type MinifiedBlockchainAccountNear =
-  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.NEAR> & {
-    readonly privateKey: string
-  }
-
-export type MinifiedBlockchainAccount =
-  | MinifiedBlockchainAccountEip155
-  | MinifiedBlockchainAccountNear
-
-export type MinifiedBlockchainAccounts = readonly MinifiedBlockchainAccount[]
 
 export enum Currency {
   USD = 'USD',
@@ -229,18 +136,18 @@ export enum AggregateWalletBannerBalanceType {
 }
 
 // TODO: Move somewhere more general, we do this a lot
-export type ResourceParams = ChainIdParams | AssetIdParams
+export type ResourceParams = ChainIdParams | AssetTypeParams
 
-export function isAssetIdResourceParams(
+export function isAssetTypeResourceParams(
   resourceParams: ResourceParams
-): resourceParams is AssetIdParams {
-  return 'tokenId' in resourceParams && 'assetName' in resourceParams
+): resourceParams is AssetTypeParams {
+  return 'assetName' in resourceParams
 }
 
 export function isChainIdResourceParams(
   resourceParams: ResourceParams
 ): resourceParams is ChainIdParams {
-  return !isAssetIdResourceParams(resourceParams)
+  return !isAssetTypeResourceParams(resourceParams)
 }
 
 type AbstractAggregateWalletBannerBalance<
@@ -274,7 +181,7 @@ export type AggregateWalletBannerBalanceNativeCurrency =
 
 export type AggregateWalletBannerBalanceErc20 =
   AbstractAggregateWalletBannerBalance<
-    AssetIdParams,
+    AssetTypeParams,
     AggregateWalletBannerBalanceType.ERC_20
   >
 

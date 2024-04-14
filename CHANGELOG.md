@@ -1,3 +1,15 @@
+# 1.3.0 (2024-04-12)
+
+## Enhancements
+
+- Remove Acacia testnet for identity creation and import
+- Handle the Acacia testnet shutdown in the "Not found identity" modal
+
+## Bug fixes
+
+- Fix handling `undefined` asset quote
+- Fix label of coins/tokens in list
+
 # 1.2.2 (2024-03-26)
 
 ## Bug Fixes

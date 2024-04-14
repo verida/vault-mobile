@@ -1,11 +1,12 @@
 import BigDecimal from 'bignumber.js'
-import { ChainMetadata } from 'features/caip'
+
+import { ChainMetadata } from '~/features/caip'
 
 import {
   AggregateWalletBannerBalanceErc20,
   AggregateWalletBannerBalanceType,
   BalanceByChainResult,
-} from '../@types'
+} from '../types'
 import { balanceByChainResultToValuation } from './balanceByChainResultToValuation'
 import { isNativeToken } from './isNativeToken'
 

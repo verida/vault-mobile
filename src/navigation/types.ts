@@ -5,9 +5,9 @@ import {
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { NFT, NFTCollection } from 'features/assets'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
+import { SingleWalletScreenParams } from '~/pages/Wallets/SingleWallet'
 
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
@@ -107,7 +107,7 @@ export type MainStackParams = {
   TransactionDetails: TransactionDetailsScreenProps
   BuyToken: undefined
   ReceiveToken: ReceiveTokenScreenProps
-  SingleWallet: { item: BlockchainWalletWithAccounts }
+  SingleWallet: SingleWalletScreenParams
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: DataFolderScreenParams

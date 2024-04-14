@@ -1,6 +1,7 @@
-import { Currency } from 'features/cryptoWallet/@types'
 import * as React from 'react'
 import { StyleProp, Text, TextStyle } from 'react-native'
+
+import { Currency } from '~/features/cryptoWallet'
 
 import { DEFAULT_LOCALE } from 'constants/locale'
 

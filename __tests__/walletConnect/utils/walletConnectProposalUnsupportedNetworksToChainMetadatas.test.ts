@@ -3,8 +3,8 @@ import 'jest'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 
-import { fetchChainsList } from '../../../src/features/blockchain/eip155/utils/chainsList'
-import { walletConnectProposalUnsupportedNetworksToChainMetadatas } from '../../../src/features/walletConnect/utils/walletConnectProposalUnsupportedNetworksToChainMetadatas'
+import { fetchChainsList } from '~/features/blockchain/eip155/utils/chainsList'
+import { walletConnectProposalUnsupportedNetworksToChainMetadatas } from '~/features/walletConnect/utils/walletConnectProposalUnsupportedNetworksToChainMetadatas'
 
 const EXAMPLE_PROPOSAL = {
   id: 1697290325307305,
