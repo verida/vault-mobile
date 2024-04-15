@@ -1,4 +1,4 @@
-import { AssetId } from 'caip'
+import { AssetType } from 'caip'
 
-export const isNativeToken = (asset: AssetId) =>
+export const isNativeToken = (asset: AssetType) =>
   asset.assetName.namespace === 'slip44'

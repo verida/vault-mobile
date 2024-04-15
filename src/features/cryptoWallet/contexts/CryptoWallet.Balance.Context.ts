@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CryptoWalletBalanceContextValue } from '../@types'
+import { CryptoWalletBalanceContextValue } from '../types'
 
 const CryptoWalletBalanceContext =
   React.createContext<CryptoWalletBalanceContextValue | null>(null)

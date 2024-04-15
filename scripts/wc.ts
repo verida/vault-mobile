@@ -1,7 +1,8 @@
 import { SignClient } from '@walletconnect/sign-client'
 import { ChainId } from 'caip'
 import * as child_process from 'child_process'
-import { AddEthereumChainRequestParam } from 'features/blockchain/eip155/@types'
+
+import { AddEthereumChainRequestParam } from '~/features/blockchain/eip155/types'
 
 import {
   fetchChainsList,

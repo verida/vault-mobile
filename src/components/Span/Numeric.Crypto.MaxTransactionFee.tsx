@@ -1,11 +1,12 @@
 import { ethers } from 'ethers'
-import { ChainMetadata } from 'features/caip/@types'
-import { DetailedValuation } from 'features/cryptoWallet/@types'
 import { convertFromCryptoIntegerToDecimal } from 'features/token/utils/convertFromCryptoIntegerToDecimal'
 import { convertFromCryptoIntegerToMaybeDecimalFiat } from 'features/token/utils/convertFromCryptoIntegerToMaybeDecimalFiat'
 import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
 import * as React from 'react'
 import { ActivityIndicator } from 'react-native'
+
+import { ChainMetadata } from '~/features/caip'
+import { DetailedValuation } from '~/features/cryptoWallet'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 import { NumericFiat } from './Numeric.Fiat'

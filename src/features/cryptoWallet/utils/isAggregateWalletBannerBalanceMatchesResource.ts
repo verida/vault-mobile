@@ -1,11 +1,11 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 
 import {
   AggregateWalletBannerBalance,
-  isAssetIdResourceParams,
+  isAssetTypeResourceParams,
   isChainIdResourceParams,
   ResourceParams,
-} from '../@types'
+} from '../types'
 
 export function isAggregateWalletBannerBalanceMatchesResource({
   aggregateWalletBannerBalance: { resource: maybeMatchingResource },
@@ -24,12 +24,12 @@ export function isAggregateWalletBannerBalanceMatchesResource({
     )
 
   if (
-    isAssetIdResourceParams(maybeMatchingResource) &&
-    isAssetIdResourceParams(resource)
+    isAssetTypeResourceParams(maybeMatchingResource) &&
+    isAssetTypeResourceParams(resource)
   )
     return (
-      new AssetId(maybeMatchingResource).toString() ===
-      new AssetId(resource).toString()
+      new AssetType(maybeMatchingResource).toString() ===
+      new AssetType(resource).toString()
     )
 
   return false

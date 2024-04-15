@@ -1,4 +1,4 @@
-import { NearAccount, NearAccountPointer } from '../@types'
+import { NearAccount, NearAccountPointer } from '../types'
 
 export function throwIfNearAccountDoesNotMatchNearAccountPointer({
   nearAccount,

@@ -40,7 +40,6 @@ import {
 import {
   ManageWalletsScreenParams,
   SingleWalletScreenParams,
-  SuccessFailureScreenParams,
 } from '~/pages/Wallets'
 
 import { SelectAssetScreenParams } from 'pages/Assets/SelectAsset'
@@ -152,7 +151,6 @@ export type MainStackParams = {
   BuyToken: BuyTokenScreenParams
   ReceiveToken: ReceiveTokenScreenParams
   SingleWallet: SingleWalletScreenParams
-  SuccessFailure: SuccessFailureScreenParams
   NFTCollectionDetail: NFTCollectionDetailScreenParams
   NFTDetail: NFTDetailScreenParams
   SelectAsset: SelectAssetScreenParams

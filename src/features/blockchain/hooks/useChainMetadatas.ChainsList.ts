@@ -10,8 +10,8 @@ import {
   isSupportedCaipNamespace,
   UseChainMetadataState,
 } from '../../caip'
-import { BlockchainNetwork } from '../@types'
 import { useGetBlockchainNetworksQuery } from '../redux'
+import { BlockchainNetwork } from '../types'
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,

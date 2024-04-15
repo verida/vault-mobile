@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 import { ChainMetadata } from 'features/caip'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
 
-import { AmountWithSymbol } from '../@types'
+import { AmountWithSymbol } from '../types'
 
 export function convertPredictedTransactionFeeToString({
   chainMetadata: { decimals, symbol },

@@ -1,4 +1,4 @@
-import { getSelectedWalletById } from 'features/cryptoWallet'
+import { useSelectedCryptoWallet } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -10,7 +10,6 @@ import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNa
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
 import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
-import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 import Collectibles from './Collectibles'
@@ -47,7 +46,7 @@ type AssetsScreenProps = TabsScreenProps<'Assets'>
 export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const { navigation } = props
 
-  const selectedWallet = useAppSelector(getSelectedWalletById)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
   const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const layout = useWindowDimensions()
@@ -65,11 +64,11 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
-        selectedWallet={selectedWallet}
+        selectedWallet={selectedCryptoWallet}
         openWalletModal={openWalletModal}
       />
     ),
-    [openWalletModal, selectedWallet]
+    [openWalletModal, selectedCryptoWallet]
   )
 
   useEffect(() => {

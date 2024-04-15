@@ -72,7 +72,6 @@ import {
 import { SettingsScreen } from 'pages/Settings'
 import { ManageWalletsScreen } from 'pages/Wallets/ManageWallets'
 import { SingleWalletScreen } from 'pages/Wallets/SingleWallet'
-import { SuccessFailureScreen } from 'pages/Wallets/SuccessFailure'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -142,10 +141,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
           <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
-          <Stack.Screen
-            name='SuccessFailure'
-            component={SuccessFailureScreen}
-          />
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}

@@ -1,20 +1,19 @@
 import Clipboard from '@react-native-community/clipboard'
 import {
   getAggregateWalletBannerBalanceResult,
-  getSelectedWalletById,
   ResourceParams,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
+  useSelectedCryptoWallet,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
-import { useSelector } from 'react-redux'
 
 import {
   getMaybeChainMetadatas,
@@ -47,17 +46,14 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = params
 
-  // TODO: idk what to do about this yet
-  const selectedWallet = useSelector(getSelectedWalletById)
-
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
   const chain = chainMetadatas.find(
     (chainMetadata) =>
-      chainMetadata.namespace === chainId.namespace &&
-      chainMetadata.reference === chainId.reference
+      chainMetadata.namespace === resourceChainId.namespace &&
+      chainMetadata.reference === resourceChainId.reference
   )
 
   const [maybeAggregateWalletBannerBalance] =
@@ -66,16 +62,19 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
         resource,
       })
     )
-  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
+  const assetType = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  const accounts = Object.values(selectedWallet?.accounts || {})
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  // TODO: Factorise this as it's also implemented in TransactionDetails.tsx and ReceiveToken.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
-
-  const maybeAddress = account?.address || null
+  const address = account?.address || null
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -97,7 +96,7 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
 
   // HACK: We'll only be returning assetIds for resources which the
   //       WalletProvider has an a-priori awareness of.
-  const isAssetSupportedByWalletProvider = Boolean(assetId)
+  const isAssetSupportedByWalletProvider = Boolean(assetType)
 
   const {
     loading: isLoadingTransactions,
@@ -105,7 +104,7 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
     transactions,
     error: errorTransactions,
   } = useTransactionsForMaybeAssetId({
-    assetId,
+    assetType,
   })
 
   const error =
@@ -137,7 +136,7 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
         title={title}
       />
       <TokenBanner
-        selectedWallet={selectedWallet}
+        selectedWallet={selectedCryptoWallet}
         decimals={maybeAggregateWalletBannerBalance?.decimals}
         tokenBalance={maybeAggregateWalletBannerBalance?.balance}
         tokenBalanceValue={value}
@@ -159,9 +158,9 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
           })
         }}
         copyButtonAction={() => {
-          if (!maybeAddress) return
+          if (!address) return
 
-          Clipboard.setString(maybeAddress)
+          Clipboard.setString(address)
 
           Toast.show('Address copied', {
             duration: Toast.durations.LONG,

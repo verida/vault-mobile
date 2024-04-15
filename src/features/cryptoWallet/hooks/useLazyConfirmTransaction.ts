@@ -1,28 +1,32 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 import { ethers } from 'ethers'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import * as React from 'react'
+
+import {
+  getMaybeChainMetadatas,
+  SupportedBlockchainNamespace,
+  useChainMetadatas,
+} from '~/features/blockchain'
 import {
   sendErc20Eip155,
   sendNativeCurrencyEip155,
   useBlockchainRequestHandlersEip155,
-} from 'features/blockchain/eip155'
+} from '~/features/blockchain/eip155'
 import {
   sendNativeCurrencyNear,
   useBlockchainRequestHandlersNear,
-} from 'features/blockchain/near'
-import { getRpcUrlOrThrow } from 'features/caip'
-import { Logger } from 'features/telemetry'
-import * as React from 'react'
-import { Stateful } from 'types'
+} from '~/features/blockchain/near'
+import { getRpcUrlOrThrow } from '~/features/caip'
+import { Logger } from '~/features/telemetry'
+import { Stateful } from '~/types'
 
+import { useCryptoWalletBalanceContext } from '../contexts'
 import {
   AggregateWalletBannerBalance,
   AggregateWalletBannerBalanceErc20,
   AggregateWalletBannerBalanceNativeCurrency,
   AggregateWalletBannerBalanceType,
-} from '../@types'
-import { useCryptoWalletBalanceContext } from '../contexts'
+} from '../types'
 import {
   getChainIdParamsFromResourceParams,
   getFromAddressForResourceOrThrow,
@@ -179,7 +183,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
       const { namespace } = chainId
 
-      const maybeErc20Address = new AssetId(resource).assetName?.reference
+      const maybeErc20Address = new AssetType(resource).assetName?.reference
 
       switch (namespace) {
         case SupportedBlockchainNamespace.EIP_155:

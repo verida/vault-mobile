@@ -1,6 +1,6 @@
 import { $enum } from 'ts-enum-util'
 
-import { Eip155RpcMethod } from '../@types'
+import { Eip155RpcMethod } from '../types'
 
 export const isValidEip155RpcMethod = (
   maybeEip155RpcMethod: string | undefined

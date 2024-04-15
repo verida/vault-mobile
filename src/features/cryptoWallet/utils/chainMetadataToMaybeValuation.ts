@@ -1,7 +1,8 @@
 import { ChainId } from 'caip'
-import { ChainMetadata } from 'features/caip'
 
-import { BalanceByChainResult, DetailedValuation } from '../@types'
+import { ChainMetadata } from '~/features/caip'
+
+import { BalanceByChainResult, DetailedValuation } from '../types'
 import { balanceByChainResultToValuation } from './balanceByChainResultToValuation'
 
 export function chainMetadataToMaybeValuation({

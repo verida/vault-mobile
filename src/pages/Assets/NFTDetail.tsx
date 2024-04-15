@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
 import { NFT, NFTMetadata } from 'features/assets'
-import { getWallets } from 'features/cryptoWallet'
+import { useSelectedCryptoWallet } from 'features/cryptoWallet'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -26,7 +26,6 @@ import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const Row: FC<
@@ -129,7 +128,7 @@ export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
   //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const wallet = useAppSelector(getWallets)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
@@ -204,7 +203,7 @@ export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
             right={
               <IconWithText
                 icon={<Icon size={theme.iconSize.s} name='wallet' />}
-                text={wallet.label}
+                text={selectedCryptoWallet?.label}
               />
             }
           />

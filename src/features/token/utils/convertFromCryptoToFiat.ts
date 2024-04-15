@@ -1,5 +1,6 @@
 import BigDecimal from 'bignumber.js'
-import { DetailedValuation } from 'features/cryptoWallet/@types'
+
+import { DetailedValuation } from '~/features/cryptoWallet'
 
 export const convertFromCryptoToFiat = ({
   valueInCrypto,

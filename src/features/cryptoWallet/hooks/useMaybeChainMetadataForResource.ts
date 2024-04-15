@@ -1,8 +1,12 @@
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
 import * as React from 'react'
 
-import { ResourceParams } from '../@types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { ChainMetadata } from '~/features/caip'
+
+import { ResourceParams } from '../types'
 import { getChainIdParamsFromResourceParams } from '../utils'
 
 export function useMaybeChainMetadataForResource({

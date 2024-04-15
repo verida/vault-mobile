@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { AggregateWalletBannerBalance } from '../@types'
+import { AggregateWalletBannerBalance } from '../types'
 import { getFromAddressForResourceOrThrow } from '../utils'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 

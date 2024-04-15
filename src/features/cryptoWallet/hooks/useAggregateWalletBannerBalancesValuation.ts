@@ -1,4 +1,4 @@
-import { AggregateWalletBannerBalances, ValuedAtWithAccuracy } from '../@types'
+import { AggregateWalletBannerBalances, ValuedAtWithAccuracy } from '../types'
 import { computeValuationForAggregateWalletBannerBalances } from '../utils'
 
 export function useAggregateWalletBannerBalancesValuation({
