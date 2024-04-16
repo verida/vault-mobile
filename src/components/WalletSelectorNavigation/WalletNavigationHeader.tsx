@@ -2,10 +2,11 @@ import { Icon } from 'components'
 import { useTheme } from 'contexts'
 import {
   getTruncatedWalletAddress,
+  getWalletTypeShortLabel,
   LegacyCryptoWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { Avatar } from 'components/Images'
@@ -18,8 +19,24 @@ interface WalletNavigationHeaderProps {
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
+export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
+  props
+) => {
   const { selectedWallet, openWalletModal } = props
+
+  const subtitle = useMemo(() => {
+    if (selectedWallet === null) {
+      return null
+    }
+    const addresses = selectedWallet.accounts.map((account) => {
+      return account.address
+    })
+    const dedupAddresses = Array.from(new Set(addresses))
+    if (dedupAddresses.length === 1) {
+      return getTruncatedWalletAddress(dedupAddresses[0])
+    }
+    return getWalletTypeShortLabel('multi')
+  }, [selectedWallet])
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
@@ -46,19 +63,15 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
           </Text>
           <Icon name='chevron-down' size={16} />
         </View>
-        {selectedWallet ? (
+        {subtitle ? (
           <Text style={styles.address} numberOfLines={1} ellipsizeMode='middle'>
-            {selectedWallet.address
-              ? getTruncatedWalletAddress(selectedWallet.address)
-              : `${selectedWallet.count} addresses`}
+            {subtitle}
           </Text>
         ) : null}
       </View>
     </Pressable>
   )
 }
-
-export default WalletNavigationHeader
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

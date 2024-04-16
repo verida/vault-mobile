@@ -276,7 +276,6 @@ export class WalletManager {
         id: record._id,
         label: record.label,
         readOnly: !record.mnemonic && !record.privateKey,
-        count: Object.keys(accounts).length,
         address: addresses.length === 1 ? addresses[0] : undefined,
         accounts,
       }

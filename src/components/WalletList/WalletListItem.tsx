@@ -1,9 +1,10 @@
 import { useTheme } from 'contexts/ThemeContext'
 import {
   getTruncatedWalletAddress,
+  getWalletTypeShortLabel,
   LegacyCryptoWallet,
 } from 'features/cryptoWallet'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
@@ -37,6 +38,17 @@ const WalletListItem = ({
     }
   }
 
+  const subtitle = useMemo(() => {
+    const addresses = item.accounts.map((account) => {
+      return account.address
+    })
+    const dedupAddresses = Array.from(new Set(addresses))
+    if (dedupAddresses.length === 1) {
+      return getTruncatedWalletAddress(dedupAddresses[0])
+    }
+    return getWalletTypeShortLabel('multi')
+  }, [item])
+
   return (
     <TouchableOpacity
       onPress={handleOnPressAction}
@@ -56,11 +68,7 @@ const WalletListItem = ({
         </View>
         <View style={styles.textContent}>
           <Text style={styles.textTitle}>{item.label}</Text>
-          <Text style={styles.subText}>
-            {item.address
-              ? getTruncatedWalletAddress(item.address)
-              : `${item.count} addresses`}
-          </Text>
+          <Text style={styles.subText}>{subtitle}</Text>
         </View>
       </View>
       <View>
