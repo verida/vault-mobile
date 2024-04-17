@@ -14,15 +14,15 @@ const baseQuery = fetchBaseQuery({
 export const cryptoWalletApi = createApi({
   reducerPath: 'cryptoWalletApi',
   baseQuery: baseQuery,
+  refetchOnMountOrArgChange: 60 * 10, // 10 min
+  // TODO: We could increase the cache expiry and use a forced refetch in UI and when a transaction has been completed
+  refetchOnReconnect: true,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
       return action.payload?.[reducerPath]
     }
   },
-  keepUnusedDataFor: 60 * 15, // 15 mins
-  refetchOnMountOrArgChange: true,
-  refetchOnReconnect: true,
   endpoints: (build) => ({
     getBalances: build.query({
       query: (walletAddresses: string[]) =>
@@ -79,15 +79,15 @@ const legacyBaseQuery = retry(
 export const cryptoWalletLegacyApi = createApi({
   reducerPath: 'cryptoWalletLegacyApi',
   baseQuery: legacyBaseQuery,
+  refetchOnMountOrArgChange: 60 * 10, // 10 min
+  // TODO: We could increase the cache expiry and use a forced refetch in UI and when a transaction has been completed
+  refetchOnReconnect: true,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
       return action.payload?.[reducerPath]
     }
   },
-  keepUnusedDataFor: 60 * 15, // 15 mins
-  refetchOnMountOrArgChange: true,
-  refetchOnReconnect: true,
   endpoints: (build) => ({
     // HACK: It is invalid to getTransactionsForToken without specifying a userAddress or asset.
     //       However, the application can technically enter a state where these values are not
