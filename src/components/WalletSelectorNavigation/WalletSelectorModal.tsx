@@ -5,8 +5,8 @@ import { StyleSheet, View } from 'react-native'
 
 import SettingsIcon from '~/assets/settings_icon.svg'
 import Button from '~/components/Button'
+import { CryptoWalletList } from '~/components/CryptoWallet'
 import AppModal from '~/components/modal/AppModal'
-import WalletList from '~/components/WalletList'
 import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS } from '~/constants/text'
 import {
@@ -64,9 +64,8 @@ const WalletSelectorModal = ({
       visible={modalVisible}
       footer={ModalFooter}>
       <View style={styles.walletList}>
-        <WalletList
+        <CryptoWalletList
           list={cryptoWallets}
-          leftIconType='checked'
           selectedWalletId={selectedCryptoWalletId}
           onPressItem={handleWalletSelection}
         />

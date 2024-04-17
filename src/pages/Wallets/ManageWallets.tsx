@@ -6,9 +6,9 @@ import { Alert, StyleSheet, View } from 'react-native'
 
 import PlusIcon from '~/assets/plus_icon.svg'
 import UnionIcon from '~/assets/union_icon.svg'
+import { CryptoWalletList } from '~/components/CryptoWallet'
 import LoadingView from '~/components/LoadingView'
 import NavigationHeader from '~/components/Navigation/NavigationHeader'
-import WalletList from '~/components/WalletList'
 import { BLACK_COLOR } from '~/constants/color'
 import {
   addWatchedCryptoWallet,
@@ -166,11 +166,11 @@ const ManageWallets = (props: Props) => {
   const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
     if (item.readOnly) {
-      options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
+      options = ['Select this wallet', 'Delete Wallet', 'Cancel']
     } else {
       options = [
         'View seed phrases',
-        'Switch to this wallet',
+        'Select this wallet',
         'Delete Wallet',
         'Cancel',
       ]
@@ -224,10 +224,11 @@ const ManageWallets = (props: Props) => {
         <View style={{ flex: 1 }}>
           <Content style={styles.content}>
             <List>
-              <WalletList
+              <CryptoWalletList
                 list={cryptoWallets}
                 selectedWalletId={selectedCryptoWalletId}
                 onPressItem={handlePressWalletListItem}
+                showMoreIcon
               />
             </List>
           </Content>
