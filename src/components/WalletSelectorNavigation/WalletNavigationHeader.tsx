@@ -85,7 +85,8 @@ const createStyles = (theme: Theme) =>
     },
     textWrapper: {
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'baseline',
+      gap: theme.spacing.xs,
     },
     label: {
       fontSize: theme.fontSize.sl,
