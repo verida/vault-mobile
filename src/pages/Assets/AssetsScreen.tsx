@@ -67,7 +67,7 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
     () => (
       <WalletNavigationHeader
         selectedWallet={selectedCryptoWallet}
-        openWalletModal={openWalletModal}
+        onPress={openWalletModal}
       />
     ),
     [openWalletModal, selectedCryptoWallet]

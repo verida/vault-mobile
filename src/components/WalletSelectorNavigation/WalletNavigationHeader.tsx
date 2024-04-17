@@ -14,7 +14,7 @@ import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
   selectedWallet: LegacyCryptoWallet | null
-  openWalletModal: () => void
+  onPress: () => void
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
@@ -22,7 +22,7 @@ const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
   props
 ) => {
-  const { selectedWallet, openWalletModal } = props
+  const { selectedWallet, onPress } = props
 
   const subtitle = useMemo(() => {
     if (selectedWallet === null) {
@@ -42,10 +42,7 @@ export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
   const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <Pressable
-      hitSlop={HIT_SLOP}
-      style={styles.container}
-      onPress={openWalletModal}>
+    <Pressable hitSlop={HIT_SLOP} style={styles.container} onPress={onPress}>
       <View style={styles.logoContainer}>
         <Avatar
           source={selectedWallet?.icon}
