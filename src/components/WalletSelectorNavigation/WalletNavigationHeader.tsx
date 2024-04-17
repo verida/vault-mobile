@@ -73,6 +73,7 @@ const createStyles = (theme: Theme) =>
     titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      // Weird issue with using `alignItems: 'baseline'` on a container with `<Icon>`, see https://github.com/react-native-elements/react-native-elements/issues/2134
       gap: theme.spacing.xs,
     },
     address: {
