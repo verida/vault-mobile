@@ -12,6 +12,8 @@ import {
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
+import { ReadOnlyCryptoWallet } from './ReadOnlyCryptoWallet'
+
 export type CryptoWalletListItemProps = {
   item: LegacyCryptoWallet
   selected: boolean
@@ -23,8 +25,6 @@ export const CryptoWalletListItem: React.FC<CryptoWalletListItemProps> = (
   props
 ) => {
   const { item, selected, showMoreIcon, onPress } = props
-
-  const { theme } = useTheme()
 
   const handlePress = useCallback(() => {
     onPress?.(item)
@@ -41,18 +41,22 @@ export const CryptoWalletListItem: React.FC<CryptoWalletListItemProps> = (
     return getWalletTypeShortLabel('multi')
   }, [item])
 
+  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
 
   return (
     <TouchableHighlight onPress={handlePress} underlayColor={theme.color.snow}>
       <View style={[styles.container, selected && styles.selected]}>
-        <View style={styles.labelContainer}>
-          <Typography
-            variant='h5SemiBold'
-            numberOfLines={1}
-            ellipsizeMode='tail'>
-            {item.label}
-          </Typography>
+        <View style={styles.content}>
+          <View style={styles.labelContainer}>
+            {item.readOnly ? <ReadOnlyCryptoWallet /> : null}
+            <Typography
+              variant='h5SemiBold'
+              numberOfLines={1}
+              ellipsizeMode='tail'>
+              {item.label}
+            </Typography>
+          </View>
           <Typography
             variant='label'
             style={styles.subText}
@@ -87,8 +91,14 @@ const createStyles = (theme: Theme) =>
     selected: {
       backgroundColor: theme.color.snow,
     },
+    content: {
+      flex: 1,
+    },
     labelContainer: {
       flex: 1,
+      flexDirection: 'row',
+      gap: theme.spacing.s,
+      alignItems: 'center',
     },
     subText: {
       color: theme.color.textLightGrey,

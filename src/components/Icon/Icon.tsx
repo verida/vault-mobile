@@ -50,6 +50,8 @@ type LibIconName =
   | 'caret-down'
   | 'more-vertical'
   | 'more-horizontal'
+  | 'eye'
+  | 'eye-off'
   | 'scan-qr'
   | 'close'
   | 'flash-on'
@@ -224,6 +226,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <Ionicon name='ellipsis-vertical' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'eye':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='eye' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'eye-off':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='eye-off' {...iconProps} />
         </IconWrapper>
       )
     case 'scan-qr':

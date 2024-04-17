@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 
+import { ReadOnlyCryptoWallet } from '~/components/CryptoWallet'
 import { Icon } from '~/components/Icon'
 import { Typography } from '~/components/Typography'
 import {
@@ -45,6 +46,7 @@ export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
   return (
     <Pressable hitSlop={HIT_SLOP} style={styles.container} onPress={onPress}>
       <View style={styles.titleContainer}>
+        {selectedWallet?.readOnly ? <ReadOnlyCryptoWallet /> : null}
         <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
           {title}
         </Typography>
