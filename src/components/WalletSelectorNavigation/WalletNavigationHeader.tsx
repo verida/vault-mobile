@@ -1,18 +1,16 @@
-import { Icon } from 'components'
-import { useTheme } from 'contexts'
+import React, { useMemo } from 'react'
+import { Pressable, StyleSheet, View } from 'react-native'
+
+import { Icon } from '~/components/Icon'
+import { Typography } from '~/components/Typography'
 import {
-  getTruncatedWalletAddress,
   getWalletTypeShortLabel,
   LegacyCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React, { useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
-import { Avatar } from 'components/Images'
-import { Theme } from 'styles/types'
-
-interface WalletNavigationHeaderProps {
+type WalletNavigationHeaderProps = {
   selectedWallet: LegacyCryptoWallet | null
   onPress: () => void
 }
@@ -24,6 +22,10 @@ export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
 ) => {
   const { selectedWallet, onPress } = props
 
+  const title = useMemo(() => {
+    return selectedWallet?.label || 'Select a wallet'
+  }, [selectedWallet])
+
   const subtitle = useMemo(() => {
     if (selectedWallet === null) {
       return null
@@ -33,39 +35,30 @@ export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
     })
     const dedupAddresses = Array.from(new Set(addresses))
     if (dedupAddresses.length === 1) {
-      return getTruncatedWalletAddress(dedupAddresses[0])
+      return dedupAddresses[0]
     }
     return getWalletTypeShortLabel('multi')
   }, [selectedWallet])
 
-  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
 
   return (
     <Pressable hitSlop={HIT_SLOP} style={styles.container} onPress={onPress}>
-      <View style={styles.logoContainer}>
-        <Avatar
-          source={selectedWallet?.icon}
-          fallbackType='wallet'
-          style={styles.icon}
-          borderColor={theme.color.primary100}
-          fallbackColor={theme.color.primary}
-          fallbackBackgroundColor={theme.color.primary200}
-        />
+      <View style={styles.titleContainer}>
+        <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
+          {title}
+        </Typography>
+        <Icon name='chevron-down' size={16} />
       </View>
-      <View style={styles.textContainer}>
-        <View style={styles.textWrapper}>
-          <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
-            {selectedWallet?.label}
-          </Text>
-          <Icon name='chevron-down' size={16} />
-        </View>
-        {subtitle ? (
-          <Text style={styles.address} numberOfLines={1} ellipsizeMode='middle'>
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
+      {subtitle ? (
+        <Typography
+          variant='label'
+          style={styles.address}
+          numberOfLines={1}
+          ellipsizeMode='middle'>
+          {subtitle}
+        </Typography>
+      ) : null}
     </Pressable>
   )
 }
@@ -73,34 +66,16 @@ export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
-      flexDirection: 'row',
-      justifyContent: 'center',
+      flexDirection: 'column',
       alignItems: 'center',
+      paddingHorizontal: theme.spacing.xxxl,
     },
-    logoContainer: {
-      marginRight: theme.spacing.s,
-    },
-    textContainer: {
-      justifyContent: 'space-between',
-    },
-    textWrapper: {
+    titleContainer: {
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'center',
       gap: theme.spacing.xs,
     },
-    label: {
-      fontSize: theme.fontSize.sl,
-      lineHeight: theme.fontSize.xl,
-      fontFamily: theme.fontFamily.bold,
-    },
     address: {
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.m,
-      fontFamily: theme.fontFamily.semibold,
       color: theme.color.textLightGrey,
-    },
-    icon: {
-      width: 32,
-      height: 32,
     },
   })
