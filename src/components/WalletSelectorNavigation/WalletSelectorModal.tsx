@@ -9,12 +9,7 @@ import { CryptoWalletList } from '~/components/CryptoWallet'
 import AppModal from '~/components/modal/AppModal'
 import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS } from '~/constants/text'
-import {
-  LegacyCryptoWallet,
-  selectCryptoWallet,
-  useCryptoWallets,
-  useSelectedCryptoWalletId,
-} from '~/features/cryptoWallet'
+import { LegacyCryptoWallet, selectCryptoWallet } from '~/features/cryptoWallet'
 import { MainStackParams } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
 
@@ -30,9 +25,6 @@ const WalletSelectorModal = ({
   modalVisible,
   onCloseModal,
 }: WalletSelectorModalProps) => {
-  const cryptoWallets = useCryptoWallets()
-  const selectedCryptoWalletId = useSelectedCryptoWalletId()
-
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const dispatch = useAppDispatch()
@@ -63,12 +55,8 @@ const WalletSelectorModal = ({
       onClose={onCloseModal}
       visible={modalVisible}
       footer={ModalFooter}>
-      <View style={styles.walletList}>
-        <CryptoWalletList
-          list={cryptoWallets}
-          selectedWalletId={selectedCryptoWalletId}
-          onPressItem={handleWalletSelection}
-        />
+      <View>
+        <CryptoWalletList onPressItem={handleWalletSelection} />
       </View>
     </AppModal>
   )
@@ -77,9 +65,6 @@ const WalletSelectorModal = ({
 export default WalletSelectorModal
 
 const styles = StyleSheet.create({
-  walletList: {
-    marginTop: 24,
-  },
   footerButton: {
     flexDirection: 'row',
     backgroundColor: PRIMARY_COLOR,

@@ -1,13 +1,12 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Container, Content, List } from 'native-base'
+import { Container } from 'native-base'
 import React, { useCallback, useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, View } from 'react-native'
 
 import PlusIcon from '~/assets/plus_icon.svg'
 import UnionIcon from '~/assets/union_icon.svg'
 import { CryptoWalletList } from '~/components/CryptoWallet'
-import LoadingView from '~/components/LoadingView'
 import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { BLACK_COLOR } from '~/constants/color'
 import {
@@ -20,15 +19,10 @@ import {
   ImportCryptoWalletData,
   LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWallets,
   useCryptoWalletsCount,
-  useCryptoWalletsStatus,
-  useSelectedCryptoWalletId,
 } from '~/features/cryptoWallet'
-import { useThemeAwareStyle } from '~/hooks'
 import { MainStackParams } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
-import { Theme } from '~/styles/types'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import { CreateWalletModal } from './CreateWalletModal'
@@ -41,10 +35,7 @@ type Props = {
 const ManageWallets = (props: Props) => {
   const { navigation } = props
 
-  const cryptoWallets = useCryptoWallets()
   const cryptoWalletCount = useCryptoWalletsCount()
-  const selectedCryptoWalletId = useSelectedCryptoWalletId()
-  const { processsing } = useCryptoWalletsStatus()
 
   const dispatch = useAppDispatch()
 
@@ -207,8 +198,6 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const styles = useThemeAwareStyle(createStyles)
-
   return (
     <Container>
       <NavigationHeader
@@ -218,47 +207,29 @@ const ManageWallets = (props: Props) => {
           action: navigationActionHandler,
         }}
       />
-      {processsing ? (
-        <LoadingView />
-      ) : (
-        <View style={{ flex: 1 }}>
-          <Content style={styles.content}>
-            <List>
-              <CryptoWalletList
-                list={cryptoWallets}
-                selectedWalletId={selectedCryptoWalletId}
-                onPressItem={handlePressWalletListItem}
-                showMoreIcon
-              />
-            </List>
-          </Content>
-          <CreateWalletModal
-            hideModal={() => setCreateWalletModalVisible(false)}
-            visible={createWalletModalVisible}
-            onCreateNewWallet={handleCreateWallet}
-          />
-          <ImportWalletModal
-            hideModal={() => setImportWalletModalVisible(false)}
-            visible={importWalletModalVisible}
-            onImportWallet={handleImportWallet}
-          />
-          <AddWatchedWalletModal
-            hideModal={() => setAddWatchedWalletModalVisible(false)}
-            visible={addWatchedWalletModalVisible}
-            onAddWatchedWallet={handleAddWatchedWallet}
-          />
-        </View>
-      )}
+      <View style={{ flex: 1 }}>
+        <CryptoWalletList
+          onPressItem={handlePressWalletListItem}
+          showMoreIcon
+        />
+        <CreateWalletModal
+          hideModal={() => setCreateWalletModalVisible(false)}
+          visible={createWalletModalVisible}
+          onCreateNewWallet={handleCreateWallet}
+        />
+        <ImportWalletModal
+          hideModal={() => setImportWalletModalVisible(false)}
+          visible={importWalletModalVisible}
+          onImportWallet={handleImportWallet}
+        />
+        <AddWatchedWalletModal
+          hideModal={() => setAddWatchedWalletModalVisible(false)}
+          visible={addWatchedWalletModalVisible}
+          onAddWatchedWallet={handleAddWatchedWallet}
+        />
+      </View>
     </Container>
   )
 }
-
-const createStyles = (theme: Theme) =>
-  StyleSheet.create({
-    content: {
-      backgroundColor: theme.color.snow,
-      paddingVertical: 25,
-    },
-  })
 
 export default ManageWallets

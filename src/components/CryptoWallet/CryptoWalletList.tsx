@@ -1,42 +1,74 @@
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import { SwipeListView } from 'react-native-swipe-list-view'
+import React, { ComponentProps, useCallback } from 'react'
+import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
-import { LegacyCryptoWallet } from '~/features/cryptoWallet'
+import { ListItemSeparator } from '~/components/Lists'
+import { Typography } from '~/components/Typography'
+import {
+  LegacyCryptoWallet,
+  useCryptoWallets,
+  useCryptoWalletsStatus,
+  useSelectedCryptoWalletId,
+} from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
 import { CryptoWalletListItem } from './CryptoWalletListItem'
 
-export type CryptoWalletListProps = {
-  list: LegacyCryptoWallet[]
-  selectedWalletId: string | null
+export type CryptoWalletListProps = Pick<
+  ComponentProps<typeof FlatList<LegacyCryptoWallet>>,
+  'style' | 'contentContainerStyle'
+> & {
   onPressItem?: (item: LegacyCryptoWallet) => void
   showMoreIcon?: boolean
 }
 
+const keyExtractor = (item: LegacyCryptoWallet) => {
+  return item.id
+}
+
 export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
-  const { list, onPressItem, showMoreIcon, selectedWalletId } = props
+  const { onPressItem, showMoreIcon, contentContainerStyle, ...listProps } =
+    props
+
+  const cryptoWallets = useCryptoWallets()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
+  const { processsing } = useCryptoWalletsStatus()
 
   const styles = useThemeAwareStyle(createStyles)
 
+  const renderItem: ListRenderItem<LegacyCryptoWallet> = useCallback(
+    ({ item: cryptoWallet }) => (
+      <CryptoWalletListItem
+        item={cryptoWallet}
+        onPress={onPressItem}
+        selected={selectedCryptoWalletId === cryptoWallet.id}
+        showMoreIcon={showMoreIcon}
+      />
+    ),
+    [onPressItem, selectedCryptoWalletId, showMoreIcon]
+  )
+
+  const hasData = cryptoWallets.length > 0
+
+  // TODO: Factorise List component
   return (
-    <SwipeListView
-      data={list}
-      style={styles.listView}
-      renderItem={(data) => (
-        <View
-          style={[
-            styles.listItemWrapper,
-            // TODO: Check why needs?
-            // data.item.other && styles.otherListItem,
-          ]}>
-          <CryptoWalletListItem
-            item={data.item}
-            onPress={onPressItem}
-            selected={selectedWalletId === data.item.id}
-            showMoreIcon={showMoreIcon}
-          />
+    <FlatList<LegacyCryptoWallet>
+      {...listProps}
+      data={cryptoWallets}
+      refreshing={processsing}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      alwaysBounceVertical={false}
+      contentContainerStyle={[
+        hasData ? styles.contentContainer : styles.emptyContentContainer,
+        contentContainerStyle,
+      ]}
+      ItemSeparatorComponent={ListItemSeparator}
+      ListEmptyComponent={() => (
+        <View style={styles.emptyMessageContainer}>
+          <Typography variant='h5SemiBold' style={styles.emptyMessage}>
+            No crypto wallets
+          </Typography>
         </View>
       )}
     />
@@ -45,11 +77,21 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    listView: {
-      borderTopWidth: 0.5,
-      borderTopColor: theme.color.separatorLight,
+    emptyContentContainer: {
+      flex: 1,
     },
-    listItemWrapper: {
-      backgroundColor: theme.color.background,
+    contentContainer: {
+      borderTopWidth: 1,
+      borderTopColor: theme.color.lightGrey,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.color.lightGrey,
+    },
+    emptyMessageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    emptyMessage: {
+      textAlign: 'center',
     },
   })
