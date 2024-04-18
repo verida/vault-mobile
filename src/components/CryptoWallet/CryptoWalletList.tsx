@@ -1,7 +1,6 @@
 import React, { ComponentProps, useCallback } from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
-import { ListItemSeparator } from '~/components/Lists'
 import { Typography } from '~/components/Typography'
 import {
   LegacyCryptoWallet,
@@ -38,14 +37,16 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
 
   const renderItem: ListRenderItem<LegacyCryptoWallet> = useCallback(
     ({ item: cryptoWallet }) => (
-      <CryptoWalletListItem
-        item={cryptoWallet}
-        onPress={onPressItem}
-        selected={selectedCryptoWalletId === cryptoWallet.id}
-        showMoreIcon={showMoreIcon}
-      />
+      <View style={styles.item}>
+        <CryptoWalletListItem
+          item={cryptoWallet}
+          onPress={onPressItem}
+          selected={selectedCryptoWalletId === cryptoWallet.id}
+          showMoreIcon={showMoreIcon}
+        />
+      </View>
     ),
-    [onPressItem, selectedCryptoWalletId, showMoreIcon]
+    [onPressItem, selectedCryptoWalletId, showMoreIcon, styles.item]
   )
 
   const hasData = cryptoWallets.length > 0
@@ -63,7 +64,6 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
         hasData ? styles.contentContainer : styles.emptyContentContainer,
         contentContainerStyle,
       ]}
-      ItemSeparatorComponent={ListItemSeparator}
       ListEmptyComponent={() => (
         <View style={styles.emptyMessageContainer}>
           <Typography variant='h5SemiBold' style={styles.emptyMessage}>
@@ -83,6 +83,8 @@ const createStyles = (theme: Theme) =>
     contentContainer: {
       borderTopWidth: 1,
       borderTopColor: theme.color.lightGrey,
+    },
+    item: {
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
     },

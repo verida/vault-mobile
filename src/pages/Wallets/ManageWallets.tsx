@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import { Alert, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import PlusIcon from '~/assets/plus_icon.svg'
 import UnionIcon from '~/assets/union_icon.svg'
@@ -198,6 +199,8 @@ const ManageWallets = (props: Props) => {
     )
   }
 
+  const { bottom } = useSafeAreaInsets()
+
   return (
     <Container>
       <NavigationHeader
@@ -211,6 +214,9 @@ const ManageWallets = (props: Props) => {
         <CryptoWalletList
           onPressItem={handlePressWalletListItem}
           showMoreIcon
+          contentContainerStyle={{
+            paddingBottom: bottom,
+          }}
         />
         <CreateWalletModal
           hideModal={() => setCreateWalletModalVisible(false)}
