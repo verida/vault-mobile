@@ -5,6 +5,7 @@ import { Icon } from '~/components/Icon'
 import { Checkmark } from '~/components/Indicators'
 import { Typography } from '~/components/Typography'
 import { useTheme } from '~/contexts/ThemeContext'
+import { getBlockchainNamespaceShortLabel } from '~/features/blockchain'
 import {
   getWalletTypeShortLabel,
   LegacyCryptoWallet,
@@ -41,6 +42,16 @@ export const CryptoWalletListItem: React.FC<CryptoWalletListItemProps> = (
     return getWalletTypeShortLabel('multi')
   }, [item])
 
+  const blockchainNamespaces = useMemo(() => {
+    const namespaces = item.accounts.map((account) => {
+      return account.namespace
+    })
+    const dedupNamespaces = Array.from(new Set(namespaces))
+    return dedupNamespaces.map((namespace) =>
+      getBlockchainNamespaceShortLabel(namespace)
+    )
+  }, [item])
+
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
 
@@ -52,18 +63,31 @@ export const CryptoWalletListItem: React.FC<CryptoWalletListItemProps> = (
             {item.readOnly ? <ReadOnlyCryptoWallet /> : null}
             <Typography
               variant='h5SemiBold'
+              style={styles.label}
               numberOfLines={1}
               ellipsizeMode='tail'>
               {item.label}
             </Typography>
           </View>
-          <Typography
-            variant='label'
-            style={styles.subText}
-            numberOfLines={1}
-            ellipsizeMode='middle'>
-            {subtext}
-          </Typography>
+          <View style={styles.infoContainer}>
+            {blockchainNamespaces.map((namespace) => (
+              <View key={namespace} style={styles.namespaceTag}>
+                <Typography
+                  variant='bodySemiBold'
+                  style={styles.namespaceTagText}>
+                  {namespace}
+                </Typography>
+              </View>
+            ))}
+
+            <Typography
+              variant='label'
+              style={styles.subText}
+              numberOfLines={1}
+              ellipsizeMode='middle'>
+              {subtext}
+            </Typography>
+          </View>
         </View>
         {selected ? (
           <View>
@@ -100,7 +124,27 @@ const createStyles = (theme: Theme) =>
       gap: theme.spacing.s,
       alignItems: 'center',
     },
+    label: {
+      flex: 1,
+    },
+    infoContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
+      alignItems: 'center',
+    },
     subText: {
-      color: theme.color.textLightGrey,
+      flex: 1,
+      color: theme.color.textGrey600,
+    },
+    namespaceTag: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.s,
+      paddingVertical: theme.spacing.xxs,
+      borderRadius: theme.roundness.xs,
+      backgroundColor: theme.color.grey120,
+    },
+    namespaceTagText: {
+      color: theme.color.textGrey500,
     },
   })
