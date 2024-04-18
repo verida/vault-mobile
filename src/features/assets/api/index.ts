@@ -10,9 +10,11 @@ const baseQuery = fetchBaseQuery({
 export const assetsApi = createApi({
   reducerPath: 'assetsApi',
   baseQuery: baseQuery,
+  refetchOnMountOrArgChange: 60 * 10, // 10 min
+  // TODO: We could increase the cache expiry and use a forced refetch in UI
+  refetchOnReconnect: true,
   endpoints: (build) => ({
     getNFTs: build.query({
-      keepUnusedDataFor: 10 * 60, // 10 mins
       query: (walletAddresses: string[]) =>
         `nfts/list?${walletAddresses
           .map((address) => `wallet[]=${address}`)
