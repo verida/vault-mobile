@@ -187,6 +187,12 @@ export class WalletManager {
     wallets: LegacyCryptoWallet[]
   }> {
     try {
+      // Get already cached selected crypto wallet id
+      const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
+        SELECTED_CRYPTO_WALLET_STORAGE_KEY
+      )
+      const selectedId = walletIdToSelect || cachedSelectedCryptoWalletId
+
       // Clearing the local storage, mostly to clean up the now unused data
       // The wallet used to be locally stored under the key CRYPTO_WALLETS_STORAGE_KEY
       // But it's now longer used, so we don't want to keep this orphan data around, especially as it contains sensitive info
@@ -211,12 +217,6 @@ export class WalletManager {
         validRecords,
         walletsDatastore
       )
-
-      const cachedSelectedCryptoWalletId = await SecureStore.getItemAsync(
-        SELECTED_CRYPTO_WALLET_STORAGE_KEY
-      )
-
-      const selectedId = walletIdToSelect || cachedSelectedCryptoWalletId
 
       const previouslySelectedWallet = selectedId
         ? wallets.find((wallet) => wallet.id === selectedId)
