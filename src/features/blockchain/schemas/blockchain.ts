@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { ChainIdSchema } from '~/features/caip'
+import { AssetIdSchema, ChainIdSchema } from '~/features/caip'
 
 import { BLOCKCHAIN_NAMESPACES } from '../constants'
 import { BaseAssetSchema } from './asset'
@@ -70,3 +70,37 @@ export const CustomBlockchainSchema = z.object({
   rpcUrls: BlockchainRpcUrlsSchema,
   blockExplorers: BlockchainExplorersSchema,
 })
+
+// ---- Blockchain object from Wallet Provider
+
+export const WalletProviderBlockchainSchema = z
+  .object({
+    asset: AssetIdSchema,
+    namespace: z.string(),
+    reference: z.string(),
+    name: z.string(),
+    label: z.string(),
+    chainName: z.string(),
+    isMainnet: z.boolean(),
+    explorerURL: UrlSchema,
+    rpcUrl: UrlSchema,
+    confirmations: z.number().int().positive(),
+    derivationPath: z.string(),
+    symbol: z.string(),
+    decimal: z.number().int().positive(),
+    icon: UrlSchema,
+    slip44Reference: z.string(),
+  })
+  .passthrough()
+
+export const WalletProviderChainListResponseSchema = z
+  .object({
+    status: z.string(),
+    data: z
+      .object({
+        mainnet: z.record(z.string(), WalletProviderBlockchainSchema),
+        testnet: z.record(z.string(), WalletProviderBlockchainSchema),
+      })
+      .passthrough(),
+  })
+  .passthrough()
