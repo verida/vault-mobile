@@ -1,4 +1,4 @@
-import { AssetId, ChainId } from 'caip'
+import { ChainId } from 'caip'
 import { z } from 'zod'
 
 import {
@@ -21,22 +21,16 @@ export type UseChainMetadataState = {
  * @deprecated use `Blockchain` instead
  */
 export interface LegacyBlockchain {
-  asset: AssetId
   chainId: string
   namespace: string
   reference: string
-  name: string
   label: string
-  chainName: string
   symbol: string
   explorerURL: string
-  confirmations: number
   isMainnet: boolean
   decimal: number
   icon: string
-  slip44Reference: string
   derivationPath: string
-  subcoinType: string
   rpcUrl: string
 }
 
