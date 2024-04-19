@@ -4,7 +4,7 @@ import { ZodError } from 'zod-validation-error'
 import {
   Blockchain,
   HACK__getFirstRpcUrl,
-  isSupportedCaipNamespace,
+  isSupportedBlockchainNamespace,
   LegacyBlockchainSchema,
   SupportedBlockchainNamespace,
 } from '~/features/blockchain'
@@ -32,7 +32,7 @@ export function useCreateChainMetadataFormFields({
 
   const [namespace, setNamespace] =
     React.useState<SupportedBlockchainNamespace>(
-      isSupportedCaipNamespace(maybeInitialNamespace)
+      isSupportedBlockchainNamespace(maybeInitialNamespace)
         ? maybeInitialNamespace
         : SupportedBlockchainNamespace.EIP_155
     )
@@ -88,7 +88,9 @@ export function useCreateChainMetadataFormFields({
       }
       const result = LegacyBlockchainSchema.safeParse(maybeChainMetadata)
 
-      if (!result.success) return { data: null, error: result.error }
+      if (!result.success) {
+        return { data: null, error: result.error }
+      }
 
       const { data } = result
 

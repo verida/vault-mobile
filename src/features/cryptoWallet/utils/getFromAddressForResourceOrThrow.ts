@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 
-import { isSupportedCaipNamespace } from '~/features/blockchain'
+import { isSupportedBlockchainNamespace } from '~/features/blockchain'
 
 import { AggregateWalletBannerBalance, CryptoWalletAccounts } from '../types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'
@@ -22,9 +22,13 @@ export function getMaybeFromAddressForResource({
     selectedMinifiedAccounts
   )
 
-  if (typeof fromAddress !== 'string' || !fromAddress.length) return undefined
+  if (typeof fromAddress !== 'string' || !fromAddress.length) {
+    return undefined
+  }
 
-  if (!isSupportedCaipNamespace(namespace)) return undefined
+  if (!isSupportedBlockchainNamespace(namespace)) {
+    return undefined
+  }
 
   return { fromAddress, namespace }
 }
@@ -41,10 +45,11 @@ export function getFromAddressForResourceOrThrow({
     selectedMinifiedAccounts,
   })
 
-  if (!maybeResult)
+  if (!maybeResult) {
     throw new Error(
       `Expected fromAddressForResource, encountered ${String(maybeResult)}.`
     )
+  }
 
   return maybeResult
 }

@@ -1,6 +1,7 @@
 import { AccountId, AssetId, ChainId } from 'caip'
 
-import { Blockchain, isSupportedCaipNamespace } from '~/features/blockchain'
+import { Blockchain } from '~/features/blockchain/types'
+import { isSupportedBlockchainNamespace } from '~/features/blockchain/utils'
 
 import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from '../constants'
 import {
@@ -39,7 +40,9 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
 
   const match = url.match(regex)
 
-  if (!match) throw new Error('Invalid crypto request')
+  if (!match) {
+    throw new Error('Invalid crypto request')
+  }
 
   // Not extracting the prefix yet as it's only 'pay' for the now
   const { namespace, address, chainId, functionName, params } = match.groups!
@@ -51,10 +54,13 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   // EIP-681 uses ethereum as namespace, but we use eip155 instead
   const chainNamespace = namespace === 'ethereum' ? 'eip155' : namespace
 
-  if (!isSupportedCaipNamespace(chainNamespace))
+  if (!isSupportedBlockchainNamespace(chainNamespace)) {
     throw new Error('Crypto request has unsupported blockchain namespace')
+  }
 
-  if (!address) throw new Error('Crypto request is missing the address')
+  if (!address) {
+    throw new Error('Crypto request is missing the address')
+  }
 
   // chainId can be omited for ethereum mainnet in EIP-681, it should be present in other cases
   const chainReference = chainId
@@ -63,8 +69,9 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
       ? '1'
       : undefined
 
-  if (!chainReference)
+  if (!chainReference) {
     throw new Error('Crypto request is missing the chain reference')
+  }
 
   const request: CryptoWalletRawRequest = {
     chainNamespace,
@@ -96,7 +103,9 @@ export function processCryptoRequest({
       e.reference === request.chainReference
   )
 
-  if (!maybeChainMetadata) throw new Error('Unknown blockchain network')
+  if (!maybeChainMetadata) {
+    throw new Error('Unknown blockchain network')
+  }
 
   const recipientAccount = new AccountId({
     chainId: chain,

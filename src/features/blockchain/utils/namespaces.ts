@@ -1,5 +1,19 @@
-import { BLOCKCHAIN_NAMESPACE_DEFINITIONS } from '../constants'
+import {
+  BLOCKCHAIN_NAMESPACE_DEFINITIONS,
+  BLOCKCHAIN_NAMESPACES,
+} from '../constants'
 import { BlockchainNamespace } from '../types'
+import { SupportedBlockchainNamespace } from '../types/enums'
+
+export function isSupportedBlockchainNamespace(
+  blockchainNamespace: string | undefined
+): blockchainNamespace is SupportedBlockchainNamespace {
+  if (!blockchainNamespace) {
+    return false
+  }
+
+  return BLOCKCHAIN_NAMESPACES.includes(blockchainNamespace as any)
+}
 
 export function getBlockchainNamespaceShortLabel(
   namespace: BlockchainNamespace

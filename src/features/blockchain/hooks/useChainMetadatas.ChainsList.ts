@@ -10,7 +10,7 @@ import {
   LegacyBlockchain,
   UseChainMetadataState,
 } from '../types'
-import { isSupportedCaipNamespace } from '../utils'
+import { isSupportedBlockchainNamespace } from '../utils'
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,
@@ -21,7 +21,9 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 }): Blockchain | undefined => {
   const { namespace, reference } = caipChainId
 
-  if (!isSupportedCaipNamespace(namespace)) return undefined
+  if (!isSupportedBlockchainNamespace(namespace)) {
+    return undefined
+  }
 
   const {
     rpcUrl,
@@ -71,7 +73,9 @@ export function getMaybeChainMetadatas(
 export function getMaybeChainMetadatasError(
   state: UseChainMetadataState
 ): Error | undefined {
-  if (!('error' in state)) return undefined
+  if (!('error' in state)) {
+    return undefined
+  }
 
   return state.error
 }
@@ -85,21 +89,25 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
   } = useGetBlockchainNetworksQuery(DEFAULT_CHAIN_LIST_QUERY)
 
   return React.useMemo<UseChainMetadataState>(() => {
-    if (isLoadingChainsList) return { loading: true }
+    if (isLoadingChainsList) {
+      return { loading: true }
+    }
 
-    if (cause)
+    if (cause) {
       return {
         loading: false,
         error: new Error('Failed to fetch ChainsList.', { cause }),
       }
+    }
 
-    if (!data || !Object.keys(data).length)
+    if (!data || !Object.keys(data).length) {
       return {
         loading: false,
         error: new Error(
           `The walletsApi has not returned any BlockchainNetworks.`
         ),
       }
+    }
 
     const result: Blockchain[] = Object.entries(data)
       .map(
@@ -108,7 +116,9 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
 
           const { namespace } = caipChainId
 
-          if (!isSupportedCaipNamespace(namespace)) return undefined
+          if (!isSupportedBlockchainNamespace(namespace)) {
+            return undefined
+          }
 
           const maybeChainMetadata = maybeBlockchainNetworkEntryToChainMetadata(
             {
@@ -117,7 +127,9 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
             }
           )
 
-          if (!maybeChainMetadata) return undefined
+          if (!maybeChainMetadata) {
+            return undefined
+          }
 
           return maybeChainMetadata
         }

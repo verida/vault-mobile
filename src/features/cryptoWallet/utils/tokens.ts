@@ -2,7 +2,7 @@ import { AssetId, AssetIdParams, ChainId } from 'caip'
 import { BigNumberish, utils } from 'ethers'
 
 import {
-  isSupportedCaipNamespace,
+  isSupportedBlockchainNamespace,
   LegacyBlockchain,
 } from '~/features/blockchain'
 
@@ -18,7 +18,9 @@ export const getTruncatedWalletAddress = (
 }
 
 export const getTokenAddress = (address: AssetId) => {
-  if (isNativeToken(address)) return 'slip44'
+  if (isNativeToken(address)) {
+    return 'slip44'
+  }
 
   return address.assetName.reference
 }
@@ -27,17 +29,23 @@ export const getWalletAddressForChainId = (
   chainId: ChainId | null | undefined,
   cryptoWalletAccounts: CryptoWalletAccounts
 ) => {
-  if (!chainId) return undefined
+  if (!chainId) {
+    return undefined
+  }
 
   const { namespace } = chainId
 
-  if (!isSupportedCaipNamespace(namespace)) return undefined
+  if (!isSupportedBlockchainNamespace(namespace)) {
+    return undefined
+  }
 
   const matchingAccount = cryptoWalletAccounts.find(
     (e) => e.namespace === namespace
   )
 
-  if (!matchingAccount) return undefined
+  if (!matchingAccount) {
+    return undefined
+  }
 
   const { address } = matchingAccount
 
@@ -48,7 +56,9 @@ export const getWalletAddressForAsset = (
   asset: AssetId | null | undefined,
   cryptoWalletAccounts: CryptoWalletAccounts
 ) => {
-  if (!asset) return undefined
+  if (!asset) {
+    return undefined
+  }
 
   return getWalletAddressForChainId(asset.chainId, cryptoWalletAccounts)
 }
@@ -57,7 +67,9 @@ export const handleTokenDecimals = (
   quantity: number,
   decimalPlaces: number
 ): number | undefined => {
-  if (!quantity) return undefined
+  if (!quantity) {
+    return undefined
+  }
 
   return quantity / Math.pow(10, decimalPlaces)
 }
@@ -69,7 +81,9 @@ export const formatTokenQuantity = (
 ) => {
   const finalQuantity = handleTokenDecimals(quantity, decimalPlaces)
 
-  if (!finalQuantity) return '-'
+  if (!finalQuantity) {
+    return '-'
+  }
 
   return finalQuantity.toFixed(fixed)
 }
@@ -91,10 +105,13 @@ export const getSupportedTokenObjectDecimals = (
   supportedTokenObject: SupportedTokenObject | undefined,
   blockchainNetwork: LegacyBlockchain | undefined
 ): number => {
-  if (supportedTokenObject && 'decimal' in supportedTokenObject)
+  if (supportedTokenObject && 'decimal' in supportedTokenObject) {
     return supportedTokenObject.decimal
+  }
 
-  if (blockchainNetwork) return blockchainNetwork.decimal
+  if (blockchainNetwork) {
+    return blockchainNetwork.decimal
+  }
 
   // TODO: Refactor logic around decimals. I'm using the EVM default of 18 here
   //       as the common case, but this may be invalid.

@@ -9,7 +9,7 @@ import {
   SupportedBlockchainNamespace,
 } from '~/features/blockchain/types' // HACK: Have to use `.../types` path to make the unit tests work, other wise they fail with importing stuff not required for the tests.
 // It's either something to fix in the tests or it's a barrel file problem, should we challenge using them?
-import { isSupportedCaipNamespace } from '~/features/blockchain/utils'
+import { isSupportedBlockchainNamespace } from '~/features/blockchain/utils'
 
 // WalletConnect proposals may optionally define rpcUrls for the connecting
 // DApp, which may be used if the DApp has never encountered the chain before.
@@ -23,7 +23,9 @@ const extractMaybeRpcForCurrentlyUnsupportedChainIdFromProposal = ({
   const maybeRequiredNamespace =
     proposal?.params?.requiredNamespaces?.[namespace]
 
-  if (!maybeRequiredNamespace) return undefined
+  if (!maybeRequiredNamespace) {
+    return undefined
+  }
 
   const maybeRpcMap =
     'rpcMap' in maybeRequiredNamespace
@@ -31,13 +33,17 @@ const extractMaybeRpcForCurrentlyUnsupportedChainIdFromProposal = ({
       : undefined
 
   // TODO: where do we replace infura id?????? make runtime DO NOT save in config
-  if (!maybeRpcMap || typeof maybeRpcMap !== 'object') return undefined
+  if (!maybeRpcMap || typeof maybeRpcMap !== 'object') {
+    return undefined
+  }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const maybeRpc = maybeRpcMap?.[reference]
 
-  if (typeof maybeRpc !== 'string' || !maybeRpc.length) return undefined
+  if (typeof maybeRpc !== 'string' || !maybeRpc.length) {
+    return undefined
+  }
 
   return maybeRpc
 }
@@ -52,7 +58,9 @@ export const getMaybeChainsListItemByChainsListByChainId = ({
   const { namespace } = chainId
 
   // The ChainsList only defines EVM-compatible chains.
-  if (namespace !== SupportedBlockchainNamespace.EIP_155) return undefined
+  if (namespace !== SupportedBlockchainNamespace.EIP_155) {
+    return undefined
+  }
 
   const { reference } = chainId
 
@@ -71,7 +79,9 @@ const getMaybeRpcsUsingChainsList = ({
     forChainId,
   })
 
-  if (!maybeChainsListItem) return []
+  if (!maybeChainsListItem) {
+    return []
+  }
 
   const { rpc } = maybeChainsListItem
 
@@ -99,10 +109,11 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
     ),
   ]
 
-  if (uniqueChainIds.length !== currentlyUnsupportedChainIds.length)
+  if (uniqueChainIds.length !== currentlyUnsupportedChainIds.length) {
     throw new Error(
       'Was passed a non-unique list of currentlyUnsupportedChainIds, which is not permitted.'
     )
+  }
 
   return uniqueChainIds.flatMap(
     (currentlyUnsupportedChainId: string): Blockchain[] => {
@@ -111,7 +122,9 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
       const { namespace, reference } = chainId
 
       // Do not permit unsupported namespaces.
-      if (!isSupportedCaipNamespace(namespace)) return []
+      if (!isSupportedBlockchainNamespace(namespace)) {
+        return []
+      }
 
       const maybeRpc =
         extractMaybeRpcForCurrentlyUnsupportedChainIdFromProposal({
@@ -124,7 +137,9 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
         forChainId: chainId,
       })
 
-      if (!maybeRpc && !maybeRpcFromChainsList.length) return []
+      if (!maybeRpc && !maybeRpcFromChainsList.length) {
+        return []
+      }
 
       // TODO: use an array instead
 
@@ -132,14 +147,18 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
         maybeRpc ? [maybeRpc] : maybeRpcFromChainsList
       )
 
-      if (!maybeRpcUrls.success) return []
+      if (!maybeRpcUrls.success) {
+        return []
+      }
 
       const maybeChainsListItem = getMaybeChainsListItemByChainsListByChainId({
         forChainId: chainId,
         chainsList,
       })
 
-      if (!maybeChainsListItem) return []
+      if (!maybeChainsListItem) {
+        return []
+      }
 
       const { nativeCurrency, name, explorers } = maybeChainsListItem
       const { decimals, symbol, name: nativeCurrencyName } = nativeCurrency

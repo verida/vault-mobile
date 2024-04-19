@@ -1,6 +1,6 @@
 import {
   Blockchain,
-  isSupportedCaipNamespace,
+  isSupportedBlockchainNamespace,
   SupportedBlockchainNamespace,
 } from 'features/blockchain'
 import { useThemeAwareStyle } from 'hooks'
@@ -24,7 +24,7 @@ export const ChainMetadataListItemTag = React.memo(
   }): JSX.Element {
     const styles = useThemeAwareStyle(createStyles)
 
-    const children = isSupportedCaipNamespace(namespace)
+    const children = isSupportedBlockchainNamespace(namespace)
       ? TAG_CHILDREN[namespace]
       : 'Unknown'
 

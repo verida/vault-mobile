@@ -8,7 +8,7 @@ import { Logger } from '~/features/telemetry'
 
 import { WalletProviderChainListResponseSchema } from '../schemas'
 import { LegacyBlockchain } from '../types'
-import { isSupportedCaipNamespace } from '../utils'
+import { isSupportedBlockchainNamespace } from '../utils'
 
 const logger = Logger.create('Blockchains')
 
@@ -44,7 +44,7 @@ export const blockchainApi = createApi({
           }
 
           Object.values(blockchainEntries).forEach((entry) => {
-            if (!isSupportedCaipNamespace(entry.namespace)) {
+            if (!isSupportedBlockchainNamespace(entry.namespace)) {
               return
             }
 

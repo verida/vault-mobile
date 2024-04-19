@@ -2,13 +2,15 @@ import { ChainId } from 'caip'
 
 import { Blockchain } from '../types'
 import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'
-import { isSupportedCaipNamespace } from './isSupportedCaipNamespace'
+import { isSupportedBlockchainNamespace } from './namespaces'
 
 export const getMaybeChainMetadataByCaipChainId = (
   chainMetadatas: Blockchain[],
   caipChainId: ChainId | undefined
 ): Blockchain | undefined => {
-  if (!caipChainId) return undefined
+  if (!caipChainId) {
+    return undefined
+  }
 
   // TODO: It is possible for ChainMetadatas can contain duplicate
   //       configuration settings for the same chainId. Ideally, a user
@@ -23,10 +25,11 @@ export const getMaybeChainMetadataByCaipChainId = (
 
   if (
     !maybeChainMetadata ||
-    !isSupportedCaipNamespace(namespace) ||
+    !isSupportedBlockchainNamespace(namespace) ||
     !isChainMetadataMatchingNamespace(maybeChainMetadata, namespace)
-  )
+  ) {
     return undefined
+  }
 
   return maybeChainMetadata
 }

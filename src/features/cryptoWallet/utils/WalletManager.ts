@@ -5,7 +5,7 @@ import {
   BlockchainNamespace,
   getBlockchainNetworks,
   IBlockchain,
-  isSupportedCaipNamespace,
+  isSupportedBlockchainNamespace,
   LegacyBlockchain,
   WalletUtilsWallet,
 } from '~/features/blockchain'
@@ -297,7 +297,7 @@ export class WalletManager {
     // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
     const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
 
-    if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
+    if (walletType !== 'multi' && !isSupportedBlockchainNamespace(walletType)) {
       logger.warn(`Blockchain namespace not supported: "${walletType}"`)
       return accounts
     }

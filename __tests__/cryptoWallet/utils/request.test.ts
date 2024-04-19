@@ -2,12 +2,12 @@
 import 'jest'
 
 import { BLOCKCHAIN_NAMESPACES } from '~/features/blockchain/constants'
-import { isSupportedCaipNamespace } from '~/features/blockchain/utils/isSupportedCaipNamespace'
+import { isSupportedBlockchainNamespace } from '~/features/blockchain/utils/namespaces'
 
 // Required as request.ts imports a simple constants from features/blockchain but the whole internal module is loaded even though it's unnecessary for these unit tests
 jest.mock('features/blockchain', () => ({
   BLOCKCHAIN_NAMESPACES,
-  isSupportedCaipNamespace,
+  isSupportedCaipNamespace: isSupportedBlockchainNamespace,
 }))
 
 import { CryptoWalletRawRequest } from 'features/cryptoWallet'
