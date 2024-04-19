@@ -1,42 +1,15 @@
 import { IDatastore } from '@verida/types'
 import { ChainId } from 'caip'
 
-import AccountManager from '~/api/AccountManager'
-import { createAppAsyncThunk } from '~/reduxStore/types'
+import { ChainMetadata, CustomBlockchain } from '../types'
+import { chainMetadataToMaybeCustomBlockchainNetwork } from './chainMetadataToMaybeCustomBlockchainNetwork'
+import { customBlockchainNetworkToMaybeChainMetadata } from './customBlockchainNetworkToMaybeChainMetadata'
 
-import {
-  BLOCKCHAIN_SLICE_NAME,
-  CUSTOM_BLOCKCHAIN_SCHEMA_URL,
-} from '../constants'
-import { ChainMetadata, CustomBlockchainNetwork } from '../types'
-import {
-  chainMetadataToMaybeCustomBlockchainNetwork,
-  customBlockchainNetworkToMaybeChainMetadata,
-} from '../utils'
-
-type AddCustomNetworkParams = {
-  readonly addCustomNetworkParams: readonly ChainMetadata[]
-  readonly reset?: boolean
-}
-
-const getCustomNetworkDatastore = (): Promise<IDatastore> => {
-  const vault = AccountManager.getInstance().context
-
-  if (!vault) throw new Error('Unable to allocate vault for custom networks.')
-
-  return vault.openDatastore(CUSTOM_BLOCKCHAIN_SCHEMA_URL)
-}
-
-const loadAllCustomNetworksFromDatastore = async ({
-  datastore,
-}: {
-  readonly datastore: IDatastore
-}): Promise<ChainMetadata[]> => {
+export async function loadAllCustomNetworksFromDatastore(
+  datastore: IDatastore
+): Promise<ChainMetadata[]> {
   // Read *all* the custom networks configurations back.
-  const [...results] = await datastore.getMany<CustomBlockchainNetwork>(
-    {},
-    undefined
-  )
+  const [...results] = await datastore.getMany<CustomBlockchain>({}, undefined)
 
   // Parse into correctly-formatted chains.
   return results.flatMap((result): ChainMetadata[] => {
@@ -55,24 +28,22 @@ const loadAllCustomNetworksFromDatastore = async ({
   })
 }
 
-const batchModifyCustomNetworks = async ({
+export async function batchModifyCustomNetworks({
   reset = false,
   networksToAdd,
   chainIdsToRemove,
+  datastore,
 }: {
   readonly networksToAdd: readonly ChainMetadata[]
   readonly chainIdsToRemove: readonly ChainId[]
   readonly reset?: boolean
-}) => {
-  const datastore = await getCustomNetworkDatastore()
-
+  datastore: IDatastore
+}) {
   // Conditionally reset the datastore, useful for development.
   if (reset) await datastore.deleteAll()
 
   // Get the existing networks.
-  const existingNetworks = await loadAllCustomNetworksFromDatastore({
-    datastore,
-  })
+  const existingNetworks = await loadAllCustomNetworksFromDatastore(datastore)
 
   // Compute the next networks. Notice the priority: networks
   // to add take higher order of precedence when it comes to
@@ -131,47 +102,5 @@ const batchModifyCustomNetworks = async ({
   )
 
   // Finally, read all of the chains back for persistence.
-  return loadAllCustomNetworksFromDatastore({
-    datastore,
-  })
+  return loadAllCustomNetworksFromDatastore(datastore)
 }
-
-export const addCustomNetwork = createAppAsyncThunk(
-  `${BLOCKCHAIN_SLICE_NAME}/addCustomNetwork`,
-  async (
-    { addCustomNetworkParams, reset = false }: AddCustomNetworkParams,
-    { rejectWithValue }
-  ) => {
-    try {
-      const result = await batchModifyCustomNetworks({
-        networksToAdd: addCustomNetworkParams,
-        chainIdsToRemove: [],
-        reset,
-      })
-
-      return result
-    } catch (error) {
-      return rejectWithValue(`Failed to add custom network. ${String(error)}`)
-    }
-  }
-)
-
-type RemoveCustomNetworkParams = {
-  readonly chainIds: readonly ChainId[]
-}
-
-export const removeCustomNetwork = createAppAsyncThunk(
-  `${BLOCKCHAIN_SLICE_NAME}/removeCustomNetwork`,
-  async ({ chainIds }: RemoveCustomNetworkParams, { rejectWithValue }) => {
-    try {
-      return batchModifyCustomNetworks({
-        networksToAdd: [],
-        chainIdsToRemove: chainIds,
-      })
-    } catch (error) {
-      return rejectWithValue(
-        `Failed to remove custom network. ${String(error)}`
-      )
-    }
-  }
-)

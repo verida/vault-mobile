@@ -1,21 +1,22 @@
 import { ChainId } from 'caip'
 import * as React from 'react'
-import { useDispatch, useStore } from 'react-redux'
 
-import { RootState, useAppSelector } from '~/reduxStore/types'
+import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
 
-import { BLOCKCHAIN_SLICE_NAME } from '../constants'
-import { addCustomNetwork, removeCustomNetwork } from '../redux'
-import { ChainMetadata, ChainMetadatas, UseChainMetadataState } from '../types'
+import {
+  addCustomBlockchains,
+  getCustomBlockchains,
+  getCustomBlockchainsStatus,
+  removeCustomBlockchains,
+} from '../redux'
+import { ChainMetadata, UseChainMetadataState } from '../types'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
-  readonly addCustomNetworks: (
-    addCustomNetworkParams: readonly ChainMetadata[]
-  ) => Promise<ChainMetadatas>
+  // TODO: Rename to addCustomBlockchains
+  readonly addCustomNetworks: (blockchains: readonly ChainMetadata[]) => void
 
-  readonly removeCustomNetworks: (
-    addCustomNetworkParams: readonly ChainId[]
-  ) => Promise<ChainMetadatas>
+  // TODO: Rename to removeCustomBlockchains
+  readonly removeCustomNetworks: (chainIds: readonly ChainId[]) => void
 }
 
 /**
@@ -24,43 +25,34 @@ type UseChainMetadatasCustomResult = UseChainMetadataState & {
  * as a user's home node, a test environment, or a new blockchain.
  */
 // TODO: This schema is **NOT** final - it is just a proof of concept.
+// TODO: Rename to useCustomBlockchains
 export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
-  const dispatch = useDispatch()
-  const { getState } = useStore<RootState>()
+  const dispatch = useAppDispatch()
 
   const addCustomNetworks = React.useCallback(
     // TODO: This type is very specific to the wallet_addEthereumWallet flow. We
     //       can generalize later on.
-    async (addCustomNetworkParams: readonly ChainMetadata[]) => {
-      await dispatch(addCustomNetwork({ addCustomNetworkParams }))
-
-      // HACK: Although we can receive the result from the call to `dispatch()` above,
-      //       the returned types are unsatisfactory, so we request them explicitly
-      //       here.
-      const { result } = getState()[BLOCKCHAIN_SLICE_NAME].customNetworks
-
-      return result
+    (blockchains: readonly ChainMetadata[]) => {
+      dispatch(addCustomBlockchains({ blockchains }))
     },
-    [dispatch, getState]
+    [dispatch]
   )
 
   const removeCustomNetworks = React.useCallback(
-    async (chainIds: readonly ChainId[]) => {
-      await dispatch(removeCustomNetwork({ chainIds }))
-
-      // HACK: Although we can receive the result from the call to `dispatch()` above,
-      //       the returned types are unsatisfactory, so we request them explicitly
-      //       here.
-      const { result } = getState()[BLOCKCHAIN_SLICE_NAME].customNetworks
-
-      return result
+    (chainIds: readonly ChainId[]) => {
+      dispatch(removeCustomBlockchains({ chainIds }))
     },
-    [dispatch, getState]
+    [dispatch]
   )
 
-  const { result, loading, error } = useAppSelector(
-    (state) => state[BLOCKCHAIN_SLICE_NAME].customNetworks
-  )
+  const customBlockchains = useAppSelector(getCustomBlockchains)
+  const status = useAppSelector(getCustomBlockchainsStatus)
 
-  return { addCustomNetworks, removeCustomNetworks, result, loading, error }
+  return {
+    addCustomNetworks,
+    removeCustomNetworks,
+    result: customBlockchains,
+    loading: status.processing,
+    error: status.error,
+  }
 }

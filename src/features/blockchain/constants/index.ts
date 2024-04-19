@@ -1,5 +1,3 @@
-export const BLOCKCHAIN_SLICE_NAME = 'blockchain'
-
 // Keep BLOCKCHAIN_NAMESPACES and BLOCKCHAIN_NAMESPACE_DEFINITIONS in sync
 export const BLOCKCHAIN_NAMESPACES = ['eip155', 'near'] as const
 export const BLOCKCHAIN_NAMESPACE_DEFINITIONS = {

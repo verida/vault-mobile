@@ -92,7 +92,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
     if (!shouldDelete) return
 
-    await removeCustomNetworks([maybeChainIdToDelete])
+    removeCustomNetworks([maybeChainIdToDelete])
 
     return navigation.goBack()
   }, [isEditable, maybeChainIdToDelete, removeCustomNetworks, navigation])
@@ -147,7 +147,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
       // HACK: Adding a custom network will implicitly overwrite
       //       duplicate fields.
-      await addCustomNetworks([data])
+      addCustomNetworks([data])
 
       return navigation.goBack()
     } catch (e) {

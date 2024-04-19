@@ -5,7 +5,7 @@ import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
 
 import { useChainMetadatasCustom } from '../../hooks'
-import { ChainMetadatas, SupportedBlockchainNamespace } from '../../types'
+import { ChainMetadata, SupportedBlockchainNamespace } from '../../types'
 import {
   AddEthereumChainRequestParams,
   BlockchainRequestHandlersEip155,
@@ -29,7 +29,7 @@ const adjustTransactionData = async ({
 
 const addEthereumChainRequestParamsToChainMetadatas = (
   params: AddEthereumChainRequestParams
-): ChainMetadatas =>
+): ChainMetadata[] =>
   params.flatMap(
     ({
       rpcUrls /* nonempty */,
@@ -38,7 +38,7 @@ const addEthereumChainRequestParamsToChainMetadatas = (
       nativeCurrency: { name: nativeCurrencyName, decimals, symbol },
       icon: maybeIcon,
       blockExplorerUrls,
-    }): ChainMetadatas => [
+    }): ChainMetadata[] => [
       {
         reference: String(parseInt(chainId, 16)),
         namespace: SupportedBlockchainNamespace.EIP_155,

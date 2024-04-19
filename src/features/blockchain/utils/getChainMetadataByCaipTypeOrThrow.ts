@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadata, ChainMetadatas } from '../types'
+import { ChainMetadata } from '../types'
 import { getMaybeChainMetadataByCaipChainId } from './getMaybeChainMetadataByCaipChainId'
 
 export const getChainMetadataByCaipTypeOrThrow = (
-  chainMetadatas: ChainMetadatas,
+  chainMetadatas: ChainMetadata[],
   chainId: ChainId
 ): ChainMetadata => {
   const maybeChainMetadata = getMaybeChainMetadataByCaipChainId(

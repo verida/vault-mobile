@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 import { connect, keyStores } from 'near-api-js'
 
-import { ChainMetadatas } from '../../types'
+import { ChainMetadata } from '../../types'
 import { getNearNetworkConfig } from '../constants'
 
 export async function nearCreateConnection({
@@ -11,7 +11,7 @@ export async function nearCreateConnection({
 }: {
   readonly keystore: keyStores.KeyStore
   readonly caipChainId: ChainId
-  readonly chainMetadatas: ChainMetadatas
+  readonly chainMetadatas: ChainMetadata[]
 }) {
   return await connect(
     await getNearNetworkConfig({

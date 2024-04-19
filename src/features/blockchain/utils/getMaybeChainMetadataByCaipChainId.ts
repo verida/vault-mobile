@@ -1,11 +1,11 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadata, ChainMetadatas } from '../types'
+import { ChainMetadata } from '../types'
 import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'
 import { isSupportedCaipNamespace } from './isSupportedCaipNamespace'
 
 export const getMaybeChainMetadataByCaipChainId = (
-  chainMetadatas: ChainMetadatas,
+  chainMetadatas: ChainMetadata[],
   caipChainId: ChainId | undefined
 ): ChainMetadata | undefined => {
   if (!caipChainId) return undefined

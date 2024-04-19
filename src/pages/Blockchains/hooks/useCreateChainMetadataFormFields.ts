@@ -3,9 +3,9 @@ import { ZodError } from 'zod-validation-error'
 
 import {
   ChainMetadata,
-  ChainMetadataSchema,
   HACK__getFirstRpcUrl,
   isSupportedCaipNamespace,
+  LegacyBlockchainSchema,
   SupportedBlockchainNamespace,
 } from '~/features/blockchain'
 
@@ -86,7 +86,7 @@ export function useCreateChainMetadataFormFields({
         blockExplorers,
         isMainnet,
       }
-      const result = ChainMetadataSchema.safeParse(maybeChainMetadata)
+      const result = LegacyBlockchainSchema.safeParse(maybeChainMetadata)
 
       if (!result.success) return { data: null, error: result.error }
 

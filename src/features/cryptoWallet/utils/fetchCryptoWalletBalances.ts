@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 
 import {
-  ChainMetadatas,
+  ChainMetadata,
   getBalanceEip155,
   getBalanceNear,
   getRpcUrlOrThrow,
@@ -14,7 +14,7 @@ export async function fetchCryptoWalletBalances({
   chainMetadatas,
   minifiedAccounts,
 }: {
-  readonly chainMetadatas: ChainMetadatas
+  readonly chainMetadatas: ChainMetadata[]
   readonly minifiedAccounts: CryptoWalletAccounts
 }): Promise<CryptoWalletBalances> {
   const eip155Addresses = [

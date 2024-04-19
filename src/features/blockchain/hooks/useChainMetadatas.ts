@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { ChainMetadatas, UseChainMetadataState } from '../types'
+import { ChainMetadata, UseChainMetadataState } from '../types'
 import {
   getMaybeChainMetadatas,
   getMaybeChainMetadatasError,
@@ -36,7 +36,7 @@ export function useChainMetadatas(): UseChainMetadataState {
     const customResult = resultCustom || []
     const regionalResult = resultRegional || []
 
-    const result: ChainMetadatas = [
+    const result: ChainMetadata[] = [
       ...chainsResult,
       ...regionalResult,
       ...customResult,

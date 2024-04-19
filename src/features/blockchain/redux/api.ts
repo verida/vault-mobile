@@ -1,10 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ChainId } from 'caip'
 import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
-
-import { RootState } from 'reduxStore/types'
 
 import { BlockchainNetwork } from '../types'
 
@@ -56,18 +53,3 @@ export const getBlockchainNetworks = createSelector(
   blockchainApi.endpoints.getBlockchainNetworks.select({}),
   (data) => data.data || {}
 )
-
-export const getMaybeBlockchainNetwork = (
-  state: RootState,
-  chainIdObj: ChainId | null | undefined
-): BlockchainNetwork | undefined => {
-  if (!chainIdObj) return undefined
-
-  const networks = getBlockchainNetworks(state)
-
-  return networks?.[new ChainId(chainIdObj).toString()]
-}
-
-export const getBlockchainNetworkLabel = (
-  network: BlockchainNetwork | undefined
-) => `${network?.label || 'Unknown Network'}`

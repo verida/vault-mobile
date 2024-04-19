@@ -1,59 +1,19 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import { z } from 'zod'
 
-import { SupportedBlockchainNamespace } from './enums'
+import {
+  BlockchainExplorerSchema,
+  CustomBlockchainSchema,
+  LegacyBlockchainSchema,
+} from '../schemas'
 
-export const ChainMetadataBlockExplorerUrl = z.string().url()
+export type BlockchainExplorer = z.infer<typeof BlockchainExplorerSchema>
 
-export const ChainMetadataBlockExplorer = z.object({
-  name: z.string().or(z.null()).optional(),
-  url: ChainMetadataBlockExplorerUrl,
-  standard: z.string().or(z.null()).optional(),
-})
-
-export type ChainMetadataBlockExplorer = z.infer<
-  typeof ChainMetadataBlockExplorer
->
-
-export const ChainMetadataBlockExplorers = z.array(ChainMetadataBlockExplorer)
-
-export type ChainMetadataBlockExplorers = z.infer<
-  typeof ChainMetadataBlockExplorers
->
-
-export const ChainMetadataRpc = z.string().url()
-
-export type ChainMetadataRpc = z.infer<typeof ChainMetadataRpc>
-
-export const ChainMetadataRpcs = z.array(ChainMetadataRpc).nonempty()
-
-export type ChainMetadataRpcs = z.infer<typeof ChainMetadataRpcs>
-
-export const ChainMetadataSchema = z
-  .object({
-    name: z.string().nonempty(),
-    rpcUrls: ChainMetadataRpcs,
-    namespace: z.nativeEnum(SupportedBlockchainNamespace),
-    reference: z.string().nonempty(),
-    decimals: z.number().positive(),
-    isMainnet: z.boolean().or(z.null()),
-    nativeCurrencyName: z.string().nonempty(),
-    symbol: z.string().nonempty(),
-    icon: z.string().url().or(z.null()),
-    blockExplorers: ChainMetadataBlockExplorers,
-  })
-  .passthrough()
-
-export type ChainMetadata = z.infer<typeof ChainMetadataSchema>
-
-// A list of ChainMetadata. Note - this may contain duplicate configuration settings,
-// for example, a custom Ethereum Mainnet configuration and the default Ethereum Mainnet
-// configuration.
-export type ChainMetadatas = readonly ChainMetadata[]
+export type ChainMetadata = z.infer<typeof LegacyBlockchainSchema>
 
 export type UseChainMetadataState = {
   readonly loading: boolean
-  readonly result?: ChainMetadatas
+  readonly result?: ChainMetadata[]
   readonly error?: Error
 }
 
@@ -94,4 +54,17 @@ export interface IBlockchain {
   ): WalletUtilsWallet
 
   buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet
+}
+
+// ------ Custom blockchain
+
+export type CustomBlockchain = z.infer<typeof CustomBlockchainSchema>
+
+export type AddCustomBlockchainsParams = {
+  readonly blockchains: readonly ChainMetadata[]
+  readonly reset?: boolean
+}
+
+export type RemoveCustomBlockchainsParams = {
+  readonly chainIds: readonly ChainId[]
 }

@@ -3,12 +3,11 @@ import { config } from 'config'
 import * as React from 'react'
 
 import { useGetBlockchainNetworksQuery } from '../redux'
+import { BlockchainExplorerUrlSchema } from '../schemas'
 import {
+  BlockchainExplorer,
   BlockchainNetwork,
   ChainMetadata,
-  ChainMetadataBlockExplorers,
-  ChainMetadataBlockExplorerUrl,
-  ChainMetadatas,
   UseChainMetadataState,
 } from '../types'
 import { isSupportedCaipNamespace } from '../utils'
@@ -37,9 +36,9 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.blockchain.infuraApiKey)
 
   const explorerURLResult =
-    ChainMetadataBlockExplorerUrl.safeParse(maybeExplorerUrl)
+    BlockchainExplorerUrlSchema.safeParse(maybeExplorerUrl)
 
-  const blockExplorers: ChainMetadataBlockExplorers = explorerURLResult.success
+  const blockExplorers: BlockchainExplorer[] = explorerURLResult.success
     ? [{ url: explorerURLResult.data }]
     : []
 
@@ -57,14 +56,14 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   }
 }
 
-const DEFAULT_RESULT: ChainMetadatas = Object.freeze([])
-
 const DEFAULT_CHAIN_LIST_QUERY = Object.freeze({})
 
 export function getMaybeChainMetadatas(
   state: UseChainMetadataState
-): ChainMetadatas {
-  if (!('result' in state) || !state.result) return DEFAULT_RESULT
+): ChainMetadata[] {
+  if (!('result' in state) || !state.result) {
+    return []
+  }
 
   return state.result
 }
@@ -102,7 +101,7 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
         ),
       }
 
-    const result: ChainMetadatas = Object.entries(data)
+    const result: ChainMetadata[] = Object.entries(data)
       .map(
         ([maybeSupportedCaip, blockchainNetwork]):
           | ChainMetadata

@@ -1,6 +1,6 @@
 import { AccountId, AssetId, ChainId } from 'caip'
 
-import { ChainMetadatas, isSupportedCaipNamespace } from '~/features/blockchain'
+import { ChainMetadata, isSupportedCaipNamespace } from '~/features/blockchain'
 
 import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from '../constants'
 import {
@@ -83,7 +83,7 @@ export function processCryptoRequest({
   chainMetadatas,
 }: {
   readonly request: CryptoWalletRawRequest
-  readonly chainMetadatas: ChainMetadatas
+  readonly chainMetadatas: ChainMetadata[]
 }): CryptoWalletRequest {
   const chain = new ChainId({
     namespace: request.chainNamespace,

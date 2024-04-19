@@ -1,6 +1,6 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { ChainMetadatas, useChainMetadatasCustom } from 'features/blockchain'
+import { ChainMetadata, useChainMetadatasCustom } from 'features/blockchain'
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,
   ChainsList,
@@ -29,7 +29,7 @@ export function useWalletConnectCustomNetworks() {
       topic,
     }: {
       readonly chainsList: ChainsList
-      readonly chainMetadatasToCreate: ChainMetadatas
+      readonly chainMetadatasToCreate: ChainMetadata[]
       readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
       readonly topic: string
     }) => {
@@ -166,7 +166,7 @@ export function useWalletConnectCustomNetworks() {
         return maybeRejectedRequestToAddCustomNetwork
 
       // If we made it this far, the user has asserted they would like to add the custom network.
-      await addCustomNetworks(chainMetadatasToCreate)
+      addCustomNetworks(chainMetadatasToCreate)
     },
     [requestAddCustomNetworks, addCustomNetworks]
   )
