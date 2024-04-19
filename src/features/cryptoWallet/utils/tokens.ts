@@ -2,8 +2,8 @@ import { AssetId, AssetIdParams, ChainId } from 'caip'
 import { BigNumberish, utils } from 'ethers'
 
 import {
-  BlockchainNetwork,
   isSupportedCaipNamespace,
+  LegacyBlockchain,
 } from '~/features/blockchain'
 
 import { CryptoWalletAccounts, SupportedTokenObject } from '../types'
@@ -89,7 +89,7 @@ export const tokenCaipObjectToString = (asset: AssetIdParams | string) => {
 
 export const getSupportedTokenObjectDecimals = (
   supportedTokenObject: SupportedTokenObject | undefined,
-  blockchainNetwork: BlockchainNetwork | undefined
+  blockchainNetwork: LegacyBlockchain | undefined
 ): number => {
   if (supportedTokenObject && 'decimal' in supportedTokenObject)
     return supportedTokenObject.decimal

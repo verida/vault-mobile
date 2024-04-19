@@ -3,10 +3,10 @@ import * as bip39 from 'bip39'
 
 import {
   BlockchainNamespace,
-  BlockchainNetwork,
   getBlockchainNetworks,
   IBlockchain,
   isSupportedCaipNamespace,
+  LegacyBlockchain,
   WalletUtilsWallet,
 } from '~/features/blockchain'
 import { eip155Blockchain } from '~/features/blockchain/eip155'
@@ -290,7 +290,7 @@ export class WalletManager {
 
   private static generateAccountsForWallet(
     walletRecord: CryptoWalletRecord,
-    blockchainNetworks: BlockchainNetwork[] = []
+    blockchainNetworks: LegacyBlockchain[] = []
   ): LegacyCryptoWalletAccount[] {
     const accounts: LegacyCryptoWalletAccount[] = []
 

@@ -17,7 +17,10 @@ export type UseChainMetadataState = {
   readonly error?: Error
 }
 
-export interface BlockchainNetwork {
+/**
+ * @deprecated use `Blockchain` instead
+ */
+export interface LegacyBlockchain {
   asset: AssetId
   chainId: string
   namespace: string

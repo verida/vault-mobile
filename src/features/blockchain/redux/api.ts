@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
 
-import { BlockchainNetwork } from '../types'
+import { LegacyBlockchain } from '../types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: config.walletProvider.url,
@@ -25,17 +25,17 @@ export const blockchainApi = createApi({
       // enforced empty object {} as this query params to have a unique cache key
       query: (_: Record<string, never> = {}) => 'chains/list',
       transformResponse: (response: {
-        data: Record<'mainnet' | 'testnet', Record<string, BlockchainNetwork>>
-      }): Record<string, BlockchainNetwork> => {
+        data: Record<'mainnet' | 'testnet', Record<string, LegacyBlockchain>>
+      }): Record<string, LegacyBlockchain> => {
         // TODO: Validate with Zod
 
         const networkEntries = response?.data
           ? { ...response.data.mainnet, ...response.data.testnet }
           : {}
 
-        const allNetworks: Record<string, BlockchainNetwork> = {}
+        const allNetworks: Record<string, LegacyBlockchain> = {}
         for (const chainId in networkEntries) {
-          const item = <BlockchainNetwork>networkEntries[chainId]
+          const item = <LegacyBlockchain>networkEntries[chainId]
           item.chainId = chainId
           allNetworks[item.chainId] = item
         }

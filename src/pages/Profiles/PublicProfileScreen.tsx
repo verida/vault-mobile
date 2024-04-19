@@ -1,7 +1,7 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import { BlockchainNetwork, getBlockchainNetworks } from 'features/blockchain'
+import { getBlockchainNetworks, LegacyBlockchain } from 'features/blockchain'
 import { LegacyCryptoWallet, useCryptoWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
@@ -231,7 +231,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
 
     function getPublicName(
       address: string,
-      blockchainNetwork: BlockchainNetwork
+      blockchainNetwork: LegacyBlockchain
     ) {
       const publicWalletAddress = getPublicWalletAddressObject(
         address,
@@ -243,7 +243,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
     let mappedWallets: VeridaOneWalletAddress[] = Object.values(
       blockchainNetworks
     ).reduce(
-      (acc: VeridaOneWalletAddress[], blockchainNetwork: BlockchainNetwork) => {
+      (acc: VeridaOneWalletAddress[], blockchainNetwork: LegacyBlockchain) => {
         const sameChainAdresses = wallets.reduce(
           (
             accAddresses: VeridaOneWalletAddress[],

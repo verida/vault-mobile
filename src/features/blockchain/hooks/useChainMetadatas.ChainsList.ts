@@ -7,7 +7,7 @@ import { BlockchainExplorerUrlSchema } from '../schemas'
 import {
   Blockchain,
   BlockchainExplorer,
-  BlockchainNetwork,
+  LegacyBlockchain,
   UseChainMetadataState,
 } from '../types'
 import { isSupportedCaipNamespace } from '../utils'
@@ -16,7 +16,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,
   caipChainId,
 }: {
-  readonly blockchainNetwork: BlockchainNetwork
+  readonly blockchainNetwork: LegacyBlockchain
   readonly caipChainId: ChainId
 }): Blockchain | undefined => {
   const { namespace, reference } = caipChainId
