@@ -1,6 +1,6 @@
 import 'jest'
 
-import { ChainMetadata } from '~/features/blockchain/types/blockchain'
+import { Blockchain } from '~/features/blockchain/types/blockchain'
 import { BalanceByChainResult } from '~/features/cryptoWallet/types'
 import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '~/features/cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance'
 
@@ -263,7 +263,7 @@ const CHAIN_METADATAS = [
     rpcUrls: ['https://rpc.testnet.near.org/'],
     symbol: 'NEAR',
   },
-] as unknown as readonly ChainMetadata[]
+] as unknown as readonly Blockchain[]
 
 describe('cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance', () => {
   it('mock', () => {

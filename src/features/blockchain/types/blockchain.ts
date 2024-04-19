@@ -9,11 +9,11 @@ import {
 
 export type BlockchainExplorer = z.infer<typeof BlockchainExplorerSchema>
 
-export type ChainMetadata = z.infer<typeof LegacyBlockchainSchema>
+export type Blockchain = z.infer<typeof LegacyBlockchainSchema>
 
 export type UseChainMetadataState = {
   readonly loading: boolean
-  readonly result?: ChainMetadata[]
+  readonly result?: Blockchain[]
   readonly error?: Error
 }
 
@@ -61,7 +61,7 @@ export interface IBlockchain {
 export type CustomBlockchain = z.infer<typeof CustomBlockchainSchema>
 
 export type AddCustomBlockchainsParams = {
-  readonly blockchains: readonly ChainMetadata[]
+  readonly blockchains: readonly Blockchain[]
   readonly reset?: boolean
 }
 

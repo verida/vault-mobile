@@ -1,7 +1,7 @@
 import { ChainId, ChainIdParams } from 'caip'
 import { connect, keyStores } from 'near-api-js'
 
-import { ChainMetadata } from '../../types'
+import { Blockchain } from '../../types'
 import { getRpcUrlOrThrow } from '../../utils'
 
 // TODO: It is not ideal to work this way (knowing a specific reference), however the implementation of Near protocol demands we do this for when we generate NEAR metadata URLs.
@@ -15,7 +15,7 @@ export async function getNearNetworkConfig({
   keystore: keyStore,
   caipChainId,
 }: {
-  readonly chainMetadatas: ChainMetadata[]
+  readonly chainMetadatas: Blockchain[]
   readonly keystore: keyStores.KeyStore
   readonly caipChainId: ChainId
 }): Promise<

@@ -12,7 +12,7 @@ import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { ChainMetadata } from '~/features/blockchain'
+import { Blockchain } from '~/features/blockchain'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -60,7 +60,7 @@ const ConfirmTransaction = () => {
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
   const renderFeeRow = React.useCallback(
-    (chainMetadata: ChainMetadata) => {
+    (chainMetadata: Blockchain) => {
       return (
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Fee</Text>

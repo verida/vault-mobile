@@ -1,5 +1,5 @@
 import { LegacyBlockchainSchema } from '../schemas'
-import { ChainMetadata, CustomBlockchain } from '../types'
+import { Blockchain, CustomBlockchain } from '../types'
 
 export function customBlockchainNetworkToMaybeChainMetadata({
   customBlockchainNetwork: {
@@ -13,7 +13,7 @@ export function customBlockchainNetworkToMaybeChainMetadata({
   },
 }: {
   readonly customBlockchainNetwork: CustomBlockchain
-}): ChainMetadata | undefined {
+}): Blockchain | undefined {
   const result = LegacyBlockchainSchema.safeParse({
     name,
     rpcUrls,

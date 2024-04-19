@@ -1,8 +1,8 @@
-import { ChainMetadata, SupportedBlockchainNamespace } from '../types'
+import { Blockchain, SupportedBlockchainNamespace } from '../types'
 
 export function isChainMetadataMatchingNamespace<
   T extends SupportedBlockchainNamespace,
->(chainMetadata: ChainMetadata, namespace: T): chainMetadata is ChainMetadata {
+>(chainMetadata: Blockchain, namespace: T): chainMetadata is Blockchain {
   const { namespace: maybeMatchingNamespace } = chainMetadata
 
   return maybeMatchingNamespace === namespace

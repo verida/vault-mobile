@@ -4,8 +4,8 @@ import { ChainId, ChainIdParams } from 'caip'
 import { ChainsList, ChainsListItem } from '~/features/blockchain/eip155'
 import { BlockchainRpcUrlsSchema } from '~/features/blockchain/schemas'
 import {
+  Blockchain,
   BlockchainExplorer,
-  ChainMetadata,
   SupportedBlockchainNamespace,
 } from '~/features/blockchain/types' // HACK: Have to use `.../types` path to make the unit tests work, other wise they fail with importing stuff not required for the tests.
 // It's either something to fix in the tests or it's a barrel file problem, should we challenge using them?
@@ -89,7 +89,7 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
   readonly chainsList: ChainsList
   readonly currentlyUnsupportedChainIds: readonly ChainId[]
   readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
-}): ChainMetadata[] => {
+}): Blockchain[] => {
   // Constrain assumptions.
   const uniqueChainIds = [
     ...new Set(
@@ -105,7 +105,7 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
     )
 
   return uniqueChainIds.flatMap(
-    (currentlyUnsupportedChainId: string): ChainMetadata[] => {
+    (currentlyUnsupportedChainId: string): Blockchain[] => {
       const chainId = new ChainId(currentlyUnsupportedChainId)
 
       const { namespace, reference } = chainId
@@ -146,7 +146,7 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
 
       const blockExplorers: BlockchainExplorer[] = explorers ? explorers : []
 
-      const chainMetadata: ChainMetadata = {
+      const chainMetadata: Blockchain = {
         namespace,
         reference,
         name,

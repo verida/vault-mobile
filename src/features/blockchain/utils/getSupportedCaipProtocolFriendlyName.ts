@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadata } from '../types'
+import { Blockchain } from '../types'
 import { getMaybeChainName } from './getMaybeChainName'
 
 export function getSupportedCaipProtocolFriendlyName(
-  chainMetadatas: ChainMetadata[],
+  chainMetadatas: Blockchain[],
   caipChainId: ChainId | null | undefined
 ): string {
   if (!caipChainId) return 'Unknown'

@@ -1,5 +1,5 @@
 import {
-  ChainMetadata,
+  Blockchain,
   isSupportedCaipNamespace,
   SupportedBlockchainNamespace,
 } from 'features/blockchain'
@@ -20,7 +20,7 @@ export const ChainMetadataListItemTag = React.memo(
   function ChainMetadataListItemTag({
     chainMetadata: { namespace },
   }: {
-    readonly chainMetadata: ChainMetadata
+    readonly chainMetadata: Blockchain
   }): JSX.Element {
     const styles = useThemeAwareStyle(createStyles)
 

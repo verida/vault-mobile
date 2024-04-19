@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 import { BottomActionBar, ScreenWrapper } from 'components'
 import {
-  ChainMetadata,
+  Blockchain,
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/blockchain'
@@ -30,7 +30,7 @@ const logger = Logger.create('BlockchainNetworkEditorScreen')
 
 export type BlockchainNetworkEditorScreenParams = {
   readonly title: string
-  readonly initialValue: ChainMetadata | null
+  readonly initialValue: Blockchain | null
   readonly isEditable: boolean
 }
 

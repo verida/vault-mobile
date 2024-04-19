@@ -1,13 +1,13 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadata } from '../types'
+import { Blockchain } from '../types'
 import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'
 import { isSupportedCaipNamespace } from './isSupportedCaipNamespace'
 
 export const getMaybeChainMetadataByCaipChainId = (
-  chainMetadatas: ChainMetadata[],
+  chainMetadatas: Blockchain[],
   caipChainId: ChainId | undefined
-): ChainMetadata | undefined => {
+): Blockchain | undefined => {
   if (!caipChainId) return undefined
 
   // TODO: It is possible for ChainMetadatas can contain duplicate
@@ -15,7 +15,7 @@ export const getMaybeChainMetadataByCaipChainId = (
   // .     would select specific settings for different scenarios - here,
   //       we are taking that choice away from the user.
   const maybeChainMetadata = chainMetadatas.find(
-    (chainMetdata: ChainMetadata) =>
+    (chainMetdata: Blockchain) =>
       new ChainId(chainMetdata).toString() === caipChainId.toString()
   )
 

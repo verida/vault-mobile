@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 
 import { BlockchainRpcUrlSchema } from '../schemas'
-import { ChainMetadata } from '../types'
+import { Blockchain } from '../types'
 import { getChainMetadataByCaipTypeOrThrow } from './getChainMetadataByCaipTypeOrThrow'
 
 // HACK: This is used to normalize all of our attempts to access
@@ -23,7 +23,7 @@ export const getRpcUrlOrThrow = ({
   chainMetadatas,
 }: {
   readonly chainId: ChainId
-  readonly chainMetadatas: ChainMetadata[]
+  readonly chainMetadatas: Blockchain[]
 }): string => {
   const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(chainMetadatas, chainId)
 

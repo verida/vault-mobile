@@ -5,9 +5,9 @@ import * as React from 'react'
 import { useGetBlockchainNetworksQuery } from '../redux'
 import { BlockchainExplorerUrlSchema } from '../schemas'
 import {
+  Blockchain,
   BlockchainExplorer,
   BlockchainNetwork,
-  ChainMetadata,
   UseChainMetadataState,
 } from '../types'
 import { isSupportedCaipNamespace } from '../utils'
@@ -18,7 +18,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 }: {
   readonly blockchainNetwork: BlockchainNetwork
   readonly caipChainId: ChainId
-}): ChainMetadata | undefined => {
+}): Blockchain | undefined => {
   const { namespace, reference } = caipChainId
 
   if (!isSupportedCaipNamespace(namespace)) return undefined
@@ -60,7 +60,7 @@ const DEFAULT_CHAIN_LIST_QUERY = Object.freeze({})
 
 export function getMaybeChainMetadatas(
   state: UseChainMetadataState
-): ChainMetadata[] {
+): Blockchain[] {
   if (!('result' in state) || !state.result) {
     return []
   }
@@ -101,11 +101,9 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
         ),
       }
 
-    const result: ChainMetadata[] = Object.entries(data)
+    const result: Blockchain[] = Object.entries(data)
       .map(
-        ([maybeSupportedCaip, blockchainNetwork]):
-          | ChainMetadata
-          | undefined => {
+        ([maybeSupportedCaip, blockchainNetwork]): Blockchain | undefined => {
           const caipChainId = new ChainId(maybeSupportedCaip)
 
           const { namespace } = caipChainId

@@ -8,7 +8,7 @@ import { createAppAsyncThunk } from '~/reduxStore/types'
 import { CUSTOM_BLOCKCHAIN_SCHEMA_URL } from '../constants'
 import {
   AddCustomBlockchainsParams,
-  ChainMetadata,
+  Blockchain,
   RemoveCustomBlockchainsParams,
 } from '../types'
 import { batchModifyCustomNetworks } from '../utils'
@@ -18,7 +18,7 @@ export const BLOCKCHAIN_SLICE_NAME = 'blockchains'
 // TODO: Move to types folder
 export type BlockchainsReduxState = {
   customBlockchains: {
-    data: ChainMetadata[]
+    data: Blockchain[]
     status: {
       processing: boolean
       error?: Error

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ZodError } from 'zod-validation-error'
 
 import {
-  ChainMetadata,
+  Blockchain,
   HACK__getFirstRpcUrl,
   isSupportedCaipNamespace,
   LegacyBlockchainSchema,
@@ -10,14 +10,14 @@ import {
 } from '~/features/blockchain'
 
 type EvaluationResult = {
-  readonly data: ChainMetadata | null
+  readonly data: Blockchain | null
   readonly error?: ZodError
 }
 
 export function useCreateChainMetadataFormFields({
   initialValue,
 }: {
-  readonly initialValue: ChainMetadata | null | undefined
+  readonly initialValue: Blockchain | null | undefined
 }) {
   const [name, setName] = React.useState<string>(initialValue?.name || '')
 

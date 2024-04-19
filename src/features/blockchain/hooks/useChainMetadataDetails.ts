@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 import * as React from 'react'
 
-import { ChainMetadata } from '../types'
+import { Blockchain } from '../types'
 import {
   getMaybeChainMetadatas,
   useChainMetadatasChainsList,
@@ -23,7 +23,7 @@ export function useChainMetadataDetails() {
   const customChainMetadatas = getMaybeChainMetadatas(useChainMetadatasCustom())
 
   const getChainMetadataDetails = React.useCallback(
-    (chainMetadata: ChainMetadata) => {
+    (chainMetadata: Blockchain) => {
       const { namespace, reference } = chainMetadata
 
       const isCustom = customChainMetadatas.find(

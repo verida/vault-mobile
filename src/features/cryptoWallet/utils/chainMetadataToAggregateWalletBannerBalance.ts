@@ -2,7 +2,7 @@ import BigDecimal from 'bignumber.js'
 import { ChainId, ChainIdParams } from 'caip'
 import { BigNumber } from 'ethers'
 
-import { ChainMetadata } from '~/features/blockchain'
+import { Blockchain } from '~/features/blockchain'
 
 import {
   AggregateWalletBannerBalanceNativeCurrency,
@@ -22,7 +22,7 @@ export function chainMetadataToAggregateWalletBannerBalance({
   chainMetadata,
   cryptoWalletBalances,
 }: {
-  readonly chainMetadata: ChainMetadata
+  readonly chainMetadata: Blockchain
   readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly cryptoWalletBalances: CryptoWalletBalances
 }): AggregateWalletBannerBalanceNativeCurrency {

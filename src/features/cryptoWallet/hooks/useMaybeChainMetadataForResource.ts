@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import {
-  ChainMetadata,
+  Blockchain,
   getMaybeChainMetadatas,
   useChainMetadatas,
 } from '~/features/blockchain'
@@ -13,10 +13,10 @@ export function useMaybeChainMetadataForResource({
   resource,
 }: {
   readonly resource: ResourceParams
-}): ChainMetadata | null {
+}): Blockchain | null {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  return React.useMemo<ChainMetadata | null>(() => {
+  return React.useMemo<Blockchain | null>(() => {
     if (!resource) return null
 
     const chainId = getChainIdParamsFromResourceParams(resource)

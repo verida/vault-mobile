@@ -1,6 +1,6 @@
 import BigDecimal from 'bignumber.js'
 
-import { ChainMetadata } from '~/features/blockchain'
+import { Blockchain } from '~/features/blockchain'
 
 import {
   AggregateWalletBannerBalanceErc20,
@@ -16,7 +16,7 @@ export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
   chainMetadatas,
 }: {
   readonly balanceByChainResults: readonly BalanceByChainResult[]
-  readonly chainMetadatas: readonly ChainMetadata[]
+  readonly chainMetadatas: readonly Blockchain[]
 }): readonly AggregateWalletBannerBalanceErc20[] {
   return balanceByChainResults
     .filter((e) => !isNativeToken(e.asset))

@@ -1,12 +1,12 @@
 import * as React from 'react'
 
-import { ChainMetadata } from '~/features/blockchain'
+import { Blockchain } from '~/features/blockchain'
 
 export function useMaybeChainMetadataExplorerUrl({
   chainMetadata: maybeChainMetadata,
   transactionHash: maybeTransactionHash,
 }: {
-  readonly chainMetadata: ChainMetadata | null | undefined
+  readonly chainMetadata: Blockchain | null | undefined
   readonly transactionHash?: string | null
 }) {
   return React.useMemo(() => {

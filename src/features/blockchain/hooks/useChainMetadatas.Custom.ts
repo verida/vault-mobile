@@ -9,11 +9,11 @@ import {
   getCustomBlockchainsStatus,
   removeCustomBlockchains,
 } from '../redux'
-import { ChainMetadata, UseChainMetadataState } from '../types'
+import { Blockchain, UseChainMetadataState } from '../types'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
   // TODO: Rename to addCustomBlockchains
-  readonly addCustomNetworks: (blockchains: readonly ChainMetadata[]) => void
+  readonly addCustomNetworks: (blockchains: readonly Blockchain[]) => void
 
   // TODO: Rename to removeCustomBlockchains
   readonly removeCustomNetworks: (chainIds: readonly ChainId[]) => void
@@ -32,7 +32,7 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
   const addCustomNetworks = React.useCallback(
     // TODO: This type is very specific to the wallet_addEthereumWallet flow. We
     //       can generalize later on.
-    (blockchains: readonly ChainMetadata[]) => {
+    (blockchains: readonly Blockchain[]) => {
       dispatch(addCustomBlockchains({ blockchains }))
     },
     [dispatch]

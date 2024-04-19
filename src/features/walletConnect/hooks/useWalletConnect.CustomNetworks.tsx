@@ -1,6 +1,6 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { ChainMetadata, useChainMetadatasCustom } from 'features/blockchain'
+import { Blockchain, useChainMetadatasCustom } from 'features/blockchain'
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,
   ChainsList,
@@ -29,7 +29,7 @@ export function useWalletConnectCustomNetworks() {
       topic,
     }: {
       readonly chainsList: ChainsList
-      readonly chainMetadatasToCreate: ChainMetadata[]
+      readonly chainMetadatasToCreate: Blockchain[]
       readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
       readonly topic: string
     }) => {
