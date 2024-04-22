@@ -20,6 +20,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2F37271798FB10B6D66FCC3B /* libPods-Wallet-Staging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EB262E8C100A67D4CD60F1A /* libPods-Wallet-Staging.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		5B8E89CA2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B8E89C92BD6C64C00B4898C /* PrivacyInfo.xcprivacy */; };
+		5B8E89CB2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B8E89C92BD6C64C00B4898C /* PrivacyInfo.xcprivacy */; };
+		5B8E89CC2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B8E89C92BD6C64C00B4898C /* PrivacyInfo.xcprivacy */; };
 		5BF4E12A2AD3C3CE00E5D4AD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		5BF4E12B2AD3C3CE00E5D4AD /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050D32F726FA3D480076780F /* File.swift */; };
 		5BF4E12C2AD3C3CE00E5D4AD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -57,6 +60,7 @@
 		3DBEAF860106428B82D2C175 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		41C79A82992D7AA174703FF5 /* Pods-Wallet-Production.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-Production.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-Production/Pods-Wallet-Production.debug.xcconfig"; sourceTree = "<group>"; };
 		500043B965F22479112EA45D /* Pods-Wallet-Development.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-Development.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-Development/Pods-Wallet-Development.debug.xcconfig"; sourceTree = "<group>"; };
+		5B8E89C92BD6C64C00B4898C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5BF4E13D2AD3C3CE00E5D4AD /* Verida Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F12764B221249EF9A963F52 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -176,6 +180,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				5B8E89C92BD6C64C00B4898C /* PrivacyInfo.xcprivacy */,
 				0545146726F9E61200654C18 /* Config.xcconfig */,
 				13B07FAE1A68108700A75B9A /* Wallet */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -377,6 +382,7 @@
 			files = (
 				0545146926F9E61300654C18 /* Config.xcconfig in Resources */,
 				0545145C26F9DB5700654C18 /* Images.xcassets in Resources */,
+				5B8E89CB2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */,
 				0545145E26F9DB5700654C18 /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,6 +393,7 @@
 			files = (
 				0545146826F9E61200654C18 /* Config.xcconfig in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				5B8E89CA2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -397,6 +404,7 @@
 			files = (
 				5BF4E1322AD3C3CE00E5D4AD /* Config.xcconfig in Resources */,
 				5BF4E1332AD3C3CE00E5D4AD /* Images.xcassets in Resources */,
+				5B8E89CC2BD6C64C00B4898C /* PrivacyInfo.xcprivacy in Resources */,
 				5BF4E1342AD3C3CE00E5D4AD /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
