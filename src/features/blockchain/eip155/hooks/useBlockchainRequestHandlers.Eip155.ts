@@ -190,8 +190,8 @@ async function getGasFees(chainId?: string | ChainId) {
   const gasStationURL =
     formattedChainId === 'eip155:137'
       ? 'https://gasstation.polygon.technology/v2'
-      : formattedChainId === 'eip155:80001'
-        ? 'https://gasstation-testnet.polygon.technology/v2'
+      : formattedChainId === 'eip155:80002'
+        ? 'https://gasstation-testnet.polygon.technology/amoy'
         : null
 
   if (!gasStationURL) {
