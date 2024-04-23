@@ -66,9 +66,7 @@ import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
 import { WalletConnectActiveSessionDetails } from 'pages/WalletConnectActiveSessionDetails'
 import { WalletConnectActiveSessions } from 'pages/WalletConnectActiveSessions'
 import ManageWallets from 'pages/Wallets/ManageWallets'
-import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
-import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -125,8 +123,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
           <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
           <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
-          <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
-          <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
           <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
           <Stack.Screen name={'SendToken'} component={SendToken} />
           <Stack.Screen

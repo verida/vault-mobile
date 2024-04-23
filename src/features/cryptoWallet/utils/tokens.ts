@@ -1,9 +1,10 @@
 import { AssetId, AssetIdParams, ChainId } from 'caip'
 import { BigNumberish, utils } from 'ethers'
-import { BlockchainNetwork } from 'features/blockchain'
-import { isSupportedCaipNamespace } from 'features/caip'
 
-import { MinifiedBlockchainAccounts, SupportedTokenObject } from '../@types'
+import { BlockchainNetwork } from '~/features/blockchain'
+import { isSupportedCaipNamespace } from '~/features/caip'
+
+import { CryptoWalletAccounts, SupportedTokenObject } from '../types'
 import { isNativeToken } from './isNativeToken'
 
 export const getTruncatedWalletAddress = (
@@ -22,7 +23,7 @@ export const getTokenAddress = (address: AssetId) => {
 
 export const getWalletAddressForChainId = (
   chainId: ChainId | null | undefined,
-  minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  cryptoWalletAccounts: CryptoWalletAccounts
 ) => {
   if (!chainId) return undefined
 
@@ -30,24 +31,24 @@ export const getWalletAddressForChainId = (
 
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
-  const maybeMatchingAccount = minifiedBlockchainAccounts.find(
+  const matchingAccount = cryptoWalletAccounts.find(
     (e) => e.namespace === namespace
   )
 
-  if (!maybeMatchingAccount) return undefined
+  if (!matchingAccount) return undefined
 
-  const { address } = maybeMatchingAccount
+  const { address } = matchingAccount
 
   return address
 }
 
 export const getWalletAddressForAsset = (
   asset: AssetId | null | undefined,
-  minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+  cryptoWalletAccounts: CryptoWalletAccounts
 ) => {
   if (!asset) return undefined
 
-  return getWalletAddressForChainId(asset.chainId, minifiedBlockchainAccounts)
+  return getWalletAddressForChainId(asset.chainId, cryptoWalletAccounts)
 }
 
 export const handleTokenDecimals = (

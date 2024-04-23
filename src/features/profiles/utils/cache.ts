@@ -1,7 +1,7 @@
 import { AppState } from 'react-native'
 import { MMKV } from 'react-native-mmkv'
 
-import { PublicProfile } from '../@types'
+import { PublicProfile } from '../types'
 
 type CacheValue = {
   value: PublicProfile

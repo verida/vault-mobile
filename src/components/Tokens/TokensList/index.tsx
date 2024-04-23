@@ -66,7 +66,7 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       ListEmptyComponent={() => (
         <View style={styles.emptyMessageContainer}>
-          <Typography variant='h5SemiBold'>
+          <Typography variant='h5SemiBold' style={styles.emptyMessage}>
             {error
               ? 'Something went wrong!\nPull down to refresh'
               : refreshing
@@ -98,5 +98,8 @@ const createStyles = (theme: Theme) =>
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    emptyMessage: {
+      textAlign: 'center',
     },
   })

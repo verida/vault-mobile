@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { SupportedBlockchainNamespace } from '../../blockchain/@types/enums'
+import { SupportedBlockchainNamespace } from '../../blockchain/types/enums'
 
 export const ChainMetadataBlockExplorerUrl = z.string().url()
 

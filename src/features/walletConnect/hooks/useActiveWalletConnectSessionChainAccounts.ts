@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { MaybeNamespace } from '../@types'
+import { MaybeNamespace } from '../types'
 import { useActiveWalletConnectSessionNamespace } from './useActiveWalletConnectSessionNamespace'
 
 export const getAccountsForMaybeNamespace = ({

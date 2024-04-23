@@ -1,9 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import {
-  BlockchainNetwork,
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from 'features/blockchain'
 import { Icon } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import {
@@ -14,65 +9,67 @@ import {
   View,
 } from 'react-native'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useAppSelector } from 'reduxStore/types'
-import InputStyles from 'styles/inputs'
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import DropDownPicker from '~/components/Select'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import {
+  AddWatchedCryptoWalletData,
+  getWalletTypeLongLabel,
+  WALLET_TYPES,
+  WalletType,
+} from '~/features/cryptoWallet'
+import InputStyles from '~/styles/inputs'
 
-type Props = {
+export type AddWatchedWalletModalProps = {
   visible: boolean
-  onAddWatchedWallet: (data: any) => void // TODO: Enforce Wallet type
+  onAddWatchedWallet: (data: AddWatchedCryptoWalletData) => void
   hideModal: () => void
 }
 
-const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
-  Object.freeze({})
+const defaultWalletType: WalletType = 'multi'
 
-export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
-  props
-) => {
+export const AddWatchedWalletModal: React.FunctionComponent<
+  AddWatchedWalletModalProps
+> = (props) => {
   const { visible, hideModal, onAddWatchedWallet } = props
 
-  // const defaultBlockchain = 'eip155:1'
-
   const [label, setLabel] = useState('')
-  const [blockchain, setBlockchain] = useState('')
-  // const [blockchain, setBlockchain] = useState(defaultBlockchain)
-  const [publicAddress, setPublicAddress] = useState('')
+  const [walletType, setWalletType] = useState<WalletType>(defaultWalletType)
+  const [address, setAddress] = useState('')
 
-  const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
-  const blockchainNetworks =
-    maybeBlockchainNetworks || defaultBlockchainNetworks
-  const blockchainItems = Object.values(blockchainNetworks).map(
-    (network: BlockchainNetwork) => {
+  const walletTypeItems = Object.values(WALLET_TYPES).map(
+    (type: WalletType) => {
       return {
-        label: getBlockchainNetworkLabel(network),
-        value: network.chainId,
+        label: getWalletTypeLongLabel(type),
+        value: type,
       }
     }
   )
 
-  const isSubmitButtonDisabled = !label || !publicAddress || !blockchain
+  const isSubmitButtonDisabled = !label || !address || !walletType
 
-  const handleBlockchainChange = useCallback((option: any) => {
-    setBlockchain(option.value)
+  const handleWalletTypeChange = useCallback((option: any) => {
+    setWalletType(option.value)
   }, [])
 
   const handlePressPasteAddressFromClipboard = useCallback(async () => {
     const clipboardData = await Clipboard.getString()
-    setPublicAddress(clipboardData)
+    setAddress(clipboardData)
   }, [])
 
   const handlePressSubmit = useCallback(() => {
-    // TODO: Should we add a check on the address pattern according to the blockchain?
-    onAddWatchedWallet({ label, blockchain, publicAddress })
+    // TODO: Add a check on the address pattern according to the blockchain?
+    onAddWatchedWallet({
+      label,
+      walletType,
+      address,
+    })
     hideModal()
-  }, [blockchain, hideModal, label, onAddWatchedWallet, publicAddress])
+  }, [walletType, hideModal, label, onAddWatchedWallet, address])
 
   return (
     <Modal
@@ -100,24 +97,23 @@ export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
             style={[InputStyles.input]}
             placeholder={'eg. Friendly wallet label'}
           />
-          <Label>Blockchain</Label>
+          <Label>Wallet type</Label>
           <DropDownPicker
             showArrow={true}
-            placeholder=''
-            // defaultValue={defaultBlockchain}
-            items={blockchainItems}
+            defaultValue={defaultWalletType}
+            items={walletTypeItems}
             containerStyle={InputStyles.select}
-            onChangeItem={handleBlockchainChange}
+            onChangeItem={handleWalletTypeChange}
             zIndex={6000}
           />
           <Label>Public address</Label>
           <TextInput
-            value={publicAddress}
+            value={address}
             multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
-            onChangeText={setPublicAddress}
+            onChangeText={setAddress}
             style={[InputStyles.textarea]}
             placeholder={'eg. 0x...'}
           />

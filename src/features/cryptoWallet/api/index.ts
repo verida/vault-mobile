@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react'
-import { AssetId } from 'caip'
+import { AssetId, AssetType } from 'caip'
 import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
 
 import { RootState } from 'reduxStore/types'
 
-import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
+import { BalanceByChain, DetailedTransaction, Transaction } from '../types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${config.walletProvider.v2Url}/api`,
@@ -14,15 +14,15 @@ const baseQuery = fetchBaseQuery({
 export const cryptoWalletApi = createApi({
   reducerPath: 'cryptoWalletApi',
   baseQuery: baseQuery,
+  refetchOnMountOrArgChange: 60 * 10, // 10 min
+  // TODO: We could increase the cache expiry and use a forced refetch in UI and when a transaction has been completed
+  refetchOnReconnect: true,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
       return action.payload?.[reducerPath]
     }
   },
-  keepUnusedDataFor: 60 * 15, // 15 mins
-  refetchOnMountOrArgChange: true,
-  refetchOnReconnect: true,
   endpoints: (build) => ({
     getBalances: build.query({
       query: (walletAddresses: string[]) =>
@@ -35,6 +35,7 @@ export const cryptoWalletApi = createApi({
         list: BalanceByChain['results']
         total: number
       } => {
+        // TODO: Create a different type for the response from Wallet Provider
         // TODO: Validate with Zod
 
         const balanceByChains = response?.data
@@ -52,8 +53,8 @@ export const cryptoWalletApi = createApi({
             return {
               ...tokenBalance,
               label: tokenBalance.symbol,
-              price: tokenBalance.quote.USD.price ?? 0,
-              change: tokenBalance.quote.USD.percent_change_24h ?? 0,
+              price: tokenBalance.quote?.USD?.price ?? 0,
+              change: tokenBalance.quote?.USD?.percent_change_24h ?? 0,
               balance: tokenBalance.balance ?? 0,
               quantity: tokenBalance.balance ?? 0,
               amount: tokenBalance.amount ?? 0,
@@ -78,21 +79,24 @@ const legacyBaseQuery = retry(
 export const cryptoWalletLegacyApi = createApi({
   reducerPath: 'cryptoWalletLegacyApi',
   baseQuery: legacyBaseQuery,
+  refetchOnMountOrArgChange: 60 * 10, // 10 min
+  // TODO: We could increase the cache expiry and use a forced refetch in UI and when a transaction has been completed
+  refetchOnReconnect: true,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
       return action.payload?.[reducerPath]
     }
   },
-  keepUnusedDataFor: 60 * 15, // 15 mins
-  refetchOnMountOrArgChange: true,
-  refetchOnReconnect: true,
   endpoints: (build) => ({
     // HACK: It is invalid to getTransactionsForToken without specifying a userAddress or asset.
     //       However, the application can technically enter a state where these values are not
     //       defined.
     getTransactionsForToken: build.query({
-      query: (body: { userAddress: string | null; asset: AssetId | null }) => ({
+      query: (body: {
+        userAddress: string | null
+        asset: AssetType | null
+      }) => ({
         url: 'transaction/list',
         method: 'POST',
         body,
@@ -105,7 +109,7 @@ export const cryptoWalletLegacyApi = createApi({
       query: (body: {
         transactionId: string
         userAddress: string | null | undefined
-        asset: AssetId | null | undefined
+        asset: AssetType | null | undefined
       }) => ({
         url: 'transaction/get',
         method: 'POST',

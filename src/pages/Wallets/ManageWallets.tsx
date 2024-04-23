@@ -1,63 +1,87 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
-import {
-  addWatchedWallet,
-  createNewWallet,
-  deleteWallet,
-  getSelectedWalletId,
-  getWalletCount,
-  getWalletList,
-  getWalletProcessingState,
-  importWallet,
-  setSelectedWallet,
-} from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
-import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import WalletList from 'components/WalletList'
-import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
-import { MainStackParams } from 'navigation/types'
+import PlusIcon from '~/assets/plus_icon.svg'
+import UnionIcon from '~/assets/union_icon.svg'
+import LoadingView from '~/components/LoadingView'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import WalletList from '~/components/WalletList'
+import { BLACK_COLOR } from '~/constants/color'
+import {
+  addWatchedCryptoWallet,
+  AddWatchedCryptoWalletData,
+  createCryptoWallet,
+  CreateCryptoWalletData,
+  deleteCryptoWallet,
+  importCryptoWallet,
+  ImportCryptoWalletData,
+  LegacyCryptoWallet,
+  selectCryptoWallet,
+  useCryptoWallets,
+  useCryptoWalletsCount,
+  useCryptoWalletsStatus,
+  useSelectedCryptoWalletId,
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackParams } from '~/navigation/types'
+import { useAppDispatch } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
-import PlusIcon from '../../assets/plus_icon.svg'
-import UnionIcon from '../../assets/union_icon.svg'
-import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
-import CreateWalletModal from './AddWalletModal'
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
-import ImportWalletModal from './ImportWalletModal'
+import { CreateWalletModal } from './CreateWalletModal'
+import { ImportWalletModal } from './ImportWalletModal'
 
 type Props = {
-  wallets: BlockchainWalletWithAccounts[]
-  walletCount: number
   navigation: NativeStackNavigationProp<MainStackParams, any>
-  selectedWalletId: number | string
-  loading: boolean
-  onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
-  onCreateWallet: () => Promise<void>
-  onImportWallet: () => Promise<void>
-  onAddWatchedWallet: () => Promise<void>
-  onDeleteWallet: (selectedWalletID: string) => Promise<void>
 }
 
 const ManageWallets = (props: Props) => {
-  const {
-    wallets,
-    walletCount,
-    navigation,
-    selectedWalletId,
-    loading,
-    onSetSelectedWalletId,
-    onCreateWallet,
-    onImportWallet,
-    onAddWatchedWallet,
-    onDeleteWallet,
-  } = props
+  const { navigation } = props
+
+  const cryptoWallets = useCryptoWallets()
+  const cryptoWalletCount = useCryptoWalletsCount()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
+  const { processsing } = useCryptoWalletsStatus()
+
+  const dispatch = useAppDispatch()
+
+  const handleSelectWallet = useCallback(
+    (walletId: string) => {
+      dispatch(selectCryptoWallet(walletId))
+    },
+    [dispatch]
+  )
+
+  const handleCreateWallet = useCallback(
+    (data: CreateCryptoWalletData) => {
+      dispatch(createCryptoWallet(data))
+    },
+    [dispatch]
+  )
+
+  const handleImportWallet = useCallback(
+    (data: ImportCryptoWalletData) => {
+      dispatch(importCryptoWallet(data))
+    },
+    [dispatch]
+  )
+
+  const handleAddWatchedWallet = useCallback(
+    (data: AddWatchedCryptoWalletData) => {
+      dispatch(addWatchedCryptoWallet(data))
+    },
+    [dispatch]
+  )
+
+  const handleDeleteWallet = useCallback(
+    (walletId: string) => {
+      dispatch(deleteCryptoWallet(walletId))
+    },
+    [dispatch]
+  )
 
   const [createWalletModalVisible, setCreateWalletModalVisible] =
     useState(false)
@@ -65,23 +89,14 @@ const ManageWallets = (props: Props) => {
     useState(false)
   const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
     useState(false)
-  const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
-    []
-  )
 
   const { showActionSheetWithOptions } = useActionSheet()
-
-  useEffect(() => {
-    if (wallets) {
-      setWalletList(wallets)
-    }
-  }, [wallets])
 
   const showDeleteAlert = () => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
   }
 
-  const showConfirmationAlert = (item: BlockchainWalletWithAccounts) =>
+  const showConfirmationAlert = (item: LegacyCryptoWallet) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -94,8 +109,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const selectedWalletID = item._id
-            onDeleteWallet(selectedWalletID)
+            handleDeleteWallet(item.id)
           },
         },
       ]
@@ -149,9 +163,9 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const handlePressWalletListItem = (item: BlockchainWalletWithAccounts) => {
+  const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
-    if (item.viewOnly) {
+    if (item.readOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
     } else {
       options = [
@@ -170,21 +184,20 @@ const ManageWallets = (props: Props) => {
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (typeof buttonIndex !== 'number') return
+        if (typeof buttonIndex !== 'number') {
+          return
+        }
 
-        if (item.viewOnly) buttonIndex++
+        if (item.readOnly) {
+          buttonIndex++
+        }
 
-        if (buttonIndex === 0 && !item.viewOnly) {
-          navigation.navigate('SingleWallet', { item })
+        if (buttonIndex === 0 && !item.readOnly) {
+          navigation.navigate('SingleWallet', { walletId: item.id })
         } else if (buttonIndex === 1) {
-          const selectedWalletID = item._id
-          onSetSelectedWalletId(selectedWalletID)
-          SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
-            selectedWalletID
-          )
+          handleSelectWallet(item.id)
         } else if (buttonIndex === 2) {
-          if (walletCount <= 1) {
+          if (cryptoWalletCount <= 1) {
             showDeleteAlert()
           } else {
             showConfirmationAlert(item)
@@ -193,6 +206,8 @@ const ManageWallets = (props: Props) => {
       }
     )
   }
+
+  const styles = useThemeAwareStyle(createStyles)
 
   return (
     <Container>
@@ -203,15 +218,15 @@ const ManageWallets = (props: Props) => {
           action: navigationActionHandler,
         }}
       />
-      {loading ? (
+      {processsing ? (
         <LoadingView />
       ) : (
         <View style={{ flex: 1 }}>
           <Content style={styles.content}>
             <List>
               <WalletList
-                list={walletList}
-                selectedWalletId={selectedWalletId}
+                list={cryptoWallets}
+                selectedWalletId={selectedCryptoWalletId}
                 onPressItem={handlePressWalletListItem}
               />
             </List>
@@ -219,17 +234,17 @@ const ManageWallets = (props: Props) => {
           <CreateWalletModal
             hideModal={() => setCreateWalletModalVisible(false)}
             visible={createWalletModalVisible}
-            onCreateNewWallet={onCreateWallet}
+            onCreateNewWallet={handleCreateWallet}
           />
           <ImportWalletModal
             hideModal={() => setImportWalletModalVisible(false)}
             visible={importWalletModalVisible}
-            onImportWallet={onImportWallet}
+            onImportWallet={handleImportWallet}
           />
           <AddWatchedWalletModal
             hideModal={() => setAddWatchedWalletModalVisible(false)}
             visible={addWatchedWalletModalVisible}
-            onAddWatchedWallet={onAddWatchedWallet}
+            onAddWatchedWallet={handleAddWatchedWallet}
           />
         </View>
       )}
@@ -237,33 +252,12 @@ const ManageWallets = (props: Props) => {
   )
 }
 
-const styles = StyleSheet.create({
-  content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    content: {
+      backgroundColor: theme.color.snow,
+      paddingVertical: 25,
+    },
+  })
 
-const mapStateToProps = (state: any) => {
-  return {
-    wallets: getWalletList(state),
-    walletCount: getWalletCount(state),
-    selectedWalletId: getSelectedWalletId(state),
-    loading: getWalletProcessingState(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onSetSelectedWalletId: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
-    onCreateWallet: (args: unknown) =>
-      dispatch(createNewWallet(args as any) as any),
-    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
-    onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
-    onDeleteWallet: (walletId: string) =>
-      dispatch(deleteWallet(walletId) as any),
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ManageWallets as any)
+export default ManageWallets

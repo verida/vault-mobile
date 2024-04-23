@@ -1,59 +1,44 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
-import {
-  getSelectedWalletId,
-  getWalletList,
-  setSelectedWallet,
-} from 'features/cryptoWallet'
-import * as SecureStore from 'helpers/VeridaSecureStore'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
-import SettingsIcon from 'assets/settings_icon.svg'
-import Button from 'components/Button'
-import AppModal from 'components/modal/AppModal'
-import WalletList from 'components/WalletList'
-import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
-import { NUNITO_SANS } from 'constants/text'
-import { MainStackParams } from 'navigation/types'
-import { RootState } from 'reduxStore/types'
+import SettingsIcon from '~/assets/settings_icon.svg'
+import Button from '~/components/Button'
+import AppModal from '~/components/modal/AppModal'
+import WalletList from '~/components/WalletList'
+import { PRIMARY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS } from '~/constants/text'
+import {
+  LegacyCryptoWallet,
+  selectCryptoWallet,
+  useCryptoWallets,
+  useSelectedCryptoWalletId,
+} from '~/features/cryptoWallet'
+import { MainStackParams } from '~/navigation/types'
+import { useAppDispatch } from '~/reduxStore/types'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
   modalVisible: boolean
-  selectedWalletId?: any
-  wallets?: BlockchainWalletWithAccounts[]
   chains?: any
-  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
 const WalletSelectorModal = ({
   modalVisible,
-  wallets,
-  selectedWalletId,
   onCloseModal,
-  onSetSelectedWallet,
 }: WalletSelectorModalProps) => {
-  const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
-    []
-  )
+  const cryptoWallets = useCryptoWallets()
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
+
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
-  useEffect(() => {
-    if (wallets) {
-      setWalletList(wallets)
-    }
-  }, [wallets])
+  const dispatch = useAppDispatch()
 
-  const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
-    onSetSelectedWallet(item._id)
-    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item._id)
+  const handleWalletSelection = (item: LegacyCryptoWallet) => {
+    dispatch(selectCryptoWallet(item.id))
     onCloseModal()
   }
 
@@ -80,9 +65,9 @@ const WalletSelectorModal = ({
       footer={ModalFooter}>
       <View style={styles.walletList}>
         <WalletList
-          list={walletList}
+          list={cryptoWallets}
           leftIconType='checked'
-          selectedWalletId={selectedWalletId}
+          selectedWalletId={selectedCryptoWalletId}
           onPressItem={handleWalletSelection}
         />
       </View>
@@ -90,21 +75,7 @@ const WalletSelectorModal = ({
   )
 }
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    wallets: getWalletList(state),
-    selectedWalletId: getSelectedWalletId(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onSetSelectedWallet: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(WalletSelectorModal)
+export default WalletSelectorModal
 
 const styles = StyleSheet.create({
   walletList: {

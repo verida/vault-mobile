@@ -1,6 +1,6 @@
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 
-import { AmountWithMaybeCurrency } from '../@types'
+import { AmountWithMaybeCurrency } from '../types'
 import { convertFromCryptoIntegerToDecimal } from './convertFromCryptoIntegerToDecimal'
 import { convertFromCryptoToFiat } from './convertFromCryptoToFiat'
 

@@ -1,11 +1,13 @@
 import { AccountId, AssetId, ChainId } from 'caip'
-import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
+
+import { ChainMetadatas, isSupportedCaipNamespace } from '~/features/caip'
+
+import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from '../constants'
 import {
   CryptoWalletRawRequest,
   CryptoWalletRequest,
   ResourceParams,
-} from 'features/cryptoWallet/@types'
-import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from 'features/cryptoWallet/constants'
+} from '../types'
 
 export function isCryptoRequestDeepLink(url: string) {
   return isCryptoRequestUrl(url)

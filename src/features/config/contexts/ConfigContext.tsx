@@ -22,7 +22,7 @@ import {
   ForcedCreateAccountType,
   ForcedUpgradeType,
   MaintenanceMode,
-} from '../@types'
+} from '../types'
 
 const logger = Logger.create('ConfigContext')
 

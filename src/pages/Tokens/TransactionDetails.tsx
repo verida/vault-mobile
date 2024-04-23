@@ -4,7 +4,7 @@ import {
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeSelectedWallet,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -32,12 +32,15 @@ const TransactionDetails = () => {
     useParams<TransactionDetailsScreenProps>()
 
   const { resource } = aggregateWalletBannerBalance
-  const chainId = useChainIdForResourceParams({ resource })
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
-  const selectedWallet = useMaybeSelectedWallet()
-  const accounts = Object.values(selectedWallet?.accounts || {})
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+  // TODO: Factorise this as it's also implemented in ReceiveToken.tsx and SingleCurrency.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
     : undefined
 
   const address = account?.address || null

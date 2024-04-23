@@ -1,23 +1,26 @@
-import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import * as React from 'react'
 
-import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
+import { LegacyCryptoWallet } from '~/features/cryptoWallet'
+
+import { transformLegacyWalletAccountToCryptoWalletAccount } from '../utils'
+import { useCryptoWallets } from './useCryptoWallets'
 import { useMaybeFromAddressForResource } from './useMaybeFromAddressForResource'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
-import { useWalletsData } from './useWalletsData'
 
 export function useMaybeBlockchainAccountForResource(
   params: Parameters<typeof useMaybeFromAddressForResource>[0]
-): BlockchainWalletWithAccounts | null {
+): LegacyCryptoWallet | null {
   const maybeFromAddress = useMaybeFromAddressForResource(params)
 
-  const walletsData = useWalletsData()
+  const wallets = useCryptoWallets()
 
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
 
-  return React.useMemo<BlockchainWalletWithAccounts | null>(() => {
-    if (!maybeFromAddress) return null
+  return React.useMemo<LegacyCryptoWallet | null>(() => {
+    if (!maybeFromAddress) {
+      return null
+    }
 
     const { namespace, fromAddress } = maybeFromAddress
 
@@ -25,18 +28,20 @@ export function useMaybeBlockchainAccountForResource(
       (e) => e.namespace === namespace && e.address === fromAddress
     )
 
-    if (!maybeMinifiedVeridaAccount) return null
+    if (!maybeMinifiedVeridaAccount) {
+      return null
+    }
 
-    const maybeMatchingAccount = Object.values(walletsData).find(
-      (e: BlockchainWalletWithAccounts) =>
-        Object.values(e.accounts).find(
-          (f) =>
-            // TODO: this is slow and inefficient, fix
-            JSON.stringify(veridaAccountMaybeToMinifiedBlockchainAccount(f)) ===
-            JSON.stringify(maybeMinifiedVeridaAccount)
-        )
+    const maybeMatchingAccount = wallets.find((e: LegacyCryptoWallet) =>
+      e.accounts.find(
+        (f) =>
+          // TODO: this is slow and inefficient, fix
+          JSON.stringify(
+            transformLegacyWalletAccountToCryptoWalletAccount(f)
+          ) === JSON.stringify(maybeMinifiedVeridaAccount)
+      )
     )
 
     return maybeMatchingAccount || null
-  }, [maybeFromAddress, selectedMinifiedBlockchainAccounts, walletsData])
+  }, [maybeFromAddress, selectedMinifiedBlockchainAccounts, wallets])
 }

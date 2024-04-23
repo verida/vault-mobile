@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadatas } from '../@types'
+import { ChainMetadatas } from '../types'
 import { getMaybeChainName } from './getMaybeChainName'
 
 export function getSupportedCaipProtocolFriendlyName(

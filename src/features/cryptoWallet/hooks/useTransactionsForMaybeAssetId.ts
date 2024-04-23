@@ -1,28 +1,30 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetType, ChainId } from 'caip'
 import * as React from 'react'
 
 import { useGetTransactionsForTokenQuery } from '../api'
-import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 export function useTransactionsForMaybeAssetId({
-  assetId: maybeAssetId,
+  assetType: maybeAssetType,
 }: {
-  readonly assetId: AssetId | null | undefined
+  readonly assetType: AssetType | null | undefined
 }) {
-  const chainId = maybeAssetId?.chainId
-    ? new ChainId(maybeAssetId.chainId).toString()
+  const assetChainId = maybeAssetType?.chainId
+    ? new ChainId(maybeAssetType.chainId)
     : null
 
-  const selectedWallet = useMaybeSelectedWallet()
-  const accounts = Object.values(selectedWallet?.accounts || {})
-  const account = chainId
-    ? accounts.find((accountItem) => accountItem.chainId === chainId)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = assetChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === assetChainId.namespace
+      )
     : undefined
+  const address = account?.address || null
 
-  const userAddress = account?.address || null
-  const asset = maybeAssetId || null
+  const asset = maybeAssetType || null
 
-  const skip = !userAddress || !asset
+  const skip = !address || !asset
 
   const {
     data,
@@ -31,7 +33,7 @@ export function useTransactionsForMaybeAssetId({
     refetch,
   } = useGetTransactionsForTokenQuery(
     {
-      userAddress,
+      userAddress: address,
       asset,
     },
     {
