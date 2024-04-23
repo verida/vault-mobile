@@ -17,7 +17,7 @@ const baseQuery = fetchBaseQuery({
 export const promoBannersApi = createApi({
   reducerPath: 'promoBannersApi',
   baseQuery: baseQuery,
-  refetchOnMountOrArgChange: 60 * 60 * 1, // 1 hours
+  refetchOnMountOrArgChange: 60 * 60 * 6, // 6 hours
   refetchOnReconnect: false,
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
