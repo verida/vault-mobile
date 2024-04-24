@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useCallback, useMemo } from 'react'
 import { StyleSheet, TouchableHighlight, View } from 'react-native'
 

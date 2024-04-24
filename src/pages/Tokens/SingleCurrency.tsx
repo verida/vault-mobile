@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
@@ -70,8 +70,8 @@ const SingleCurrency = () => {
   const accounts = selectedCryptoWallet?.accounts || []
   const account = resourceChainId
     ? accounts.find(
-        (accountItem) => accountItem.namespace === resourceChainId.namespace
-      )
+      (accountItem) => accountItem.namespace === resourceChainId.namespace
+    )
     : undefined
   const address = account?.address || null
 

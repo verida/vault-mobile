@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'

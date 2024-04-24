@@ -11,6 +11,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.soloader.SoLoader;
+import com.facebook.react.flipper.ReactNativeFlipper;
 import com.microsoft.codepush.react.CodePush;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-import { useClipboard } from '@react-native-community/clipboard'
+import { useClipboard } from '@react-native-clipboard/clipboard'
 import { config } from 'config'
 import {
   canBeHandledByDeeplink,
@@ -104,11 +104,11 @@ export const QrCodeScannerScreen: React.FunctionComponent<
   const [maybeClipboardContent] =
     config.dev.devMode && config.dev.enableClipboardInQrCodeScanner
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
-        useClipboard()
+      useClipboard()
       : []
 
   React.useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (!maybeClipboardContent) return
 
       return debouncedProcessQrCodeMessage(maybeClipboardContent)
