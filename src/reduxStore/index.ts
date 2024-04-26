@@ -32,6 +32,8 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import { promoBannersApi } from '~/features/promoBanners'
+
 import {
   REDUX_PERSIST_CURRENT_VERSION,
   reduxPersistMigrations,
@@ -56,6 +58,7 @@ const persistConfig = {
     cryptoWalletApi.reducerPath,
     cryptoWalletLegacyApi.reducerPath,
     assetsApi.reducerPath,
+    promoBannersApi.reducerPath,
   ],
 }
 
@@ -74,6 +77,7 @@ export const rootReducer = combineReducers({
   [cryptoWalletApi.reducerPath]: cryptoWalletApi.reducer,
   [cryptoWalletLegacyApi.reducerPath]: cryptoWalletLegacyApi.reducer,
   [assetsApi.reducerPath]: assetsApi.reducer,
+  [promoBannersApi.reducerPath]: promoBannersApi.reducer,
 })
 
 const debounceNotify = debounce((notify) => notify(), 30)
@@ -100,7 +104,8 @@ export function configureAppStore() {
         .concat(blockchainApi.middleware)
         .concat(cryptoWalletApi.middleware)
         .concat(cryptoWalletLegacyApi.middleware)
-        .concat(assetsApi.middleware),
+        .concat(assetsApi.middleware)
+        .concat(promoBannersApi.middleware),
     devTools: __DEV__,
     enhancers: [batchedSubscribe(debounceNotify) as any],
   })

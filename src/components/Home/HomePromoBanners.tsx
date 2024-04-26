@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useTheme } from 'contexts/ThemeContext'
-import { HomeScreenPromoBanner, promoBanners } from 'features/homeScreen'
+// import { HomeScreenPromoBanner, promoBanners } from 'features/homeScreen'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
@@ -21,6 +21,8 @@ import PagerView, {
   PagerViewOnPageScrollEventData,
 } from 'react-native-pager-view'
 
+import { Banner, usePromoBanners } from '~/features/promoBanners'
+
 import { Icon } from 'components/Icon'
 import { WHITE_COLOR_OPACITY } from 'constants/color'
 import { Theme } from 'styles/types'
@@ -35,6 +37,8 @@ type HomePromoBannersProps = ViewProps
 
 export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
   const { ...viewProps } = props
+
+  const { promoBanners } = usePromoBanners()
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
@@ -69,25 +73,22 @@ export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
     []
   )
 
-  const handleBannerPress = useCallback(
-    async (banner: HomeScreenPromoBanner) => {
-      try {
-        switch (banner.actionType) {
-          case 'link': {
-            Linking.openURL(banner.actionValue)
-            break
-          }
-          // TODO: Handle opening screen from banner
-          // case 'screen':
-          //   navigation.navigate(banner.actionValue)
-          //   break
+  const handleBannerPress = useCallback(async (banner: Banner) => {
+    try {
+      switch (banner.actionType) {
+        case 'link': {
+          Linking.openURL(banner.actionValue)
+          break
         }
-      } catch (error: unknown) {
-        logger.error(error)
+        // TODO: Handle opening screen from banner
+        // case 'screen':
+        //   navigation.navigate(banner.actionValue)
+        //   break
       }
-    },
-    []
-  )
+    } catch (error: unknown) {
+      logger.error(error)
+    }
+  }, [])
 
   if (promoBanners.length === 0) {
     return null
@@ -96,9 +97,11 @@ export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
   const banners = [...promoBanners]
     .sort((a, b) => a.order - b.order) // TODO: Prefer toSorted if supported
     .map((banner) => (
-      <View key={banner.key} style={styles.bannerContainer}>
+      <View key={banner.id} style={styles.bannerContainer}>
         <ImageBackground
-          source={banner.image}
+          source={{
+            uri: banner.image,
+          }}
           resizeMode='cover'
           borderRadius={theme.roundness.xs}
           style={styles.bannerContent}>
