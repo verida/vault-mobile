@@ -8,7 +8,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+platform :ios, '13.4'
 prepare_react_native_project!
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
@@ -52,6 +52,8 @@ def shared_pods
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod "OpenSSL-Universal", "1.1.1100"
+
 end
 
 target 'Wallet-Production' do
@@ -84,6 +86,18 @@ post_install do |installer|
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
       target.build_configurations.each do |config|
           config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      end
+    end
+
+    # Temp fix for Flipper https://github.com/facebook/react-native/issues/43335
+    if target.name == 'Flipper'
+      file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'
+      contents = File.read(file_path)
+      unless contents.include?('#include <functional>')
+        File.open(file_path, 'w') do |file|
+          file.puts('#include <functional>')
+          file.puts(contents)
+        end
       end
     end
   end

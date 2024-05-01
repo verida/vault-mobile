@@ -1,3 +1,16 @@
+# 1.4.0 (2024-04-26)
+
+## Enhancements
+
+- Improve UI/UX of the crypto wallet list and details
+
+## Bug Fixes
+
+- Fix sending MATIC on Polygon mainnet
+- Fix blockchain cache incorrect expiry strategy
+- Fix selected crypto wallet not kept after restart
+- Fix crash when navigating to "View Seed phrase" of crypto wallet
+
 # 1.3.0 (2024-04-12)
 
 ## Enhancements

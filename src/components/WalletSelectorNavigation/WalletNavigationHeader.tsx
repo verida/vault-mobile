@@ -1,95 +1,84 @@
-import { Icon } from 'components'
-import { useTheme } from 'contexts'
+import React, { useMemo } from 'react'
+import { Pressable, StyleSheet, View } from 'react-native'
+
+import { ReadOnlyCryptoWallet } from '~/components/CryptoWallet'
+import { Icon } from '~/components/Icon'
+import { Typography } from '~/components/Typography'
 import {
-  getTruncatedWalletAddress,
+  getWalletTypeShortLabel,
   LegacyCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
-import { Avatar } from 'components/Images'
-import { Theme } from 'styles/types'
-
-interface WalletNavigationHeaderProps {
+type WalletNavigationHeaderProps = {
   selectedWallet: LegacyCryptoWallet | null
-  openWalletModal: () => void
+  onPress: () => void
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
-  const { selectedWallet, openWalletModal } = props
+export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
+  props
+) => {
+  const { selectedWallet, onPress } = props
 
-  const { theme } = useTheme()
+  const title = useMemo(() => {
+    return selectedWallet?.label || 'Select a wallet'
+  }, [selectedWallet])
+
+  const subtitle = useMemo(() => {
+    if (selectedWallet === null) {
+      return null
+    }
+    const addresses = selectedWallet.accounts.map((account) => {
+      return account.address
+    })
+    const dedupAddresses = Array.from(new Set(addresses))
+    if (dedupAddresses.length === 1) {
+      return dedupAddresses[0]
+    }
+    return getWalletTypeShortLabel('multi')
+  }, [selectedWallet])
+
   const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <Pressable
-      hitSlop={HIT_SLOP}
-      style={styles.container}
-      onPress={openWalletModal}>
-      <View style={styles.logoContainer}>
-        <Avatar
-          source={selectedWallet?.icon}
-          fallbackType='wallet'
-          style={styles.icon}
-          borderColor={theme.color.primary100}
-          fallbackColor={theme.color.primary}
-          fallbackBackgroundColor={theme.color.primary200}
-        />
+    <Pressable hitSlop={HIT_SLOP} style={styles.container} onPress={onPress}>
+      <View style={styles.titleContainer}>
+        {selectedWallet?.readOnly ? <ReadOnlyCryptoWallet /> : null}
+        <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
+          {title}
+        </Typography>
+        <Icon name='chevron-down' size={16} />
       </View>
-      <View style={styles.textContainer}>
-        <View style={styles.textWrapper}>
-          <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
-            {selectedWallet?.label}
-          </Text>
-          <Icon name='chevron-down' size={16} />
-        </View>
-        {selectedWallet ? (
-          <Text style={styles.address} numberOfLines={1} ellipsizeMode='middle'>
-            {selectedWallet.address
-              ? getTruncatedWalletAddress(selectedWallet.address)
-              : `${selectedWallet.count} addresses`}
-          </Text>
-        ) : null}
-      </View>
+      {subtitle ? (
+        <Typography
+          variant='label'
+          style={styles.address}
+          numberOfLines={1}
+          ellipsizeMode='middle'>
+          {subtitle}
+        </Typography>
+      ) : null}
     </Pressable>
   )
 }
 
-export default WalletNavigationHeader
-
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
-      flexDirection: 'row',
-      justifyContent: 'center',
+      flexDirection: 'column',
       alignItems: 'center',
+      paddingHorizontal: theme.spacing.xxxl,
     },
-    logoContainer: {
-      marginRight: theme.spacing.s,
-    },
-    textContainer: {
-      justifyContent: 'space-between',
-    },
-    textWrapper: {
+    titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    label: {
-      fontSize: theme.fontSize.sl,
-      lineHeight: theme.fontSize.xl,
-      fontFamily: theme.fontFamily.bold,
+      // Weird issue with using `alignItems: 'baseline'` on a container with `<Icon>`, see https://github.com/react-native-elements/react-native-elements/issues/2134
+      gap: theme.spacing.xs,
     },
     address: {
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.m,
-      fontFamily: theme.fontFamily.semibold,
       color: theme.color.textLightGrey,
-    },
-    icon: {
-      width: 32,
-      height: 32,
     },
   })
