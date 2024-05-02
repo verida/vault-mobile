@@ -15,6 +15,8 @@ const baseQuery = fetchBaseQuery({
 export const blockchainApi = createApi({
   reducerPath: 'blockchainApi',
   baseQuery: baseQuery,
+  refetchOnMountOrArgChange: 60 * 60 * 12, // 12 hours
+  refetchOnReconnect: false,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === REHYDRATE) {
@@ -23,7 +25,6 @@ export const blockchainApi = createApi({
   },
   endpoints: (build) => ({
     getBlockchainNetworks: build.query({
-      keepUnusedDataFor: 60 * 60 * 24, // 24 hours
       // enforced empty object {} as this query params to have a unique cache key
       query: (_: Record<string, never> = {}) => 'chains/list',
       transformResponse: (response: {

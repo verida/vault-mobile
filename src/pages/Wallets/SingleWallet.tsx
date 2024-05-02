@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import ChainsAddressesList from 'components/ChainsAddressesList'
+import { ChainAddressesList } from 'components/ChainsAddressesList'
 import Container from 'components/Container'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
@@ -124,12 +124,9 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
               <Text style={styles.actionButtonText}>Seed phrase</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.listLabel}>Addresses</Text>
-          <ChainsAddressesList
+          <Text style={styles.listLabel}>Accounts</Text>
+          <ChainAddressesList
             list={cryptoWallet.accounts || []}
-            onPressSeedPhrase={(seedPhrase: string) => {
-              showSeedPhrase(seedPhrase)
-            }}
             onPressPrivateKey={(privateKey: string) => {
               showPrivateKey(privateKey)
             }}
