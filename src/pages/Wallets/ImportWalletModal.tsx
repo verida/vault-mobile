@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-clipboard/clipboard'
-import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
   Alert,
@@ -13,7 +12,6 @@ import {
 import Button from '~/components/Button'
 import Label from '~/components/Label'
 import Layout from '~/components/Layouts/Layout'
-import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import DropDownPicker from '~/components/Select'
 import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
@@ -26,6 +24,10 @@ import {
   WalletType,
 } from '~/features/cryptoWallet'
 import InputStyles from '~/styles/inputs'
+
+import ClipboardIcon from 'assets/clipboard_icon.svg'
+import CloseIcon from 'assets/icons/close_icon.svg'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 export type ImportWalletModalProps = {
   visible: boolean
@@ -122,7 +124,7 @@ export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <CloseIcon />,
           action: () => hideModal(),
         }}
         title='Import wallet'
@@ -204,7 +206,7 @@ export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
           <TouchableOpacity
             onPress={fetchCopiedText}
             style={styles.actionButton}>
-            <Icon name='clipboard' style={styles.actionButtonIcon} />
+            <ClipboardIcon />
             <Text style={styles.actionButtonText}>Paste</Text>
           </TouchableOpacity>
         </View>

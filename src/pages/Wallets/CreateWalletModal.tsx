@@ -1,13 +1,14 @@
-import { Icon } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
 import Button from '~/components/Button'
 import Label from '~/components/Label'
 import Layout from '~/components/Layouts/Layout'
-import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { CreateCryptoWalletData } from '~/features/cryptoWallet'
 import InputStyles from '~/styles/inputs'
+
+import CloseIcon from 'assets/icons/close_icon.svg'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 export type CreateWalletModalProps = {
   visible: boolean
@@ -32,7 +33,7 @@ export const CreateWalletModal: React.FC<CreateWalletModalProps> = (props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <CloseIcon />,
           action: () => hideModal(),
         }}
         title='Create wallet'

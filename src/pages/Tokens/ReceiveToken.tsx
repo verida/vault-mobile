@@ -5,7 +5,7 @@ import {
   useChainIdForResourceParams,
   useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 // @ts-expect-error missing_declaration
@@ -23,6 +23,8 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 const LogoImg = require('assets/vault-logo.png')
 
@@ -56,7 +58,7 @@ const ReceiveToken = () => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title={`Receive ${aggregateWalletBannerBalance.symbol}`}

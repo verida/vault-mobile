@@ -8,11 +8,13 @@ import { isNetworkCompatibleForConnect } from 'features/veridaConnect'
 import { useWalletConnectContext } from 'features/walletConnect'
 import { capitalize } from 'lodash'
 import moment from 'moment'
-import { Container, Content, Icon } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, StyleSheet, View } from 'react-native'
+import Icon from 'react-native-vector-icons/AntDesign'
 
 import AccountManager from 'api/AccountManager'
+import CloseIcon from 'assets/icons/close_icon.svg'
 import AppLogo from 'components/AppLogo'
 import CountDownText from 'components/CountDownText'
 import CustomFooter from 'components/Layouts/CustomFooter'
@@ -324,7 +326,7 @@ export default (props) => {
       <NavigationHeader
         title='Login Request'
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <CloseIcon />,
           action: () => props.navigation.goBack(),
         }}
       />
@@ -420,7 +422,6 @@ export default (props) => {
                             { color: errorMessage.color, marginBottom: 2 },
                           ]}>
                           <Icon
-                            type='AntDesign'
                             name={errorMessage.iconName}
                             style={[style.text, { color: errorMessage.color }]}
                           />

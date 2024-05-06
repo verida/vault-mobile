@@ -86,33 +86,33 @@ export const EditVeridaOnePlatformLinkScreen: React.FunctionComponent<
           right={
             isEditMode()
               ? {
-                  icon: <TrashBinIcon />,
-                  action: () => {
-                    Alert.alert(
-                      'Are you sure you want to delete this social?',
-                      undefined,
-                      [
-                        {
-                          text: 'Cancel',
-                          style: 'cancel',
+                icon: <TrashBinIcon />,
+                action: () => {
+                  Alert.alert(
+                    'Are you sure you want to delete this social?',
+                    undefined,
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: () => {
+                          emitter.emit('SAVE_GENERIC_PROPERTY', {
+                            screenName,
+                            value: originalValue,
+                            mode: PublicProfileEditMode.DeletePlatformURL,
+                            originalValue,
+                          })
+                          navigation.goBack()
                         },
-                        {
-                          text: 'Delete',
-                          style: 'destructive',
-                          onPress: () => {
-                            emitter.emit('SAVE_GENERIC_PROPERTY', {
-                              screenName,
-                              value: originalValue,
-                              mode: PublicProfileEditMode.DeletePlatformURL,
-                              originalValue,
-                            })
-                            navigation.goBack()
-                          },
-                        },
-                      ]
-                    )
-                  },
-                }
+                      },
+                    ]
+                  )
+                },
+              }
               : undefined
           }
         />

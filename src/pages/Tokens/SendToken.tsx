@@ -7,7 +7,7 @@ import {
   usePredictMaxTransactionFeeOrZero,
   useTokenCalculator,
 } from 'features/token'
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -19,6 +19,8 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 const showAlert = () =>
   Alert.alert('Invalid quantity', 'Quantity is higher than wallet balance')
@@ -70,7 +72,7 @@ const SendToken = React.memo(function SendToken() {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title={`Send ${aggregateWalletBannerBalance.symbol}`}

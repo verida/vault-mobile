@@ -6,13 +6,20 @@ import {
 } from 'components'
 import { selectSelectedAccount } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
-import { Dimensions, StatusBar, StyleSheet, Text, View } from 'react-native'
+import {
+  Dimensions,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore no-implicit-any
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 
+import CloseIcon from 'assets/icons/close_icon.svg'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
@@ -48,10 +55,9 @@ export const ShareIdentityScreen: React.FunctionComponent<
       title: 'Share Identity',
       // TODO: Get rid of the following when properly handling a common header in the navigator
       headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
+        <TouchableOpacity onPress={handleClose}>
+          <CloseIcon />
+        </TouchableOpacity>
       ),
     })
   }, [navigation, handleClose])

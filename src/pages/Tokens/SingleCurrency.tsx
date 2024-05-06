@@ -13,7 +13,6 @@ import {
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
-import { Icon } from 'native-base'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
@@ -27,6 +26,8 @@ import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 export type SingleCurrencyRouteProp = RouteProp<
   MainStackParams,
@@ -129,7 +130,7 @@ const SingleCurrency = () => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title={title}

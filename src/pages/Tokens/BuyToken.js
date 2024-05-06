@@ -1,4 +1,4 @@
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React, { useState } from 'react'
 import {
   Image,
@@ -20,6 +20,8 @@ import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import InputStyles from 'styles/inputs'
 
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
+
 export default ({ navigation }) => {
   const [cardNumber, setCardNumber] = useState('')
 
@@ -27,7 +29,7 @@ export default ({ navigation }) => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title='Buy ETH'

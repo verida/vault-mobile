@@ -6,7 +6,7 @@ import {
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React from 'react'
 
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -15,6 +15,8 @@ import TransactionInfo from 'components/Tokens/TransactionInfo'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 export type TransactionDetailsRouteProp = RouteProp<
   MainStackParams,
@@ -39,8 +41,8 @@ const TransactionDetails = () => {
   const accounts = selectedCryptoWallet?.accounts || []
   const account = resourceChainId
     ? accounts.find(
-        (accountItem) => accountItem.namespace === resourceChainId.namespace
-      )
+      (accountItem) => accountItem.namespace === resourceChainId.namespace
+    )
     : undefined
 
   const address = account?.address || null
@@ -59,7 +61,7 @@ const TransactionDetails = () => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title={'Transaction Details'}

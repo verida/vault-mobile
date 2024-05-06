@@ -1,4 +1,4 @@
-import { Container, Content, Icon } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
   FlatList,
@@ -12,6 +12,8 @@ import DataConnectorsManager from 'api/DataConnectorsManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 function buildConnections(allConnectors) {
   const finalConnectors = []
@@ -51,7 +53,7 @@ export const ConnectionsTabScreen = (props) => {
       <NavigationHeader
         title='Connections'
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => props.navigation.goBack(),
         }}
       />

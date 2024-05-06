@@ -9,7 +9,6 @@ import { getDefaultVeridaNetwork } from 'features/verida'
 import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
-import { Icon } from 'native-base'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
   Alert,
@@ -26,6 +25,7 @@ import AccountManager from 'api/AccountManager'
 import AlertIcon from 'assets/alert_icon_2.svg'
 import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
+import LeftArrowIcon from 'assets/left_arrow_icon.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import Button from 'components/Button'
 import Container from 'components/Container'
@@ -176,7 +176,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       if (
         error instanceof Error &&
         error.message ===
-          'Unable to force creation of storage context for this DID'
+        'Unable to force creation of storage context for this DID'
       ) {
         setCreateAccountErrorMessage(
           'Blockchain is temporarily unavailable, please try again later.'
@@ -286,14 +286,9 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
           left={
             pageData[currentPage].hasBack || showRetry
               ? {
-                  icon: (
-                    <Icon
-                      name='arrow-back'
-                      style={{ color: theme.color.icon }}
-                    />
-                  ),
-                  action: () => onBack(),
-                }
+                icon: <LeftArrowIcon />,
+                action: () => onBack(),
+              }
               : ({} as any)
           }
         />
@@ -304,7 +299,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         />
       </>
     ) : null
-  }, [currentPage, onBack, showRetry, theme.color.icon, theme.spacing.m])
+  }, [currentPage, onBack, showRetry, theme.spacing.m])
 
   const renderBottomButtons = useCallback(() => {
     return (

@@ -7,7 +7,7 @@ import {
   useChainIdForResourceParams,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React, { useState } from 'react'
 import {
   Alert,
@@ -28,6 +28,8 @@ import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
 import InputStyles from 'styles/inputs'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 const logger = Logger.create('TokenRecipient')
 
@@ -100,7 +102,7 @@ const TokenRecipient = () => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         title={`Send ${aggregateWalletBannerBalance.symbol}`}

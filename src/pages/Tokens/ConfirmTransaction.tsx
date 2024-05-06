@@ -9,10 +9,11 @@ import {
   useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
+import CloseIcon from 'assets/icons/close_icon.svg'
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NumericCryptoMaxTransactionFee } from 'components/Span'
@@ -89,7 +90,7 @@ const ConfirmTransaction = () => {
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <CloseIcon />,
           action: () =>
             navigation.navigate('SingleCurrency', {
               resource,

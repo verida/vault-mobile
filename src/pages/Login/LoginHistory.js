@@ -1,9 +1,10 @@
-import { Container, Icon } from 'native-base'
+import { Container } from 'native-base'
 import React, { useState } from 'react'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 import HistoryLayout from '../../components/Layouts/HistoryLayout'
 import LoginTabs from '../../components/Navigation/LoginTabs'
 
@@ -24,7 +25,7 @@ export default (props) => {
       <NavigationHeader
         title='Login History'
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => props.navigation.goBack(),
         }}
       />

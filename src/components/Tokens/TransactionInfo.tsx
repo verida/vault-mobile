@@ -6,9 +6,9 @@ import {
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
-import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
@@ -73,6 +73,7 @@ export default ({
               style={styles.copyButton}>
               <Icon
                 name='copy-outline'
+                size={22}
                 style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
               />
               <Text style={styles.copyText}>Copy</Text>

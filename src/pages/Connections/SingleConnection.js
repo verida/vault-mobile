@@ -1,12 +1,16 @@
-import { Container, Content, Icon } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
+
+import { Checkmark } from '~/components'
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 const calculateNextSync = function (conn) {
   if (!conn.syncNext) return
@@ -106,14 +110,14 @@ export default ({ route, navigation }) => {
       <NavigationHeader
         title={'Connect ' + connectionInfo.label}
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
       />
       <Content contentContainerStyle={styles.contentContainer}>
         {Boolean(showSuccess) && (
           <View style={styles.successMessage}>
-            <Icon name='checkmark-circle' style={styles.successMessageIcon} />
+            <Checkmark size={20} />
             <Text style={styles.successMessageText}>
               Connection successfully established.
             </Text>

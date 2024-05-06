@@ -8,7 +8,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import PlusIcon from '~/assets/plus_icon.svg'
 import UnionIcon from '~/assets/union_icon.svg'
 import { CryptoWalletList } from '~/components/CryptoWallet'
-import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { BLACK_COLOR } from '~/constants/color'
 import {
   addWatchedCryptoWallet,
@@ -24,6 +23,8 @@ import {
 } from '~/features/cryptoWallet'
 import { MainStackParams } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
+
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import { CreateWalletModal } from './CreateWalletModal'

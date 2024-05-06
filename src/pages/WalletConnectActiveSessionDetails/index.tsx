@@ -1,12 +1,13 @@
 import { Spacer } from 'components'
 import { WalletConnectActiveSession } from 'features/walletConnect'
-import { Icon } from 'native-base'
 import * as React from 'react'
 import { ScrollView, View } from 'react-native'
 import { LAYOUT_BASE } from 'styles'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 export type WalletConnectActiveSessionDetailsParams = {
   walletConnectSessionKey: string
@@ -25,7 +26,7 @@ export const WalletConnectActiveSessionDetails = React.memo(
           title='Session Details'
           left={React.useMemo(
             () => ({
-              icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+              icon: <LeftArrowIcon />,
               action: () => navigation.goBack(),
             }),
             [navigation]

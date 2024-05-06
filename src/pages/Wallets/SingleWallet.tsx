@@ -4,11 +4,11 @@ import {
   UpdateCryptoWalletData,
   useCryptoWallets,
 } from 'features/cryptoWallet'
-import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
+import LeftArrowIcon from 'assets/left_arrow_icon.svg'
 import { ChainAddressesList } from 'components/ChainsAddressesList'
 import Container from 'components/Container'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -103,7 +103,7 @@ const SingleWalletScreen = (props: SingleWalletScreenProps) => {
       <NavigationHeader
         title={cryptoWallet?.label}
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => navigation.goBack(),
         }}
         rightComponent={

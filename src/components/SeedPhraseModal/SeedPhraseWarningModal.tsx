@@ -1,7 +1,7 @@
-import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import CloseIcon from 'assets/icons/close_icon.svg'
 import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -87,7 +87,7 @@ export default (props: Props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <CloseIcon />,
           action: () => hideModal(),
         }}
         title={modalContent[type].title}

@@ -1,9 +1,10 @@
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
-import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
+import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 
+import CloseIcon from 'assets/icons/close_icon.svg'
 import Text from 'components/Text'
 import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT } from 'constants/color'
 
@@ -46,12 +47,12 @@ function NavigationHeader({
         style={
           bottomBorder
             ? Platform.select({
-                ios: {
-                  borderBottomWidth: 1,
-                  borderBottomColor: SEPARATOR_EXTRA_LIGHT,
-                },
-                android: { elevation: 1 },
-              })
+              ios: {
+                borderBottomWidth: 1,
+                borderBottomColor: SEPARATOR_EXTRA_LIGHT,
+              },
+              android: { elevation: 1 },
+            })
             : {}
         }>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>
@@ -68,7 +69,7 @@ function NavigationHeader({
               case 'close':
                 return navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
-                    <Icon name='close' style={{ color: '#000' }} />
+                    <CloseIcon />
                   </Button>
                 ) : null
               case 'skip':

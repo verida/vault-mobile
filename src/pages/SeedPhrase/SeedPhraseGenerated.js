@@ -1,8 +1,8 @@
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
-import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 import _ from 'underscore'
 
 import AccountManager from 'api/AccountManager'
@@ -65,7 +65,11 @@ const SeedPhraseGenerated = (props) => {
             <Text style={styles.copyButtonText}>
               {'Copy to clipboard\u00A0'}
             </Text>
-            <Icon name='copy' style={{ color: theme.color.black600 }} />
+            <Icon
+              name='copy-outline'
+              size={24}
+              style={{ color: theme.color.black600 }}
+            />
           </View>
         </Button>
         <Button color='primary' onPress={onSaved}>
