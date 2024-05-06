@@ -76,7 +76,7 @@ post_install do |installer|
     config[:reactNativePath],
     :mac_catalyst_enabled => false
   )
-  __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  # __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
@@ -90,15 +90,15 @@ post_install do |installer|
     end
 
     # Temp fix for Flipper https://github.com/facebook/react-native/issues/43335
-    if target.name == 'Flipper'
-      file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'
-      contents = File.read(file_path)
-      unless contents.include?('#include <functional>')
-        File.open(file_path, 'w') do |file|
-          file.puts('#include <functional>')
-          file.puts(contents)
-        end
-      end
-    end
+    # if target.name == 'Flipper'
+    #   file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'
+    #   contents = File.read(file_path)
+    #   unless contents.include?('#include <functional>')
+    #     File.open(file_path, 'w') do |file|
+    #       file.puts('#include <functional>')
+    #       file.puts(contents)
+    #     end
+    #   end
+    # end
   end
 end
