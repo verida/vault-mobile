@@ -35,7 +35,7 @@ export const WALLET_TYPES = ['multi', ...BLOCKCHAIN_NAMESPACES] as const
 export const WALLET_TYPE_DEFINITIONS = {
   ...BLOCKCHAIN_NAMESPACE_DEFINITIONS,
   multi: {
-    shortLabel: 'Multi-chain Wallet',
+    shortLabel: 'Multi-chain',
     longLabel: 'Multi-chain Wallet',
   },
 }

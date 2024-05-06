@@ -8,7 +8,7 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
-import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
+import { WalletNavigationHeader } from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
 import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
@@ -67,7 +67,7 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
     () => (
       <WalletNavigationHeader
         selectedWallet={selectedCryptoWallet}
-        openWalletModal={openWalletModal}
+        onPress={openWalletModal}
       />
     ),
     [openWalletModal, selectedCryptoWallet]
