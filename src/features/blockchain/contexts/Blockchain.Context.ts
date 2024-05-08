@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { BlockchainContextValue } from '../@types'
+import { BlockchainContextValue } from '../types'
 
 const BlockchainContext = React.createContext<BlockchainContextValue | null>(
   null

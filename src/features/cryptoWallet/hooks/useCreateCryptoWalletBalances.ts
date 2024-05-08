@@ -1,12 +1,16 @@
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { Logger } from 'features/telemetry'
 import * as React from 'react'
+
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { Logger } from '~/features/telemetry'
 
 import {
   CryptoWalletBalances,
   UseCreateCryptoWalletBalancesResult,
   UseCreateCryptoWalletBalancesState,
-} from '../@types'
+} from '../types'
 import { fetchCryptoWalletBalances } from '../utils'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 

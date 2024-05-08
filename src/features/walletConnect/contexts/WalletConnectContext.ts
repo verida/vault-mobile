@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { WalletConnectContextValue } from '../@types'
+import { WalletConnectContextValue } from '../types'
 
 const WalletConnectContext =
   React.createContext<WalletConnectContextValue | null>(null)

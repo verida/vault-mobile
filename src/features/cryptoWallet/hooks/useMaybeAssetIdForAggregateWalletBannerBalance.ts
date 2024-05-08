@@ -6,7 +6,7 @@ import {
   isAssetTypeResourceParams,
   isChainIdResourceParams,
   ResourceParams,
-} from '../@types'
+} from '../types'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 
 // TODO: Move this somewhere.

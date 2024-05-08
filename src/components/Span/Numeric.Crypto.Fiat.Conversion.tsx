@@ -1,7 +1,8 @@
-import { CurrencyFormat } from 'features/token/@types'
 import { useTokenCalculator } from 'features/token/hooks/useTokenCalculator'
 import * as React from 'react'
 import { Text } from 'react-native'
+
+import { CurrencyFormat } from '~/features/token'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 import { NumericFiat } from './Numeric.Fiat'

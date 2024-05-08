@@ -1,13 +1,12 @@
+import * as bip39 from 'bip39'
 import { AssetId, ChainId } from 'caip'
 import * as ethers from 'ethers'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
-import { Logger } from 'features/telemetry'
 
-import { ImportedSeedPhrase } from '../@types'
+import { Logger } from '~/features/telemetry'
 
-const bip39 = require('bip39')
+import { WalletType } from '../types'
 
-const logger = Logger.create('validation')
+const logger = Logger.create('CryptoWallets')
 
 const validateNearAddress = (address: string) => {
   if (address.includes('.') && address.length >= 2 && address.length <= 64) {
@@ -26,9 +25,9 @@ export const isValidWalletAddressForChainId = (
   const { namespace } = chainId
 
   switch (namespace) {
-    case SupportedBlockchainNamespace.EIP_155:
+    case 'eip155':
       return ethers.utils.isAddress(address)
-    case SupportedBlockchainNamespace.NEAR:
+    case 'near':
       return validateNearAddress(address)
     default:
       logger.warn(
@@ -48,28 +47,21 @@ export const isValidWalletAddressForAssetId = (
   return isValidWalletAddressForChainId(address, asset.chainId)
 }
 
-export const isValidSeedPhrase = ({
-  phrase,
-  privateKey,
-  blockchainNetwork,
-  inputSwitch,
-}: ImportedSeedPhrase) => {
-  if (!blockchainNetwork || blockchainNetwork.namespace === 'near') {
-    // valid bip39 12 word seedphrase
-    return bip39.validateMnemonic(phrase)
-  } else if (blockchainNetwork.namespace === 'eip155') {
-    if (inputSwitch === 'privateKey') {
-      // is valid evm compatible privateKey
-      try {
-        return Boolean(new ethers.Wallet(privateKey)?.address)
-      } catch (err) {
-        return false
-      }
-    } else {
-      // valid bip39 12 word seedphrase
-      return bip39.validateMnemonic(phrase)
-    }
-  } else {
-    return bip39.validateMnemonic(phrase)
+export function isValidMnemonic(_walletType: WalletType, mnemonic: string) {
+  // TODO: Define somewhere the list of wallet types that support mnemonics
+
+  return bip39.validateMnemonic(mnemonic)
+}
+
+export function isValidPrivateKey(walletType: WalletType, privateKey: string) {
+  if (walletType !== 'eip155') {
+    // TODO: Define somewhere the list of wallet types that support private keys
+    return false // TODO: Throw an error instead
+  }
+
+  try {
+    return Boolean(new ethers.Wallet(privateKey)?.address)
+  } catch (_error) {
+    return false
   }
 }

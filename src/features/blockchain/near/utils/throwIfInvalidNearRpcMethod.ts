@@ -1,6 +1,6 @@
 import { $enum } from 'ts-enum-util'
 
-import { NearRpcMethod } from '../@types'
+import { NearRpcMethod } from '../types'
 
 export const isValidNearRpcMethod = (
   maybeNearRpcMethod: string | undefined

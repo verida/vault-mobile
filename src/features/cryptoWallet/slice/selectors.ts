@@ -1,155 +1,29 @@
-import { AssetType } from 'caip'
-import {
-  BlockchainNetwork,
-  BlockchainWalletWithAccounts,
-} from 'features/blockchain'
-import {
-  getBalancesData,
-  SelectSingleTokenData,
-  SelectSingleTokenDataFailureCase,
-  WalletsData,
-} from 'features/cryptoWallet'
-import { isEmpty } from 'lodash'
-import { createSelector } from 'reselect'
+import { RootState } from '~/reduxStore/types'
 
-import { RootState } from 'reduxStore/types'
+// In components, prefer using a hook over a selector as the selector needs to be used in a `useAppSelector` anyway.
 
-const createDefaultErrorResponse = (): SelectSingleTokenDataFailureCase => ({
-  label: '',
-  price: 0,
-  change: 0,
-  quantity: 0,
-  amount: 0,
-})
+export const getCryptoWallets = (state: RootState) => {
+  return state.cryptoWallets.wallets
+}
 
-// TODO: @cawfree If there was a `tokenType` field, it should be created here.
-export const selectSingleTokenData = (
-  state: RootState,
-  asset: AssetType | undefined
-): SelectSingleTokenData => {
-  if (!asset) return createDefaultErrorResponse()
+export const getCryptoWalletsCount = (state: RootState) => {
+  const wallets = getCryptoWallets(state)
+  return wallets.length || 0
+}
 
-  const selectedWallet = getSelectedWalletById(state)
-  const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { list } = getBalancesData(state, addresses)
+export const getSelectedCryptoWalletId = (state: RootState) => {
+  return state.cryptoWallets.selectedWalletId
+}
 
-  const tokenBalance = list?.find((item) => {
-    return (
-      new AssetType(item.asset).toString() === new AssetType(asset).toString()
-    )
-  })
-
-  // We should always find a token balance, so this shouldn't happen
-  // but just in case, return 0 values if not found
-  if (!tokenBalance) return createDefaultErrorResponse()
-
-  return {
-    ...tokenBalance,
-    label: tokenBalance.symbol,
-    price: tokenBalance.quote.USD.price,
-    change: tokenBalance.quote.USD.percent_change_24h,
-    quantity: tokenBalance.balance,
-    amount: tokenBalance.amount,
+export const getSelectedCryptoWallet = (state: RootState) => {
+  const selectedWalletId = getSelectedCryptoWalletId(state)
+  if (selectedWalletId === null) {
+    return null
   }
+  const wallets = getCryptoWallets(state)
+  return wallets?.find((wallet) => wallet.id === selectedWalletId) || null
 }
 
-export const getAllWallets = (state: RootState) =>
-  state.cryptoWallets.walletsData
-
-export const getSelectedWalletId = (state: RootState) =>
-  state.cryptoWallets.selectedWalletId
-
-export const getWalletList = (
-  state: RootState
-): BlockchainWalletWithAccounts[] => {
-  const allWallets = getAllWallets(state)
-
-  return Object.values(allWallets).map((wallet) => {
-    const addresses = Object.values(wallet.accounts).map((account) => {
-      return account.address
-    })
-
-    let icon
-    if (!wallet.multiChain) {
-      icon = wallet.blockchainNetwork?.icon
-    }
-
-    return {
-      ...wallet,
-      icon,
-      count: Object.keys(wallet.accounts).length,
-      address: addresses.length === 1 ? addresses[0] : undefined,
-    }
-  })
-}
-
-export const getUniqueWalletAddresses = (
-  wallet: BlockchainWalletWithAccounts
-) => {
-  if (isEmpty(wallet) || isEmpty(wallet.accounts)) return []
-
-  const addresses: string[] = [
-    ...new Set(
-      Object.values(wallet.accounts).flatMap((account) => {
-        // Ensure a valid chainId.
-        if (typeof account.chainId !== 'string' || !account.chainId.length)
-          return []
-
-        return [`${account.chainId}:${account.address}`]
-      })
-    ),
-  ]
-
-  return addresses
-}
-
-export const getSelectedWalletById = (state: RootState) => {
-  const walletList = getWalletList(state)
-  const selectedWalletId = state.cryptoWallets.selectedWalletId
-  const selectedWallet = walletList.find(
-    (item) => item._id === selectedWalletId
-  )!
-  return selectedWallet as BlockchainWalletWithAccounts
-}
-
-export const getWalletProcessingState = (state: RootState) => {
-  return state.cryptoWallets.walletProcessing.loading
-}
-
-export const getWalletCount = (state: RootState) => {
-  const allWallets = getAllWallets(state)
-  return Object.keys(allWallets).length || 0
-}
-
-export const getWalletsData = createSelector(
-  getSelectedWalletId,
-  getAllWallets,
-  (selectedWalletId, wallets): WalletsData =>
-    wallets?.[selectedWalletId!]?.accounts || {}
-)
-
-// TODO: Rename more appropriately, disturbing to be called getWallets when it only returns the selected one.
-export const getWallets = createSelector(
-  getSelectedWalletId,
-  getAllWallets,
-  (selectedWallet, wallets) => wallets?.[selectedWallet!] || {}
-)
-
-export const getWalletObjectById = (state: RootState, id: string) => {
-  return state.cryptoWallets.walletsData[id] || {}
-}
-
-export const selectNativeTokenBalance = (
-  state: RootState,
-  token: BlockchainNetwork
-) => {
-  const wallets = getWallets(state)
-  const addresses = getUniqueWalletAddresses(wallets)
-  const { list: balances } = getBalancesData(state, addresses)
-
-  if (balances && balances.some((item) => item.symbol === token.symbol)) {
-    return balances.find((item) => item.symbol === token.symbol)?.balance ?? 0
-  } else {
-    0
-  }
+export const getCryptoWalletStatus = (state: RootState) => {
+  return state.cryptoWallets.status
 }

@@ -1,16 +1,20 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { CryptoWalletRawRequest } from 'features/cryptoWallet/@types'
+import React, { createContext, useCallback, useMemo } from 'react'
+
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { MainStackParams } from '~/navigation/types'
+import { PaymentRequestScreenParams } from '~/pages/Requests'
+
+import { CryptoWalletRawRequest } from '../types'
 import {
   parseCryptoRequestDeepLink,
   parseCryptoRequestQrCode,
   processCryptoRequest,
-} from 'features/cryptoWallet/utils'
-import React, { createContext, useCallback, useMemo } from 'react'
-
-import { MainStackParams } from 'navigation/types'
-import { PaymentRequestScreenParams } from 'pages/Requests'
+} from '../utils'
 
 export type CryptoWalletContextType = {
   handleDeepLinkUrl: (url: string) => void
