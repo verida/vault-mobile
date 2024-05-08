@@ -1,3 +1,9 @@
+# 1.4.1 (2024-05-08)
+
+## Bug fixes
+
+* Fix profile country not updatable
+
 # 1.4.0 (2024-04-26)
 
 ## Enhancements
