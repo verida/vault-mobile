@@ -4,6 +4,8 @@ import { formatNumber } from 'utils'
 import { Typography, TypographyProps } from 'components/Typography'
 
 export type NumberProps = {
+  isLoading?: boolean
+  loadingValue?: string
   value: number
 
   /**
@@ -25,6 +27,8 @@ export type NumberProps = {
  */
 export const Number: React.FunctionComponent<NumberProps> = (props) => {
   const {
+    isLoading = false,
+    loadingValue = '-',
     value,
     unit,
     nbDecimals,
@@ -44,7 +48,9 @@ export const Number: React.FunctionComponent<NumberProps> = (props) => {
       : {}
   )
 
-  const formatedValue = formatNumber(value, unit, opts, locale)
+  const formatedValue = isLoading
+    ? loadingValue
+    : formatNumber(value, unit, opts, locale)
 
   return <Typography {...typographyProps}>{formatedValue}</Typography>
 }

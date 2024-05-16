@@ -27,6 +27,7 @@ type TokensListProps = {
   ) => void
   readonly refreshing?: boolean
   readonly error?: Error
+  readonly isCryptoWalletLoading?: boolean
 }
 
 export const TokensList: React.FC<TokensListProps> = (props) => {
@@ -36,6 +37,7 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
     onPullToRefresh = defaultOnPullToRefresh,
     refreshing = false,
     error,
+    isCryptoWalletLoading = false,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
@@ -67,11 +69,13 @@ export const TokensList: React.FC<TokensListProps> = (props) => {
       ListEmptyComponent={() => (
         <View style={styles.emptyMessageContainer}>
           <Typography variant='h5SemiBold' style={styles.emptyMessage}>
-            {error
-              ? 'Something went wrong!\nPull down to refresh'
-              : refreshing
-                ? 'Refreshing the list of coins...'
-                : "You don't have any coins yet"}
+            {isCryptoWalletLoading
+              ? 'Loading crypto wallet...'
+              : error
+                ? 'Something went wrong!\nPull down to refresh'
+                : refreshing
+                  ? 'Refreshing the list of coins...'
+                  : "You don't have any coins yet"}
           </Typography>
         </View>
       )}

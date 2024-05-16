@@ -55,7 +55,7 @@ const WalletSelectorModal = ({
       onClose={onCloseModal}
       visible={modalVisible}
       footer={ModalFooter}>
-      <View>
+      <View style={{ flex: 1 }}>
         <CryptoWalletList onPressItem={handleWalletSelection} />
       </View>
     </AppModal>
