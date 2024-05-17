@@ -5,6 +5,8 @@ import { ethers } from 'ethers'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
 
+import { Logger } from '~/features/telemetry'
+
 import { useChainMetadatasCustom } from '../../hooks'
 import { Blockchain, SupportedBlockchainNamespace } from '../../types'
 import {
