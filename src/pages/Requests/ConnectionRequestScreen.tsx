@@ -1,5 +1,4 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ScrollView,
@@ -103,13 +102,6 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Connection Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
     })
   }, [navigation, handleClose])
 

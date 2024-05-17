@@ -1,8 +1,9 @@
 import { Logger } from 'ethers/lib/utils'
 import { buildItem, findTypeById } from 'helpers/inbox'
-import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+
+import { ScreenWrapper } from '~/components'
 
 import AccountManager from 'api/AccountManager'
 import TypeDatabaseSync from 'components/Inbox/types/DatabaseSync'
@@ -11,7 +12,6 @@ import TypeDataSend from 'components/Inbox/types/DataSend'
 import TypeDatastoreSync from 'components/Inbox/types/DatastoreSync'
 import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
 const inboxItemComponents = {
@@ -74,9 +74,14 @@ export const InboxItemScreen: React.FC<InboxItemScreenProps> = (props) => {
     loadMessage()
   }, [loadMessage])
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: getHeaderTitle(inboxType?.id),
+    })
+  }, [navigation, inboxType])
+
   return (
-    <Container>
-      <NavigationHeader title={getHeaderTitle(inboxType?.id)} />
+    <ScreenWrapper>
       {!item ? (
         <LoadingView />
       ) : inboxItem ? (
@@ -92,6 +97,6 @@ export const InboxItemScreen: React.FC<InboxItemScreenProps> = (props) => {
           }
         )
       ) : null}
-    </Container>
+    </ScreenWrapper>
   )
 }

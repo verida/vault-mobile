@@ -96,48 +96,10 @@ export const MainNavigator: React.FunctionComponent = () => {
             options={{ headerShown: false }}
           />
 
-          <Stack.Screen name='Inbox' component={InboxScreen} />
-          <Stack.Screen name='InboxItem' component={InboxItemScreen} />
           <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
-
           <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
-
           <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
-
-          {/* Public profile modal screens */}
-          <Stack.Group
-            screenOptions={{
-              presentation: 'modal',
-            }}>
-            <Stack.Screen name='EditProfile' component={EditProfileScreen} />
-            <Stack.Screen
-              name='EditGenericProperty'
-              component={EditGenericPropertyScreen}
-            />
-            <Stack.Screen
-              name='AddVeridaOneCustomLink'
-              component={AddVeridaOneCustomLinkScreen}
-            />
-            <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
-            <Stack.Screen
-              name='ClaimUsername'
-              component={ClaimUsernameScreen}
-            />
-            <Stack.Screen
-              name='UnlockVeridaOne'
-              component={UnlockVeridaOneScreen}
-            />
-            <Stack.Screen
-              name='AddVeridaOnePlatformLink'
-              component={AddVeridaOnePlatformLinkScreen}
-            />
-            <Stack.Screen
-              name='EditVeridaOnePlatformLink'
-              component={EditVeridaOnePlatformLinkScreen}
-            />
-          </Stack.Group>
-
           <Stack.Screen
             name='SeedPhraseView'
             component={SeedPhraseViewScreen}
@@ -169,12 +131,10 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name='BuyToken' component={BuyTokenScreen} />
           <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
-
           <Stack.Screen name='DataFolder' component={DataFolderScreen} />
           <Stack.Screen name='DataItem' component={DataItemScreen} />
           <Stack.Screen name='ChangePin' component={ChangePinScreen} />
           <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
-
           <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
           <Stack.Screen
             name='CreateIdentity'
@@ -184,7 +144,6 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='ImportIdentity'
             component={ImportIdentityScreen}
           />
-
           <Stack.Screen
             name='MigrateIdentityConfirmation'
             component={MigrateIdentityConfirmationScreen}
@@ -196,19 +155,16 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='MigrateIdentityExecution'
             component={MigrateIdentityExecutionScreen}
           />
-
           <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
           <Stack.Screen
             name='SeedPhraseGenerated'
             component={SeedPhraseGeneratedScreen}
           />
           <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
-
           <Stack.Screen
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
-
           <Stack.Screen
             name='NFTCollectionDetail'
             component={NFTCollectionDetailScreen}
@@ -224,28 +180,6 @@ export const MainNavigator: React.FunctionComponent = () => {
             />
           )} */}
 
-          {/* Modal screens */}
-          <Stack.Group
-            screenOptions={{
-              presentation: 'modal',
-              headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
-              // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
-            }}>
-            <Stack.Screen
-              name='ConnectionRequest'
-              component={ConnectionRequestScreen}
-            />
-            <Stack.Screen
-              name='IncomingDataRequest'
-              component={IncomingDataRequestScreen}
-            />
-            <Stack.Screen
-              name='PaymentRequest'
-              component={PaymentRequestScreen}
-            />
-            <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
-          </Stack.Group>
-
           {/* Groups with the new BaseScreenHeader
           TODO: Progressively move other screens here to migrate from old header
           Eventually apply it at the very top and remove the group
@@ -256,6 +190,8 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShadowVisible: true,
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
+            <Stack.Screen name='Inbox' component={InboxScreen} />
+            <Stack.Screen name='InboxItem' component={InboxItemScreen} />
             <Stack.Screen
               name='ManageWallets'
               component={ManageWalletsScreen}
@@ -291,6 +227,41 @@ export const MainNavigator: React.FunctionComponent = () => {
               component={PolygonIdStatusScreen}
             />
           </Stack.Group>
+
+          {/* Public profile modal screens */}
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal',
+            }}>
+            <Stack.Screen name='EditProfile' component={EditProfileScreen} />
+            <Stack.Screen
+              name='EditGenericProperty'
+              component={EditGenericPropertyScreen}
+            />
+            <Stack.Screen
+              name='AddVeridaOneCustomLink'
+              component={AddVeridaOneCustomLinkScreen}
+            />
+            <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
+            <Stack.Screen
+              name='ClaimUsername'
+              component={ClaimUsernameScreen}
+            />
+            <Stack.Screen
+              name='UnlockVeridaOne'
+              component={UnlockVeridaOneScreen}
+            />
+            <Stack.Screen
+              name='AddVeridaOnePlatformLink'
+              component={AddVeridaOnePlatformLinkScreen}
+            />
+            <Stack.Screen
+              name='EditVeridaOnePlatformLink'
+              component={EditVeridaOnePlatformLinkScreen}
+            />
+          </Stack.Group>
+
+          {/* Modals */}
           <Stack.Group
             screenOptions={{
               presentation: 'modal',
@@ -302,6 +273,19 @@ export const MainNavigator: React.FunctionComponent = () => {
               name='ShareIdentity'
               component={ShareIdentityScreen}
             />
+            <Stack.Screen
+              name='ConnectionRequest'
+              component={ConnectionRequestScreen}
+            />
+            <Stack.Screen
+              name='IncomingDataRequest'
+              component={IncomingDataRequestScreen}
+            />
+            <Stack.Screen
+              name='PaymentRequest'
+              component={PaymentRequestScreen}
+            />
+            <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
           </Stack.Group>
         </Stack.Navigator>
       </BehindAuthContextProviders>

@@ -13,7 +13,6 @@ import {
 } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -81,13 +80,6 @@ export const PaymentRequestScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Payment Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
     })
   }, [navigation, handleClose])
 

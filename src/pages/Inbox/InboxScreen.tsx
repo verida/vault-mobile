@@ -1,15 +1,13 @@
-import { Logger } from 'features/telemetry'
-import { Container } from 'native-base'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { StyleSheet } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import Card from 'components/CardList/Card'
-import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { MainStackScreenProps } from 'navigation/types'
-
-import { buildItem } from '../../helpers/inbox'
+import AccountManager from '~/api/AccountManager'
+import { ScreenWrapper } from '~/components'
+import Card from '~/components/CardList/Card'
+import CustomFlatList, { ITEM_PER_PAGE } from '~/components/CustomFlatList'
+import { Logger } from '~/features/telemetry'
+import { buildItem } from '~/helpers/inbox'
+import { MainStackScreenProps } from '~/navigation/types'
 
 const logger = Logger.create('Pages/Inbox')
 
@@ -17,7 +15,9 @@ export type InboxScreenParams = undefined
 
 type InboxScreenProps = MainStackScreenProps<'Inbox'>
 
-export const InboxScreen: React.FC<InboxScreenProps> = (_props) => {
+export const InboxScreen: React.FC<InboxScreenProps> = (props) => {
+  const { navigation } = props
+
   const listRef = useRef(null)
 
   const loadInbox = useCallback(async (skip) => {
@@ -45,6 +45,12 @@ export const InboxScreen: React.FC<InboxScreenProps> = (_props) => {
     return results
   }, [])
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Inbox',
+    })
+  }, [navigation])
+
   // Initialise component
   useEffect(() => {
     const init = async () => {
@@ -67,8 +73,7 @@ export const InboxScreen: React.FC<InboxScreenProps> = (_props) => {
   }, [])
 
   return (
-    <Container>
-      <NavigationHeader title='Inbox' />
+    <ScreenWrapper>
       <CustomFlatList
         ref={listRef}
         data={[]}
@@ -76,7 +81,7 @@ export const InboxScreen: React.FC<InboxScreenProps> = (_props) => {
         loadData={loadInbox}
         contentContainerStyle={styles.list}
       />
-    </Container>
+    </ScreenWrapper>
   )
 }
 
