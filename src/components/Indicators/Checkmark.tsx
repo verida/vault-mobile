@@ -1,20 +1,18 @@
 import { useTheme } from 'contexts'
-import React from 'react'
-import Ionicon from 'react-native-vector-icons/Ionicons'
+import React, { ComponentProps } from 'react'
 
-export type CheckmarkProps = {
-  size?: number
-  color?: string
-}
+import { Icon } from '~/components/Icon'
+
+export type CheckmarkProps = Omit<ComponentProps<typeof Icon>, 'name'>
 
 export const Checkmark: React.FunctionComponent<CheckmarkProps> = (props) => {
-  const { size = 24, color } = props
+  const { size = 20, color } = props
 
   const { theme } = useTheme()
 
   return (
-    <Ionicon
-      name='checkmark-circle'
+    <Icon
+      name='check-circle'
       size={size}
       color={color || theme.color.success}
     />

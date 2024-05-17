@@ -1,13 +1,13 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { Container, Content, List } from 'native-base'
+import { Container } from 'native-base'
 import React, { useCallback, useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import PlusIcon from '~/assets/plus_icon.svg'
 import UnionIcon from '~/assets/union_icon.svg'
-import LoadingView from '~/components/LoadingView'
+import { CryptoWalletList } from '~/components/CryptoWallet'
 import NavigationHeader from '~/components/Navigation/NavigationHeader'
-import WalletList from '~/components/WalletList'
 import { BLACK_COLOR } from '~/constants/color'
 import {
   addWatchedCryptoWallet,
@@ -19,15 +19,10 @@ import {
   ImportCryptoWalletData,
   LegacyCryptoWallet,
   selectCryptoWallet,
-  useCryptoWallets,
   useCryptoWalletsCount,
-  useCryptoWalletsStatus,
-  useSelectedCryptoWalletId,
 } from '~/features/cryptoWallet'
-import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
-import { Theme } from '~/styles/types'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import { CreateWalletModal } from './CreateWalletModal'
@@ -42,10 +37,7 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const cryptoWallets = useCryptoWallets()
   const cryptoWalletCount = useCryptoWalletsCount()
-  const selectedCryptoWalletId = useSelectedCryptoWalletId()
-  const { processsing } = useCryptoWalletsStatus()
 
   const dispatch = useAppDispatch()
 
@@ -167,11 +159,11 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
   const handlePressWalletListItem = (item: LegacyCryptoWallet) => {
     let options
     if (item.readOnly) {
-      options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
+      options = ['Select this wallet', 'Delete Wallet', 'Cancel']
     } else {
       options = [
         'View seed phrases',
-        'Switch to this wallet',
+        'Select this wallet',
         'Delete Wallet',
         'Cancel',
       ]
@@ -208,7 +200,7 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     )
   }
 
-  const styles = useThemeAwareStyle(createStyles)
+  const { bottom } = useSafeAreaInsets()
 
   return (
     <Container>
@@ -219,44 +211,30 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
           action: navigationActionHandler,
         }}
       />
-      {processsing ? (
-        <LoadingView />
-      ) : (
-        <View style={{ flex: 1 }}>
-          <Content style={styles.content}>
-            <List>
-              <WalletList
-                list={cryptoWallets}
-                selectedWalletId={selectedCryptoWalletId}
-                onPressItem={handlePressWalletListItem}
-              />
-            </List>
-          </Content>
-          <CreateWalletModal
-            hideModal={() => setCreateWalletModalVisible(false)}
-            visible={createWalletModalVisible}
-            onCreateNewWallet={handleCreateWallet}
-          />
-          <ImportWalletModal
-            hideModal={() => setImportWalletModalVisible(false)}
-            visible={importWalletModalVisible}
-            onImportWallet={handleImportWallet}
-          />
-          <AddWatchedWalletModal
-            hideModal={() => setAddWatchedWalletModalVisible(false)}
-            visible={addWatchedWalletModalVisible}
-            onAddWatchedWallet={handleAddWatchedWallet}
-          />
-        </View>
-      )}
+      <View style={{ flex: 1 }}>
+        <CryptoWalletList
+          onPressItem={handlePressWalletListItem}
+          showMoreIcon
+          contentContainerStyle={{
+            paddingBottom: bottom,
+          }}
+        />
+        <CreateWalletModal
+          hideModal={() => setCreateWalletModalVisible(false)}
+          visible={createWalletModalVisible}
+          onCreateNewWallet={handleCreateWallet}
+        />
+        <ImportWalletModal
+          hideModal={() => setImportWalletModalVisible(false)}
+          visible={importWalletModalVisible}
+          onImportWallet={handleImportWallet}
+        />
+        <AddWatchedWalletModal
+          hideModal={() => setAddWatchedWalletModalVisible(false)}
+          visible={addWatchedWalletModalVisible}
+          onAddWatchedWallet={handleAddWatchedWallet}
+        />
+      </View>
     </Container>
   )
 }
-
-const createStyles = (theme: Theme) =>
-  StyleSheet.create({
-    content: {
-      backgroundColor: theme.color.snow,
-      paddingVertical: 25,
-    },
-  })

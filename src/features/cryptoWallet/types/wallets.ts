@@ -74,7 +74,6 @@ export type LegacyCryptoWallet = {
   mnemonic?: string
   accounts: LegacyCryptoWalletAccount[]
   icon?: string // kept for now but not set
-  count?: number
 }
 
 export type CryptoWalletsReduxState = {

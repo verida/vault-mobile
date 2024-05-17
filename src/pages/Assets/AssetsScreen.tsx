@@ -1,4 +1,7 @@
-import { useSelectedCryptoWallet } from 'features/cryptoWallet'
+import {
+  useCryptoWalletsStatus,
+  useSelectedCryptoWallet,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -6,7 +9,7 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
-import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
+import { WalletNavigationHeader } from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
 import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
@@ -46,6 +49,7 @@ type AssetsScreenProps = TabsScreenProps<'Assets'>
 export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const { navigation } = props
 
+  const { processsing: cryptoWalletProcessing } = useCryptoWalletsStatus()
   const selectedCryptoWallet = useSelectedCryptoWallet()
   const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -64,11 +68,12 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
+        isWalletLoading={cryptoWalletProcessing && !selectedCryptoWallet}
         selectedWallet={selectedCryptoWallet}
-        openWalletModal={openWalletModal}
+        onPress={openWalletModal}
       />
     ),
-    [openWalletModal, selectedCryptoWallet]
+    [cryptoWalletProcessing, openWalletModal, selectedCryptoWallet]
   )
 
   useEffect(() => {
