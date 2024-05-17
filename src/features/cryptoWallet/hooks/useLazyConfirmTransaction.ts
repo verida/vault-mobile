@@ -139,6 +139,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             to: toAddress,
             minifiedBlockchainAccount,
             eth_sendTransaction,
+            chainId,
           })
 
         case SupportedBlockchainNamespace.NEAR:

@@ -5,7 +5,7 @@ import {
   setPublicProfileByDid,
 } from 'features/profiles'
 import { Logger } from 'features/telemetry'
-import { COUNTRIES } from 'helpers/countries'
+import { COUNTRIES, CountrySelectItem } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
@@ -66,7 +66,9 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
     inputMaxLength: 0,
     isExceededMaxLength: false,
   })
-  const onChangeItem = (e: any) => setEdited(e)
+  const onChangeCountry = (countryItem: CountrySelectItem) => {
+    setEdited(countryItem.value)
+  }
 
   const saveValue = async () => {
     Keyboard.dismiss()
@@ -154,7 +156,7 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
                   defaultValue={option.value}
                   items={COUNTRIES}
                   containerStyle={InputStyles.select}
-                  onChangeItem={onChangeItem}
+                  onChangeItem={onChangeCountry}
                 />
               </>
             )}

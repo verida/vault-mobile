@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
 import {
@@ -14,7 +7,6 @@ import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   SEPARATOR,
-  SNOW_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
@@ -59,7 +51,7 @@ const AppModal = ({
             <View />
           </View>
           <View style={styles.divider} />
-          <ScrollView style={styles.modalView}>{children}</ScrollView>
+          <View style={styles.modalView}>{children}</View>
           {footer && <View style={styles.bottom}>{footer}</View>}
         </View>
       </View>
@@ -105,7 +97,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     flex: 1,
-    backgroundColor: SNOW_COLOR,
+    // backgroundColor: SNOW_COLOR,
   },
   bottom: {
     alignItems: 'center',
