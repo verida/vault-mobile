@@ -12,6 +12,7 @@ import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
 type WalletNavigationHeaderProps = {
+  isWalletLoading?: boolean
   selectedWallet: LegacyCryptoWallet | null
   onPress: () => void
 }
@@ -21,11 +22,13 @@ const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 export const WalletNavigationHeader: React.FC<WalletNavigationHeaderProps> = (
   props
 ) => {
-  const { selectedWallet, onPress } = props
+  const { isWalletLoading = false, selectedWallet, onPress } = props
 
   const title = useMemo(() => {
-    return selectedWallet?.label || 'Select a wallet'
-  }, [selectedWallet])
+    return isWalletLoading
+      ? 'Loading...'
+      : selectedWallet?.label || 'Select a wallet'
+  }, [isWalletLoading, selectedWallet])
 
   const subtitle = useMemo(() => {
     if (selectedWallet === null) {

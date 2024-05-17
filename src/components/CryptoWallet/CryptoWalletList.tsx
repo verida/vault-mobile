@@ -6,7 +6,7 @@ import {
   LegacyCryptoWallet,
   useCryptoWallets,
   useCryptoWalletsStatus,
-  useSelectedCryptoWalletId,
+  useSelectedCryptoWallet,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
@@ -30,8 +30,8 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
     props
 
   const cryptoWallets = useCryptoWallets()
-  const selectedCryptoWalletId = useSelectedCryptoWalletId()
   const { processsing } = useCryptoWalletsStatus()
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -41,12 +41,12 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
         <CryptoWalletListItem
           item={cryptoWallet}
           onPress={onPressItem}
-          selected={selectedCryptoWalletId === cryptoWallet.id}
+          selected={selectedCryptoWallet?.id === cryptoWallet.id}
           showMoreIcon={showMoreIcon}
         />
       </View>
     ),
-    [onPressItem, selectedCryptoWalletId, showMoreIcon, styles.item]
+    [onPressItem, selectedCryptoWallet, showMoreIcon, styles.item]
   )
 
   const hasData = cryptoWallets.length > 0
@@ -67,7 +67,9 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
       ListEmptyComponent={() => (
         <View style={styles.emptyMessageContainer}>
           <Typography variant='h5SemiBold' style={styles.emptyMessage}>
-            No crypto wallets
+            {processsing && !selectedCryptoWallet
+              ? 'Loading crypto wallets...'
+              : 'No crypto wallets'}
           </Typography>
         </View>
       )}
