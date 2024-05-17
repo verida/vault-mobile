@@ -1,14 +1,61 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { BaseScreenHeader, ModalScreenHeader } from 'components'
-import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
+import { BaseScreenHeader, ModalScreenHeader } from '~/components'
+import { BehindAuthHandlers } from '~/components/BehindAuthHandlers'
+import { BehindAuthContextProviders } from '~/contexts'
+import { NFTCollectionDetailScreen } from '~/pages/Assets/NFTCollectionDetail'
+import { NFTDetailScreen } from '~/pages/Assets/NFTDetail'
+import { SelectAssetScreen } from '~/pages/Assets/SelectAsset'
+import { ChangePinScreen } from '~/pages/Authentication/ChangePin'
 import {
   BlockchainNetworkEditorScreen,
   BlockchainNetworksScreen,
 } from '~/pages/Blockchains'
 import { SingleConnectionScreen } from '~/pages/Connections'
+import { DataFolderScreen, DataItemScreen } from '~/pages/Data'
+import {
+  AddIdentityScreen,
+  CreateIdentityScreen,
+  DeleteIdentityScreen,
+  ImportIdentityScreen,
+  MigrateIdentityConfirmationScreen,
+  MigrateIdentityExecutionScreen,
+  RemoveIdentityScreen,
+  ShareIdentityScreen,
+} from '~/pages/Identity'
+import {
+  InboxItemScreen,
+  InboxScreen,
+  ShareableDataScreen,
+} from '~/pages/Inbox'
+import { LoginHistoryScreen } from '~/pages/Login'
+import LoginRequest from '~/pages/Login/LoginRequest'
 import { PolygonIdStatusScreen } from '~/pages/PolygonId'
+import {
+  AddVeridaOneCustomLinkScreen,
+  AddVeridaOnePlatformLinkScreen,
+  ClaimUsernameScreen,
+  EditGenericPropertyScreen,
+  EditProfileScreen,
+  EditVeridaOnePlatformLinkScreen,
+  PublicProfileScreen,
+  UnlockVeridaOneScreen,
+} from '~/pages/Profiles'
+import { QrCodeScannerScreen } from '~/pages/QrCodeScanner'
+import {
+  SeedPhraseGeneratedScreen,
+  SeedPhraseScreen,
+  SeedPhraseViewScreen,
+  VerifyPhraseScreen,
+} from '~/pages/RecoveryPhrase'
+import {
+  ConnectionRequestScreen,
+  IncomingDataRequestScreen,
+  PaymentRequestScreen,
+  ProofRequestScreen,
+} from '~/pages/Requests'
+import { SettingsScreen } from '~/pages/Settings'
 import {
   BuyTokenScreen,
   ConfirmTransactionScreen,
@@ -24,54 +71,10 @@ import {
   WalletConnectActiveSessionDetailsScreen,
   WalletConnectActiveSessionsScreen,
 } from '~/pages/WalletConnect'
+import { ManageWalletsScreen, SingleWalletScreen } from '~/pages/Wallets'
 
-import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
-import { TabsNavigator } from 'navigation/TabsNavigator'
-import { MainStackParams } from 'navigation/types'
-import { NFTCollectionDetailScreen } from 'pages/Assets/NFTCollectionDetail'
-import { NFTDetailScreen } from 'pages/Assets/NFTDetail'
-import { SelectAssetScreen } from 'pages/Assets/SelectAsset'
-import { ChangePinScreen } from 'pages/Authentication/ChangePin'
-import { DataFolderScreen, DataItemScreen } from 'pages/Data'
-import {
-  AddIdentityScreen,
-  CreateIdentityScreen,
-  DeleteIdentityScreen,
-  ImportIdentityScreen,
-  MigrateIdentityConfirmationScreen,
-  MigrateIdentityExecutionScreen,
-  RemoveIdentityScreen,
-  ShareIdentityScreen,
-} from 'pages/Identity'
-import { InboxItemScreen, InboxScreen, ShareableDataScreen } from 'pages/Inbox'
-import { LoginHistoryScreen } from 'pages/Login'
-import LoginRequest from 'pages/Login/LoginRequest'
-import {
-  AddVeridaOneCustomLinkScreen,
-  AddVeridaOnePlatformLinkScreen,
-  ClaimUsernameScreen,
-  EditGenericPropertyScreen,
-  EditProfileScreen,
-  EditVeridaOnePlatformLinkScreen,
-  PublicProfileScreen,
-  UnlockVeridaOneScreen,
-} from 'pages/Profiles'
-import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
-import {
-  SeedPhraseGeneratedScreen,
-  SeedPhraseScreen,
-  SeedPhraseViewScreen,
-  VerifyPhraseScreen,
-} from 'pages/RecoveryPhrase'
-import {
-  ConnectionRequestScreen,
-  IncomingDataRequestScreen,
-  PaymentRequestScreen,
-  ProofRequestScreen,
-} from 'pages/Requests'
-import { SettingsScreen } from 'pages/Settings'
-import { ManageWalletsScreen } from 'pages/Wallets/ManageWallets'
-import { SingleWalletScreen } from 'pages/Wallets/SingleWallet'
+import { TabsNavigator } from './TabsNavigator'
+import { MainStackParams } from './types'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -139,8 +142,6 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='SeedPhraseView'
             component={SeedPhraseViewScreen}
           />
-          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
-          <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}
@@ -255,6 +256,11 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShadowVisible: true,
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
+            <Stack.Screen
+              name='ManageWallets'
+              component={ManageWalletsScreen}
+            />
+            <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen
               name='RemoveIdentity'

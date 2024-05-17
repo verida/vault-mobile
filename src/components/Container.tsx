@@ -34,6 +34,9 @@ interface ContainerProps {
   keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
+/**
+ * @deprecated use <ScreenWrapper> instead
+ */
 const Container = (props: ContainerProps) => {
   const {
     withSafeAreaView,

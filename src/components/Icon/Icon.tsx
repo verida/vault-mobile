@@ -74,6 +74,7 @@ type LibIconName =
   | 'send'
   | 'receive'
   | 'delete'
+  | 'import'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -367,6 +368,12 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialIcon name='delete' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'import':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
         </IconWrapper>
       )
   }
