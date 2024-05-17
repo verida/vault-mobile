@@ -73,6 +73,7 @@ type LibIconName =
   | 'radio-button-checked'
   | 'send'
   | 'receive'
+  | 'delete'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -280,7 +281,7 @@ export const Icon = (props: {
     case 'add':
       return (
         <IconWrapper size={size}>
-          <Ionicon name='add' {...iconProps} />
+          <MaterialIcon name='add' {...iconProps} />
         </IconWrapper>
       )
     case 'settings':
@@ -360,6 +361,12 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialIcon name='vertical-align-bottom' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'delete':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='delete' {...iconProps} />
         </IconWrapper>
       )
   }

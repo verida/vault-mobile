@@ -1,11 +1,9 @@
 import { Spacer } from 'components'
 import { WalletConnectActiveSession } from 'features/walletConnect'
-import { Icon } from 'native-base'
 import * as React from 'react'
 import { ScrollView, View } from 'react-native'
 import { LAYOUT_BASE } from 'styles'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
 export type WalletConnectActiveSessionDetailsScreenParams = {
@@ -15,6 +13,9 @@ export type WalletConnectActiveSessionDetailsScreenParams = {
 type WalletConnectActiveSessionDetailsScreenProps =
   MainStackScreenProps<'WalletConnectActiveSessionDetails'>
 
+/**
+ * TODO: Make a decision whether to name session or connection, update either the component name (and related elements) or the user-facing screen title and other references
+ */
 export const WalletConnectActiveSessionDetailsScreen: React.FC<
   WalletConnectActiveSessionDetailsScreenProps
 > = (props) => {
@@ -22,20 +23,18 @@ export const WalletConnectActiveSessionDetailsScreen: React.FC<
     navigation,
     route: { params },
   } = props
+
   const { walletConnectSessionKey } = params
 
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: 'DApp connection',
+    })
+  }, [navigation])
+
   return (
+    // TODO: Use ScreenWrapper
     <View>
-      <NavigationHeader
-        title='Session Details'
-        left={React.useMemo(
-          () => ({
-            icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-            action: () => navigation.goBack(),
-          }),
-          [navigation]
-        )}
-      />
       <View style={LAYOUT_BASE}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <WalletConnectActiveSession

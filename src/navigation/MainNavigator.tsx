@@ -183,14 +183,7 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='ImportIdentity'
             component={ImportIdentityScreen}
           />
-          <Stack.Screen
-            name='RemoveIdentity'
-            component={RemoveIdentityScreen}
-          />
-          <Stack.Screen
-            name='DeleteIdentity'
-            component={DeleteIdentityScreen}
-          />
+
           <Stack.Screen
             name='MigrateIdentityConfirmation'
             component={MigrateIdentityConfirmationScreen}
@@ -211,23 +204,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
 
           <Stack.Screen
-            name='BlockchainNetworks'
-            component={BlockchainNetworksScreen}
-          />
-          <Stack.Screen
-            name='BlockchainNetworkEditor'
-            component={BlockchainNetworkEditorScreen}
-          />
-          <Stack.Screen
-            name='WalletConnectActiveSessions'
-            component={WalletConnectActiveSessionsScreen}
-          />
-          <Stack.Screen
-            name='WalletConnectActiveSessionDetails'
-            component={WalletConnectActiveSessionDetailsScreen}
-          />
-
-          <Stack.Screen
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
@@ -237,15 +213,6 @@ export const MainNavigator: React.FunctionComponent = () => {
             component={NFTCollectionDetailScreen}
           />
           <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
-
-          <Stack.Screen
-            name='PolygonIdStatus'
-            component={PolygonIdStatusScreen}
-            options={{
-              // TODO: Refactor the whole Navigation to leverage the header customisation
-              headerShown: true,
-            }}
-          />
 
           {/* Internal Screens */}
           {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
@@ -289,6 +256,34 @@ export const MainNavigator: React.FunctionComponent = () => {
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
             <Stack.Screen name='Settings' component={SettingsScreen} />
+            <Stack.Screen
+              name='RemoveIdentity'
+              component={RemoveIdentityScreen}
+            />
+            <Stack.Screen
+              name='DeleteIdentity'
+              component={DeleteIdentityScreen}
+            />
+            <Stack.Screen
+              name='BlockchainNetworks'
+              component={BlockchainNetworksScreen}
+            />
+            <Stack.Screen
+              name='BlockchainNetworkEditor'
+              component={BlockchainNetworkEditorScreen}
+            />
+            <Stack.Screen
+              name='WalletConnectActiveSessions'
+              component={WalletConnectActiveSessionsScreen}
+            />
+            <Stack.Screen
+              name='WalletConnectActiveSessionDetails'
+              component={WalletConnectActiveSessionDetailsScreen}
+            />
+            <Stack.Screen
+              name='PolygonIdStatus'
+              component={PolygonIdStatusScreen}
+            />
           </Stack.Group>
           <Stack.Group
             screenOptions={{
