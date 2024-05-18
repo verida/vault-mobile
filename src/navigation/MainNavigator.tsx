@@ -89,13 +89,17 @@ export const MainNavigator: React.FC = () => {
           screenOptions={{
             headerShown: false,
           }}>
+          <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
+          <Stack.Screen
+            name='SeedPhraseGenerated'
+            component={SeedPhraseGeneratedScreen}
+          />
+          <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
+
+          {/* To rework */}
           <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
 
-          <Stack.Screen
-            name='SingleCurrency'
-            component={SingleCurrencyScreen}
-          />
           <Stack.Screen
             name='TransactionDetails'
             component={TransactionDetailsScreen}
@@ -117,19 +121,11 @@ export const MainNavigator: React.FC = () => {
             name='TransactionFailure'
             component={TransactionFailureScreen}
           />
-          <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
 
-          <Stack.Screen name='ChangePin' component={ChangePinScreen} />
           <Stack.Screen
             name='SeedPhraseView'
             component={SeedPhraseViewScreen}
           />
-          <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
-          <Stack.Screen
-            name='SeedPhraseGenerated'
-            component={SeedPhraseGeneratedScreen}
-          />
-          <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
 
           <Stack.Screen
             name='SingleConnection'
@@ -197,7 +193,12 @@ export const MainNavigator: React.FC = () => {
               component={ManageWalletsScreen}
             />
             <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
+            <Stack.Screen
+              name='SingleCurrency'
+              component={SingleCurrencyScreen}
+            />
             <Stack.Screen name='Settings' component={SettingsScreen} />
+            <Stack.Screen name='ChangePin' component={ChangePinScreen} />
             <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
             <Stack.Screen
               name='RemoveIdentity'
@@ -270,6 +271,7 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
             <Stack.Screen
               name='ShareIdentity'
               component={ShareIdentityScreen}

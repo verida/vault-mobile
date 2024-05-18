@@ -1,27 +1,32 @@
+import React, { useCallback } from 'react'
+import { FlatList, Text, View } from 'react-native'
+
 import {
   AggregateWalletBannerBalance,
   Transaction,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import React from 'react'
-import { FlatList, Text, View } from 'react-native'
+} from '~/features/cryptoWallet'
 
-import TransactionsListItem from './TransactionsListItem'
+import { TransactionsListItem } from './TransactionsListItem'
 
-export default ({
-  aggregateWalletBannerBalance,
-  list,
-  errorType,
-  onPullToRefresh,
-  refreshing,
-}: {
+export type TransactionListProps = {
   readonly aggregateWalletBannerBalance?: AggregateWalletBannerBalance
   readonly list: readonly Transaction[]
   readonly errorType?: unknown
   readonly onPullToRefresh: () => void
   readonly refreshing: boolean
-}) => {
-  const renderItem = React.useCallback(
+}
+
+export const TransactionsList: React.FC<TransactionListProps> = (props) => {
+  const {
+    aggregateWalletBannerBalance,
+    list,
+    errorType,
+    onPullToRefresh,
+    refreshing,
+  } = props
+
+  const renderItem = useCallback(
     ({ item }) => {
       if (!aggregateWalletBannerBalance) {
         return null
@@ -37,7 +42,8 @@ export default ({
   )
 
   const maybeChainMetadata = aggregateWalletBannerBalance?.resource
-    ? useMaybeChainMetadataForResource({
+    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      useMaybeChainMetadataForResource({
         resource: aggregateWalletBannerBalance.resource,
       })
     : null

@@ -18,13 +18,15 @@ const icons: { readonly [key in TransactionType]: JSX.Element } = {
   received: <ReceivedIcon />,
 }
 
-export default ({
-  aggregateWalletBannerBalance,
-  item,
-}: {
+export type TransactionsListItemProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly item: Transaction
-}) => {
+}
+
+export const TransactionsListItem: React.FC<TransactionsListItemProps> = (
+  props
+) => {
+  const { aggregateWalletBannerBalance, item } = props
   const { type, quantity, address, id, pending } = item
 
   const navigation = useNavigation()

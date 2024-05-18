@@ -1,4 +1,16 @@
 import Clipboard from '@react-native-community/clipboard'
+import React, { useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
+import Toast from 'react-native-root-toast'
+
+import { ScreenWrapper } from '~/components'
+import { ErrorFallbackCard } from '~/components/Errors'
+import { TransactionsList } from '~/components/Tokens'
+import { TokenBanner } from '~/components/Tokens/TokenBanner'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
 import {
   getAggregateWalletBannerBalanceResult,
   ResourceParams,
@@ -9,25 +21,10 @@ import {
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useSelectedCryptoWallet,
   useTransactionsForMaybeAssetId,
-} from 'features/cryptoWallet'
-import { Icon } from 'native-base'
-import * as React from 'react'
-import { StyleSheet } from 'react-native'
-import Toast from 'react-native-root-toast'
-
-import {
-  getMaybeChainMetadatas,
-  useChainMetadatas,
-} from '~/features/blockchain'
+} from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
-
-import Container from 'components/Container'
-import { ErrorFallbackCard } from 'components/Errors'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { TokenBanner } from 'components/Tokens/TokenBanner'
-import TransactionsList from 'components/Tokens/TransactionsList'
-import { MainStackScreenProps } from 'navigation/types'
 
 export type SingleCurrencyScreenParams = {
   readonly title: string
@@ -45,6 +42,12 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
   } = props
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = params
+
+  useEffect(() => {
+    navigation.setOptions({
+      title,
+    })
+  }, [navigation, title])
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -127,71 +130,71 @@ export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
     )
 
   return (
-    <Container>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
-        }}
-        title={title}
-      />
-      <TokenBanner
-        selectedWallet={selectedCryptoWallet}
-        decimals={maybeAggregateWalletBannerBalance?.decimals}
-        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
-        tokenBalanceValue={value}
-        tokenBalanceValueCurrency={currency}
-        valuation={maybeAggregateWalletBannerBalance?.valuation}
-        symbol={maybeAggregateWalletBannerBalance?.symbol}
-        icon={maybeAggregateWalletBannerBalance?.icon || undefined}
-        chainLabel={chain?.name}
-        chainLogo={chain?.icon || undefined}
-        isChainMainnet={!!chain?.isMainnet}
-        receiveButtonAction={() => {
-          return navigation.navigate('ReceiveToken', {
-            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
-          })
-        }}
-        sendButtonAction={() => {
-          return navigation.navigate('SendToken', {
-            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
-          })
-        }}
-        copyButtonAction={() => {
-          if (!address) return
+    <ScreenWrapper safeAreaEdges={['left', 'right']}>
+      <View style={styles.container}>
+        <TokenBanner
+          selectedWallet={selectedCryptoWallet}
+          decimals={maybeAggregateWalletBannerBalance?.decimals}
+          tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+          tokenBalanceValue={value}
+          tokenBalanceValueCurrency={currency}
+          valuation={maybeAggregateWalletBannerBalance?.valuation}
+          symbol={maybeAggregateWalletBannerBalance?.symbol}
+          icon={maybeAggregateWalletBannerBalance?.icon || undefined}
+          chainLabel={chain?.name}
+          chainLogo={chain?.icon || undefined}
+          isChainMainnet={!!chain?.isMainnet}
+          receiveButtonAction={() => {
+            return navigation.navigate('ReceiveToken', {
+              aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+            })
+          }}
+          sendButtonAction={() => {
+            return navigation.navigate('SendToken', {
+              aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+            })
+          }}
+          copyButtonAction={() => {
+            if (!address) return
 
-          Clipboard.setString(address)
+            Clipboard.setString(address)
 
-          Toast.show('Address copied', {
-            duration: Toast.durations.LONG,
-            position: -130,
-            shadow: false,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-            backgroundColor: 'rgba(4, 17, 51, 1)',
-          })
-        }}
-        style={styles.tokenBanner}
-      />
-      {!isAssetSupportedByWalletProvider ? (
-        // Here, we're handling a custom asset. We could render something accordingly.
-        <React.Fragment />
-      ) : (
-        <TransactionsList
-          aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
-          onPullToRefresh={pullToRefresh}
-          refreshing={isLoadingTransactions}
-          list={transactions}
+            Toast.show('Address copied', {
+              duration: Toast.durations.LONG,
+              position: -130,
+              shadow: false,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+              backgroundColor: 'rgba(4, 17, 51, 1)',
+            })
+          }}
+          style={styles.tokenBanner}
         />
-      )}
-    </Container>
+        {isAssetSupportedByWalletProvider ? (
+          <TransactionsList
+            aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
+            onPullToRefresh={pullToRefresh}
+            refreshing={isLoadingTransactions}
+            list={transactions}
+          />
+        ) : (
+          // Here, we're handling a custom asset. We could render something accordingly.
+          <React.Fragment />
+        )}
+      </View>
+    </ScreenWrapper>
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: theme.spacing.m,
+      paddingTop: theme.spacing.m,
+    },
     tokenBanner: {
-      margin: theme.spacing.m,
+      marginHorizontal: theme.spacing.m,
     },
   })

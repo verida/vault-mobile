@@ -1,27 +1,33 @@
-import Clipboard from '@react-native-community/clipboard'
+import React, { useCallback, useEffect } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
+// @ts-expect-error missing_declaration
+import { QRCode } from 'react-native-custom-qr-codes-expo'
+
+import {
+  BottomActionBar,
+  CopyToClipboardButton,
+  ScreenWrapper,
+  ShareButton,
+  Typography,
+} from '~/components'
 import {
   AggregateWalletBannerBalance,
   useChainIdForResourceParams,
   useSelectedCryptoWallet,
-} from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
-import React from 'react'
-import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
-// @ts-expect-error missing_declaration
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-import Toast from 'react-native-root-toast'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
-import CopyIconDark from 'assets/copy_icon_dark.svg'
-import ShareIcon from 'assets/share_icon_with_bg.svg'
-import Button from 'components/Button'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
+const VeridaLogo = require('assets/vault-logo.png')
 
-const LogoImg = require('assets/vault-logo.png')
+const { width: screenWidth } = Dimensions.get('screen')
+
+// Size of the QR code container based on the screen width
+const qrCodeContainerSize = screenWidth * 0.7
+
+// Size of the QR code based on its container
+const qrCodeSize = qrCodeContainerSize * 0.9
 
 export type ReceiveTokenScreenParams = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
@@ -39,6 +45,12 @@ export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
 
   const { aggregateWalletBannerBalance } = params
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: `Receive ${aggregateWalletBannerBalance.symbol}`,
+    })
+  }, [navigation, aggregateWalletBannerBalance])
+
   const { resource } = aggregateWalletBannerBalance
 
   const resourceChainId = useChainIdForResourceParams({ resource })
@@ -55,156 +67,104 @@ export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
 
   const hasAddress = typeof address === 'string' && Boolean(address)
 
-  return (
-    <Container>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
-        }}
-        title={`Receive ${aggregateWalletBannerBalance.symbol}`}
-      />
-      <Layout style={styles.container}>
-        <View style={styles.content}>
-          {hasAddress && (
-            <>
-              <Text style={styles.address} children={address} />
-              <View style={styles.qr}>
-                <QRCode
-                  logo={LogoImg}
-                  logoSize={60}
-                  size={207}
-                  codeStyle='dot'
-                  innerEyeStyle='circle'
-                  padding={0.5}
-                  content={address}
-                />
-              </View>
-            </>
-          )}
+  const handleClose = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
 
-          {/* <Text style={styles.amount}>
-            <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
-          </Text> */}
-          <Text style={styles.notice}>
-            Send only {aggregateWalletBannerBalance.label}
-            {` (${aggregateWalletBannerBalance.symbol})`} to this address.
-            Sending any other coins may result in permanent loss.
-          </Text>
-          <View style={styles.actionButtons}>
-            {hasAddress && (
-              <TouchableOpacity
-                onPress={() => {
-                  Clipboard.setString(address)
-                  Toast.show('Address copied', {
-                    duration: Toast.durations.LONG,
-                    position: -130,
-                    shadow: false,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                    backgroundColor: 'rgba(4, 17, 51, 1)',
-                  })
-                }}
-                style={styles.actionButton}>
-                <CopyIconDark />
-                <Text style={styles.actionText}>Copy</Text>
-              </TouchableOpacity>
-            )}
-            {hasAddress && (
-              <TouchableOpacity
-                onPress={() =>
-                  Share.share({
-                    message: `My address to receive ${aggregateWalletBannerBalance.symbol} \r${address}`,
-                  })
-                }
-                style={styles.actionButton}>
-                <ShareIcon />
-                <Text style={styles.actionText}>Share</Text>
-              </TouchableOpacity>
-            )}
+  const styles = useThemeAwareStyle(createStyles)
+
+  return (
+    <ScreenWrapper>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={styles.qrContainer}>
+            {hasAddress ? (
+              <QRCode
+                content={address}
+                size={qrCodeSize}
+                logo={VeridaLogo}
+                logoSize={qrCodeSize * 0.3}
+                codeStyle='dot'
+                innerEyeStyle='circle'
+              />
+            ) : null}
           </View>
+          <View style={styles.sharedContentContainer}>
+            <Typography
+              variant='bodySemiBold'
+              numberOfLines={1}
+              ellipsizeMode='middle'>
+              {address}
+            </Typography>
+          </View>
+          {hasAddress ? (
+            <View style={styles.buttonsContainer}>
+              <View style={styles.buttonWrapper}>
+                <CopyToClipboardButton content={address} />
+                <Typography variant='bodySemiBold'>Copy</Typography>
+              </View>
+              <View style={styles.buttonWrapper}>
+                <ShareButton content={address} />
+                <Typography variant='bodySemiBold'>Share</Typography>
+              </View>
+            </View>
+          ) : null}
         </View>
-        <View style={styles.footer}>
-          <Button
-            style={styles.saveButton}
-            color='primary'
-            onPress={() => navigation.goBack()}>
-            Done
-          </Button>
-        </View>
-      </Layout>
-    </Container>
+      </View>
+      <BottomActionBar
+        alertType='warning'
+        alertContent={`Send only ${aggregateWalletBannerBalance.label} (${aggregateWalletBannerBalance.symbol}) to this address. Sending any other coins may result in permanent loss.`}
+        actions={[
+          {
+            label: 'Close',
+            onPress: handleClose,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
-const styles = StyleSheet.create({
-  timer: {
-    color: PRIMARY_COLOR,
-    fontSize: 16,
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'space-between',
-    paddingBottom: 30,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.2)',
-  },
-  content: {
-    alignItems: 'center',
-    padding: 24,
-  },
-  address: {
-    fontFamily: NUNITO_SANS_BOLD,
-    color: 'rgba(4, 17, 51, 0.6)',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  qr: {
-    width: 240,
-    height: 240,
-    borderRadius: 12,
-    padding: 17,
-    backgroundColor: WHITE_COLOR,
-
-    shadowColor: BLACK_ORIGIN_COLOR,
-    shadowOffset: {
-      width: 0,
-      height: 1,
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    shadowOpacity: 0.22,
-    elevation: 3,
-    marginBottom: 24,
-  },
-  amount: {
-    fontSize: 16,
-    color: 'rgba(0,0,0,0.5)',
-    marginBottom: 24,
-  },
-  cryptoAmount: {
-    fontSize: 16,
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-  },
-  notice: {
-    color: 'rgba(0,0,0,0.5)',
-    textAlign: 'center',
-    fontSize: 14,
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    marginTop: 24,
-  },
-  actionButton: {
-    marginHorizontal: 20,
-  },
-  actionText: {
-    marginTop: 4,
-    textAlign: 'center',
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-  },
-  footer: {},
-  saveButton: {},
-})
+    contentContainer: {
+      width: qrCodeContainerSize,
+    },
+    qrContainer: {
+      width: qrCodeContainerSize,
+      height: qrCodeContainerSize,
+      borderRadius: theme.roundness.l,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.color.background,
+      shadowColor: theme.color.black,
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.22,
+      elevation: 3,
+    },
+    sharedContentContainer: {
+      marginTop: theme.spacing.l,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.m,
+      borderRadius: theme.roundness.l,
+      backgroundColor: theme.color.primary5,
+    },
+    buttonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginTop: theme.spacing.l,
+    },
+    buttonWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+    },
+  })

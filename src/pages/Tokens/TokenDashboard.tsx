@@ -1,19 +1,19 @@
 import { useNavigation } from '@react-navigation/native'
-import { CryptoWalletValueBanner } from 'components'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+
+import { CryptoWalletValueBanner } from '~/components'
+import { ErrorBoundary } from '~/components/ErrorBoundary'
+import { TokensList } from '~/components/Tokens'
 import {
   AggregateWalletBannerBalance,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useCryptoWalletsStatus,
   useSelectedCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-
-import { ErrorBoundary } from 'components/ErrorBoundary'
-import { TokensList } from 'components/Tokens/TokensList'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export const TokenDashboard: React.FC = () => {
   const navigation = useNavigation()
