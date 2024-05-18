@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import color from 'color'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useTheme } from 'contexts/ThemeContext'
 import {
   CreateIdentityStep,
@@ -9,31 +9,30 @@ import { getDefaultVeridaNetwork } from 'features/verida'
 import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
-import { Icon } from 'native-base'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert,
   BackHandler,
   Platform,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { BottomActionBar, Icon, ScreenWrapper } from '~/components'
+import { HIT_SLOP_10_10 } from '~/constants'
+
 import AccountManager from 'api/AccountManager'
-import AlertIcon from 'assets/alert_icon_2.svg'
 import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
-import Button from 'components/Button'
 import Container from 'components/Container'
 import { StepsIndicator } from 'components/Indicators'
 import { AnimatedCheckbox, FormInput } from 'components/Input'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NetworkSelectorRadioButtonGroup } from 'components/Network'
-import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
@@ -42,7 +41,7 @@ import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
 import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
+import { AuthStackParams, MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
 
@@ -90,28 +89,35 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   const {
     route: { params },
   } = props
-  const navigation = useNavigation() // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
+  const navigation = useNavigation() as NativeStackNavigationProp<
+    AuthStackParams,
+    'CreateIdentity'
+  > // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
 
   const defaultNetwork = getDefaultVeridaNetwork()
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const { top } = useSafeAreaInsets()
+
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
+
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
-  const [processing, setProcessing] = useState(false)
   const [network, setNetwork] = useState(defaultNetwork)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
-  function toggleCountryCheckbox() {
-    setShowCountryOnPublicProfile((prevState) => !prevState)
-  }
 
-  const [showRetry, setShowRetry] = useState(false)
-  const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('')
-  const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
+  const toggleCountryCheckbox = useCallback(() => {
+    setShowCountryOnPublicProfile((prevState) => !prevState)
+  }, [])
+
+  const [createIdentityStatus, setCreateIdentityStatus] = useState<
+    'idle' | 'processing' | 'success' | 'error'
+  >('idle')
+  const [createIdentityErrorMessage, setCreateIdentityErrorMessage] =
+    useState('')
 
   // const publicNameInputRef = useRef<TextInput>(null)
   // const usernameInputRef = useRef<TextInput>(null)
@@ -148,8 +154,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
 
   const createIdentifier = useCallback(async () => {
     try {
-      setProcessing(true)
-      setShowRetry(false)
+      setCreateIdentityStatus('processing')
 
       await AccountManager.getInstance().createAccount(
         {
@@ -171,24 +176,24 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         }
       )
 
-      setDoneCreateAccount(true)
+      setCreateIdentityStatus('success')
     } catch (error) {
       if (
         error instanceof Error &&
         error.message ===
           'Unable to force creation of storage context for this DID'
       ) {
-        setCreateAccountErrorMessage(
+        setCreateIdentityErrorMessage(
           'Blockchain is temporarily unavailable, please try again later.'
         )
       } else {
-        setCreateAccountErrorMessage(
+        setCreateIdentityErrorMessage(
           'Unable to create account at this time, please try again later.'
         )
       }
-      setShowRetry(true)
+
+      setCreateIdentityStatus('error')
     }
-    setProcessing(false)
   }, [profile, network, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
@@ -222,44 +227,71 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   }
 
   const onNext = useCallback(() => {
-    if (currentPage < numberOfPages - 2) {
-      pagerRef.current?.setPage(currentPage + 1)
-      setCurrentPage(currentPage + 1)
-    } else if (currentPage === PageType.Confirmation - 1) {
-      // navigate to last page and create identifier
-      pagerRef.current?.setPage(PageType.Confirmation)
-      setCurrentPage(PageType.Confirmation)
-      setProcessing(true)
+    setCurrentPage((prevPage) => prevPage + 1)
+    // if (currentPage < numberOfPages - 2) {
+    //   pagerRef.current?.setPage(currentPage + 1)
+    //   setCurrentPage(currentPage + 1)
+    // } else if (currentPage === PageType.Confirmation - 1) {
+    //   // navigate to last page and create identifier
+    //   pagerRef.current?.setPage(PageType.Confirmation)
+    //   setCurrentPage(PageType.Confirmation)
 
+    //   setTimeout(() => {
+    //     createIdentifier()
+    //   }, 0)
+    // }
+  }, [])
+
+  useEffect(() => {
+    pagerRef.current?.setPage(currentPage)
+  }, [currentPage])
+
+  useEffect(() => {
+    if (
+      currentPage === PageType.Confirmation &&
+      createIdentityStatus === 'idle'
+    ) {
       setTimeout(() => {
         createIdentifier()
       }, 0)
     }
-  }, [createIdentifier, currentPage])
+  }, [currentPage, createIdentityStatus, createIdentifier])
 
   const onBack = useCallback(() => {
     // Keyboard.dismiss()
-    if (processing) {
+    if (createIdentityStatus === 'processing') {
       // Useful for handling hardware back button on Android
-      Alert.alert("Hold on, we're building your Identity")
+      Alert.alert("Hold on, we're building your identity")
       return
     }
 
     setTimeout(() => {
       if (currentPage > 0) {
-        pagerRef.current?.setPage(currentPage - 1)
-        setCurrentPage(currentPage - 1)
-        showRetry && setShowRetry(false)
+        setCurrentPage((prevPage) => prevPage - 1)
+        setCreateIdentityStatus('idle')
       } else {
         navigation.goBack()
       }
     }, 0)
-  }, [currentPage, navigation, processing, showRetry])
+  }, [createIdentityStatus, currentPage, navigation])
 
   const onRetry = useCallback(() => {
     setConfirmationState({})
     createIdentifier()
   }, [createIdentifier])
+
+  const handleRecordSeedPhraseButtonPress = useCallback(() => {
+    navigation.navigate('SeedPhrase')
+  }, [navigation])
+
+  const handleDoneButtonPress = useCallback(() => {
+    if (params.firstIdentity) {
+      // FIXME: CreateidentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
+      navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
+    } else {
+      navigation.goBack()
+    }
+  }, [params.firstIdentity, navigation])
 
   useFocusEffect(
     useCallback(() => {
@@ -277,128 +309,47 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     }, [onBack])
   )
 
-  const renderTopNav = useCallback(() => {
-    return currentPage !== PageType.Confirmation ? (
-      <>
-        <NavigationHeader
-          title={`Step ${currentPage + 1} of ${numberOfPages - 1}`}
-          bottomBorder={false}
-          left={
-            pageData[currentPage].hasBack || showRetry
-              ? {
-                  icon: (
-                    <Icon
-                      name='arrow-back'
-                      style={{ color: theme.color.icon }}
-                    />
-                  ),
-                  action: () => onBack(),
-                }
-              : ({} as any)
-          }
-        />
-        <StepsIndicator
-          style={{ paddingHorizontal: theme.spacing.m }}
-          currentStep={currentPage}
-          numberOfSteps={numberOfPages - 1}
-        />
-      </>
-    ) : null
-  }, [currentPage, onBack, showRetry, theme.color.icon, theme.spacing.m])
-
-  const renderBottomButtons = useCallback(() => {
-    return (
-      <View style={styles.bottomNavContainer}>
-        {currentPage !== PageType.Confirmation && (
-          <>
-            {
-              // currentPage === PageType.Username && (
-              //   <Button
-              //     color='transparent'
-              //     style={styles.nextButton}
-              //     disabled={!formValidated}
-              //     onPress={() => {
-              //       setProfile((p) => ({
-              //         ...p,
-              //         username: '',
-              //       }))
-              //       onNext()
-              //     }}>
-              //     Skip
-              //   </Button>
-              // )
-            }
-
-            <Button
-              style={styles.nextButton}
-              disabled={!formValidated}
-              onPress={onNext}>
-              Next
-            </Button>
-          </>
-        )}
-
-        {currentPage === PageType.Confirmation ? (
-          showRetry ? (
-            <Button
-              style={styles.button}
-              disabled={formValidated}
-              onPress={onRetry}>
-              Retry
-            </Button>
-          ) : !processing ? (
-            <View>
-              <View style={styles.seedPhraseRemindView}>
-                <View style={{ alignItems: 'center', marginTop: 3 }}>
-                  <AlertIcon />
-                </View>
-                <Text
-                  style={{
-                    flex: 1,
-                    marginLeft: theme.spacing.s,
-                  }}>
-                  Record your seed phrase to create a backup for your identity.
-                  You can do it later.
-                </Text>
-              </View>
-              <Button
-                style={styles.button}
-                color='transparent-border'
-                onPress={() => navigation.navigate('SeedPhrase')}>
-                Record Seed Phrase
-              </Button>
-              <Button
-                style={styles.button}
-                onPress={() => {
-                  if (params.firstIdentity) {
-                    // FIXME: CreateidentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
-                    navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
-                  } else {
-                    navigation.goBack()
-                  }
-                }}>
-                Done
-              </Button>
-            </View>
-          ) : null
-        ) : null}
-      </View>
-    )
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: currentPage !== PageType.Confirmation,
+      title: `Step ${currentPage + 1} of ${numberOfPages - 1}`,
+      headerShadowVisible: false,
+      headerLeft: pageData[currentPage].hasBack
+        ? () => (
+            <TouchableOpacity
+              onPress={onBack}
+              hitSlop={HIT_SLOP_10_10}
+              style={styles.headerBackButton}>
+              <Icon name='back' size={24} color={theme.color.onBackground} />
+            </TouchableOpacity>
+          )
+        : undefined,
+    })
   }, [
-    currentPage,
-    formValidated,
     navigation,
-    onNext,
-    onRetry,
-    params,
-    processing,
-    showRetry,
-    styles,
-    theme.spacing.s,
+    currentPage,
+    onBack,
+    styles.headerBackButton,
+    theme.color.onBackground,
   ])
 
+  const ProgressBar = useCallback(() => {
+    return currentPage !== PageType.Confirmation ? (
+      <StepsIndicator
+        style={{ paddingHorizontal: theme.spacing.m }}
+        currentStep={currentPage}
+        numberOfSteps={numberOfPages - 1}
+      />
+    ) : null
+  }, [currentPage, theme.spacing.m])
+
   return (
-    <Screen withSafeAreaView navBar={renderTopNav()}>
+    <ScreenWrapper
+      keyboardAvoiding
+      allSafeAreaEdges={
+        currentPage === PageType.Confirmation // Because there is no header
+      }>
+      <ProgressBar />
       <PagerView
         style={styles.pagerView}
         initialPage={currentPage}
@@ -412,16 +363,14 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         //   }, 0)
         // }}
         ref={pagerRef}>
-        <Container
-          key='name'
-          withKeyboardAvoidingView
-          keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
+        <Container key='name'>
           <ScrollView
             contentContainerStyle={[
               styles.scrollViewContainer,
               styles.contentPadding,
             ]}
             showsVerticalScrollIndicator={false}
+            alwaysBounceVertical={false}
             keyboardShouldPersistTaps='handled'>
             <Headline style={styles.title}>Public name</Headline>
             <Text>
@@ -450,7 +399,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               Your public name is required and public
             </Label>
           </ScrollView>
-          {renderBottomButtons()}
         </Container>
 
         {/* {enabledClaimUsername && (
@@ -497,12 +445,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                 Your username is public and optional
               </Label>
             </ScrollView>
-            {renderBottomButtons()}
           </Container>
         )} */}
 
         <Container key='location'>
           <ScrollView
+            alwaysBounceVertical={false}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
             contentContainerStyle={{
@@ -541,7 +489,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               style={styles.networkSelection}
             />
           </ScrollView>
-          {renderBottomButtons()}
         </Container>
         <Container key='confirmation'>
           <View
@@ -551,10 +498,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
             ]}>
             <ScrollView
               showsVerticalScrollIndicator={false}
+              alwaysBounceVertical={false}
               contentContainerStyle={{
                 ...styles.contentPadding,
               }}>
               <View
+                // TODO: Use <StatusInfo> component instead
                 style={{
                   width: 128,
                   height: 128,
@@ -562,7 +511,11 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                   justifyContent: 'center',
                   alignSelf: 'center',
                 }}>
-                {processing ? (
+                {createIdentityStatus === 'success' ? (
+                  <SuccessTick />
+                ) : createIdentityStatus === 'error' ? (
+                  <FailureCross />
+                ) : (
                   <>
                     <BlurCircle />
                     <LottieView
@@ -572,20 +525,16 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                       style={styles.dotsLoader}
                     />
                   </>
-                ) : isDoneCreateAccount ? (
-                  <SuccessTick />
-                ) : (
-                  <FailureCross />
                 )}
               </View>
 
               <Headline
                 style={[styles.title, { alignSelf: 'center', fontSize: 28 }]}>
-                {isDoneCreateAccount
+                {createIdentityStatus === 'success'
                   ? 'Success!'
-                  : showRetry
+                  : createIdentityStatus === 'error'
                     ? 'Something went wrong'
-                    : 'Building your Identity'}
+                    : 'Building your identity'}
               </Headline>
               <Text
                 style={[
@@ -595,10 +544,10 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                     color: theme.color.textLightGrey,
                   },
                 ]}>
-                {isDoneCreateAccount
-                  ? 'Your Identity has been successfully created'
-                  : showRetry
-                    ? createAccountErrorMessage
+                {createIdentityStatus === 'success'
+                  ? 'Your identity has been successfully created'
+                  : createIdentityStatus === 'error'
+                    ? createIdentityErrorMessage
                     : 'Please wait...'}
               </Text>
               <Spacer vertical='xxl' />
@@ -651,35 +600,57 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               />
             </ScrollView>
           </View>
-          {renderBottomButtons()}
         </Container>
       </PagerView>
-    </Screen>
+      <BottomActionBar
+        hideBorder
+        actionsOrientation='column'
+        actions={
+          currentPage !== PageType.Confirmation
+            ? [
+                {
+                  label: 'Next',
+                  onPress: onNext,
+                  disabled: !formValidated,
+                },
+              ]
+            : createIdentityStatus === 'success'
+              ? [
+                  {
+                    label: 'Record Seed Phrase',
+                    color: 'transparent-border',
+                    onPress: handleRecordSeedPhraseButtonPress,
+                  },
+                  {
+                    label: 'Done',
+                    onPress: handleDoneButtonPress,
+                  },
+                ]
+              : createIdentityStatus === 'error'
+                ? [
+                    {
+                      label: 'Retry',
+                      onPress: onRetry,
+                    },
+                  ]
+                : undefined
+        }
+        alertType='warning'
+        alertContent={
+          currentPage === PageType.Confirmation &&
+          createIdentityStatus === 'success'
+            ? 'Record your seed phrase to recover your identity.'
+            : undefined
+        }
+      />
+    </ScreenWrapper>
   )
 }
 
 const creatStyles = (theme: Theme) => {
   return StyleSheet.create({
-    main: {
-      flex: 1,
-      backgroundColor: theme.color.surface,
-    },
-    bottomNavContainer: {
-      width: '100%',
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing.m,
-    },
-    nextButton: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
-    },
-    button: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
+    headerBackButton: {
+      marginLeft: theme.spacing.m,
     },
     landing: {
       flex: 1,
@@ -687,9 +658,6 @@ const creatStyles = (theme: Theme) => {
     title: {
       color: theme.color.onBackground,
       marginBottom: 10,
-    },
-    subTitle: {
-      color: theme.color.textLightGrey,
     },
     termAndCondition: {
       marginTop: theme.spacing.m,
@@ -702,10 +670,6 @@ const creatStyles = (theme: Theme) => {
       flexGrow: 1,
       paddingBottom: theme.spacing.xxl,
     },
-    center: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     contentPadding: {
       paddingTop: theme.spacing.l,
       paddingHorizontal: theme.spacing.l,
@@ -715,16 +679,6 @@ const creatStyles = (theme: Theme) => {
       width: 48,
       height: 48,
       position: 'absolute',
-    },
-    seedPhraseRemindView: {
-      flexDirection: 'row',
-      borderColor: theme.color.warning,
-      backgroundColor: color.rgb(theme.color.warning).alpha(0.1).toString(),
-      borderWidth: 1,
-      borderRadius: 3,
-      paddingVertical: theme.spacing.s,
-      paddingHorizontal: theme.spacing.m,
-      marginHorizontal: theme.spacing.m,
     },
     networkSelection: {
       marginTop: theme.spacing.l,

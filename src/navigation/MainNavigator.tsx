@@ -137,11 +137,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
 
           <Stack.Screen
-            name='CreateIdentity'
-            component={CreateIdentityScreen}
-          />
-
-          <Stack.Screen
             name='MigrateIdentityConfirmation'
             component={MigrateIdentityConfirmationScreen}
             options={{
@@ -188,6 +183,10 @@ export const MainNavigator: React.FunctionComponent = () => {
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
             <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
+            <Stack.Screen
+              name='CreateIdentity'
+              component={CreateIdentityScreen}
+            />
             <Stack.Screen
               name='ImportIdentity'
               component={ImportIdentityScreen}
