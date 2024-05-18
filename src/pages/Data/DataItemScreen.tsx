@@ -1,14 +1,15 @@
 import { DataItem } from 'features/data'
 import { Logger } from 'features/telemetry'
 import { isCredentialsDatabase } from 'features/verifiableCredential'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+
+import { ScreenWrapper } from '~/components'
 
 import Folder from 'api/VaultCommon/managers/data/folder'
 import { CredentialDataItem, DataFieldList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
 const logger = Logger.create('Pages/Data/DataItemScreen')
@@ -25,8 +26,14 @@ type DataItemScreenProps = MainStackScreenProps<'DataItem'>
 export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
   props
 ) => {
-  const { route } = props
+  const { navigation, route } = props
   const { item, folder } = route.params
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: folder.config.title,
+    })
+  }, [navigation, folder])
 
   const [data, setData] = useState<DataItem>({
     data: [],
@@ -61,8 +68,7 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
   }, [folder, item, isCredential])
 
   return (
-    <Container>
-      <NavigationHeader title={folder.config.title} />
+    <ScreenWrapper>
       {loading ? (
         <LoadingView />
       ) : (
@@ -74,6 +80,6 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
           )}
         </Content>
       )}
-    </Container>
+    </ScreenWrapper>
   )
 }

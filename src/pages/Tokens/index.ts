@@ -1,4 +1,3 @@
-export * from './BuyTokenScreen'
 export * from './ConfirmTransactionScreen'
 export * from './ReceiveTokenScreen'
 export * from './SendTokenScreen'

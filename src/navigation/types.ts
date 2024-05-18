@@ -23,7 +23,6 @@ import {
 } from '~/pages/Connections'
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
-  BuyTokenScreenParams,
   ConfirmTransactionScreenParams,
   ReceiveTokenScreenParams,
   SendTokenScreenParams,
@@ -148,7 +147,6 @@ export type MainStackParams = {
   TransactionSuccess: TransactionSuccessScreenParams
   TransactionFailure: TransactionFailureScreenParams
   TransactionDetails: TransactionDetailsScreenParams
-  BuyToken: BuyTokenScreenParams
   ReceiveToken: ReceiveTokenScreenParams
   SingleWallet: SingleWalletScreenParams
   NFTCollectionDetail: NFTCollectionDetailScreenParams

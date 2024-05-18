@@ -7,7 +7,7 @@ import {
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Platform, StatusBar, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
@@ -29,6 +29,12 @@ export const QrCodeScannerScreen: React.FunctionComponent<
   QrCodeScannerScreenProps
 > = (props) => {
   const { navigation, route } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    })
+  }, [navigation])
 
   const [processing, setProcessing] = useState(false)
   const [isFlashOn, setIsFlashOn] = useState(false)

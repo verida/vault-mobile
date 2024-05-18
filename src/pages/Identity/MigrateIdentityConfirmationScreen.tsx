@@ -24,7 +24,6 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Migrate Identity',
-      headerBackVisible: false, // TODO: Update when reworking headers
     })
   }, [navigation])
 

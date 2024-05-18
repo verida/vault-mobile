@@ -57,7 +57,6 @@ import {
 } from '~/pages/Requests'
 import { SettingsScreen } from '~/pages/Settings'
 import {
-  BuyTokenScreen,
   ConfirmTransactionScreen,
   ReceiveTokenScreen,
   SendTokenScreen,
@@ -78,7 +77,7 @@ import { MainStackParams } from './types'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
-export const MainNavigator: React.FunctionComponent = () => {
+export const MainNavigator: React.FC = () => {
   return (
     <>
       {/* As the MainNavigator is only mounted after the user is authenticated, so are these context providers. */}
@@ -90,25 +89,22 @@ export const MainNavigator: React.FunctionComponent = () => {
           screenOptions={{
             headerShown: false,
           }}>
-          <Stack.Screen
-            name='Tabs'
-            component={TabsNavigator}
-            options={{ headerShown: false }}
-          />
-
           <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
-          <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
-          <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
-          <Stack.Screen
-            name='SeedPhraseView'
-            component={SeedPhraseViewScreen}
-          />
+
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}
           />
+          <Stack.Screen
+            name='TransactionDetails'
+            component={TransactionDetailsScreen}
+          />
           <Stack.Screen name='SendToken' component={SendTokenScreen} />
+          <Stack.Screen
+            name='TokenRecipient'
+            component={TokenRecipientScreen}
+          />
           <Stack.Screen
             name='ConfirmTransaction'
             component={ConfirmTransactionScreen}
@@ -121,31 +117,12 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='TransactionFailure'
             component={TransactionFailureScreen}
           />
-          <Stack.Screen
-            name='TransactionDetails'
-            component={TransactionDetailsScreen}
-          />
-          <Stack.Screen
-            name='TokenRecipient'
-            component={TokenRecipientScreen}
-          />
-          <Stack.Screen name='BuyToken' component={BuyTokenScreen} />
           <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
-          <Stack.Screen name='DataFolder' component={DataFolderScreen} />
-          <Stack.Screen name='DataItem' component={DataItemScreen} />
-          <Stack.Screen name='ChangePin' component={ChangePinScreen} />
-          <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
 
+          <Stack.Screen name='ChangePin' component={ChangePinScreen} />
           <Stack.Screen
-            name='MigrateIdentityConfirmation'
-            component={MigrateIdentityConfirmationScreen}
-            options={{
-              headerShown: true,
-            }}
-          />
-          <Stack.Screen
-            name='MigrateIdentityExecution'
-            component={MigrateIdentityExecutionScreen}
+            name='SeedPhraseView'
+            component={SeedPhraseViewScreen}
           />
           <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
           <Stack.Screen
@@ -153,10 +130,12 @@ export const MainNavigator: React.FunctionComponent = () => {
             component={SeedPhraseGeneratedScreen}
           />
           <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
+
           <Stack.Screen
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
+
           <Stack.Screen
             name='NFTCollectionDetail'
             component={NFTCollectionDetailScreen}
@@ -182,6 +161,12 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShadowVisible: true,
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
+            <Stack.Screen
+              name='Tabs'
+              component={TabsNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
             <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
             <Stack.Screen
               name='CreateIdentity'
@@ -191,14 +176,29 @@ export const MainNavigator: React.FunctionComponent = () => {
               name='ImportIdentity'
               component={ImportIdentityScreen}
             />
+            <Stack.Screen
+              name='MigrateIdentityConfirmation'
+              component={MigrateIdentityConfirmationScreen}
+            />
+            <Stack.Screen
+              name='MigrateIdentityExecution'
+              component={MigrateIdentityExecutionScreen}
+            />
+            <Stack.Screen
+              name='PublicProfile'
+              component={PublicProfileScreen}
+            />
             <Stack.Screen name='Inbox' component={InboxScreen} />
             <Stack.Screen name='InboxItem' component={InboxItemScreen} />
+            <Stack.Screen name='DataFolder' component={DataFolderScreen} />
+            <Stack.Screen name='DataItem' component={DataItemScreen} />
             <Stack.Screen
               name='ManageWallets'
               component={ManageWalletsScreen}
             />
             <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
             <Stack.Screen name='Settings' component={SettingsScreen} />
+            <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
             <Stack.Screen
               name='RemoveIdentity'
               component={RemoveIdentityScreen}
