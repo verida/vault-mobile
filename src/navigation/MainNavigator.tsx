@@ -135,15 +135,12 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name='DataItem' component={DataItemScreen} />
           <Stack.Screen name='ChangePin' component={ChangePinScreen} />
           <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
-          <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
+
           <Stack.Screen
             name='CreateIdentity'
             component={CreateIdentityScreen}
           />
-          <Stack.Screen
-            name='ImportIdentity'
-            component={ImportIdentityScreen}
-          />
+
           <Stack.Screen
             name='MigrateIdentityConfirmation'
             component={MigrateIdentityConfirmationScreen}
@@ -190,6 +187,11 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShadowVisible: true,
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
+            <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
+            <Stack.Screen
+              name='ImportIdentity'
+              component={ImportIdentityScreen}
+            />
             <Stack.Screen name='Inbox' component={InboxScreen} />
             <Stack.Screen name='InboxItem' component={InboxItemScreen} />
             <Stack.Screen

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Image,
   ScrollView,
@@ -7,18 +7,18 @@ import {
   View,
 } from 'react-native'
 
-import Button from 'components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Spacer } from 'components/Spacer'
-import TCCheckbox from 'components/TCCheckbox'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
-import { DISABLED_COLOR, LIGHTGREY_COLOR, TEXT_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { ScreenWrapper } from '~/components'
+import Button from '~/components/Button'
+import { Spacer } from '~/components/Spacer'
+import TCCheckbox from '~/components/TCCheckbox'
+import { Headline } from '~/components/Typography/Headline'
+import { Text } from '~/components/Typography/Text'
+import { HIT_SLOP_10_10 } from '~/constants'
+import { DISABLED_COLOR, LIGHTGREY_COLOR, TEXT_COLOR } from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type AddIdentityScreenParams = {
   /* If there is no other identity */
@@ -35,13 +35,19 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
   const styles = useThemeAwareStyle(creatStyles)
 
   const [agreedTC, setAgreedTC] = useState(false)
-  function toggleAgreedTC() {
+
+  const toggleAgreedTC = useCallback(() => {
     setAgreedTC((prevState) => !prevState)
-  }
+  }, [])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Identity',
+    })
+  }, [navigation])
 
   return (
-    <Screen withSafeAreaView>
-      <NavigationHeader title='Identity' />
+    <ScreenWrapper>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.landing, { alignItems: 'center' }]}>
@@ -76,6 +82,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
         />
         <Spacer vertical='m' />
         <Button
+          hitSlop={HIT_SLOP_10_10}
           disabled={!agreedTC}
           style={styles.actionButton}
           onPress={() => {
@@ -87,7 +94,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
         </Button>
         {/* TODO: Create proper reussable buttons of the diffferent variants */}
         <TouchableOpacity
-          hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
+          hitSlop={HIT_SLOP_10_10}
           disabled={!agreedTC}
           style={[
             styles.actionButton,
@@ -108,7 +115,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </Screen>
+    </ScreenWrapper>
   )
 }
 

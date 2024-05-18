@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import {
@@ -43,6 +44,9 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
     keyboardVerticalOffset,
   } = props
 
+  const headerHeight = useHeaderHeight()
+  const keyboardAvoidingVerticalOffset = keyboardVerticalOffset || headerHeight
+
   const insets = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
 
@@ -83,7 +87,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             ? 'padding'
             : 'height'
         }
-        keyboardVerticalOffset={keyboardVerticalOffset}
+        keyboardVerticalOffset={keyboardAvoidingVerticalOffset}
         style={{ flex: 1 }}>
         {children}
       </KeyboardAvoidingView>
