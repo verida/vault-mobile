@@ -1,21 +1,21 @@
+import React, { useCallback, useEffect } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore no-implicit-any
+import { QRCode } from 'react-native-custom-qr-codes-expo'
+
 import {
   BottomActionBar,
   CopyToClipboardButton,
   ScreenWrapper,
   ShareButton,
-} from 'components'
-import { selectSelectedAccount } from 'features/identities'
-import { useThemeAwareStyle } from 'hooks'
-import React, { useCallback, useEffect } from 'react'
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore no-implicit-any
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+  Typography,
+} from '~/components'
+import { selectSelectedAccount } from '~/features/identities'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 const VeridaLogo = require('assets/vault-logo.png')
 
@@ -58,7 +58,7 @@ export const ShareIdentityScreen: React.FunctionComponent<
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.qrContainer}>
-            {Boolean(sharedContent) && (
+            {sharedContent ? (
               <QRCode
                 content={sharedContent}
                 size={qrCodeSize}
@@ -67,24 +67,24 @@ export const ShareIdentityScreen: React.FunctionComponent<
                 codeStyle='dot'
                 innerEyeStyle='circle'
               />
-            )}
+            ) : null}
           </View>
           <View style={styles.sharedContentContainer}>
-            <Text
-              style={styles.sharedContentText}
+            <Typography
+              variant='bodySemiBold'
               numberOfLines={1}
-              lineBreakMode='tail'>
+              ellipsizeMode='tail'>
               {sharedContent}
-            </Text>
+            </Typography>
           </View>
           <View style={styles.buttonsContainer}>
             <View style={styles.buttonWrapper}>
               <CopyToClipboardButton content={sharedContent} />
-              <Text style={styles.buttonLabel}>Copy</Text>
+              <Typography variant='bodySemiBold'>Copy</Typography>
             </View>
             <View style={styles.buttonWrapper}>
               <ShareButton content={sharedContent} />
-              <Text style={styles.buttonLabel}>Share</Text>
+              <Typography variant='bodySemiBold'>Share</Typography>
             </View>
           </View>
         </View>
@@ -133,11 +133,6 @@ const createStyles = (theme: Theme) =>
       borderRadius: theme.roundness.l,
       backgroundColor: theme.color.primary5,
     },
-    sharedContentText: {
-      fontSize: theme.fontSize.m,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-      lineHeight: 20,
-    },
     buttonsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-evenly',
@@ -146,11 +141,6 @@ const createStyles = (theme: Theme) =>
     buttonWrapper: {
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    buttonLabel: {
-      marginTop: theme.spacing.xs,
-      fontSize: theme.fontSize.m,
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-      lineHeight: 20,
+      gap: theme.spacing.xs,
     },
   })

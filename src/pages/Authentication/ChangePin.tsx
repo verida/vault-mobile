@@ -19,6 +19,12 @@ type ChangePinScreenProps = MainStackScreenProps<'ChangePin'>
 export const ChangePinScreen: React.FC<ChangePinScreenProps> = (props) => {
   const { navigation } = props
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    })
+  }, [navigation])
+
   const [loading, setLoading] = useState(true)
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
