@@ -53,26 +53,20 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
           <Alert
             type={alertType}
             onPress={alertOnPress}
-            actionIcon={alertActionIcon}
-            style={[
-              styles.alertContainer,
-              actions && actions.length > 0
-                ? {
-                    marginBottom: theme.spacing.sm,
-                  }
-                : {},
-            ]}>
+            actionIcon={alertActionIcon}>
             {alertContent}
           </Alert>
         ) : null}
         {actions && actions.length > 0 ? (
           <View
-            style={[
-              styles.actionsContainer,
-              { flexDirection: actionsOrientation },
-            ]}>
-            {/* TODO: Ensure the buttons have a background */}
-            {actions.map((action, index) => (
+            style={{
+              flexDirection: actionsOrientation,
+              gap:
+                actionsOrientation === 'row'
+                  ? theme.spacing.m
+                  : theme.spacing.s,
+            }}>
+            {actions.map((action) => (
               <Button
                 key={action.label}
                 onPress={action.onPress}
@@ -82,10 +76,6 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
                   styles.actionButton,
                   {
                     flex: actionsOrientation === 'row' ? 1 : undefined,
-                    marginTop:
-                      actionsOrientation === 'column' && index !== 0
-                        ? theme.spacing.s
-                        : 0,
                   },
                 ]}>
                 {action.label}
@@ -103,21 +93,15 @@ const createStyles = (theme: Theme) =>
     container: {
       backgroundColor: theme.color.background,
       paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.m,
+      gap: theme.spacing.sm,
     },
     containerWithTopBorder: {
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
     },
-    actionsContainer: {
-      paddingHorizontal: theme.spacing.s, // Trick as React Native 0.68 doesn't support gap
-      // TODO: change spacing after upgrading to a React native supporting gap in flex
-    },
     actionButton: {
-      marginBottom: 0,
-      marginHorizontal: theme.spacing.s,
-    },
-    alertContainer: {
-      marginHorizontal: theme.spacing.m,
+      marginBottom: 0, // Override the annoying default style of <Button>
     },
     alertText: {
       flexDirection: 'row',
