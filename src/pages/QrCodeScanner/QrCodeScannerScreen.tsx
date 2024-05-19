@@ -113,7 +113,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<
         useClipboard()
       : []
 
-  React.useEffect(() => {
+  useEffect(() => {
     ;(async () => {
       if (!maybeClipboardContent) return
 

@@ -2,11 +2,12 @@ import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
-import LoadingView from 'components/LoadingView'
-import { useAuth } from 'hooks/useAuth'
-import AuthNavigator from 'navigation/AuthNavigator'
-import { MainNavigator } from 'navigation/MainNavigator'
-import { RootStackParams } from 'navigation/types'
+import LoadingView from '~/components/LoadingView'
+import { useAuth } from '~/hooks/useAuth'
+
+import { AuthNavigator } from './AuthNavigator'
+import { MainNavigator } from './MainNavigator'
+import { RootStackParams } from './types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
