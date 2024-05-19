@@ -172,13 +172,12 @@ export const ConfirmTransactionScreen: React.FC<
         actions={[
           {
             label: 'Cancel',
-            color: 'grey',
             onPress: handleCancelButtonPress,
+            variant: 'secondary',
             disabled: loading,
           },
           {
             label: `Send ${aggregateWalletBannerBalance.symbol}`,
-            color: 'primary',
             onPress: handleSendButtonPress,
             disabled: loading,
           },

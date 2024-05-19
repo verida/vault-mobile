@@ -2,18 +2,15 @@ import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
 import { Alert, AlertType } from '~/components/Alert'
-import Button from '~/components/Button'
+import { Button, ButtonProps } from '~/components/Buttons'
 import { IconName } from '~/components/Icon'
 import { useTheme } from '~/contexts'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
 type Action = {
-  label: React.ReactNode
-  onPress: () => void
-  disabled?: boolean
-  color?: string // TODO: Use type from Button once it's properly reworked
-}
+  label?: string // Used as shortcut to children
+} & ButtonProps
 
 export type BottomActionBarProps = {
   actions?: Action[]
@@ -66,21 +63,21 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
                   ? theme.spacing.m
                   : theme.spacing.s,
             }}>
-            {actions.map((action) => (
-              <Button
-                key={action.label}
-                onPress={action.onPress}
-                disabled={action.disabled}
-                color={action.color}
-                style={[
-                  styles.actionButton,
-                  {
-                    flex: actionsOrientation === 'row' ? 1 : undefined,
-                  },
-                ]}>
-                {action.label}
-              </Button>
-            ))}
+            {actions.map(
+              ({ label, style, children, ...buttonProps }, index) => (
+                <Button
+                  key={index}
+                  {...buttonProps}
+                  style={[
+                    style,
+                    {
+                      flex: actionsOrientation === 'row' ? 1 : undefined,
+                    },
+                  ]}>
+                  {label || children}
+                </Button>
+              )
+            )}
           </View>
         ) : null}
       </View>
@@ -99,9 +96,6 @@ const createStyles = (theme: Theme) =>
     containerWithTopBorder: {
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
-    },
-    actionButton: {
-      marginBottom: 0, // Override the annoying default style of <Button>
     },
     alertText: {
       flexDirection: 'row',

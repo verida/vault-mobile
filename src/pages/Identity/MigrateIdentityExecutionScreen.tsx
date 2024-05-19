@@ -249,7 +249,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
                   {
                     label: 'Close',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Switch to new identity',
@@ -261,7 +261,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
                   {
                     label: 'Close',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Retry',

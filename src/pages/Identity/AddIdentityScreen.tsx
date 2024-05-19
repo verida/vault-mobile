@@ -97,7 +97,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
           },
           {
             label: 'Import Identity',
-            color: 'transparent-border',
+            variant: 'secondary',
             onPress: handleImportIdentityButtonPress,
             disabled: !agreedTC,
           },

@@ -108,14 +108,14 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<
         actions={[
           {
             label: 'Cancel',
-            color: 'grey',
             onPress: handleCancel,
+            variant: 'secondary',
           },
           {
             label: 'Migrate',
             onPress: handleMigrate,
+            variant: 'danger',
             disabled: !canMigrate,
-            color: 'danger',
           },
         ]}
       />

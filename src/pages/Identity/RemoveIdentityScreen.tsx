@@ -108,13 +108,13 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
           {
             label: 'Cancel',
             onPress: handleCancel,
-            color: 'grey',
+            variant: 'secondary',
           },
           {
             label: 'Log out',
             onPress: handleLogout,
             disabled: !canRemove,
-            color: 'danger',
+            variant: 'danger',
           },
         ]}
       />

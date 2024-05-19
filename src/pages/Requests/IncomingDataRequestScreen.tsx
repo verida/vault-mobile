@@ -217,7 +217,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
                   {
                     label: 'Decline',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Accept',

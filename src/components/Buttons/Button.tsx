@@ -11,7 +11,7 @@ import { DISABLED_COLOR, HIT_SLOP_10_10 } from '~/constants'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
-export type ButtonVariant = 'primary' | 'secondary'
+export type ButtonVariant = 'primary' | 'secondary' | 'danger'
 
 // TODO: Consider a type prop to handle the diversity of buttons, see Figma
 // export type ButtonType = 'contained' | 'outlined'
@@ -30,13 +30,17 @@ export const Button: React.FC<ButtonProps> = (props) => {
   // TODO: Find a better way to define the varian style and apply it to the container and content
 
   const variantLabelStyle =
-    variant === 'primary'
+    variant === 'danger'
       ? disabled
-        ? styles.variantPrimaryLabelDisabled
-        : styles.variantPrimaryLabel
-      : disabled
-        ? styles.variantSecondaryLabelDisabled
-        : styles.variantSecondaryLabel
+        ? styles.variantDangerLabelDisabled
+        : styles.variantDangerLabel
+      : variant === 'secondary'
+        ? disabled
+          ? styles.variantSecondaryLabelDisabled
+          : styles.variantSecondaryLabel
+        : disabled
+          ? styles.variantPrimaryLabelDisabled
+          : styles.variantPrimaryLabel
 
   const content =
     typeof children === 'string' ? (
@@ -48,13 +52,17 @@ export const Button: React.FC<ButtonProps> = (props) => {
     )
 
   const variantContainerStyle =
-    variant === 'primary'
+    variant === 'danger'
       ? disabled
-        ? styles.variantPrimaryContainerDisabled
-        : styles.variantPrimaryContainer
-      : disabled
-        ? styles.variantSecondaryContainerDisabled
-        : styles.variantSecondaryContainer
+        ? styles.variantDangerContainerDisabled
+        : styles.variantDangerContainer
+      : variant === 'secondary'
+        ? disabled
+          ? styles.variantSecondaryContainerDisabled
+          : styles.variantSecondaryContainer
+        : disabled
+          ? styles.variantPrimaryContainerDisabled
+          : styles.variantPrimaryContainer
 
   return (
     <TouchableOpacity
@@ -106,5 +114,20 @@ const createStyles = (theme: Theme) =>
     },
     variantSecondaryLabelDisabled: {
       color: theme.color.onBackground,
+    },
+    variantDangerContainer: {
+      backgroundColor: theme.color.orange,
+      borderColor: theme.color.orange,
+    },
+    variantDangerContainerDisabled: {
+      opacity: 0.5,
+      backgroundColor: theme.color.orange,
+      borderColor: theme.color.orange,
+    },
+    variantDangerLabel: {
+      color: theme.color.onPrimary,
+    },
+    variantDangerLabelDisabled: {
+      color: theme.color.onPrimary,
     },
   })

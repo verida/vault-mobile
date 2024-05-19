@@ -262,7 +262,7 @@ export const ProofRequestScreen: React.FunctionComponent<
                   {
                     label: 'Decline',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Send Proof',

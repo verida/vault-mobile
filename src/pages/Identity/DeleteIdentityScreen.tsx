@@ -113,13 +113,13 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
           {
             label: 'Cancel',
             onPress: handleCancel,
-            color: 'grey',
+            variant: 'secondary',
           },
           {
             label: 'Delete',
             onPress: handleDelete,
+            variant: 'danger',
             disabled: !canDelete,
-            color: 'danger',
           },
         ]}
       />

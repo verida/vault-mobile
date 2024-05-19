@@ -618,7 +618,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               ? [
                   {
                     label: 'Record Seed Phrase',
-                    color: 'transparent-border',
+                    variant: 'secondary',
                     onPress: handleRecordSeedPhraseButtonPress,
                   },
                   {
