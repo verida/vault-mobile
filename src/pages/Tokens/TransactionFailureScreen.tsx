@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import SuccessFailure from 'components/SuccessFailure'
-import { MainStackScreenProps } from 'navigation/types'
+import { BottomActionBar, ScreenWrapper, StatusInfo } from '~/components'
+import { AggregateWalletBannerBalance } from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type TransactionFailureScreenParams = {
-  // TODO: this was `sentTransaction.error`
   readonly errorMessage: string
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 type TransactionFailureScreenProps = MainStackScreenProps<'TransactionFailure'>
@@ -17,19 +21,56 @@ export const TransactionFailureScreen: React.FC<
     navigation,
     route: { params },
   } = props
-  const { errorMessage } = params
+  const { errorMessage, aggregateWalletBannerBalance } = params
 
-  const titleText = 'Ooops..'
-  const descriptionText = `Transaction failed: ${errorMessage}`
-  const buttonLabel = 'Back'
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    })
+  }, [navigation])
+
+  const { resource, label: title } = aggregateWalletBannerBalance
+
+  const statusTitle = 'Transaction failed!'
+  const statusSubtitle = errorMessage
+
+  const handleCloseButtonPress = useCallback(() => {
+    navigation.navigate('SingleCurrency', {
+      resource,
+      title,
+    })
+  }, [navigation, resource, title])
+
+  const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <SuccessFailure
-      failure
-      titleText={titleText}
-      descriptionText={descriptionText}
-      buttonLabel={buttonLabel}
-      actionButtonOnPress={() => navigation.goBack()}
-    />
+    <ScreenWrapper allSafeAreaEdges>
+      <View style={styles.container}>
+        <StatusInfo
+          statusType='error'
+          title={statusTitle}
+          subtitle={statusSubtitle}
+        />
+      </View>
+      <BottomActionBar
+        hideBorder
+        actions={[
+          {
+            label: 'Close',
+            onPress: handleCloseButtonPress,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
+}
+
+const createStyles = (theme: Theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: theme.spacing.l,
+      paddingHorizontal: theme.spacing.m,
+    },
+  })
 }

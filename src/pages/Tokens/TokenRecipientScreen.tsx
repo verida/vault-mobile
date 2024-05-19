@@ -1,13 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
-import { BigNumber, ethers } from 'ethers'
-import {
-  AggregateWalletBannerBalance,
-  isValidWalletAddressForChainId,
-  useChainIdForResourceParams,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-import { Container, Icon } from 'native-base'
-import React, { useState } from 'react'
+import { BigNumber } from 'ethers'
+import { Icon } from 'native-base'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -16,15 +10,18 @@ import {
   View,
 } from 'react-native'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain'
-
-import Button from 'components/Button'
-import Label from 'components/Label'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
-import InputStyles from 'styles/inputs'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import Label from '~/components/Label'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import {
+  AggregateWalletBannerBalance,
+  isValidWalletAddressForChainId,
+  useChainIdForResourceParams,
+} from '~/features/cryptoWallet'
+import { Logger } from '~/features/telemetry'
+import { MainStackScreenProps } from '~/navigation/types'
+import InputStyles from '~/styles/inputs'
 
 const logger = Logger.create('TokenRecipient')
 
@@ -46,44 +43,11 @@ export const TokenRecipientScreen: React.FC<TokenRecipientScreenProps> = (
   const { aggregateWalletBannerBalance, amount, predictedMaxTransactionFee } =
     params
 
-  const fetchCopiedText = async () => {
-    const clipboardData = await Clipboard.getString()
-    setAddress(clipboardData)
-  }
-  function onReadQRCode(data: string) {
-    setAddress(data)
-  }
-  function onScanQRPress() {
-    navigation.navigate('ScanQrCode', {
-      firstTime: false,
-      onReadQRCode: (data) => onReadQRCode(data),
+  useEffect(() => {
+    navigation.setOptions({
+      title: `Send ${aggregateWalletBannerBalance.symbol}`,
     })
-  }
-
-  const onPressSend = React.useCallback(
-    async (toAddress: string) => {
-      const showGenericFailure = (reason: string) =>
-        Alert.alert('Unable to Send', reason)
-
-      try {
-        navigation.navigate('ConfirmTransaction', {
-          amount,
-          aggregateWalletBannerBalance,
-          toAddress,
-          predictedMaxTransactionFee,
-        })
-      } catch (e) {
-        logger.error(e)
-        showGenericFailure(String(e))
-      }
-    },
-    [
-      aggregateWalletBannerBalance,
-      navigation,
-      amount,
-      predictedMaxTransactionFee,
-    ]
-  )
+  }, [navigation, aggregateWalletBannerBalance])
 
   const [address, setAddress] = useState<string>('')
 
@@ -91,19 +55,55 @@ export const TokenRecipientScreen: React.FC<TokenRecipientScreenProps> = (
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const { namespace } = chainId
+  const isAddressValid = isValidWalletAddressForChainId(address, chainId)
 
-  const disabled = !isValidWalletAddressForChainId(address, chainId)
+  const fetchCopiedText = useCallback(async () => {
+    const clipboardData = await Clipboard.getString()
+    setAddress(clipboardData)
+  }, [])
+
+  const handleQRCodeRead = useCallback((data: string) => {
+    setAddress(data)
+  }, [])
+
+  const handleScanQRButtonPress = useCallback(() => {
+    navigation.navigate('ScanQrCode', {
+      firstTime: false,
+      onReadQRCode: handleQRCodeRead,
+    })
+  }, [navigation, handleQRCodeRead])
+
+  const handleNextButtonPress = useCallback(() => {
+    const showGenericFailure = (reason: string) => {
+      Alert.alert('Unable to Send', reason)
+    }
+
+    if (!isAddressValid) {
+      return
+    }
+
+    try {
+      navigation.navigate('ConfirmTransaction', {
+        amount,
+        aggregateWalletBannerBalance,
+        toAddress: address,
+        predictedMaxTransactionFee,
+      })
+    } catch (e) {
+      logger.error(e)
+      showGenericFailure(String(e))
+    }
+  }, [
+    aggregateWalletBannerBalance,
+    isAddressValid,
+    address,
+    navigation,
+    amount,
+    predictedMaxTransactionFee,
+  ])
 
   return (
-    <Container>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
-        }}
-        title={`Send ${aggregateWalletBannerBalance.symbol}`}
-      />
+    <ScreenWrapper keyboardAvoiding>
       <View style={styles.container}>
         <View style={styles.content}>
           <Label>Recipient address</Label>
@@ -119,7 +119,7 @@ export const TokenRecipientScreen: React.FC<TokenRecipientScreenProps> = (
           />
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              onPress={onScanQRPress}
+              onPress={handleScanQRButtonPress}
               style={styles.actionButton}>
               <Icon name='qr-code' style={styles.actionButtonIcon} />
               <Text style={styles.actionButtonText}>Scan QR</Text>
@@ -130,42 +130,25 @@ export const TokenRecipientScreen: React.FC<TokenRecipientScreenProps> = (
               <Icon name='clipboard' style={styles.actionButtonIcon} />
               <Text style={styles.actionButtonText}>Paste</Text>
             </TouchableOpacity>
-            {Boolean(__DEV__) && (
-              <TouchableOpacity
-                onPress={() => {
-                  if (namespace === SupportedBlockchainNamespace.NEAR)
-                    return onPressSend('guest-book.testnet')
-
-                  const { address: randomAddress } =
-                    ethers.Wallet.createRandom()
-                  return onPressSend(randomAddress)
-                }}
-                style={styles.actionButton}>
-                <Icon name='rocket' style={styles.actionButtonIcon} />
-                <Text style={styles.actionButtonText}>Random Address</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </View>
-        <View style={styles.footer}>
-          <Button
-            style={styles.nextButton}
-            color='primary'
-            disabled={disabled}
-            onPress={() => onPressSend(address)}>
-            Next
-          </Button>
-        </View>
       </View>
-    </Container>
+      <BottomActionBar
+        actions={[
+          {
+            label: 'Next',
+            onPress: handleNextButtonPress,
+            disabled: !isAddressValid,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.1)',
     flex: 1,
   },
   content: {

@@ -1,5 +1,12 @@
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/caip'
+import React, { useCallback, useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
+
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import { NumericCryptoMaxTransactionFee } from '~/components/Span'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { ChainMetadata } from '~/features/caip'
 import {
   AggregateWalletBannerBalance,
   getWalletAddressForChainId,
@@ -7,17 +14,8 @@ import {
   useLazyConfirmTransaction,
   useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
-} from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-
-import Button from 'components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { NumericCryptoMaxTransactionFee } from 'components/Span'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
+} from '~/features/cryptoWallet'
+import { MainStackScreenProps } from '~/navigation/types'
 
 export type ConfirmTransactionScreenParams = {
   readonly amount: number
@@ -41,6 +39,12 @@ export const ConfirmTransactionScreen: React.FC<
     toAddress,
     predictedMaxTransactionFee,
   } = params
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: `Send ${aggregateWalletBannerBalance.symbol}`,
+    })
+  }, [navigation, aggregateWalletBannerBalance])
 
   const { resource } = aggregateWalletBannerBalance
 
@@ -83,19 +87,42 @@ export const ConfirmTransactionScreen: React.FC<
 
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
+  const handleCancelButtonPress = useCallback(() => {
+    navigation.navigate('SingleCurrency', {
+      resource,
+      title: aggregateWalletBannerBalance.label,
+    })
+  }, [navigation, aggregateWalletBannerBalance, resource])
+
+  const handleSendButtonPress = useCallback(async () => {
+    try {
+      await confirmTransaction({
+        amount,
+        toAddress,
+        aggregateWalletBannerBalance,
+      })
+
+      navigation.navigate('TransactionSuccess', {
+        amount,
+        toAddress,
+        aggregateWalletBannerBalance,
+      })
+    } catch (error) {
+      navigation.navigate('TransactionFailure', {
+        errorMessage: String(error),
+        aggregateWalletBannerBalance,
+      })
+    }
+  }, [
+    navigation,
+    confirmTransaction,
+    amount,
+    toAddress,
+    aggregateWalletBannerBalance,
+  ])
+
   return (
-    <Container>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
-          action: () =>
-            navigation.navigate('SingleCurrency', {
-              resource,
-              title: aggregateWalletBannerBalance.label,
-            }),
-        }}
-        title={`Send ${aggregateWalletBannerBalance.symbol}`}
-      />
+    <ScreenWrapper>
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>
@@ -139,46 +166,31 @@ export const ConfirmTransactionScreen: React.FC<
           </View>
           {!!maybeChainMetadata && renderFeeRow(maybeChainMetadata)}
         </View>
-        <View style={styles.footer}>
-          <Button
-            style={styles.nextButton}
-            color='primary'
-            loading={loading}
-            onPress={async () => {
-              try {
-                await confirmTransaction({
-                  amount,
-                  toAddress,
-                  aggregateWalletBannerBalance,
-                })
-
-                navigation.navigate('TransactionSuccess', {
-                  amount,
-                  toAddress,
-                  aggregateWalletBannerBalance,
-                })
-              } catch (error) {
-                navigation.navigate('TransactionFailure', {
-                  errorMessage: String(error),
-                })
-              }
-            }}>
-            {/* @ts-expect-error "color" is not a valid prop */}
-            <Text style={styles.nextButton} color='primary'>
-              Send {aggregateWalletBannerBalance.symbol}
-            </Text>
-          </Button>
-        </View>
       </View>
-    </Container>
+      <BottomActionBar
+        actionsOrientation='row'
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'grey',
+            onPress: handleCancelButtonPress,
+            disabled: loading,
+          },
+          {
+            label: `Send ${aggregateWalletBannerBalance.symbol}`,
+            color: 'primary',
+            onPress: handleSendButtonPress,
+            disabled: loading,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.1)',
     flex: 1,
   },
   content: {

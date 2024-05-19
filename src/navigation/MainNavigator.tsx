@@ -101,28 +101,6 @@ export const MainNavigator: React.FC = () => {
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
 
           <Stack.Screen
-            name='TransactionDetails'
-            component={TransactionDetailsScreen}
-          />
-          <Stack.Screen name='SendToken' component={SendTokenScreen} />
-          <Stack.Screen
-            name='TokenRecipient'
-            component={TokenRecipientScreen}
-          />
-          <Stack.Screen
-            name='ConfirmTransaction'
-            component={ConfirmTransactionScreen}
-          />
-          <Stack.Screen
-            name='TransactionSuccess'
-            component={TransactionSuccessScreen}
-          />
-          <Stack.Screen
-            name='TransactionFailure'
-            component={TransactionFailureScreen}
-          />
-
-          <Stack.Screen
             name='SeedPhraseView'
             component={SeedPhraseViewScreen}
           />
@@ -196,6 +174,27 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen
               name='SingleCurrency'
               component={SingleCurrencyScreen}
+            />
+            <Stack.Screen
+              name='TransactionDetails'
+              component={TransactionDetailsScreen}
+            />
+            <Stack.Screen name='SendToken' component={SendTokenScreen} />
+            <Stack.Screen
+              name='TokenRecipient'
+              component={TokenRecipientScreen}
+            />
+            <Stack.Screen
+              name='ConfirmTransaction'
+              component={ConfirmTransactionScreen}
+            />
+            <Stack.Screen
+              name='TransactionSuccess'
+              component={TransactionSuccessScreen}
+            />
+            <Stack.Screen
+              name='TransactionFailure'
+              component={TransactionFailureScreen}
             />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='ChangePin' component={ChangePinScreen} />

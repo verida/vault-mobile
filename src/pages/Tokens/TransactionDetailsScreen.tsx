@@ -1,3 +1,8 @@
+import React, { useEffect } from 'react'
+
+import { ScreenWrapper } from '~/components'
+import LoadingIndicator from '~/components/LoadingIndicator'
+import { TransactionInfo } from '~/components/Tokens'
 import {
   AggregateWalletBannerBalance,
   getWalletAddressForChainId,
@@ -5,14 +10,8 @@ import {
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useSelectedMinifiedBlockchainAccounts,
-} from 'features/cryptoWallet'
-import { Container, Icon } from 'native-base'
-import React from 'react'
-
-import LoadingIndicator from 'components/LoadingIndicator'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TransactionInfo from 'components/Tokens/TransactionInfo'
-import { MainStackScreenProps } from 'navigation/types'
+} from '~/features/cryptoWallet'
+import { MainStackScreenProps } from '~/navigation/types'
 
 export type TransactionDetailsScreenParams = {
   readonly id: string
@@ -28,6 +27,12 @@ export const TransactionDetailsScreen: React.FC<
     navigation,
     route: { params },
   } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Transaction Details',
+    })
+  }, [navigation])
 
   const { id, aggregateWalletBannerBalance } = params
 
@@ -49,14 +54,7 @@ export const TransactionDetailsScreen: React.FC<
   })
 
   return (
-    <Container>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
-        }}
-        title={'Transaction Details'}
-      />
+    <ScreenWrapper>
       {isLoading || !transaction || !aggregateWalletBannerBalance ? (
         <LoadingIndicator />
       ) : (
@@ -65,6 +63,6 @@ export const TransactionDetailsScreen: React.FC<
           aggregateWalletBannerBalance={aggregateWalletBannerBalance}
         />
       )}
-    </Container>
+    </ScreenWrapper>
   )
 }
