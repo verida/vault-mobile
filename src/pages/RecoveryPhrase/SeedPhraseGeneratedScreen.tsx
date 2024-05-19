@@ -1,20 +1,20 @@
 import Clipboard from '@react-native-community/clipboard'
-import { useTheme } from 'contexts/ThemeContext'
-import _ from 'lodash'
+import { shuffle } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import AlertNotification from 'components/AlertNotification'
-import Button from 'components/Button'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { Text } from 'components/Typography/Text'
-import WordCard from 'components/Words/WordCard'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import AlertNotification from '~/components/AlertNotification'
+import Button from '~/components/Button'
+import Layout from '~/components/Layouts/Layout'
+import { Text } from '~/components/Typography/Text'
+import WordCard from '~/components/Words/WordCard'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type SeedPhraseGeneratedScreenParams = undefined
 
@@ -25,6 +25,12 @@ export const SeedPhraseGeneratedScreen: React.FC<
   SeedPhraseGeneratedScreenProps
 > = (props) => {
   const { navigation } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Record your Seed Phrase',
+    })
+  }, [navigation])
 
   const { theme } = useTheme()
   const [words, setWords] = useState('Generating seed phrase ...')
@@ -38,30 +44,29 @@ export const SeedPhraseGeneratedScreen: React.FC<
     init()
   }, [])
 
-  const onSaved = useCallback(async () => {
+  const handleSavedButtonPress = useCallback(() => {
     const mnemonic = words.split(' ')
-    const shuffled = _.shuffle(mnemonic)
+    const shuffled = shuffle(mnemonic)
     navigation.replace('VerifyPhrase', { shuffled })
   }, [navigation, words])
 
-  const onRemindLater = () => {
+  const handleRemindLaterButtonPress = useCallback(() => {
     navigation.goBack()
-  }
+  }, [navigation])
 
-  const onClosePress = () => {
+  const onClosePress = useCallback(() => {
     setIsSeedPhraseCopied(false)
-  }
+  }, [])
 
-  const copyToClipBoard = () => {
+  const copyToClipBoard = useCallback(() => {
     Clipboard.setString(words)
     setIsSeedPhraseCopied(true)
-  }
+  }, [words])
 
   const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <View>
-      <NavigationHeader title='Record Your Seed Phrase' />
+    <ScreenWrapper>
       <Layout title='Seed Phrase'>
         <Text style={styles.title}>
           Carefully write down each word in order
@@ -78,12 +83,6 @@ export const SeedPhraseGeneratedScreen: React.FC<
             <Icon name='copy' style={{ color: theme.color.black600 }} />
           </View>
         </Button>
-        <Button color='primary' onPress={onSaved}>
-          I have saved my seed words
-        </Button>
-        <Button color='transparent-grey' onPress={onRemindLater}>
-          Remind me later
-        </Button>
         <AlertNotification
           onClosePress={onClosePress}
           isOpened={isSeedPhraseCopied}
@@ -93,7 +92,21 @@ export const SeedPhraseGeneratedScreen: React.FC<
           timeOutInSeconds={5}
         />
       </Layout>
-    </View>
+      <BottomActionBar
+        actionsOrientation='column'
+        actions={[
+          {
+            label: 'I have saved my seed phrase',
+            onPress: handleSavedButtonPress,
+          },
+          {
+            label: 'Remind me later',
+            onPress: handleRemindLaterButtonPress,
+            variant: 'secondary',
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 

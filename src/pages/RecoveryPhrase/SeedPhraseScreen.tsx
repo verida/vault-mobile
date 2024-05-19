@@ -1,13 +1,12 @@
-import { Container, Content } from 'native-base'
-import React, { useCallback, useState } from 'react'
+import { Content } from 'native-base'
+import React, { useCallback, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 
-import SafeImg from 'assets/safe.svg'
-import Button from 'components/Button'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import { MainStackScreenProps } from 'navigation/types'
+import SafeImg from '~/assets/safe.svg'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import Layout from '~/components/Layouts/Layout'
+import Text from '~/components/Text'
+import { MainStackScreenProps } from '~/navigation/types'
 
 export type SeedPhraseScreenParams = undefined
 
@@ -16,20 +15,22 @@ type SeedPhraseScreenProps = MainStackScreenProps<'SeedPhrase'>
 export const SeedPhraseScreen: React.FC<SeedPhraseScreenProps> = (props) => {
   const { navigation } = props
 
-  const [disabled, setDisabled] = useState(false)
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Record your Seed Phrase',
+    })
+  }, [navigation])
 
-  const onRemindLatter = useCallback(() => {
-    setDisabled(true)
+  const handleRemindLaterButtonPress = useCallback(() => {
     navigation.goBack()
   }, [navigation])
 
-  const onShow = useCallback(() => {
+  const handleRecordSeedPhraseButtonPress = useCallback(() => {
     navigation.replace('SeedPhraseGenerated')
   }, [navigation])
 
   return (
-    <Container>
-      <NavigationHeader title='Record Your Seed Phrase' />
+    <ScreenWrapper>
       <Content>
         <Layout title='Seed Phrase'>
           <Text style={style.description}>
@@ -41,34 +42,31 @@ export const SeedPhraseScreen: React.FC<SeedPhraseScreenProps> = (props) => {
             Your seed phrase is a list of words. Please record them carefully
             and store in a safe place.
           </Text>
-          <Text style={style.highlight}>
-            Warning: There is no password reset!
-          </Text>
-          <Button
-            style={{ marginTop: 56 }}
-            disabled={disabled}
-            color='primary'
-            onPress={onShow}>
-            Show Seed Phrase
-          </Button>
-          <Button
-            disabled={disabled}
-            color='transparent-grey'
-            onPress={onRemindLatter}>
-            Remind me later
-          </Button>
         </Layout>
       </Content>
-    </Container>
+      <BottomActionBar
+        hideBorder
+        alertType='warning'
+        alertContent='Your seed phrase is the only way to recover your identity.'
+        actionsOrientation='column'
+        actions={[
+          {
+            label: 'Record Seed Phrase',
+            onPress: handleRecordSeedPhraseButtonPress,
+          },
+          {
+            label: 'Remind me later',
+            onPress: handleRemindLaterButtonPress,
+            variant: 'secondary',
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const style = StyleSheet.create({
   description: {
-    marginTop: 16,
-  },
-  highlight: {
-    textDecorationLine: 'underline',
     marginTop: 16,
   },
 })

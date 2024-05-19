@@ -89,13 +89,6 @@ export const MainNavigator: React.FC = () => {
           screenOptions={{
             headerShown: false,
           }}>
-          <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
-          <Stack.Screen
-            name='SeedPhraseGenerated'
-            component={SeedPhraseGeneratedScreen}
-          />
-          <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
-
           {/* To rework */}
           <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
@@ -226,6 +219,12 @@ export const MainNavigator: React.FC = () => {
               name='PolygonIdStatus'
               component={PolygonIdStatusScreen}
             />
+            <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
+            <Stack.Screen
+              name='SeedPhraseGenerated'
+              component={SeedPhraseGeneratedScreen}
+            />
+            <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
           </Stack.Group>
 
           {/* Public profile modal screens */}

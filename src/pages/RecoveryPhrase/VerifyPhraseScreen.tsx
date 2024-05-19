@@ -1,19 +1,18 @@
-import {
-  resetPhrase as resetPhraseAction,
-  selectSeedPhraseTemplate,
-} from 'features/seedphrases'
-import { setShowSeedPhraseReminder } from 'features/settings'
 import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import Button from 'components/Button'
-import ErrorPhrase from 'components/ErrorPhrase'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Words from 'components/Words'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import ErrorPhrase from '~/components/ErrorPhrase'
+import Layout from '~/components/Layouts/Layout'
+import Words from '~/components/Words'
+import {
+  resetPhrase as resetPhraseAction,
+  selectSeedPhraseTemplate,
+} from '~/features/seedphrases'
+import { setShowSeedPhraseReminder } from '~/features/settings'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
 
 export type VerifyPhraseScreenParams = {
   shuffled: string[]
@@ -28,6 +27,12 @@ export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
     navigation,
     route: { params },
   } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Record your Seed Phrase',
+    })
+  }, [navigation])
 
   const dispatch = useAppDispatch()
   const selected = useAppSelector(selectSeedPhraseTemplate)
@@ -61,7 +66,7 @@ export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
     }
   }, [resetPhrase])
 
-  const onConfirm = async () => {
+  const handleConfirmButtonPress = useCallback(async () => {
     try {
       resetPhrase()
       dispatch(setShowSeedPhraseReminder(false))
@@ -70,46 +75,49 @@ export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
     } catch (cause) {
       showError(true)
     }
-  }
+  }, [dispatch, navigation, resetPhrase])
+
+  const handleResetButtonPress = useCallback(() => {
+    resetPhrase()
+  }, [resetPhrase])
+
+  const handleSkipButtonPress = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
 
   return (
-    <View>
-      <NavigationHeader title='Record Your Seed Phrase' />
+    <ScreenWrapper>
       <Layout title='Verify Your Phrase'>
         <View>
           <Words words={params.shuffled} />
           <ErrorPhrase shown={error} style={style.error} />
         </View>
-        <View>
-          {!verified && (
-            <Button
-              style={{ marginTop: 20 }}
-              color='transparent-grey'
-              onPress={() => {
-                navigation.goBack()
-              }}>
-              Skip
-            </Button>
-          )}
-          {verified && (
-            <>
-              <Button
-                style={{ marginTop: 20 }}
-                color='primary'
-                onPress={onConfirm}>
-                Confirm
-              </Button>
-              <Button
-                style={{ marginTop: 10 }}
-                color='transparent-grey'
-                onPress={resetPhrase}>
-                Clear
-              </Button>
-            </>
-          )}
-        </View>
       </Layout>
-    </View>
+      <BottomActionBar
+        actionsOrientation='column'
+        actions={
+          verified
+            ? [
+                {
+                  label: 'Confirm',
+                  onPress: handleConfirmButtonPress,
+                },
+                {
+                  label: 'Clear',
+                  onPress: handleResetButtonPress,
+                  variant: 'secondary',
+                },
+              ]
+            : [
+                {
+                  label: 'Skip',
+                  onPress: handleSkipButtonPress,
+                  variant: 'secondary',
+                },
+              ]
+        }
+      />
+    </ScreenWrapper>
   )
 }
 
