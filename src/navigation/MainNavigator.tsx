@@ -90,19 +90,7 @@ export const MainNavigator: React.FC = () => {
             headerShown: false,
           }}>
           {/* To rework */}
-          <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
-
-          <Stack.Screen
-            name='SingleConnection'
-            component={SingleConnectionScreen}
-          />
-
-          <Stack.Screen
-            name='NFTCollectionDetail'
-            component={NFTCollectionDetailScreen}
-          />
-          <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
 
           {/* Internal Screens */}
           {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
@@ -152,8 +140,16 @@ export const MainNavigator: React.FC = () => {
             />
             <Stack.Screen name='Inbox' component={InboxScreen} />
             <Stack.Screen name='InboxItem' component={InboxItemScreen} />
+            <Stack.Screen
+              name='ShareableData'
+              component={ShareableDataScreen}
+            />
             <Stack.Screen name='DataFolder' component={DataFolderScreen} />
             <Stack.Screen name='DataItem' component={DataItemScreen} />
+            <Stack.Screen
+              name='SingleConnection'
+              component={SingleConnectionScreen}
+            />
             <Stack.Screen
               name='ManageWallets'
               component={ManageWalletsScreen}
@@ -184,6 +180,11 @@ export const MainNavigator: React.FC = () => {
               name='TransactionFailure'
               component={TransactionFailureScreen}
             />
+            <Stack.Screen
+              name='NFTCollectionDetail'
+              component={NFTCollectionDetailScreen}
+            />
+            <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='ChangePin' component={ChangePinScreen} />
             <Stack.Screen

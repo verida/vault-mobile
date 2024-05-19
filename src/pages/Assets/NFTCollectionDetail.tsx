@@ -1,18 +1,16 @@
-import { Logger } from 'features/telemetry'
-import { getNFTImageUri } from 'helpers/nft'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
+import { ScreenWrapper } from '~/components'
+import GridView from '~/components/Grids/GridView'
+import { Tag } from '~/components/Tag'
 import { NFT, NFTCollection, NFTMetadata } from '~/features/assets'
-
-import GridView from 'components/Grids/GridView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Tag } from 'components/Tag'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { Logger } from '~/features/telemetry'
+import { getNFTImageUri } from '~/helpers/nft'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
@@ -31,6 +29,12 @@ export const NFTCollectionDetailScreen: React.FC<
     route: { params },
   } = props
   const { collection } = params
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: collection.name,
+    })
+  }, [navigation, collection])
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -75,8 +79,7 @@ export const NFTCollectionDetailScreen: React.FC<
   )
 
   return (
-    <Screen>
-      <NavigationHeader title={collection.name} bottomBorder />
+    <ScreenWrapper>
       <View style={styles.container}>
         <GridView
           numColumns={NUMBER_OF_COLUMNS}
@@ -85,7 +88,7 @@ export const NFTCollectionDetailScreen: React.FC<
           renderItem={renderCollection}
         />
       </View>
-    </Screen>
+    </ScreenWrapper>
   )
 }
 

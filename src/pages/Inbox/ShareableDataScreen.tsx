@@ -1,8 +1,7 @@
 import { IDatastore } from '@verida/types'
-import { Logger } from 'features/telemetry'
 import update from 'immutability-helper'
 import { debounce } from 'lodash'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FlatList,
@@ -13,17 +12,16 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import AccountManager from 'api/AccountManager'
-import Button from 'components/Button'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { Text } from 'components/Typography/Text'
-import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
-import { MainStackScreenProps } from 'navigation/types'
-import ShareableDataItem, {
-  ShareableDataItemType,
-} from 'pages/Inbox/ShareableDataItem'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import LoadingView from '~/components/LoadingView'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import { Text } from '~/components/Typography/Text'
+import { GREY_COLOR, LIGHTGREY_COLOR } from '~/constants/color'
+import { Logger } from '~/features/telemetry'
+import { MainStackScreenProps } from '~/navigation/types'
+
+import ShareableDataItem, { ShareableDataItemType } from './ShareableDataItem'
 
 const logger = Logger.create('Pages/Inbox/ShareableData')
 
@@ -39,6 +37,12 @@ export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
   props
 ) => {
   const { navigation, route } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Select an item',
+    })
+  }, [navigation])
 
   const [data, setData] = useState<ShareableDataItemType[]>([])
   const [loading, setLoading] = useState(true)
@@ -145,7 +149,7 @@ export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
   }
 
   return (
-    <Container>
+    <ScreenWrapper>
       <NavigationHeader title='Select an item' />
       <View style={styles.searchInputContainer}>
         <AntDesign name='search1' size={15} color={GREY_COLOR} />
@@ -171,12 +175,15 @@ export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
           />
         )}
       </Content>
-      <CustomFooter>
-        <Button color='primary' onPress={onConfirmPress}>
-          Confirm selection
-        </Button>
-      </CustomFooter>
-    </Container>
+      <BottomActionBar
+        actions={[
+          {
+            label: 'Confirm selection',
+            onPress: onConfirmPress,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 

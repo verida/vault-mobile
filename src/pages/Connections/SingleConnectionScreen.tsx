@@ -1,13 +1,13 @@
-import { Container, Content, Icon } from 'native-base'
+import { Content, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
-import DataConnectorsManager from 'api/DataConnectorsManager'
-import Button from 'components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import { SUCCESS_COLOR } from 'constants/color'
-import { MainStackScreenProps } from 'navigation/types'
+import DataConnectorsManager from '~/api/DataConnectorsManager'
+import { ScreenWrapper } from '~/components'
+import Button from '~/components/Button'
+import Text from '~/components/Text'
+import { SUCCESS_COLOR } from '~/constants/color'
+import { MainStackScreenProps } from '~/navigation/types'
 
 const calculateNextSync = function (connection: any) {
   // TODO: Better typing
@@ -38,6 +38,12 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
   const { provider, connectNow, accessToken } = params
 
   const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Connect ' + connectionInfo.label,
+    })
+  }, [navigation, connectionInfo])
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
@@ -110,14 +116,7 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
   }
 
   return (
-    <Container>
-      <NavigationHeader
-        title={'Connect ' + connectionInfo.label}
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
-        }}
-      />
+    <ScreenWrapper>
       <Content contentContainerStyle={styles.contentContainer}>
         {Boolean(showSuccess) && (
           <View style={styles.successMessage}>
@@ -169,7 +168,7 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
           </View>
         )}
       </Content>
-    </Container>
+    </ScreenWrapper>
   )
 }
 
