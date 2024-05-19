@@ -30,7 +30,7 @@ import {
   ShareableDataScreen,
 } from '~/pages/Inbox'
 import { LoginHistoryScreen } from '~/pages/Login'
-import LoginRequest from '~/pages/Login/LoginRequest'
+import { LoginRequestScreen } from '~/pages/Login/LoginRequest'
 import { PolygonIdStatusScreen } from '~/pages/PolygonId'
 import {
   AddVeridaOneCustomLinkScreen,
@@ -89,18 +89,6 @@ export const MainNavigator: React.FC = () => {
           screenOptions={{
             headerShown: false,
           }}>
-          {/* To rework */}
-          <Stack.Screen name='LoginRequest' component={LoginRequest} />
-
-          {/* Internal Screens */}
-          {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
-          {/* {__DEV__ && (
-            <Stack.Screen
-              name='__Storybook__'
-              component={require('../../.storybook').default}
-            />
-          )} */}
-
           {/* Groups with the new BaseScreenHeader
           TODO: Progressively move other screens here to migrate from old header
           Eventually apply it at the very top and remove the group
@@ -117,6 +105,7 @@ export const MainNavigator: React.FC = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
+            <Stack.Screen name='LoginRequest' component={LoginRequestScreen} />
             <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
             <Stack.Screen
               name='CreateIdentity'
@@ -288,6 +277,14 @@ export const MainNavigator: React.FC = () => {
             />
             <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
           </Stack.Group>
+
+          {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
+          {/* {__DEV__ && (
+            <Stack.Screen
+              name='__Storybook__'
+              component={require('../../.storybook').default}
+            />
+          )} */}
         </Stack.Navigator>
       </BehindAuthContextProviders>
     </>
