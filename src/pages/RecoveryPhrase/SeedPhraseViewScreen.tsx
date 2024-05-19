@@ -1,5 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   BackHandler,
@@ -9,23 +9,26 @@ import {
   View,
 } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import AlertNotification from 'components/AlertNotification'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
-import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
-import { BLACK_ORIGIN_COLOR } from 'constants/color'
-import { MainStackScreenProps } from 'navigation/types'
+import AccountManager from '~/api/AccountManager'
+import ExportSeedphraseSvg from '~/assets/export_seedphrase.svg'
+import { ScreenWrapper, Typography } from '~/components'
+import AlertNotification from '~/components/AlertNotification'
+import CopySeedPhraseModal from '~/components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from '~/components/SeedPhraseModal/SeedPhraseWarningModal'
+import { BLACK_ORIGIN_COLOR } from '~/constants/color'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type SeedPhraseViewScreenParams = undefined
 
 type SeedPhraseViewScreenProps = MainStackScreenProps<'SeedPhraseView'>
 
 export const SeedPhraseViewScreen: React.FC<SeedPhraseViewScreenProps> = (
-  _props
+  props
 ) => {
+  const { navigation } = props
+
   const [loading, setLoading] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
@@ -60,6 +63,19 @@ export const SeedPhraseViewScreen: React.FC<SeedPhraseViewScreenProps> = (
     setIsSeedPhraseCopied(false)
   }
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: !loading && !(pinCodeStatus && !isPinCorrect),
+      title: 'Seed Phrase',
+    })
+  }, [navigation, loading, pinCodeStatus, isPinCorrect])
+
+  const styles = useThemeAwareStyle(createStyles)
+
+  const handleShowButtonPress = useCallback(() => {
+    setSeedPhraseModalVisible(true)
+  }, [])
+
   if (loading) {
     return (
       <View>
@@ -87,52 +103,59 @@ export const SeedPhraseViewScreen: React.FC<SeedPhraseViewScreenProps> = (
   }
 
   return (
-    <View>
-      <NavigationHeader title='Seed Phrase' />
-      <Layout title='View Seed Phrase'>
-        <TouchableOpacity
-          onPress={() => setSeedPhraseModalVisible(true)}
-          style={styles.actionButton}>
-          <ExportSeedphraseSvg />
-          <Text style={styles.actionButtonText}>Seed phrase</Text>
-        </TouchableOpacity>
-        <Text style={styles.description}>
-          Your seed phrase is a list of words. Please record them carefully and
-          store in a safe place.
-        </Text>
-        <SeedPhraseWarningModal
-          hideModal={() => setSeedPhraseModalVisible(false)}
-          visible={seedPhraseModalVisible}
-          type='seed_phrase'
-          onPressButton={showSeedPhrase}
-        />
-        <CopySeedPhraseModal
-          visible={copySeedPhraseModalVisible}
-          phrase={seedPhraseData}
-          toggleConfirmModal={() =>
-            toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
-          }
-        />
-        <AlertNotification
-          onClosePress={onClosePress}
-          isOpened={isSeedPhraseCopied}
-          type='success'
-          bodyText='Seed Phrase copied to clipboard'
-          title='Seed Phrase Copied'
-          timeOutInSeconds={5}
-        />
-      </Layout>
-    </View>
+    <>
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={handleShowButtonPress}
+            style={styles.actionButton}>
+            <ExportSeedphraseSvg />
+            <Typography variant='bodySemiBold'>Show</Typography>
+          </TouchableOpacity>
+          <Typography>
+            Your seed phrase is a list of words. Please record them carefully
+            and store in a safe place.
+          </Typography>
+        </View>
+      </ScreenWrapper>
+      <SeedPhraseWarningModal
+        hideModal={() => setSeedPhraseModalVisible(false)}
+        visible={seedPhraseModalVisible}
+        type='seed_phrase'
+        onPressButton={showSeedPhrase}
+      />
+      <CopySeedPhraseModal
+        visible={copySeedPhraseModalVisible}
+        phrase={seedPhraseData}
+        toggleConfirmModal={() =>
+          toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
+        }
+      />
+      <AlertNotification
+        onClosePress={onClosePress}
+        isOpened={isSeedPhraseCopied}
+        type='success'
+        bodyText='Seed Phrase copied to clipboard'
+        title='Seed Phrase Copied'
+        timeOutInSeconds={5}
+      />
+    </>
   )
 }
 
-const styles = StyleSheet.create({
-  actionButton: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  description: {
-    marginTop: 16,
-  },
-  actionButtonText: { marginTop: 5, fontSize: 14 },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: theme.spacing.l,
+      paddingHorizontal: theme.spacing.m,
+      gap: theme.spacing.m,
+    },
+    actionButton: {
+      alignItems: 'center',
+    },
+    actionButtonText: {
+      // marginTop: 5,
+      fontSize: 14,
+    },
+  })

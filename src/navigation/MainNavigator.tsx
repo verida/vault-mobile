@@ -101,11 +101,6 @@ export const MainNavigator: React.FC = () => {
           <Stack.Screen name='LoginRequest' component={LoginRequest} />
 
           <Stack.Screen
-            name='SeedPhraseView'
-            component={SeedPhraseViewScreen}
-          />
-
-          <Stack.Screen
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
@@ -198,6 +193,10 @@ export const MainNavigator: React.FC = () => {
             />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='ChangePin' component={ChangePinScreen} />
+            <Stack.Screen
+              name='SeedPhraseView'
+              component={SeedPhraseViewScreen}
+            />
             <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
             <Stack.Screen
               name='RemoveIdentity'
