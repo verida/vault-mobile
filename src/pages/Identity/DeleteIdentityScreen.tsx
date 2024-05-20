@@ -108,7 +108,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
       </ScrollView>
       <BottomActionBar
         alertType='error'
-        alertContent={`This operation is final!\nYour Identity and data cannot be recovered after.`}
+        alertContent={`This operation is final! Your Identity and data cannot be recovered after.`}
         actions={[
           {
             label: 'Cancel',
