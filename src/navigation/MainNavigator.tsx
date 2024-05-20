@@ -89,10 +89,7 @@ export const MainNavigator: React.FC = () => {
           screenOptions={{
             headerShown: false,
           }}>
-          {/* Groups with the new BaseScreenHeader
-          TODO: Progressively move other screens here to migrate from old header
-          Eventually apply it at the very top and remove the group
-           */}
+          {/* Groups with the new BaseScreenHeader */}
           <Stack.Group
             screenOptions={{
               headerShown: true,
@@ -217,12 +214,11 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
           </Stack.Group>
 
-          {/* Public profile modal screens */}
+          {/* Modal screens to rework */}
           <Stack.Group
             screenOptions={{
               presentation: 'modal',
             }}>
-            <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
               name='EditGenericProperty'
               component={EditGenericPropertyScreen}
@@ -232,14 +228,6 @@ export const MainNavigator: React.FC = () => {
               component={AddVeridaOneCustomLinkScreen}
             />
             <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
-            <Stack.Screen
-              name='ClaimUsername'
-              component={ClaimUsernameScreen}
-            />
-            <Stack.Screen
-              name='UnlockVeridaOne'
-              component={UnlockVeridaOneScreen}
-            />
             <Stack.Screen
               name='AddVeridaOnePlatformLink'
               component={AddVeridaOnePlatformLinkScreen}
@@ -258,6 +246,15 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen name='EditProfile' component={EditProfileScreen} />
+            <Stack.Screen
+              name='UnlockVeridaOne'
+              component={UnlockVeridaOneScreen}
+            />
+            <Stack.Screen
+              name='ClaimUsername'
+              component={ClaimUsernameScreen}
+            />
             <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
             <Stack.Screen
               name='ShareIdentity'
