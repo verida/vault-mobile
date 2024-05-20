@@ -1,12 +1,5 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useTheme } from 'contexts/ThemeContext'
-import {
-  CreateIdentityStep,
-  CreateIdentityStepStatus,
-} from 'features/identities'
-import { getDefaultVeridaNetwork } from 'features/verida'
-import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -22,49 +15,59 @@ import {
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import AccountManager from '~/api/AccountManager'
+import BlurCircle from '~/assets/blur_circle.svg'
+import FailureCross from '~/assets/failure_cross.svg'
+import SuccessTick from '~/assets/success_tick.svg'
 import { BottomActionBar, Icon, ScreenWrapper } from '~/components'
+import Container from '~/components/Container'
+import { StepsIndicator } from '~/components/Indicators'
+import { AnimatedCheckbox, FormInput } from '~/components/Input'
+import { NetworkSelectorRadioButtonGroup } from '~/components/Network'
+import DropDownPicker, { Option } from '~/components/Select'
+import { Spacer } from '~/components/Spacer'
+import { Headline } from '~/components/Typography/Headline'
+import { Label } from '~/components/Typography/Label'
+import { Paragraph } from '~/components/Typography/Paragraph'
+import { Text } from '~/components/Typography/Text'
 import { HIT_SLOP_10_10 } from '~/constants'
-
-import AccountManager from 'api/AccountManager'
-import BlurCircle from 'assets/blur_circle.svg'
-import FailureCross from 'assets/failure_cross.svg'
-import SuccessTick from 'assets/success_tick.svg'
-import Container from 'components/Container'
-import { StepsIndicator } from 'components/Indicators'
-import { AnimatedCheckbox, FormInput } from 'components/Input'
-import { NetworkSelectorRadioButtonGroup } from 'components/Network'
-import DropDownPicker, { Option } from 'components/Select'
-import { Spacer } from 'components/Spacer'
-import { Headline } from 'components/Typography/Headline'
-import { Label } from 'components/Typography/Label'
-import { Paragraph } from 'components/Typography/Paragraph'
-import { Text } from 'components/Typography/Text'
-import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { AuthStackParams, MainStackScreenProps } from 'navigation/types'
-import InputStyles from 'styles/inputs'
-import { Theme } from 'styles/types'
+import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from '~/constants/profile'
+import { useTheme } from '~/contexts'
+import {
+  CreateIdentityStep,
+  CreateIdentityStepStatus,
+} from '~/features/identities'
+import { getDefaultVeridaNetwork } from '~/features/verida'
+import { COUNTRIES } from '~/helpers/countries'
+import { useThemeAwareStyle } from '~/hooks'
+import { AuthStackParams, MainStackScreenProps } from '~/navigation'
+import InputStyles from '~/styles/inputs'
+import { Theme } from '~/styles/types'
 
 const pageData = [
   {
     key: 'name',
     hasNext: true,
     hasBack: true,
+    canSkip: false,
   },
   // {
   //   key: 'username',
   //   hasNext: true,
   //   hasBack: true,
+  //   canSkip: true,
   // },
   {
     key: 'location',
     hasNext: true,
     hasBack: true,
+    canSkip: false,
   },
   {
     key: 'confirmation',
     hasNext: false,
     hasBack: false,
+    canSkip: false,
   },
 ]
 
@@ -116,6 +119,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   const [createIdentityStatus, setCreateIdentityStatus] = useState<
     'idle' | 'processing' | 'success' | 'error'
   >('idle')
+
   const [createIdentityErrorMessage, setCreateIdentityErrorMessage] =
     useState('')
 
@@ -152,7 +156,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     country: '',
   })
 
-  const createIdentifier = useCallback(async () => {
+  const createIdentity = useCallback(async () => {
     try {
       setCreateIdentityStatus('processing')
 
@@ -222,24 +226,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     }
   }, [confirmationState, currentPage, profile])
 
-  const onCountryChange = (option: Option) => {
+  const handleCountryChange = useCallback((option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
-  }
+  }, [])
 
-  const onNext = useCallback(() => {
+  const navigateForward = useCallback(() => {
     setCurrentPage((prevPage) => prevPage + 1)
-    // if (currentPage < numberOfPages - 2) {
-    //   pagerRef.current?.setPage(currentPage + 1)
-    //   setCurrentPage(currentPage + 1)
-    // } else if (currentPage === PageType.Confirmation - 1) {
-    //   // navigate to last page and create identifier
-    //   pagerRef.current?.setPage(PageType.Confirmation)
-    //   setCurrentPage(PageType.Confirmation)
-
-    //   setTimeout(() => {
-    //     createIdentifier()
-    //   }, 0)
-    // }
   }, [])
 
   useEffect(() => {
@@ -252,13 +244,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       createIdentityStatus === 'idle'
     ) {
       setTimeout(() => {
-        createIdentifier()
+        createIdentity()
       }, 0)
     }
-  }, [currentPage, createIdentityStatus, createIdentifier])
+  }, [currentPage, createIdentityStatus, createIdentity])
 
-  const onBack = useCallback(() => {
-    // Keyboard.dismiss()
+  const navigateBack = useCallback(() => {
     if (createIdentityStatus === 'processing') {
       // Useful for handling hardware back button on Android
       Alert.alert("Hold on, we're building your identity")
@@ -275,10 +266,10 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     }, 0)
   }, [createIdentityStatus, currentPage, navigation])
 
-  const onRetry = useCallback(() => {
+  const handleRetryButtonPress = useCallback(() => {
     setConfirmationState({})
-    createIdentifier()
-  }, [createIdentifier])
+    createIdentity()
+  }, [createIdentity])
 
   const handleRecordSeedPhraseButtonPress = useCallback(() => {
     navigation.navigate('SeedPhrase')
@@ -286,7 +277,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
 
   const handleDoneButtonPress = useCallback(() => {
     if (params.firstIdentity) {
-      // FIXME: CreateidentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
+      // FIXME: CreateIdentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
       navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
     } else {
       navigation.goBack()
@@ -296,7 +287,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        onBack()
+        navigateBack()
         return true // Manually handle Android Back press event
       }
 
@@ -306,7 +297,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       )
 
       return () => subscription.remove()
-    }, [onBack])
+    }, [navigateBack])
   )
 
   useEffect(() => {
@@ -317,7 +308,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       headerLeft: pageData[currentPage].hasBack
         ? () => (
             <TouchableOpacity
-              onPress={onBack}
+              onPress={navigateBack}
               hitSlop={HIT_SLOP_10_10}
               style={styles.headerBackButton}>
               <Icon name='back' size={24} color={theme.color.onBackground} />
@@ -328,7 +319,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   }, [
     navigation,
     currentPage,
-    onBack,
+    navigateBack,
     styles.headerBackButton,
     theme.color.onBackground,
   ])
@@ -336,12 +327,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   const ProgressBar = useCallback(() => {
     return currentPage !== PageType.Confirmation ? (
       <StepsIndicator
-        style={{ paddingHorizontal: theme.spacing.m }}
+        style={styles.progressBar}
         currentStep={currentPage}
         numberOfSteps={numberOfPages - 1}
       />
     ) : null
-  }, [currentPage, theme.spacing.m])
+  }, [currentPage, styles.progressBar])
 
   return (
     <ScreenWrapper
@@ -393,7 +384,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               }
               onChangeText={(text) => setProfile((p) => ({ ...p, name: text }))}
               value={profile.name}
-              onSubmitEditing={() => formValidated && onNext()}
+              onSubmitEditing={() => formValidated && navigateForward()}
             />
             <Label style={{ marginTop: 2 }}>
               Your public name is required and public
@@ -474,7 +465,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               placeholder=''
               items={COUNTRIES}
               containerStyle={InputStyles.select}
-              onChangeItem={onCountryChange}
+              onChangeItem={handleCountryChange}
             />
             <Spacer vertical='m' />
             <AnimatedCheckbox
@@ -610,7 +601,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
             ? [
                 {
                   label: 'Next',
-                  onPress: onNext,
+                  onPress: navigateForward,
                   disabled: !formValidated,
                 },
               ]
@@ -630,7 +621,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
                 ? [
                     {
                       label: 'Retry',
-                      onPress: onRetry,
+                      onPress: handleRetryButtonPress,
                     },
                   ]
                 : undefined
@@ -651,6 +642,9 @@ const creatStyles = (theme: Theme) => {
   return StyleSheet.create({
     headerBackButton: {
       marginLeft: theme.spacing.m,
+    },
+    progressBar: {
+      marginHorizontal: theme.spacing.m,
     },
     landing: {
       flex: 1,
