@@ -26,6 +26,9 @@ const HIT_SLOP = {
   top: 50,
 }
 
+/**
+ * @deprecated there is no such modal design anymore. We should the screens from React navigation, potential with a modal type
+ */
 const AppModal = ({
   onClose,
   visible,
