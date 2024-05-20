@@ -1,12 +1,6 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
 
@@ -132,112 +126,108 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   }, [details.requesterId, details.timestamp, protocols])
 
   return (
-    <>
-      <StatusBar barStyle='light-content' />
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingBottom: insets.bottom,
-            paddingRight: insets.right,
-            paddingLeft: insets.left,
-          },
-        ]}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.containerContent}>
-          {!processing && !error && !success ? (
-            <>
-              <Avatar source={logo} fallbackType='person' style={styles.logo} />
-              {details.url ? (
-                <Typography variant='bodySemiBold' style={styles.url}>
-                  {details.url}
-                </Typography>
-              ) : null}
-              <Typography
-                variant='h2'
-                style={
-                  styles.connectMessage
-                }>{`Connect to ${name}`}</Typography>
-              {details.message ? (
-                <RequestMessage style={styles.messageContainer}>
-                  {details.message}
-                </RequestMessage>
-              ) : null}
+    <View
+      // TODO: Use <ScreenWrapper>
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.containerContent}>
+        {!processing && !error && !success ? (
+          <>
+            <Avatar source={logo} fallbackType='person' style={styles.logo} />
+            {details.url ? (
+              <Typography variant='bodySemiBold' style={styles.url}>
+                {details.url}
+              </Typography>
+            ) : null}
+            <Typography
+              variant='h2'
+              style={styles.connectMessage}>{`Connect to ${name}`}</Typography>
+            {details.message ? (
+              <RequestMessage style={styles.messageContainer}>
+                {details.message}
+              </RequestMessage>
+            ) : null}
 
-              <TouchableOpacity
-                onPress={handleToggleDetails}
-                style={styles.detailsButton}>
-                <Typography
-                  variant='bodySemiBold'
-                  style={styles.detailsButtonLabel}>
-                  Request details
-                </Typography>
-                <Feather
-                  name={detailsOpen ? 'chevron-up' : 'chevron-down'}
-                  size={16}
-                  style={styles.detailsButtonLabelIcon}
-                />
-              </TouchableOpacity>
-              {detailsOpen ? (
-                <RequestDetails
-                  properties={detailProperties}
-                  style={styles.detailsContainer}
-                />
-              ) : null}
-            </>
-          ) : (
-            <StatusInfo
-              style={styles.statusContainer}
-              statusType={
-                processing ? 'processsing' : success ? 'success' : 'error'
-              }
-              title={
-                processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
-              }
-              subtitle={
-                processing
-                  ? 'Please wait a moment, we are securely setting up the connection.'
-                  : success
-                    ? `You are successfully connected to ${name}.`
-                    : erroMessage || 'Something went wrong. Try again later.'
-              }
-            />
-          )}
-        </ScrollView>
-        <BottomActionBar
-          alertType='error'
-          alertContent={
-            polygonIdNotReady
-              ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
-              : undefined
-          }
-          alertOnPress={handleGoToPolygonIdStatus}
-          actions={
-            processing || error || success
-              ? [
-                  {
-                    label: 'Close',
-                    onPress: handleClose,
-                    disabled: processing,
-                  },
-                ]
-              : [
-                  {
-                    label: 'Decline',
-                    onPress: handleClose,
-                    variant: 'secondary',
-                  },
-                  {
-                    label: 'Connect',
-                    onPress: handleConnect,
-                    disabled: processButtonDisabled,
-                  },
-                ]
-          }
-        />
-      </View>
-    </>
+            <TouchableOpacity
+              onPress={handleToggleDetails}
+              style={styles.detailsButton}>
+              <Typography
+                variant='bodySemiBold'
+                style={styles.detailsButtonLabel}>
+                Request details
+              </Typography>
+              <Feather
+                name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                size={16}
+                style={styles.detailsButtonLabelIcon}
+              />
+            </TouchableOpacity>
+            {detailsOpen ? (
+              <RequestDetails
+                properties={detailProperties}
+                style={styles.detailsContainer}
+              />
+            ) : null}
+          </>
+        ) : (
+          <StatusInfo
+            style={styles.statusContainer}
+            statusType={
+              processing ? 'processsing' : success ? 'success' : 'error'
+            }
+            title={
+              processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
+            }
+            subtitle={
+              processing
+                ? 'Please wait a moment, we are securely setting up the connection.'
+                : success
+                  ? `You are successfully connected to ${name}.`
+                  : erroMessage || 'Something went wrong. Try again later.'
+            }
+          />
+        )}
+      </ScrollView>
+      <BottomActionBar
+        alertType='error'
+        alertContent={
+          polygonIdNotReady
+            ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
+            : undefined
+        }
+        alertOnPress={handleGoToPolygonIdStatus}
+        actions={
+          processing || error || success
+            ? [
+                {
+                  label: 'Close',
+                  onPress: handleClose,
+                  disabled: processing,
+                },
+              ]
+            : [
+                {
+                  label: 'Decline',
+                  onPress: handleClose,
+                  variant: 'secondary',
+                },
+                {
+                  label: 'Connect',
+                  onPress: handleConnect,
+                  disabled: processButtonDisabled,
+                },
+              ]
+        }
+      />
+    </View>
   )
 }
 

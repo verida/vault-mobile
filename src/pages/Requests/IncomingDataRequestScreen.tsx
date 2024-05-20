@@ -1,6 +1,6 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import {
@@ -124,111 +124,109 @@ export const IncomingDataRequestScreen: React.FunctionComponent<
   }, [details.requesterId, details.url, protocols])
 
   return (
-    <>
-      <StatusBar barStyle='light-content' />
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingBottom: insets.bottom,
-            paddingRight: insets.right,
-            paddingLeft: insets.left,
-          },
-        ]}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.containerContent}>
-          {!processing && !error && !success ? (
-            <>
-              <RequestHeader
-                senderName={name}
-                avatar={logo}
-                timestamp={details.timestamp}
-                isDetailsOpen={detailsOpen}
-                onToggleDetails={handleToggleDetails}
-              />
-              {detailsOpen ? (
-                <RequestDetails
-                  properties={detailProperties}
-                  style={styles.detailsContainer}
-                />
-              ) : null}
-              {details.message ? (
-                <RequestMessage style={styles.messageContainer}>
-                  {details.message}
-                </RequestMessage>
-              ) : null}
-              <View style={styles.dataContainer}>
-                <Typography variant='h5SemiBold' style={styles.dataLabel}>
-                  Incoming data item
-                </Typography>
-                {data.body?.credentials?.map((item) => (
-                  <View style={styles.dataItemContainer} key={item.id}>
-                    <Typography variant='h4'>Credential</Typography>
-                    <Typography
-                      variant='bodySemiBold'
-                      style={styles.dataItemLabel}>
-                      {item.description}
-                    </Typography>
-                  </View>
-                ))}
-                {/* TODO: Handle if there is no data items */}
-              </View>
-            </>
-          ) : (
-            // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
-            <StatusInfo
-              style={styles.statusContainer}
-              statusType={
-                processing ? 'processsing' : success ? 'success' : 'error'
-              }
-              title={
-                processing ? 'Saving data...' : success ? 'Success!' : 'Error!'
-              }
-              subtitle={
-                processing
-                  ? 'Please wait a few seconds, we are verifying and saving the data.'
-                  : success
-                    ? `The data from ${name} have been successfully saved.` // TODO: Find better messages
-                    : erroMessage || 'Something went wrong. Try again later.'
-              }
+    <View
+      // TODO: Use <ScreenWrapper>
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.containerContent}>
+        {!processing && !error && !success ? (
+          <>
+            <RequestHeader
+              senderName={name}
+              avatar={logo}
+              timestamp={details.timestamp}
+              isDetailsOpen={detailsOpen}
+              onToggleDetails={handleToggleDetails}
             />
-          )}
-        </ScrollView>
+            {detailsOpen ? (
+              <RequestDetails
+                properties={detailProperties}
+                style={styles.detailsContainer}
+              />
+            ) : null}
+            {details.message ? (
+              <RequestMessage style={styles.messageContainer}>
+                {details.message}
+              </RequestMessage>
+            ) : null}
+            <View style={styles.dataContainer}>
+              <Typography variant='h5SemiBold' style={styles.dataLabel}>
+                Incoming data item
+              </Typography>
+              {data.body?.credentials?.map((item) => (
+                <View style={styles.dataItemContainer} key={item.id}>
+                  <Typography variant='h4'>Credential</Typography>
+                  <Typography
+                    variant='bodySemiBold'
+                    style={styles.dataItemLabel}>
+                    {item.description}
+                  </Typography>
+                </View>
+              ))}
+              {/* TODO: Handle if there is no data items */}
+            </View>
+          </>
+        ) : (
+          // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
+          <StatusInfo
+            style={styles.statusContainer}
+            statusType={
+              processing ? 'processsing' : success ? 'success' : 'error'
+            }
+            title={
+              processing ? 'Saving data...' : success ? 'Success!' : 'Error!'
+            }
+            subtitle={
+              processing
+                ? 'Please wait a few seconds, we are verifying and saving the data.'
+                : success
+                  ? `The data from ${name} have been successfully saved.` // TODO: Find better messages
+                  : erroMessage || 'Something went wrong. Try again later.'
+            }
+          />
+        )}
+      </ScrollView>
 
-        <BottomActionBar
-          alertType='error'
-          alertContent={
-            polygonIdNotReady
-              ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
-              : undefined
-          }
-          alertOnPress={handleGoToPolygonIdStatus}
-          actions={
-            processing || error || success
-              ? [
-                  {
-                    label: 'Close',
-                    onPress: handleClose,
-                    disabled: processing,
-                  },
-                ]
-              : [
-                  {
-                    label: 'Decline',
-                    onPress: handleClose,
-                    variant: 'secondary',
-                  },
-                  {
-                    label: 'Accept',
-                    onPress: handleAccept,
-                    disabled: processButtonDisabled,
-                  },
-                ]
-          }
-        />
-      </View>
-    </>
+      <BottomActionBar
+        alertType='error'
+        alertContent={
+          polygonIdNotReady
+            ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
+            : undefined
+        }
+        alertOnPress={handleGoToPolygonIdStatus}
+        actions={
+          processing || error || success
+            ? [
+                {
+                  label: 'Close',
+                  onPress: handleClose,
+                  disabled: processing,
+                },
+              ]
+            : [
+                {
+                  label: 'Decline',
+                  onPress: handleClose,
+                  variant: 'secondary',
+                },
+                {
+                  label: 'Accept',
+                  onPress: handleAccept,
+                  disabled: processButtonDisabled,
+                },
+              ]
+        }
+      />
+    </View>
   )
 }
 

@@ -74,7 +74,7 @@ export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
   const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper isModal>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.qrContainer}>

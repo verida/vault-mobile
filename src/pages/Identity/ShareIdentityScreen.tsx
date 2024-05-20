@@ -54,7 +54,7 @@ export const ShareIdentityScreen: React.FunctionComponent<
   // TODO: Handle when there is no content to share
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper isModal>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.qrContainer}>
