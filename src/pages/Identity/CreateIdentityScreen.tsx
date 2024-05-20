@@ -44,6 +44,8 @@ import { AuthStackParams, MainStackScreenProps } from '~/navigation'
 import InputStyles from '~/styles/inputs'
 import { Theme } from '~/styles/types'
 
+// TODO: Implement username claim. See commit 8ea4a847 for the previous implementation
+
 const pageData = [
   {
     key: 'name',
@@ -51,12 +53,6 @@ const pageData = [
     hasBack: true,
     canSkip: false,
   },
-  // {
-  //   key: 'username',
-  //   hasNext: true,
-  //   hasBack: true,
-  //   canSkip: true,
-  // },
   {
     key: 'location',
     hasNext: true,
@@ -75,7 +71,6 @@ const numberOfPages = pageData.length
 
 enum PageType {
   Name,
-  // Username,
   Location,
   Confirmation,
 }
@@ -122,23 +117,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
 
   const [createIdentityErrorMessage, setCreateIdentityErrorMessage] =
     useState('')
-
-  // const publicNameInputRef = useRef<TextInput>(null)
-  // const usernameInputRef = useRef<TextInput>(null)
-  // // const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
-  // const [checkingUsername, setCheckingUsername] = useState(false)
-  // const [availableUsername, setAvailableUsername] = useState(false)
-  // const [usernameError, setUsernameError] = useState<string | undefined>(
-  //   undefined
-  // )
-  // const checkUsername = useCallback(async () => {
-  //   // FIXME: Need an API for checking username is available to claim
-  //   setCheckingUsername(true)
-  //   setTimeout(() => {
-  //     setCheckingUsername(false)
-  //     setAvailableUsername(true)
-  //   }, 300)
-  // }, [])
 
   const [confirmationState, setConfirmationState] = useState<{
     state?: Partial<Record<CreateIdentityStep, CreateIdentityStepStatus>> & {
@@ -208,10 +186,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
             !isEmpty(profile.name) &&
             profile.name?.length <= PUBLIC_PROFILE_NAME_MAX_LENGTH,
         }
-      // case PageType.Username:
-      //   return {
-      //     formValidated: true,
-      //   }
       case PageType.Location:
         return { formValidated: !isEmpty(profile.country) }
       case PageType.Confirmation:
@@ -345,14 +319,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}
-        // onPageSelected={() => {
-        //   setTimeout(() => {
-        //     if (manualFocusUsenameInput && currentPage === PageType.Username) {
-        //       usernameInputRef.current?.focus()
-        //       setManualFocusUsenameInput(false)
-        //     }
-        //   }, 0)
-        // }}
         ref={pagerRef}>
         <Container key='name'>
           <ScrollView
@@ -391,54 +357,6 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
             </Label>
           </ScrollView>
         </Container>
-
-        {/* {enabledClaimUsername && (
-          <Container
-            key='username'
-            withKeyboardAvoidingView
-            keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
-            <ScrollView
-              contentContainerStyle={[
-                styles.scrollViewContainer,
-                styles.contentPadding,
-              ]}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Username</Headline>
-              <Text>Your username is unique to your identity.</Text>
-              <Spacer vertical='l' />
-              <FormInput
-                label='Username'
-                placeholder='veridaname.vda'
-                suffix={profile.username ? '.vda' : undefined}
-                ref={usernameInputRef}
-                withAnimatedChecbox={profile.username.length > 0}
-                keyboardType='url'
-                autoCapitalize='none'
-                autoCorrect={false}
-                autoFocus={false}
-                autoComplete='off'
-                loading={checkingUsername}
-                onChangeText={(text) => {
-                  setProfile((p) => ({ ...p, username: text }))
-                }}
-                onBlur={() => {
-                  if (profile.username.length > 0) checkUsername()
-                }}
-                onFocus={() => {
-                  setUsernameError(undefined)
-                }}
-                value={profile.username}
-                checked={availableUsername}
-                errorMessage={usernameError}
-              />
-              <Label style={{ marginTop: 2 }}>
-                Your username is public and optional
-              </Label>
-            </ScrollView>
-          </Container>
-        )} */}
-
         <Container key='location'>
           <ScrollView
             alwaysBounceVertical={false}
@@ -652,10 +570,6 @@ const creatStyles = (theme: Theme) => {
     title: {
       color: theme.color.onBackground,
       marginBottom: 10,
-    },
-    termAndCondition: {
-      marginTop: theme.spacing.m,
-      color: theme.color.onBackground,
     },
     pagerView: {
       flex: 1,
