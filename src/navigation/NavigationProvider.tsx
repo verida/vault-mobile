@@ -1,7 +1,8 @@
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
-import { useTheme } from 'contexts'
-import { navigationLinkingConfiguration } from 'features/deepLinks'
 import React from 'react'
+
+import { useTheme } from '~/contexts'
+import { navigationLinkingConfiguration } from '~/features/deepLinks'
 
 import { navigationRef } from './RootNavigator'
 

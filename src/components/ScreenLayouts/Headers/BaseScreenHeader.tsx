@@ -1,15 +1,15 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { getHeaderTitle, Header } from '@react-navigation/elements'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
-import { Icon, Typography } from 'components'
-import { useTheme } from 'contexts'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { Platform, StatusBar, StyleSheet, TouchableOpacity } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { HIT_SLOP_10_10 } from 'constants/buttons'
-import { Theme } from 'styles/types'
+import { Icon, Typography } from '~/components'
+import { HIT_SLOP_10_10 } from '~/constants/buttons'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { useNavigationHeaderHeight } from '~/navigation'
+import { Theme } from '~/styles/types'
 
 export type BaseScreenHeaderProps =
   | NativeStackHeaderProps
@@ -32,22 +32,18 @@ export const BaseScreenHeader: React.FunctionComponent<
     headerBackground,
   } = options
 
-  // The following have been copied from react-navigation's Header component:
-  const insets = useSafeAreaInsets()
-  const hasDynamicIsland = Platform.OS === 'ios' && insets.top > 50
-  const statusBarHeight = hasDynamicIsland ? insets.top - 5 : insets.top
-  // https://github.com/react-navigation/react-navigation/blob/968840cb4f98303562de9e29fae7fbfda9c8d2fa/packages/elements/src/Header/Header.tsx#L86C55-L86C70
-  // Reason is that, for some reason, `isParentHeaderShown` (see link above) is true in stack screens while it shouldn't and thus set the status bar height to 0, so have to set it ourselves. It's likely the `isParentHeaderShown=true` is due to a mistake of ours somewhere.
-
   const isModal = 'presentation' in options && options.presentation !== 'card'
+  const { statusBarHeightForHeaderComponent } = useNavigationHeaderHeight({
+    isModal,
+  })
+
   const canGoBack = navigation.canGoBack()
-
-  const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
-
   const handleBackPress = useCallback(() => {
     navigation.goBack()
   }, [navigation])
+
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
 
   return (
     <>
@@ -62,9 +58,7 @@ export const BaseScreenHeader: React.FunctionComponent<
       <Header
         title={getHeaderTitle(options, route.name)}
         modal={isModal}
-        headerStatusBarHeight={
-          isModal && Platform.OS === 'ios' ? 0 : statusBarHeight
-        }
+        headerStatusBarHeight={statusBarHeightForHeaderComponent}
         headerTransparent={headerTransparent}
         headerShadowVisible={false}
         headerStyle={[styles.header, headerStyle]}

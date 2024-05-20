@@ -9,6 +9,7 @@ import {
   NFTCollectionDetailScreenParams,
   NFTDetailScreenParams,
 } from '~/pages/Assets'
+import { SelectAssetScreenParams } from '~/pages/Assets/SelectAsset'
 import {
   ChangePinScreenParams,
   CreatePinScreenParams,
@@ -21,7 +22,54 @@ import {
   ConnectionsScreenParams,
   SingleConnectionScreenParams,
 } from '~/pages/Connections'
+import {
+  DataFolderScreenParams,
+  DataItemScreenParams,
+  DataScreenParams,
+} from '~/pages/Data'
+import { HomeScreenParams } from '~/pages/Home'
+import {
+  AddIdentityScreenParams,
+  CreateIdentityScreenParams,
+  DeleteIdentityScreenParams,
+  ImportIdentityScreenParams,
+  MigrateIdentityConfirmationScreenParams,
+  MigrateIdentityExecutionScreenParams,
+  RemoveIdentityScreenParams,
+  ShareIdentityScreenParams,
+} from '~/pages/Identity'
+import {
+  InboxItemScreenParams,
+  InboxScreenParams,
+  ShareableDataScreenParams,
+} from '~/pages/Inbox'
+import { LoginHistoryScreenParams } from '~/pages/Login'
+import { OnboardingScreenParams } from '~/pages/Onboarding'
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
+import {
+  AddVeridaOneCustomLinkScreenParams,
+  AddVeridaOnePlatformLinkScreenParams,
+  ClaimUsernameScreenParams,
+  EditProfileScreenParams,
+  EditVeridaOnePlatformLinkScreenParams,
+  GenericEditPropertyScreenParams,
+  PublicProfileScreenParams,
+  UnlockVeridaOneScreenParams,
+} from '~/pages/Profiles'
+import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
+import {
+  SeedPhraseGeneratedScreenParams,
+  SeedPhraseScreenParams,
+  SeedPhraseViewScreenParams,
+  VerifyPhraseScreenParams,
+} from '~/pages/RecoveryPhrase'
+import {
+  ConnectionRequestScreenParams,
+  IncomingDataRequestScreenParams,
+  PaymentRequestScreenParams,
+  ProofRequestScreenParams,
+} from '~/pages/Requests'
+import { SettingsScreenParams } from '~/pages/Settings'
 import {
   ConfirmTransactionScreenParams,
   ReceiveTokenScreenParams,
@@ -40,55 +88,6 @@ import {
   ManageWalletsScreenParams,
   SingleWalletScreenParams,
 } from '~/pages/Wallets'
-
-import { SelectAssetScreenParams } from 'pages/Assets/SelectAsset'
-import {
-  DataFolderScreenParams,
-  DataItemScreenParams,
-  DataScreenParams,
-} from 'pages/Data'
-import { HomeScreenParams } from 'pages/Home'
-import {
-  AddIdentityScreenParams,
-  CreateIdentityScreenParams,
-  DeleteIdentityScreenParams,
-  ImportIdentityScreenParams,
-  MigrateIdentityConfirmationScreenParams,
-  MigrateIdentityExecutionScreenParams,
-  RemoveIdentityScreenParams,
-  ShareIdentityScreenParams,
-} from 'pages/Identity'
-import {
-  InboxItemScreenParams,
-  InboxScreenParams,
-  ShareableDataScreenParams,
-} from 'pages/Inbox'
-import { LoginHistoryScreenParams } from 'pages/Login'
-import { OnboardingScreenParams } from 'pages/Onboarding'
-import {
-  AddVeridaOneCustomLinkScreenParams,
-  AddVeridaOnePlatformLinkScreenParams,
-  ClaimUsernameScreenParams,
-  EditProfileScreenParams,
-  EditVeridaOnePlatformLinkScreenParams,
-  GenericEditPropertyScreenParams,
-  PublicProfileScreenParams,
-  UnlockVeridaOneScreenParams,
-} from 'pages/Profiles'
-import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
-import {
-  SeedPhraseGeneratedScreenParams,
-  SeedPhraseScreenParams,
-  SeedPhraseViewScreenParams,
-  VerifyPhraseScreenParams,
-} from 'pages/RecoveryPhrase'
-import {
-  ConnectionRequestScreenParams,
-  IncomingDataRequestScreenParams,
-  PaymentRequestScreenParams,
-  ProofRequestScreenParams,
-} from 'pages/Requests'
-import { SettingsScreenParams } from 'pages/Settings'
 
 export type RootStackParams = {
   Auth: undefined
