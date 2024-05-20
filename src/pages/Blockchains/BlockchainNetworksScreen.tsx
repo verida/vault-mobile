@@ -125,7 +125,7 @@ export const BlockchainNetworksScreen: React.FC<
               onPress={handlePressAddNetwork}
               hitSlop={HIT_SLOP_10_10}
               style={styles.headerAddNetworkButton}>
-              <Icon name='add' size={24} color={theme.color.onBackground} />
+              <Icon name='add' size={24} color={theme.color.primary} />
             </TouchableOpacity>
           )
         : undefined,
@@ -134,7 +134,7 @@ export const BlockchainNetworksScreen: React.FC<
     navigation,
     handlePressAddNetwork,
     styles.headerAddNetworkButton,
-    theme.color.onBackground,
+    theme.color.primary,
   ])
 
   useImmediateLayoutAnimation([searchText])

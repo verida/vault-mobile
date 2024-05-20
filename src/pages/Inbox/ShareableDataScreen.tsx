@@ -15,7 +15,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import AccountManager from '~/api/AccountManager'
 import { BottomActionBar, ScreenWrapper } from '~/components'
 import LoadingView from '~/components/LoadingView'
-import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { Text } from '~/components/Typography/Text'
 import { GREY_COLOR, LIGHTGREY_COLOR } from '~/constants/color'
 import { Logger } from '~/features/telemetry'
@@ -150,7 +149,6 @@ export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
 
   return (
     <ScreenWrapper>
-      <NavigationHeader title='Select an item' />
       <View style={styles.searchInputContainer}>
         <AntDesign name='search1' size={15} color={GREY_COLOR} />
         <TextInput

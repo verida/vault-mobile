@@ -170,7 +170,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
               onPress={handlePressDeleteNetwork}
               hitSlop={HIT_SLOP_10_10}
               style={styles.headerDeleteNetworkButton}>
-              <Icon name='delete' size={24} color={theme.color.onBackground} />
+              <Icon name='delete' size={24} color={theme.color.primary} />
             </TouchableOpacity>
           )
         : undefined,
@@ -181,7 +181,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
     deleteControlsEnabled,
     handlePressDeleteNetwork,
     styles.headerDeleteNetworkButton,
-    theme.color.onBackground,
+    theme.color.primary,
   ])
 
   return (

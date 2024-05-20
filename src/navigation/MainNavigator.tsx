@@ -214,30 +214,6 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
           </Stack.Group>
 
-          {/* Modal screens to rework */}
-          <Stack.Group
-            screenOptions={{
-              presentation: 'modal',
-            }}>
-            <Stack.Screen
-              name='EditGenericProperty'
-              component={EditGenericPropertyScreen}
-            />
-            <Stack.Screen
-              name='AddVeridaOneCustomLink'
-              component={AddVeridaOneCustomLinkScreen}
-            />
-            <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
-            <Stack.Screen
-              name='AddVeridaOnePlatformLink'
-              component={AddVeridaOnePlatformLinkScreen}
-            />
-            <Stack.Screen
-              name='EditVeridaOnePlatformLink'
-              component={EditVeridaOnePlatformLinkScreen}
-            />
-          </Stack.Group>
-
           {/* Modals */}
           <Stack.Group
             screenOptions={{
@@ -254,6 +230,23 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen
               name='ClaimUsername'
               component={ClaimUsernameScreen}
+            />
+            <Stack.Screen
+              name='EditGenericProperty'
+              component={EditGenericPropertyScreen}
+            />
+            <Stack.Screen
+              name='AddVeridaOneCustomLink'
+              component={AddVeridaOneCustomLinkScreen}
+            />
+            <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
+            <Stack.Screen
+              name='AddVeridaOnePlatformLink'
+              component={AddVeridaOnePlatformLinkScreen}
+            />
+            <Stack.Screen
+              name='EditVeridaOnePlatformLink'
+              component={EditVeridaOnePlatformLinkScreen}
             />
             <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
             <Stack.Screen

@@ -47,6 +47,7 @@ export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
   return (
     <ScreenWrapper isModal keyboardAvoiding>
       <PagerView
+        // FIXME: bottom bar blink when the keyboard appears. Remove the footer button from within each Page and move it in a BottomActionBar at the same level as the PagerView.
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}

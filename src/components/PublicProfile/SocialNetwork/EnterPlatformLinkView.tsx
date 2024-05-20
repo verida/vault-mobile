@@ -1,20 +1,18 @@
 import Clipboard from '@react-native-community/clipboard'
-import { useTheme } from 'contexts/ThemeContext'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { StyleSheet, TextInput, View } from 'react-native'
+
+import ClipboardIcon from '~/assets/clipboard_icon.svg'
+import Button from '~/components/Button'
+import { FormInput } from '~/components/Input/FormInput'
+import { BottomActionBar } from '~/components/ScreenLayouts'
+import { Caption } from '~/components/Typography/Caption'
 import {
   VeridaOnePlatformLink,
   VeridaOnePlatformMetadata,
-} from 'features/veridaOne'
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-import ClipboardIcon from 'assets/clipboard_icon.svg'
-import Button from 'components/Button'
-import Container from 'components/Container'
-import { FormInput } from 'components/Input/FormInput'
-import { Caption } from 'components/Typography/Caption'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+} from '~/features/veridaOne'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 const MAX_INPUT_LENGTH = 120
 const MIN_USERNAME_LENGTH = 1
@@ -35,9 +33,7 @@ export const EnterPlatformLinkView = React.forwardRef(
     { platformLink, originalValue, onSaveSocialNetworkHandle }: PageProps,
     receivedRef: React.ForwardedRef<EnterPlatformLinkViewRefProps>
   ) => {
-    const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
-    const { theme } = useTheme()
     const [isValid, setIsValid] = useState(false)
     const [inputText, setInputText] = useState(platformLink.baseURL)
 
@@ -80,85 +76,62 @@ export const EnterPlatformLinkView = React.forwardRef(
     if (!platformLink?.baseURL) return null
 
     return (
-      <Container
-        key={'EnterPlatformLink'}
-        withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 48 + top }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: theme.spacing.xxl,
-            paddingTop: theme.spacing.l,
-            paddingHorizontal: theme.spacing.m,
-          }}
-          keyboardShouldPersistTaps='handled'>
-          <View style={{ flex: 1 }}>
-            <FormInput
-              ref={urlInputRef}
-              placeholder={`${platformLink.baseURL + USERNAME_PLACEHOLDER}`}
-              label={`${platformLink.label} Account URL`}
-              autoFocus={false}
-              autoCorrect={false}
-              keyboardType='url'
-              autoComplete='off'
-              autoCapitalize='none'
-              returnKeyType='done'
-              maxLength={platformLink.baseURL.length + MAX_INPUT_LENGTH}
-              value={inputText}
-              onChangeText={(text) => {
-                setInputText(text)
-              }}
-            />
+      <View key='EnterPlatformLink' style={styles.container}>
+        <View style={styles.content}>
+          <FormInput
+            ref={urlInputRef}
+            placeholder={`${platformLink.baseURL + USERNAME_PLACEHOLDER}`}
+            label={`${platformLink.label} Account URL`}
+            autoFocus={false}
+            autoCorrect={false}
+            keyboardType='url'
+            autoComplete='off'
+            autoCapitalize='none'
+            returnKeyType='done'
+            maxLength={platformLink.baseURL.length + MAX_INPUT_LENGTH}
+            value={inputText}
+            onChangeText={(text) => {
+              setInputText(text)
+            }}
+          />
 
-            <Button
-              color='transparent-link'
-              onPress={async () => {
-                const text = await Clipboard.getString()
-                const cleanText = text.replace(platformLink.baseURL, '')
-                setInputText(platformLink.baseURL + cleanText)
-              }}>
-              <View style={styles.clipboardPasteButton}>
-                <ClipboardIcon />
-                <Caption style={styles.clipboardPasteButtonText}>
-                  Paste from clipboard
-                </Caption>
-              </View>
-            </Button>
-          </View>
-        </ScrollView>
-
-        <View
-          style={[
-            styles.bottomNavContainer,
-            { marginBottom: bottom + theme.spacing.m },
-          ]}>
           <Button
-            disabled={!isValid}
-            style={styles.button}
-            onPress={() => onSaveSocialNetworkHandle(inputText)}>
-            {originalValue?.url ? 'Save' : 'Add'}
+            color='transparent-link'
+            onPress={async () => {
+              const text = await Clipboard.getString()
+              const cleanText = text.replace(platformLink.baseURL, '')
+              setInputText(platformLink.baseURL + cleanText)
+            }}>
+            <View style={styles.clipboardPasteButton}>
+              <ClipboardIcon />
+              <Caption style={styles.clipboardPasteButtonText}>
+                Paste from clipboard
+              </Caption>
+            </View>
           </Button>
         </View>
-      </Container>
+        <BottomActionBar
+          actions={[
+            {
+              label: originalValue?.url ? 'Save' : 'Add',
+              onPress: () => onSaveSocialNetworkHandle(inputText),
+              disabled: !isValid,
+            },
+          ]}
+        />
+      </View>
     )
   }
 )
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    bottomNavContainer: {
-      width: '100%',
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing.m,
-    },
-    button: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
-    },
-    pagerView: {
+    container: {
       flex: 1,
+    },
+    content: {
+      flex: 1,
+      padding: theme.spacing.m,
     },
     clipboardPasteButton: {
       flexDirection: 'row',

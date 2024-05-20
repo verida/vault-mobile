@@ -17,6 +17,7 @@ export const ModalScreenHeader: React.FunctionComponent<
   ModalScreenHeaderProps
 > = (props) => {
   const { navigation, options, ...otherProps } = props
+  const { headerLeft } = options
 
   const layout = useSafeAreaFrame()
   const styles = useThemeAwareStyle(createStyles)
@@ -26,7 +27,7 @@ export const ModalScreenHeader: React.FunctionComponent<
     navigation.goBack()
   }, [navigation])
 
-  const headerLeft: typeof options.headerLeft = useCallback(
+  const defaultHeaderLeft: typeof options.headerLeft = useCallback(
     () => (
       <TouchableOpacity
         onPress={handleBackPress}
@@ -44,7 +45,7 @@ export const ModalScreenHeader: React.FunctionComponent<
       navigation={navigation}
       options={{
         ...options,
-        headerLeft,
+        headerLeft: headerLeft || defaultHeaderLeft,
       }}
       layout={layout}
     />
