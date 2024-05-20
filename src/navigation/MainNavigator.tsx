@@ -87,132 +87,117 @@ export const MainNavigator: React.FC = () => {
         <Stack.Navigator
           initialRouteName='Tabs'
           screenOptions={{
-            headerShown: false,
+            headerShown: true,
+            headerShadowVisible: true,
+            header: (props) => <BaseScreenHeader {...props} />,
           }}>
-          {/* Groups with the new BaseScreenHeader */}
-          <Stack.Group
-            screenOptions={{
-              headerShown: true,
-              headerShadowVisible: true,
-              header: (props) => <BaseScreenHeader {...props} />,
-            }}>
-            <Stack.Screen
-              name='Tabs'
-              component={TabsNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
-            <Stack.Screen name='LoginRequest' component={LoginRequestScreen} />
-            <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
-            <Stack.Screen
-              name='CreateIdentity'
-              component={CreateIdentityScreen}
-            />
-            <Stack.Screen
-              name='ImportIdentity'
-              component={ImportIdentityScreen}
-            />
-            <Stack.Screen
-              name='MigrateIdentityConfirmation'
-              component={MigrateIdentityConfirmationScreen}
-            />
-            <Stack.Screen
-              name='MigrateIdentityExecution'
-              component={MigrateIdentityExecutionScreen}
-            />
-            <Stack.Screen
-              name='PublicProfile'
-              component={PublicProfileScreen}
-            />
-            <Stack.Screen name='Inbox' component={InboxScreen} />
-            <Stack.Screen name='InboxItem' component={InboxItemScreen} />
-            <Stack.Screen
-              name='ShareableData'
-              component={ShareableDataScreen}
-            />
-            <Stack.Screen name='DataFolder' component={DataFolderScreen} />
-            <Stack.Screen name='DataItem' component={DataItemScreen} />
-            <Stack.Screen
-              name='SingleConnection'
-              component={SingleConnectionScreen}
-            />
-            <Stack.Screen
-              name='ManageWallets'
-              component={ManageWalletsScreen}
-            />
-            <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
-            <Stack.Screen
-              name='SingleCurrency'
-              component={SingleCurrencyScreen}
-            />
-            <Stack.Screen
-              name='TransactionDetails'
-              component={TransactionDetailsScreen}
-            />
-            <Stack.Screen name='SendToken' component={SendTokenScreen} />
-            <Stack.Screen
-              name='TokenRecipient'
-              component={TokenRecipientScreen}
-            />
-            <Stack.Screen
-              name='ConfirmTransaction'
-              component={ConfirmTransactionScreen}
-            />
-            <Stack.Screen
-              name='TransactionSuccess'
-              component={TransactionSuccessScreen}
-            />
-            <Stack.Screen
-              name='TransactionFailure'
-              component={TransactionFailureScreen}
-            />
-            <Stack.Screen
-              name='NFTCollectionDetail'
-              component={NFTCollectionDetailScreen}
-            />
-            <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
-            <Stack.Screen name='Settings' component={SettingsScreen} />
-            <Stack.Screen name='ChangePin' component={ChangePinScreen} />
-            <Stack.Screen
-              name='SeedPhraseView'
-              component={SeedPhraseViewScreen}
-            />
-            <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
-            <Stack.Screen
-              name='RemoveIdentity'
-              component={RemoveIdentityScreen}
-            />
-            <Stack.Screen
-              name='DeleteIdentity'
-              component={DeleteIdentityScreen}
-            />
-            <Stack.Screen
-              name='BlockchainNetworks'
-              component={BlockchainNetworksScreen}
-            />
-            <Stack.Screen
-              name='BlockchainNetworkEditor'
-              component={BlockchainNetworkEditorScreen}
-            />
-            <Stack.Screen
-              name='WalletConnectActiveSessions'
-              component={WalletConnectActiveSessionsScreen}
-            />
-            <Stack.Screen
-              name='WalletConnectActiveSessionDetails'
-              component={WalletConnectActiveSessionDetailsScreen}
-            />
-            <Stack.Screen
-              name='PolygonIdStatus'
-              component={PolygonIdStatusScreen}
-            />
-            <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
-            <Stack.Screen
-              name='SeedPhraseGenerated'
-              component={SeedPhraseGeneratedScreen}
-            />
-            <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
-          </Stack.Group>
+          <Stack.Screen
+            name='Tabs'
+            component={TabsNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
+          <Stack.Screen name='LoginRequest' component={LoginRequestScreen} />
+          <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
+          <Stack.Screen
+            name='CreateIdentity'
+            component={CreateIdentityScreen}
+          />
+          <Stack.Screen
+            name='ImportIdentity'
+            component={ImportIdentityScreen}
+          />
+          <Stack.Screen
+            name='MigrateIdentityConfirmation'
+            component={MigrateIdentityConfirmationScreen}
+          />
+          <Stack.Screen
+            name='MigrateIdentityExecution'
+            component={MigrateIdentityExecutionScreen}
+          />
+          <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
+          <Stack.Screen name='Inbox' component={InboxScreen} />
+          <Stack.Screen name='InboxItem' component={InboxItemScreen} />
+          <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
+          <Stack.Screen name='DataFolder' component={DataFolderScreen} />
+          <Stack.Screen name='DataItem' component={DataItemScreen} />
+          <Stack.Screen
+            name='SingleConnection'
+            component={SingleConnectionScreen}
+          />
+          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
+          <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
+          <Stack.Screen
+            name='SingleCurrency'
+            component={SingleCurrencyScreen}
+          />
+          <Stack.Screen
+            name='TransactionDetails'
+            component={TransactionDetailsScreen}
+          />
+          <Stack.Screen name='SendToken' component={SendTokenScreen} />
+          <Stack.Screen
+            name='TokenRecipient'
+            component={TokenRecipientScreen}
+          />
+          <Stack.Screen
+            name='ConfirmTransaction'
+            component={ConfirmTransactionScreen}
+          />
+          <Stack.Screen
+            name='TransactionSuccess'
+            component={TransactionSuccessScreen}
+          />
+          <Stack.Screen
+            name='TransactionFailure'
+            component={TransactionFailureScreen}
+          />
+          <Stack.Screen
+            name='NFTCollectionDetail'
+            component={NFTCollectionDetailScreen}
+          />
+          <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
+          <Stack.Screen name='Settings' component={SettingsScreen} />
+          <Stack.Screen name='ChangePin' component={ChangePinScreen} />
+          <Stack.Screen
+            name='SeedPhraseView'
+            component={SeedPhraseViewScreen}
+          />
+          <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
+          <Stack.Screen
+            name='RemoveIdentity'
+            component={RemoveIdentityScreen}
+          />
+          <Stack.Screen
+            name='DeleteIdentity'
+            component={DeleteIdentityScreen}
+          />
+          <Stack.Screen
+            name='BlockchainNetworks'
+            component={BlockchainNetworksScreen}
+          />
+          <Stack.Screen
+            name='BlockchainNetworkEditor'
+            component={BlockchainNetworkEditorScreen}
+          />
+          <Stack.Screen
+            name='WalletConnectActiveSessions'
+            component={WalletConnectActiveSessionsScreen}
+          />
+          <Stack.Screen
+            name='WalletConnectActiveSessionDetails'
+            component={WalletConnectActiveSessionDetailsScreen}
+          />
+          <Stack.Screen
+            name='PolygonIdStatus'
+            component={PolygonIdStatusScreen}
+          />
+          <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
+          <Stack.Screen
+            name='SeedPhraseGenerated'
+            component={SeedPhraseGeneratedScreen}
+          />
+          <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
 
           {/* Modals */}
           <Stack.Group
