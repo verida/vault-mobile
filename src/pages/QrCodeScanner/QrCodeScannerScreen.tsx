@@ -126,6 +126,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<
       <StatusBar
         barStyle='light-content' // It's a full screen with no header, the overlay is translucent dark so need light status bar content
         backgroundColor='transparent'
+        translucent
       />
       <View style={styles.container}>
         <RNCamera

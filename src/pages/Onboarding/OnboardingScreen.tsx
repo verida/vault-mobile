@@ -44,6 +44,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = (props) => {
         // It's a full screen with no header and a dark background
         barStyle='light-content'
         backgroundColor='transparent'
+        translucent
       />
       <LinearGradient
         colors={['#0E1572', '#1467CB', '#1995CB']}

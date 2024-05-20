@@ -2,8 +2,6 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const iOSModalMaskHeight = 10
-
 export function useNavigationHeaderHeight(options: { isModal: boolean }) {
   const { isModal } = options
 
@@ -21,6 +19,10 @@ export function useNavigationHeaderHeight(options: { isModal: boolean }) {
   const headerHeight =
     reportedHeaderHeight -
     (isModal && Platform.OS === 'ios' ? 0 : statusBarHeight)
+
+  // Adjust height of the iOS modal mask/stack for the different iOS versions, identified by the different status bar heights
+  const iOSModalMaskHeight =
+    statusBarHeight > 50 ? 15 : statusBarHeight > 20 ? 10 : 20
 
   const totalHeaderAndStatusBarHeight =
     headerHeight +

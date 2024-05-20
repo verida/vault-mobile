@@ -95,7 +95,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             : 'height'
         }
         keyboardVerticalOffset={resolvedKeyboardVerticalOffset}
-        style={{ flex: 1 }}>
+        style={styles.keyboardAvoidingView}>
         {children}
       </KeyboardAvoidingView>
     </View>
@@ -107,5 +107,8 @@ const createStyles = (theme: Theme) =>
     wrapper: {
       flex: 1,
       backgroundColor: theme.color.background,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
     },
   })

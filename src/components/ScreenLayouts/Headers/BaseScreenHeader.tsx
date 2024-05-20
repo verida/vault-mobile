@@ -54,6 +54,7 @@ export const BaseScreenHeader: React.FunctionComponent<
             : theme.statusBar.defaultStyle
         }
         backgroundColor='transparent'
+        translucent
       />
       <Header
         title={getHeaderTitle(options, route.name)}
