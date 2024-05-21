@@ -1,26 +1,27 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import isEmpty from 'lodash/isEmpty'
-import LottieView from 'lottie-react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert,
   BackHandler,
-  Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AccountManager from '~/api/AccountManager'
-import BlurCircle from '~/assets/blur_circle.svg'
-import FailureCross from '~/assets/failure_cross.svg'
-import SuccessTick from '~/assets/success_tick.svg'
-import { BottomActionBar, Icon, ScreenWrapper } from '~/components'
-import Container from '~/components/Container'
+import {
+  BottomActionBar,
+  Icon,
+  ScreenWrapper,
+  StatusInfo,
+  StatusList,
+  StatusListItem,
+} from '~/components'
 import { StepsIndicator } from '~/components/Indicators'
 import { AnimatedCheckbox, FormInput } from '~/components/Input'
 import { NetworkSelectorRadioButtonGroup } from '~/components/Network'
@@ -75,6 +76,26 @@ enum PageType {
   Confirmation,
 }
 
+const defaultIdentityCreationStepStatus: Array<
+  StatusListItem & { key: CreateIdentityStep }
+> = [
+  {
+    key: 'CreateIdentifier',
+    label: 'Creating your decentralized identity',
+    status: 'idle',
+  },
+  {
+    key: 'StorageLocation',
+    label: 'Connecting to your storage nodes',
+    status: 'idle',
+  },
+  {
+    key: 'CreateProfile',
+    label: 'Creating your public profile',
+    status: 'idle',
+  },
+]
+
 export type CreateIdentityScreenParams = {
   firstIdentity: boolean
 }
@@ -96,13 +117,21 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
-  const { top } = useSafeAreaInsets()
 
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
 
-  const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [network, setNetwork] = useState(defaultNetwork)
+
+  const [profile, setProfile] = useState<{
+    name: string
+    username: string
+    country: string
+  }>({
+    name: '',
+    username: '',
+    country: '',
+  })
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
@@ -115,6 +144,9 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     'idle' | 'processing' | 'success' | 'error'
   >('idle')
 
+  const [identityCreationStatusItems, setIdentityCreationStatusItems] =
+    useState(defaultIdentityCreationStepStatus)
+
   const [createIdentityErrorMessage, setCreateIdentityErrorMessage] =
     useState('')
 
@@ -124,15 +156,21 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     }
   }>()
 
-  const [profile, setProfile] = useState<{
-    name: string
-    username: string
-    country: string
-  }>({
-    name: '',
-    username: '',
-    country: '',
-  })
+  const updateIdentityCreationStepStatus = useCallback(
+    (step: CreateIdentityStep, status: CreateIdentityStepStatus) => {
+      setIdentityCreationStatusItems((prevItems) =>
+        prevItems.map((item) =>
+          item.key === step
+            ? {
+                ...item,
+                status,
+              }
+            : item
+        )
+      )
+    },
+    []
+  )
 
   const createIdentity = useCallback(async () => {
     try {
@@ -147,15 +185,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         },
         profile?.country,
         network,
-        (step, status) => {
-          setConfirmationState((cstate) => ({
-            state: {
-              ...cstate?.state,
-              currentStep: step,
-              [step]: status,
-            },
-          }))
-        }
+        updateIdentityCreationStepStatus
       )
 
       setCreateIdentityStatus('success')
@@ -176,7 +206,12 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
 
       setCreateIdentityStatus('error')
     }
-  }, [profile, network, showCountryInPublicProfile])
+  }, [
+    profile,
+    network,
+    showCountryInPublicProfile,
+    updateIdentityCreationStepStatus,
+  ])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -191,9 +226,9 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       case PageType.Confirmation:
         return {
           formValidated:
-            confirmationState?.state?.CreateIdentifier === 'Success' &&
-            confirmationState?.state?.StorageLocation === 'Success' &&
-            confirmationState?.state?.CreateProfile === 'Success',
+            confirmationState?.state?.CreateIdentifier === 'success' &&
+            confirmationState?.state?.StorageLocation === 'success' &&
+            confirmationState?.state?.CreateProfile === 'success',
         }
       default:
         return {}
@@ -316,19 +351,17 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       }>
       <ProgressBar />
       <PagerView
-        style={styles.pagerView}
+        ref={pagerRef}
         initialPage={currentPage}
         scrollEnabled={false}
-        ref={pagerRef}>
-        <Container key='name'>
+        style={styles.pager}>
+        <View key='name' style={styles.page}>
           <ScrollView
-            contentContainerStyle={[
-              styles.scrollViewContainer,
-              styles.contentPadding,
-            ]}
-            showsVerticalScrollIndicator={false}
             alwaysBounceVertical={false}
-            keyboardShouldPersistTaps='handled'>
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
+            style={styles.container}
+            contentContainerStyle={styles.content}>
             <Headline style={styles.title}>Public name</Headline>
             <Text>
               A public name visible to other users and applications. You can
@@ -356,16 +389,14 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               Your public name is required and public
             </Label>
           </ScrollView>
-        </Container>
-        <Container key='location'>
+        </View>
+        <View key='location' style={styles.page}>
           <ScrollView
             alwaysBounceVertical={false}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
-            contentContainerStyle={{
-              ...styles.contentPadding,
-              paddingBottom: theme.spacing.xxxxl,
-            }}>
+            style={styles.container}
+            contentContainerStyle={styles.content}>
             <Headline style={styles.title}>Data Region</Headline>
             <Paragraph>
               Select your country to determine the default servers that store
@@ -398,118 +429,48 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               style={styles.networkSelection}
             />
           </ScrollView>
-        </Container>
-        <Container key='confirmation'>
-          <View
-            style={[
-              styles.landing,
-              { marginTop: Platform.OS === 'ios' ? 0 : top }, // Some layout trick for Android, TODO: reafactor
-            ]}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              alwaysBounceVertical={false}
-              contentContainerStyle={{
-                ...styles.contentPadding,
-              }}>
-              <View
-                // TODO: Use <StatusInfo> component instead
-                style={{
-                  width: 128,
-                  height: 128,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                }}>
-                {createIdentityStatus === 'success' ? (
-                  <SuccessTick />
-                ) : createIdentityStatus === 'error' ? (
-                  <FailureCross />
-                ) : (
-                  <>
-                    <BlurCircle />
-                    <LottieView
-                      source={require('assets/animations/dots-loader.json')}
-                      autoPlay
-                      loop
-                      style={styles.dotsLoader}
-                    />
-                  </>
-                )}
-              </View>
-
-              <Headline
-                style={[styles.title, { alignSelf: 'center', fontSize: 28 }]}>
-                {createIdentityStatus === 'success'
+        </View>
+        <View key='confirmation' style={styles.page}>
+          <StatusBar
+            barStyle={theme.statusBar.defaultStyle}
+            backgroundColor='transparent'
+            translucent={true}
+          />
+          <ScrollView
+            alwaysBounceVertical={true}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
+            style={styles.container}
+            contentContainerStyle={styles.content}>
+            <StatusInfo
+              statusType={
+                createIdentityStatus === 'success'
+                  ? 'success'
+                  : createIdentityStatus === 'error'
+                    ? 'error'
+                    : 'processsing'
+              }
+              title={
+                createIdentityStatus === 'success'
                   ? 'Success!'
                   : createIdentityStatus === 'error'
                     ? 'Something went wrong'
-                    : 'Building your identity'}
-              </Headline>
-              <Text
-                style={[
-                  {
-                    alignSelf: 'center',
-                    fontSize: theme.fontSize.l,
-                    color: theme.color.textLightGrey,
-                  },
-                ]}>
-                {createIdentityStatus === 'success'
+                    : 'Building your identity'
+              }
+              subtitle={
+                createIdentityStatus === 'success'
                   ? 'Your identity has been successfully created'
                   : createIdentityStatus === 'error'
                     ? createIdentityErrorMessage
-                    : 'Please wait...'}
-              </Text>
-              <Spacer vertical='xxl' />
-              <AnimatedCheckbox
-                checked={
-                  confirmationState?.state?.CreateIdentifier === 'Success'
-                }
-                failed={
-                  confirmationState?.state?.CreateIdentifier === 'Failure'
-                }
-                loading={
-                  confirmationState?.state?.CreateIdentifier === 'Loading'
-                }
-                label='Creating your decentralized identity'
-              />
-              {enabledClaimUsername && (
-                <>
-                  <Spacer vertical='m' />
-                  <AnimatedCheckbox
-                    checked={
-                      confirmationState?.state?.ClaimUsername === 'Success'
-                    }
-                    failed={
-                      confirmationState?.state?.ClaimUsername === 'Failure'
-                    }
-                    loading={
-                      confirmationState?.state?.ClaimUsername === 'Loading'
-                    }
-                    label='Claim username'
-                  />
-                </>
-              )}
-              <Spacer vertical='m' />
-              <AnimatedCheckbox
-                checked={
-                  confirmationState?.state?.StorageLocation === 'Success'
-                }
-                failed={confirmationState?.state?.StorageLocation === 'Failure'}
-                loading={
-                  confirmationState?.state?.StorageLocation === 'Loading'
-                }
-                label='Connecting to your storage nodes'
-              />
-              <Spacer vertical='m' />
-              <AnimatedCheckbox
-                checked={confirmationState?.state?.CreateProfile === 'Success'}
-                failed={confirmationState?.state?.CreateProfile === 'Failure'}
-                loading={confirmationState?.state?.CreateProfile === 'Loading'}
-                label='Creating your public profile'
-              />
-            </ScrollView>
-          </View>
-        </Container>
+                    : 'Please wait...'
+              }
+            />
+            <StatusList
+              statusItems={identityCreationStatusItems}
+              style={styles.identityCreationStepStatusList}
+            />
+          </ScrollView>
+        </View>
       </PagerView>
       <BottomActionBar
         hideBorder
@@ -564,29 +525,26 @@ const creatStyles = (theme: Theme) => {
     progressBar: {
       marginHorizontal: theme.spacing.m,
     },
-    landing: {
+    pager: {
       flex: 1,
+    },
+    page: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+    },
+    content: {
+      paddingTop: theme.spacing.l,
+      paddingBottom: theme.spacing.m,
+      paddingHorizontal: theme.spacing.m,
+    },
+    identityCreationStepStatusList: {
+      marginTop: theme.spacing.xxl,
     },
     title: {
       color: theme.color.onBackground,
       marginBottom: 10,
-    },
-    pagerView: {
-      flex: 1,
-    },
-    scrollViewContainer: {
-      flexGrow: 1,
-      paddingBottom: theme.spacing.xxl,
-    },
-    contentPadding: {
-      paddingTop: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-      paddingVertical: theme.spacing.m,
-    },
-    dotsLoader: {
-      width: 48,
-      height: 48,
-      position: 'absolute',
     },
     networkSelection: {
       marginTop: theme.spacing.l,
