@@ -1,5 +1,5 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import { Icon, IdentityAvatar } from 'components'
 import { useTheme } from 'contexts'
 import {
@@ -55,7 +55,7 @@ export const HomeScreenHeader: React.FunctionComponent<
 
   const network = identity?.did
     ? getNetworkFromDID(identity?.did)
-    : EnvironmentType.MAINNET
+    : Network.MYRTLE
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
   const { toggle: toggleDrawer } = useIdentityDrawer()

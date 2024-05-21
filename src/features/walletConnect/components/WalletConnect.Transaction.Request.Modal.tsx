@@ -1,13 +1,13 @@
 import * as React from 'react'
 
 import {
-  ActiveSession,
-  WalletConnectSessionRequestCallbackParams,
-} from '../@types'
-import {
   useWalletConnectSessionApproveCallback,
   useWalletConnectSessionRejectCallback,
 } from '../hooks'
+import {
+  ActiveSession,
+  WalletConnectSessionRequestCallbackParams,
+} from '../types'
 import { WalletConnectTransactionRequestModalAdapter } from './WalletConnect.Transaction.Request.Modal.Adapter'
 
 export const WalletConnectTransactionRequestModal = React.memo(

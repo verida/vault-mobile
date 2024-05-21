@@ -1,23 +1,27 @@
 import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import * as React from 'react'
 
-import { useAppSelector } from 'reduxStore/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
 
+import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
+import { useCryptoWalletBalanceContext } from '../contexts'
 import {
   AggregateWalletBannerBalances,
   UseAggregateWalletBannerBalancesParams,
   UseAggregateWalletBannerBalancesState,
-} from '../@types'
-import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
-import { useCryptoWalletBalanceContext } from '../contexts'
-import { getWallets } from '../slice'
-import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
-import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
-import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
+} from '../types'
+import {
+  balanceByChainResultsToErc20AggregateWalletBannerBalance,
+  chainMetadataToAggregateWalletBannerBalance,
+  isAggregateWalletBannerBalanceMatchesResource,
+} from '../utils'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
+import { useSelectedCryptoWallet } from './useSelectedCryptoWallet'
 
 export const getAggregateWalletBannerBalanceError = (
   state: UseAggregateWalletBannerBalancesState
@@ -53,13 +57,13 @@ export function useAggregateWalletBannerBalances(
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const currentWallet = useAppSelector(getWallets)
+  const selectedCryptoWallet = useSelectedCryptoWallet()
 
-  const currentChainIds = React.useMemo(() => {
-    return Object.entries(currentWallet?.accounts ?? {}).map(
-      ([key, account]) => new ChainId(account.chainId || key)
+  const selectedCryptoWalletNamespaces = React.useMemo(() => {
+    return (selectedCryptoWallet?.accounts || []).map(
+      (account) => account.namespace as string
     )
-  }, [currentWallet])
+  }, [selectedCryptoWallet])
 
   const { resource: maybeResource } = params
 
@@ -125,11 +129,9 @@ export function useAggregateWalletBannerBalances(
             ? aggregateWalletBannerBalance.resource.chainId
             : aggregateWalletBannerBalance.resource
         )
-        const isOnCurrentlySelectedChain = currentChainIds.find(
-          (chainId) =>
-            itemChainId.namespace === chainId.namespace &&
-            itemChainId.reference === chainId.reference
-        )
+        const isOnCurrentlySelectedChain =
+          selectedCryptoWalletNamespaces.includes(itemChainId.namespace)
+
         if (!isOnCurrentlySelectedChain) return false
 
         // If we didn't define a resource to filter against, then assume all match.
@@ -152,7 +154,7 @@ export function useAggregateWalletBannerBalances(
       result: resultForOnlyMatchingChains,
     }
   }, [
-    currentChainIds,
+    selectedCryptoWalletNamespaces,
     errorWalletProvider,
     isLoadingWalletProvider,
     chainMetadatas,

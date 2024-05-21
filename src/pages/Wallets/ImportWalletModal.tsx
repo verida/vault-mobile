@@ -1,10 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import {
-  BlockchainNetwork,
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from 'features/blockchain'
-import { isValidSeedPhrase } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -16,63 +10,73 @@ import {
   View,
 } from 'react-native'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useAppSelector } from 'reduxStore/types'
-import InputStyles from 'styles/inputs'
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import DropDownPicker from '~/components/Select'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import {
+  getWalletTypeLongLabel,
+  ImportCryptoWalletData,
+  isValidMnemonic,
+  isValidPrivateKey,
+  WALLET_TYPES,
+  WalletType,
+} from '~/features/cryptoWallet'
+import InputStyles from '~/styles/inputs'
 
-type Props = {
+export type ImportWalletModalProps = {
   visible: boolean
-  onImportWallet: (data: any) => void
+  onImportWallet: (data: ImportCryptoWalletData) => void
   hideModal: () => void
 }
 
-const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
-  Object.freeze({})
+const walletTypesAllowingPrivateKey: WalletType[] = ['eip155'] // TODO: Move into blockchain or crypto wallet feature
 
-const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
-  const privateKeyEnabledNetworks = ['eip155']
-  const [name, setName] = useState('')
-  const [phrase, setPhrase] = useState('')
+const defaultWalletType: WalletType = 'multi'
+
+export const ImportWalletModal: React.FC<ImportWalletModalProps> = (props) => {
+  const { visible, hideModal, onImportWallet } = props
+
+  const [label, setLabel] = useState('')
+  const [mnemonic, setMnemonic] = useState('')
   const [privateKey, setPrivateKey] = useState('')
-  const [blockchain, setBlockchain] = useState('multi')
-  const [inputSwitch, setInputSwitch] = useState('seedPhrase')
+  const [walletType, setWalletType] = useState<WalletType>(defaultWalletType)
 
-  const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
-  const blockchainNetworks =
-    maybeBlockchainNetworks || defaultBlockchainNetworks
-  const blockchainItems = Object.values(blockchainNetworks).map(
-    (network: BlockchainNetwork) => {
+  const [inputSwitch, setInputSwitch] = useState<'mnemonic' | 'privateKey'>(
+    'mnemonic'
+  )
+
+  const walletTypeItems = Object.values(WALLET_TYPES).map(
+    (type: WalletType) => {
       return {
-        label: getBlockchainNetworkLabel(network),
-        value: network.chainId,
+        label: getWalletTypeLongLabel(type),
+        value: type,
       }
     }
   )
-  blockchainItems.unshift({ label: 'Multi-chain Wallet', value: 'multi' })
 
   const onBlockchainChange = (option: any) => {
-    const network = blockchainNetworks[option.value]
+    const value = option.value
 
-    if (option.value === 'multi') {
-      setInputSwitch('seedPhrase')
-    } else if (privateKeyEnabledNetworks.includes(network.namespace)) {
+    if (value === 'multi') {
+      setInputSwitch('mnemonic')
+    } else if (walletTypesAllowingPrivateKey.includes(value)) {
       setInputSwitch('privateKey')
     } else {
-      setInputSwitch('seedPhrase')
+      setInputSwitch('mnemonic')
     }
 
-    setBlockchain(option.value)
+    setWalletType(value)
   }
+
   const onSwitchChange = (option: any) => setInputSwitch(option.value)
+
   const isDisabled = () => {
-    if (!name) return true
-    if (inputSwitch === 'seedPhrase' && !phrase) return true
+    if (!label) return true
+    if (inputSwitch === 'mnemonic' && !mnemonic) return true
     if (inputSwitch === 'privateKey' && !privateKey) return true
     return false
   }
@@ -80,34 +84,35 @@ const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
-    if (inputSwitch === 'seedPhrase') {
-      setPhrase(clipboardData)
+    if (inputSwitch === 'mnemonic') {
+      setMnemonic(clipboardData)
     } else {
       setPrivateKey(clipboardData)
     }
   }
 
-  const showAlert = () =>
-    Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
-
   const onPressSend = () => {
-    const blockchainNetwork =
-      blockchain === 'multi' ? undefined : blockchainNetworks[blockchain]
-    if (
-      isValidSeedPhrase({ phrase, privateKey, blockchainNetwork, inputSwitch })
-    ) {
-      onImportWallet({
-        phrase,
-        name,
-        walletType: blockchain,
-        blockchainNetwork,
-        privateKey,
-        inputSwitch,
-      })
-      hideModal()
-    } else {
-      showAlert()
+    const isValid =
+      inputSwitch === 'mnemonic'
+        ? isValidMnemonic(walletType, mnemonic)
+        : isValidPrivateKey(walletType, privateKey)
+
+    if (!isValid) {
+      Alert.alert(
+        'Invalid value',
+        inputSwitch === 'mnemonic'
+          ? `The seed phrase is not valid`
+          : `The private key is not valid`
+      )
     }
+
+    onImportWallet({
+      label,
+      walletType,
+      mnemonic: inputSwitch === 'mnemonic' ? mnemonic : undefined,
+      privateKey: inputSwitch === 'privateKey' ? privateKey : undefined,
+    })
+    hideModal()
   }
 
   return (
@@ -124,61 +129,58 @@ const ImportModal = ({ visible, hideModal, onImportWallet }: Props) => {
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
-          <Label>Wallet name</Label>
+          <Label>Wallet label</Label>
           <TextInput
-            value={name}
+            value={label}
             autoFocus={true}
             multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
-            onChangeText={setName}
+            onChangeText={setLabel}
             style={[InputStyles.input]}
-            placeholder={'eg. Friendly wallet name'}
+            placeholder={'eg. Friendly wallet label'}
           />
 
-          <Label>Blockchain</Label>
+          <Label>Wallet type</Label>
           <DropDownPicker
             showArrow={true}
-            placeholder=''
-            defaultValue='multi'
-            items={blockchainItems}
+            defaultValue={defaultWalletType}
+            items={walletTypeItems}
             containerStyle={InputStyles.select}
             onChangeItem={onBlockchainChange}
             zIndex={6000}
           />
 
-          {privateKeyEnabledNetworks.includes(blockchain.split(':')[0]) ? (
+          {walletTypesAllowingPrivateKey.includes(walletType) ? (
             <>
               <Label>Import using</Label>
               <DropDownPicker
                 showArrow={true}
                 placeholder=''
-                defaultValue='seedPhrase'
+                defaultValue='mnemonic' // TODO: Get it according to wallet type
                 items={[
-                  { label: 'Seed Phrase', value: 'seedPhrase' },
+                  { label: 'Seed Phrase', value: 'mnemonic' },
                   { label: 'Private Key', value: 'privateKey' },
                 ]}
                 containerStyle={InputStyles.select}
                 onChangeItem={onSwitchChange}
               />
             </>
-          ) : (
-            <></>
-          )}
+          ) : null}
 
-          {inputSwitch === 'seedPhrase' && (
+          {inputSwitch === 'mnemonic' && (
             <>
               <Label>Enter seed phrase</Label>
               <TextInput
-                value={phrase}
+                value={mnemonic}
                 multiline
                 editable
                 autoCorrect={false}
                 autoCapitalize='none'
-                onChangeText={setPhrase}
+                onChangeText={setMnemonic}
                 style={[InputStyles.textarea]}
-                placeholder={'eg. Open despair creek road again ice least'}
+                placeholder={'eg. Open despair creek road ...'}
               />
             </>
           )}
@@ -253,5 +255,3 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
-
-export default ImportModal

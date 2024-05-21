@@ -1,8 +1,8 @@
 import 'jest'
 
-import { ChainMetadata } from '../../../src/features/caip'
-import { BalanceByChainResult } from '../../../src/features/cryptoWallet/@types'
-import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../../../src/features/cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance'
+import { ChainMetadata } from '~/features/caip'
+import { BalanceByChainResult } from '~/features/cryptoWallet/types'
+import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '~/features/cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance'
 
 const BALANCE_BY_CHAIN_RESULTS = [
   {

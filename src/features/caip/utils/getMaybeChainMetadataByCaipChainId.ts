@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
 import { isSupportedCaipNamespace } from 'features/caip'
 
-import { ChainMetadata, ChainMetadatas } from '../@types'
+import { ChainMetadata, ChainMetadatas } from '../types'
 import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'
 
 export const getMaybeChainMetadataByCaipChainId = (

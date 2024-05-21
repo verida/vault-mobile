@@ -1,5 +1,6 @@
 import { ChainIdParams } from 'caip'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+
+import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 // TODO: It is not ideal to work this way (knowing a specific reference), however
 //       the implementation of Near protocol demands we do this for when we generate

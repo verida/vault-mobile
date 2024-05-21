@@ -1,57 +1,46 @@
-// eslint-disable-next-line simple-import-sort/imports
-import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import Vault from './VaultCommon/vault'
-import * as SecureStore from 'helpers/VeridaSecureStore'
-import { isEmpty, merge } from 'lodash'
-import { store } from 'reduxStore'
-
-import {
-  BlockchainWallet,
-  blockchainApi,
-  getBlockchainNetworks,
-} from 'features/blockchain'
-import {
-  CreateIdentityStepStatus,
-  CreateIdentityStep,
-  Account,
-  NormalizedAccounts,
-  addAccount,
-  generateIdentityMnemonic,
-  getNetworkFromDID,
-  getPrivateKeyFromMnemonic,
-  setAccounts,
-  setSelectedAccount,
-} from 'features/identities'
-import {
-  removeUserWallets,
-  saveUserWallets,
-  setSelectedWallet,
-  getSelectedWalletId,
-  cryptoWalletApi,
-  WALLET_SCHEMA_0_2_0_URI,
-  getUniqueWalletAddresses,
-  getWallets,
-} from 'features/cryptoWallet'
-import { getCountryCode } from 'helpers/countries'
-import DataConnectorsManager from './DataConnectorsManager'
-
-import { config } from 'config'
+import { Client } from '@verida/client-rn'
+import { BlockchainAnchor, IContext, Network } from '@verida/types'
 import EventEmitter from 'events'
-import { WalletManager } from '../features/cryptoWallet/utils/WalletManager'
-import { EnvironmentType, IContext } from '@verida/types'
-import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { executeWithTimeout } from 'utils'
+import { isEmpty, merge } from 'lodash'
+
+import { config } from '~/config'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
 import {
   ACCOUNTS_STORAGE_KEY,
   SELECTED_ACCOUNT_DID_STORAGE_KEY,
-  SELECTED_WALLET_STORAGE_KEY,
-  WALLETS_STORAGE_KEY,
-} from 'constants/storageKeys'
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
-import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
-import { getDidClientConfigForNetwork } from 'features/verida'
+} from '~/constants/storageKeys'
+import {
+  clearCryptoWallets,
+  createCryptoWallet,
+  restoreCryptoWallets,
+} from '~/features/cryptoWallet'
+import {
+  Account,
+  addAccount,
+  CreateIdentityStep,
+  CreateIdentityStepStatus,
+  generateIdentityMnemonic,
+  getNetworkFromDID,
+  getPrivateKeyFromMnemonic,
+  NormalizedAccounts,
+  setAccounts,
+  setSelectedAccount,
+} from '~/features/identities'
+import { fetchAllPublicProfilesData, PublicProfile } from '~/features/profiles'
+import {
+  CONFIG_DB_NAME,
+  SEED_PHRASE_BACKED_UP_CONFIG,
+} from '~/features/settings'
+import { Logger } from '~/features/telemetry'
+import { getDidClientConfigForNetwork } from '~/features/verida'
+import { getCountryCode } from '~/helpers/countries'
+import * as SecureStore from '~/helpers/VeridaSecureStore'
+import { store } from '~/reduxStore'
+import { executeWithTimeout } from '~/utils'
+
+import DataConnectorsManager from './DataConnectorsManager'
+import Vault from './VaultCommon/vault'
 
 const logger = Logger.create('AccountManager')
 
@@ -113,52 +102,8 @@ class AccountManager extends EventEmitter {
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
-
-          // Load or restore user wallets from the mnemonic
-          this.initUserWallets()
         }
       }
-    } catch (error) {
-      logger.error(error)
-    }
-  }
-
-  private async initUserWallets() {
-    try {
-      const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(SELECTED_WALLET_STORAGE_KEY),
-        store.dispatch(
-          blockchainApi.endpoints.getBlockchainNetworks.initiate(
-            {},
-            {
-              forceRefetch: false,
-            }
-          )
-        ),
-      ])
-
-      const wallets = JSON.parse(walletsRaw || '{}')
-
-      if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
-        const selectedAccount = this.getSelectedAccount()
-        if (selectedAccount) {
-          const network = getNetworkFromDID(selectedAccount.did)
-          await this.connect(false, network)
-        }
-      } else {
-        store.dispatch(saveUserWallets(wallets))
-        store.dispatch(setSelectedWallet(selectedWalletId!))
-      }
-
-      const state = store.getState()
-      const storedWallet = getWallets(state)
-      const addresses = getUniqueWalletAddresses(storedWallet)
-      store.dispatch(
-        cryptoWalletApi.endpoints.getBalances.initiate(addresses, {
-          forceRefetch: false,
-        })
-      )
     } catch (error) {
       logger.error(error)
     }
@@ -174,13 +119,13 @@ class AccountManager extends EventEmitter {
       : undefined
   }
 
-  public async connect(forced: boolean, network: EnvironmentType) {
+  public async connect(forced: boolean, network: Network) {
     if (!forced && this.context) {
       return
     }
     this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
-    await this.restoreUserWallet(true)
+    store.dispatch(restoreCryptoWallets())
   }
 
   public static getInstance(): AccountManager {
@@ -192,7 +137,7 @@ class AccountManager extends EventEmitter {
   }
 
   public async getVeridaContext(
-    veridaNetwork: EnvironmentType
+    veridaNetwork: Network
   ): Promise<IContext | undefined> {
     try {
       if (!this.selectedAccount) return undefined
@@ -207,10 +152,10 @@ class AccountManager extends EventEmitter {
       const didClientConfig = getDidClientConfigForNetwork(network)
 
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
           rpcUrl: didClientConfig.rpcUrl,
-          network: network,
+          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
         },
       })
 
@@ -218,7 +163,7 @@ class AccountManager extends EventEmitter {
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
 
@@ -319,114 +264,17 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async setUserWallet() {
-    try {
-      await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic = WalletManager.generateMnemonic()
-
-      // save mnemonic to verida store
-      const walletDb = await this.context?.openDatastore(
-        WALLET_SCHEMA_0_2_0_URI
-      )
-
-      const wallet = {
-        mnemonic: userHDWalletMnemonic,
-        walletType: 'multi',
-        label: 'Multi-chain Wallet',
-        multiChain: true, // Set this's a multi-chain wallet
-      }
-
-      const saved: any = await walletDb?.save(wallet, undefined)
-
-      const walletID = saved?.id as string
-
-      // generate wallets and save to redux state
-      const blockchainNetworks = getBlockchainNetworks(store.getState())
-
-      const userGeneratedWallets = WalletManager.generateAccountsForWallet(
-        { ...wallet } as BlockchainWallet,
-        blockchainNetworks
-      )
-
-      const walletData = {
-        [walletID]: {
-          ...wallet,
-          _id: walletID, // wallet saved id
-          accounts: userGeneratedWallets,
-        },
-      }
-
-      // Update redux wallet states
-      store.dispatch(saveUserWallets(walletData))
-      store.dispatch(setSelectedWallet(walletID))
-
-      // save wallet state to secure storage
-      await Promise.all([
-        SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
-          JSON.stringify(walletData)
-        ),
-        SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID),
-      ])
-    } catch (error) {
-      logger.error(error)
-      throw error
-    }
-  }
-
-  public async restoreUserWallet(clearWallets: boolean) {
-    try {
-      const previouslySelectedWalletId = getSelectedWalletId(store.getState())
-      if (clearWallets) {
-        store.dispatch(removeUserWallets())
-      }
-
-      const datastore = await this.context?.openDatastore(
-        WALLET_SCHEMA_0_2_0_URI
-      )
-
-      const hdWallets: any = await datastore?.getMany(undefined, undefined)
-
-      if (!isEmpty(hdWallets)) {
-        const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
-        store.dispatch(saveUserWallets(wallets))
-
-        // save to storage..
-        await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        )
-
-        const previouslySelectedWallet = previouslySelectedWalletId
-          ? wallets[previouslySelectedWalletId!]
-          : undefined
-
-        const selectedWalletId = previouslySelectedWallet
-          ? previouslySelectedWalletId
-          : hdWallets[0]._id
-
-        store.dispatch(setSelectedWallet(selectedWalletId))
-
-        await SecureStore.setItemAsync(
-          SELECTED_WALLET_STORAGE_KEY,
-          selectedWalletId
-        )
-      }
-    } catch (error) {
-      logger.error(error)
-      throw error
-    }
-  }
-
   public async createAccount(
     userData: PublicProfile,
     country: string,
-    network: EnvironmentType,
+    network: Network,
     updateProgress?: (
       step: CreateIdentityStep,
       status: CreateIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
+    console.log('Create account -------')
+
     let connected = false
     updateProgress?.('StorageLocation', 'None')
     updateProgress?.('CreateProfile', 'None')
@@ -462,23 +310,28 @@ class AccountManager extends EventEmitter {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
+      console.log('Create account 0', didClientConfig)
+
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
           rpcUrl: didClientConfig.rpcUrl,
-          network,
+          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
         },
       })
 
+      console.log('Create account 1')
       const account = new AutoAccount({
         privateKey: this.selectedAccount!.mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
 
+      console.log('Create account 2', account)
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
 
+      console.log('Create account 3', countryCode)
       const notificationEndpoints =
         config.verida[network].notificationServerUrls
 
@@ -487,9 +340,13 @@ class AccountManager extends EventEmitter {
         notificationEndpoints,
       })
 
+      console.log('Create account 4')
+
       updateProgress?.('StorageLocation', 'Loading')
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
+
+      console.log('Create account 5')
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
@@ -497,10 +354,14 @@ class AccountManager extends EventEmitter {
         true
       )
 
+      console.log('Create account 6')
+
       if (context === undefined) {
         throw new Error(`Failed to open context ${VERIDA_VAULT_CONTEXT_NAME}`)
       }
       this.context = context
+
+      console.log('Create account 7')
 
       // Set the Vault
       this.vault = await this.getVault()
@@ -540,7 +401,7 @@ class AccountManager extends EventEmitter {
 
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
-      this.setUserWallet()
+      store.dispatch(createCryptoWallet({}))
       this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')
@@ -571,9 +432,7 @@ class AccountManager extends EventEmitter {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
-      await store.dispatch(removeUserWallets())
+      store.dispatch(clearCryptoWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
         delete this.accounts[did]
@@ -705,7 +564,7 @@ class AccountManager extends EventEmitter {
     )
   }
 
-  public async importAccount(mnemonic: string, network: EnvironmentType) {
+  public async importAccount(mnemonic: string, network: Network) {
     try {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null

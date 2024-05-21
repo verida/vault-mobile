@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import {
   DrawerIdentityList,
   DrawerShortcutButton,
@@ -46,7 +46,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
-    : EnvironmentType.MAINNET
+    : Network.MYRTLE
 
   const handleAddIdentity = useCallback(() => {
     navigation.navigate('AddIdentity', { firstIdentity: false })

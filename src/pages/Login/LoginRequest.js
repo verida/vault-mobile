@@ -1,5 +1,5 @@
 import EncryptionUtils from '@verida/encryption-utils'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import { Alert as AlertBanner } from 'components'
 import didJWT from 'did-jwt'
 import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
@@ -123,14 +123,14 @@ export default (props) => {
                 _expiry,
                 key,
                 network:
-                  parsed.environment === EnvironmentType.MAINNET
-                    ? EnvironmentType.MAINNET
-                    : parsed.environment === EnvironmentType.TESTNET
-                      ? EnvironmentType.TESTNET
-                      : parsed.environment === EnvironmentType.DEVNET
-                        ? EnvironmentType.DEVNET
-                        : parsed.environment === EnvironmentType.LOCAL
-                          ? EnvironmentType.LOCAL
+                  parsed.environment === Network.MYRTLE
+                    ? Network.MYRTLE
+                    : parsed.environment === Network.BANKSIA
+                      ? Network.BANKSIA
+                      : parsed.environment === Network.DEVNET
+                        ? Network.DEVNET
+                        : parsed.environment === Network.LOCAL
+                          ? Network.LOCAL
                           : null,
                 logoUrl: parsed.logoUrl,
                 openUrl: parsed.openUrl ? parsed.openUrl : null,

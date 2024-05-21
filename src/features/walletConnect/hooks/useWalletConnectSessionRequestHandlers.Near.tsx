@@ -15,7 +15,7 @@ import { $enum } from 'ts-enum-util'
 import {
   NearSessionRequestHandlers,
   WalletConnectSessionRequestCallbackParams,
-} from '../@types'
+} from '../types'
 
 // TODO: we need to leverage walletconnect's implementation rather than rolling
 //       our own copies each time - we should be adapting a common interface

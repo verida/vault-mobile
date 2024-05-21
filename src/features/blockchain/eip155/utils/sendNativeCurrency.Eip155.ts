@@ -1,10 +1,15 @@
+import { ChainId } from 'caip'
 import { ethers } from 'ethers'
+
+import {
+  ConfirmTransactionCallbackResult,
+  CryptoWalletAccount,
+} from '~/features/cryptoWallet'
+
 import {
   BlockchainRequestHandlerCallback,
   SupportedBlockchainNamespace,
-} from 'features/blockchain/@types'
-import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
+} from '../../types'
 
 export const sendNativeCurrencyEip155 = async ({
   value,
@@ -12,12 +17,14 @@ export const sendNativeCurrencyEip155 = async ({
   eth_sendTransaction,
   minifiedBlockchainAccount,
   rpc,
+  chainId,
 }: {
   readonly to: string
   readonly value: number
   readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
-  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
+  readonly minifiedBlockchainAccount: CryptoWalletAccount
   readonly rpc: string
+  readonly chainId: ChainId
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedBlockchainAccount
 
@@ -38,6 +45,7 @@ export const sendNativeCurrencyEip155 = async ({
         to,
       },
     ],
+    chainId: chainId.toString(),
   })
 
   if (typeof maybeTransactionHash !== 'string' || !maybeTransactionHash.length)

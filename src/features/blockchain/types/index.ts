@@ -1,0 +1,121 @@
+import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import { AssetId } from 'caip'
+import { ChainMetadata } from 'features/caip'
+import { z } from 'zod'
+
+import { BLOCKCHAIN_NAMESPACES } from '../constants'
+
+export * from './enums'
+
+export type BlockchainNamespace = (typeof BLOCKCHAIN_NAMESPACES)[number]
+
+/**
+ * A blockchain network (ie: goerli)
+ */
+export interface BlockchainNetwork {
+  asset: AssetId
+  chainId: string
+  namespace: string
+  reference: string
+  name: string
+  label: string
+  chainName: string
+  symbol: string
+  explorerURL: string
+  confirmations: number
+  isMainnet: boolean
+  decimal: number
+  icon: string
+  slip44Reference: string
+  derivationPath: string
+  subcoinType: string
+  rpcUrl: string
+}
+
+export interface WalletUtilsWallet {
+  chain: string
+  mnemonic: string
+  privateKey: string
+  publicKey: string
+  did: string
+  address: string
+}
+
+export interface IBlockchain {
+  buildAccountFromMnemonic(
+    mnemonic: string,
+    derivationPath: string,
+    multiChain: boolean
+  ): WalletUtilsWallet
+
+  buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet
+}
+
+export type BlockchainRequestHandlerCallbackParams<Context> = {
+  readonly params: Web3WalletTypes.EventArguments['session_request']['params']['request']['params']
+  readonly context: Context
+  chainId?: string
+}
+
+export type BlockchainRequestHandlerCallback<Context> = (
+  params: BlockchainRequestHandlerCallbackParams<Context>
+) => Promise<unknown>
+
+export type BlockchainRequestHandlers<
+  T extends string | number | symbol,
+  Context,
+> = {
+  readonly [key in T]: BlockchainRequestHandlerCallback<Context>
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type BlockchainContextValue = {}
+
+const CustomBlockchainNetworkLabel = z.string()
+
+const CustomBlockchainNetworkRpcUrls = z.array(z.string().url()).nonempty()
+
+const CustomBlockchainNetworkChainId = z.object({
+  namespace: z.string(),
+  reference: z.string(),
+})
+
+const CustomBlockchainNetworkIsMainnet = z.boolean().or(z.null())
+
+const CustomBlockchainNetworkNativeCurrency = z.object({
+  decimals: z.number().int().positive(),
+  label: CustomBlockchainNetworkLabel,
+  symbol: z.string(),
+})
+
+const CustomBlockchainNetworkBlockExplorer = z.object({
+  label: CustomBlockchainNetworkLabel.or(z.null()).optional(),
+  url: z.string().url(),
+  standard: z.string().or(z.null()).optional(),
+})
+
+const CustomBlockchainNetworkBlockExplorers = z.array(
+  CustomBlockchainNetworkBlockExplorer
+)
+
+const CustomBlockchainNetworkIcon = z.string().url().or(z.null())
+
+export const CustomBlockchainNetwork = z.object({
+  label: CustomBlockchainNetworkLabel,
+  rpcUrls: CustomBlockchainNetworkRpcUrls,
+  chainId: CustomBlockchainNetworkChainId,
+  isMainnet: CustomBlockchainNetworkIsMainnet,
+  nativeCurrency: CustomBlockchainNetworkNativeCurrency,
+  blockExplorers: CustomBlockchainNetworkBlockExplorers,
+  icon: CustomBlockchainNetworkIcon,
+})
+
+export type CustomBlockchainNetwork = z.infer<typeof CustomBlockchainNetwork>
+
+export const BLOCKCHAIN_SLICE_NAME = 'blockchain'
+
+export type CustomChains = {
+  readonly loading: boolean
+  readonly result: ChainMetadata[]
+  readonly error?: Error
+}
