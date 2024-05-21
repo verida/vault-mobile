@@ -4,7 +4,7 @@ import { StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Texture from '~/assets/landing-bg.svg'
-import Logo from '~/assets/logo.svg'
+import WalletLogo from '~/assets/logos/app/verida_wallet_logo_colored_white.svg'
 import { Typography } from '~/components'
 import { Button } from '~/components/Buttons'
 import { useThemeAwareStyle } from '~/hooks'
@@ -61,7 +61,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = (props) => {
             },
           ]}>
           <View style={styles.content}>
-            <Logo width={156} height={52} />
+            <WalletLogo width={156} height={52} />
             <Typography variant='h1' style={styles.title}>
               {title}
             </Typography>
