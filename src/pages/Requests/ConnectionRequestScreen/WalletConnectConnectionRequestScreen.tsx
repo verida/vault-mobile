@@ -5,7 +5,9 @@ import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { AccountId } from 'caip'
 import {
+  getAggregateWalletBannerBalanceResult,
   getCryptoWalletAccountId,
+  useAggregateWalletBannerBalances,
   useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
@@ -16,10 +18,14 @@ import {
   useWalletConnectProposalRequiredCaipChainIds,
 } from 'features/walletConnect/hooks'
 import { createWalletConnectSessionApprovalConfiguration } from 'features/walletConnect/utils'
-import React, { useCallback, useMemo, useState } from 'react'
+import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert } from 'react-native'
 
-import { RequestDetailProperty } from '~/components'
+import {
+  RequestDetailProperty,
+  useMaybeWalletSelectorButtonProps,
+} from '~/components'
 import { reduceProtocols } from '~/features/protocols'
 
 import { MainStackParams } from 'navigation/types'
@@ -203,18 +209,46 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
 
   const handleGoToPolygonIdStatus = () => {}
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Connection Request',
+      // TODO: Get rid of the following when properly handling a common header in the navigator
+      headerRight: () => (
+        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
+        <ButtonNativeBase transparent onPress={handleClose}>
+          <IconNativeBase name='close' style={{ color: '#000' }} />
+        </ButtonNativeBase>
+      ),
+    })
+  }, [navigation, handleClose])
+
+  const [maybeAggregateWalletBannerBalance] =
+    getAggregateWalletBannerBalanceResult(
+      useAggregateWalletBannerBalances({
+        resource: onlyMatchingCaipChainIds?.[0],
+      })
+    )
+
+  const maybeWalletSelectorButtonProps = useMaybeWalletSelectorButtonProps({
+    aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+    resource: onlyMatchingCaipChainIds?.[0],
+  })
+
   return (
-    <ConnectionRequestScreenContent
-      handleConnect={handleConnect}
-      handleReject={handleClose}
-      params={params}
-      error={error}
-      processing={processing}
-      success={success}
-      processButtonDisabled={false}
-      detailProperties={detailProperties}
-      handleAlertProcess={handleGoToPolygonIdStatus}
-      errorMessage={erroMessage}
-    />
+    <>
+      <ConnectionRequestScreenContent
+        params={params}
+        error={error}
+        errorMessage={erroMessage}
+        processing={processing}
+        success={success}
+        processButtonDisabled={false}
+        detailProperties={detailProperties}
+        maybeWalletSelectorButtonProps={maybeWalletSelectorButtonProps}
+        handleAlertProcess={handleGoToPolygonIdStatus}
+        handleConnect={handleConnect}
+        handleReject={handleClose}
+      />
+    </>
   )
 }
