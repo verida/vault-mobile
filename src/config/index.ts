@@ -1,5 +1,5 @@
 import { core as PolygonId, CredentialStatusType } from '@0xpolygonid/js-sdk'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
@@ -56,7 +56,7 @@ export const config = {
     },
   },
   verida: {
-    [EnvironmentType.LOCAL]: {
+    [Network.LOCAL]: {
       // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
       rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
@@ -64,7 +64,7 @@ export const config = {
       metaTransactionServerUrl:
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.DEVNET]: {
+    [Network.DEVNET]: {
       // TODO: Update the devnet variables
       rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
@@ -72,7 +72,7 @@ export const config = {
       metaTransactionServerUrl:
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.TESTNET]: {
+    [Network.BANKSIA]: {
       // TODO: Change it to Banksia
       rpcUrl: envVars.VERIDA_BANKSIA_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_BANKSIA_NOTIFICATION_SERVER_URL],
@@ -80,7 +80,7 @@ export const config = {
       metaTransactionServerUrl:
         envVars.VERIDA_BANKSIA_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.MAINNET]: {
+    [Network.MYRTLE]: {
       // TODO: Change it to Myrtle
       rpcUrl: envVars.VERIDA_MYRTLE_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_MYRTLE_NOTIFICATION_SERVER_URL],

@@ -1,7 +1,7 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
-import { EnvironmentType, IContext } from '@verida/types'
+import { BlockchainAnchor, IContext, Network } from '@verida/types'
 import { config } from 'config'
 import {
   fetchAllPublicProfilesData,
@@ -31,7 +31,7 @@ import { useCurrentIdentity } from './useCurrentIdentity'
 
 const logger = Logger.create('IdentityMigration')
 
-const mainnetNetwork = EnvironmentType.MAINNET
+const mainnetNetwork = Network.MYRTLE
 
 export function useMigrateIdentity() {
   const dispatch = useAppDispatch()
@@ -66,17 +66,17 @@ export function useMigrateIdentity() {
         })
 
         mainnetClient = new Client({
-          environment: mainnetNetwork,
+          network: mainnetNetwork,
           didClientConfig: {
             rpcUrl: didClientConfig.rpcUrl,
-            network: mainnetNetwork,
+            blockchain: BlockchainAnchor.POLPOS,
           },
         })
         logger.debug('Created Mainnet client')
 
         mainnetVeridaAccount = new AutoAccount({
           privateKey: currentIdentity.privateKey,
-          environment: mainnetNetwork,
+          network: mainnetNetwork,
           didClientConfig,
         })
         logger.debug('Created Mainnet local account')
@@ -170,12 +170,12 @@ export function useMigrateIdentity() {
         const contextNames = IDENTITY_MIGRATION_USE_PREDEFINED_CONTEXTS
           ? IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES
           : await Promise.all(
-              links
-                .filter((link) => !!link)
-                .map(async (link) => {
-                  return currentClient!.getContextNameFromHash(link.id)
-                })
-            )
+            links
+              .filter((link) => !!link)
+              .map(async (link) => {
+                return currentClient!.getContextNameFromHash(link.id)
+              })
+          )
 
         const cleanedContextNames = contextNames.filter(
           (contextName) => !!contextName

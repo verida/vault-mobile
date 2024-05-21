@@ -1,6 +1,6 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
-import { EnvironmentType, IContext } from '@verida/types'
+import { BlockchainAnchor, IContext, Network } from '@verida/types'
 import EventEmitter from 'events'
 import { isEmpty, merge } from 'lodash'
 
@@ -119,7 +119,7 @@ class AccountManager extends EventEmitter {
       : undefined
   }
 
-  public async connect(forced: boolean, network: EnvironmentType) {
+  public async connect(forced: boolean, network: Network) {
     if (!forced && this.context) {
       return
     }
@@ -137,7 +137,7 @@ class AccountManager extends EventEmitter {
   }
 
   public async getVeridaContext(
-    veridaNetwork: EnvironmentType
+    veridaNetwork: Network
   ): Promise<IContext | undefined> {
     try {
       if (!this.selectedAccount) return undefined
@@ -152,10 +152,10 @@ class AccountManager extends EventEmitter {
       const didClientConfig = getDidClientConfigForNetwork(network)
 
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
           rpcUrl: didClientConfig.rpcUrl,
-          network: network,
+          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
         },
       })
 
@@ -163,7 +163,7 @@ class AccountManager extends EventEmitter {
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
 
@@ -267,12 +267,14 @@ class AccountManager extends EventEmitter {
   public async createAccount(
     userData: PublicProfile,
     country: string,
-    network: EnvironmentType,
+    network: Network,
     updateProgress?: (
       step: CreateIdentityStep,
       status: CreateIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
+    console.log('Create account -------')
+
     let connected = false
     updateProgress?.('StorageLocation', 'None')
     updateProgress?.('CreateProfile', 'None')
@@ -308,23 +310,28 @@ class AccountManager extends EventEmitter {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
+      console.log('Create account 0', didClientConfig)
+
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
           rpcUrl: didClientConfig.rpcUrl,
-          network,
+          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
         },
       })
 
+      console.log('Create account 1')
       const account = new AutoAccount({
         privateKey: this.selectedAccount!.mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
 
+      console.log('Create account 2', account)
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
 
+      console.log('Create account 3', countryCode)
       const notificationEndpoints =
         config.verida[network].notificationServerUrls
 
@@ -333,9 +340,13 @@ class AccountManager extends EventEmitter {
         notificationEndpoints,
       })
 
+      console.log('Create account 4')
+
       updateProgress?.('StorageLocation', 'Loading')
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
+
+      console.log('Create account 5')
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
@@ -343,10 +354,14 @@ class AccountManager extends EventEmitter {
         true
       )
 
+      console.log('Create account 6')
+
       if (context === undefined) {
         throw new Error(`Failed to open context ${VERIDA_VAULT_CONTEXT_NAME}`)
       }
       this.context = context
+
+      console.log('Create account 7')
 
       // Set the Vault
       this.vault = await this.getVault()
@@ -549,7 +564,7 @@ class AccountManager extends EventEmitter {
     )
   }
 
-  public async importAccount(mnemonic: string, network: EnvironmentType) {
+  public async importAccount(mnemonic: string, network: Network) {
     try {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null

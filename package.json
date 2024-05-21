@@ -81,6 +81,8 @@
     "@walletconnect/react-native-compat": "^2.8.1",
     "@walletconnect/sign-client": "^2.8.1",
     "@walletconnect/web3wallet": "^1.8.0",
+    "ajv": "^8.13.0",
+    "ajv-formats": "^3.0.1",
     "apisauce": "^2.1.2",
     "assert": "^1.5.0",
     "asyncstorage-down": "^4.2.0",

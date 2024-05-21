@@ -1,4 +1,5 @@
 import { DIDClient } from '@verida/did-client'
+import { BlockchainAnchor } from '@verida/types'
 import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
@@ -45,8 +46,9 @@ export const AuthProvider: FC = ({ children }) => {
     // try to fetch the DID
     const did = selectedAccount!.did
     const veridaNetwork = getNetworkFromDID(did)
+    console.log('AuthProvider', veridaNetwork)
     const didClient = new DIDClient({
-      network: veridaNetwork,
+      blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
     })
 
     try {
@@ -67,6 +69,7 @@ export const AuthProvider: FC = ({ children }) => {
       const selectedAccount = AccountManager.getInstance().getSelectedAccount()
       if (selectedAccount) {
         const network = getNetworkFromDID(selectedAccount.did)
+        console.log('AuthProvider 2', network)
         await AccountManager.getInstance().connect(false, network)
       }
       setLoaded(true)

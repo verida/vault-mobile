@@ -1,4 +1,4 @@
-import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
+import { AccountNodeDIDClientConfig, Network } from '@verida/types'
 import { config } from 'config'
 import { VERIDA_DID_REGEXP } from 'features/verida'
 
@@ -18,7 +18,7 @@ export function isValidVeridaDid(maybeDid: string) {
 }
 
 export function getDidClientConfigForNetwork(
-  network: EnvironmentType
+  network: Network
 ): AccountNodeDIDClientConfig {
   const rpcUrl = config.verida[network].rpcUrl
   const metaTransactionServerUrl =
@@ -53,21 +53,21 @@ export function getDidClientConfigForNetwork(
  *
  * @returns An array of supported Verida networks.
  */
-export function getSupportedVeridaNetworks(): EnvironmentType[] {
-  const networks: EnvironmentType[] = []
+export function getSupportedVeridaNetworks(): Network[] {
+  const networks: Network[] = []
 
-  networks.push(EnvironmentType.MAINNET)
+  networks.push(Network.MYRTLE) // Main net
   // TODO: Add Banksia when available
 
   if (config.dev.devMode) {
-    networks.push(EnvironmentType.DEVNET)
-    networks.push(EnvironmentType.LOCAL)
+    networks.push(Network.DEVNET)
+    networks.push(Network.LOCAL)
   }
   return networks
 }
 
-export function getDefaultVeridaNetwork(): EnvironmentType {
+export function getDefaultVeridaNetwork(): Network {
   return config.dev.devMode
-    ? EnvironmentType.DEVNET // TODO: Should we change to testnet/banksia? As the wallet dev should use a testnet
-    : EnvironmentType.MAINNET
+    ? Network.DEVNET // TODO: Should we change to testnet/banksia? As the wallet dev should use a testnet
+    : Network.MYRTLE
 }

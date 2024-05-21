@@ -22,7 +22,7 @@
     "@verida/account": "^4.0.0-alpha.0",
     "@verida/did-client": "^4.0.0-alpha.0",
     "@verida/did-document": "^4.0.0-alpha.0",
-    "@verida/encryption-utils": "^3.0.0",
+    "@verida/encryption-utils": "^3.0.1",
     "@verida/keyring": "^4.0.0-alpha.0",
     "@verida/pouchdb-replication-react-native": "^7.0.0-prerelease",
     "@verida/storage-link": "^4.0.0-alpha.0",
@@ -77,5 +77,5 @@
     "vm-browserify": "0.0.4"
   },
   "gitHead": "2eb834ec3b626c0349f033f7da99faa7ed58f0d1",
-  "yalcSig": "566018fc7f9afda221e4d63152cf065a"
+  "yalcSig": "4d0be2a9e520a9d5bbfa4b2805840764"
 }

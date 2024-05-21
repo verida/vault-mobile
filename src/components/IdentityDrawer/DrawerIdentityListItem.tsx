@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import { useTheme } from 'contexts'
 import { getAddressFromDID, getNetworkFromDID } from 'features/identities'
 import { PROFILE_EMPTY_NAME_VALUE, PublicProfile } from 'features/profiles'
@@ -21,7 +21,7 @@ export const DrawerIdentityListItem: React.FunctionComponent<
   DrawerIdentityListItemProps
 > = (props) => {
   const { did, profile, isCurrent, onPress } = props
-  const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
+  const network = did ? getNetworkFromDID(did) : Network.MYRTLE
   const displayedDid = getAddressFromDID(did)
 
   const isNameEmpty = !profile.name
