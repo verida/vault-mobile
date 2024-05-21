@@ -109,6 +109,6 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.color.background,
     },
     keyboardAvoidingView: {
-      flex: 1,
+      flexGrow: 1,
     },
   })
