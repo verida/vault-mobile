@@ -1,7 +1,6 @@
 import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { RequestDetailProperty } from '~/components'
@@ -66,19 +65,6 @@ export const PolygonIDConnectionRequestScreen: React.FunctionComponent<
     setProcessing(false)
     // TODO: Handle the case where the user closes the screen before the request is processed
   }, [polygonIdManager, data])
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Connection Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
-    })
-  }, [navigation, handleClose])
 
   const protocols = reduceProtocols(details.protocols, 16)
 

@@ -1,4 +1,7 @@
-import React, { useRef, useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ScrollView,
   StatusBar,
@@ -22,8 +25,13 @@ import {
   WalletSelectorButtonProps,
 } from '~/components'
 import { CryptoWalletList } from '~/components/CryptoWallet'
-import { LegacyCryptoWallet, selectCryptoWallet } from '~/features/cryptoWallet'
+import {
+  LegacyCryptoWallet,
+  selectCryptoWallet,
+  useSelectedCryptoWalletId,
+} from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
+import { MainStackParams } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
@@ -32,6 +40,7 @@ import { ConnectionRequestScreenParams } from './ConnectionRequestScreen'
 enum PageType {
   ConnectionRequest,
   SelectWallet,
+  ConnectionRequestResult,
 }
 
 export const ConnectionRequestScreenContent = React.memo(
@@ -62,9 +71,18 @@ export const ConnectionRequestScreenContent = React.memo(
   }): JSX.Element {
     const { name, logo, details } = params
     const styles = useThemeAwareStyle(createStyles)
-    const [currentPage] = useState<PageType>(PageType.ConnectionRequest)
+    const selectedCryptoWalletId = useSelectedCryptoWalletId()
+    const dispatch = useAppDispatch()
+    const navigation =
+      useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const [currentPage, setCurrentPage] = useState<PageType>(
+      PageType.ConnectionRequest
+    )
     const [erroMessage] = useState<string | undefined>()
     const [detailsOpen, setDetailsOpen] = useState(false)
+    const [previousWalletId, setPreviousWalletId] = useState<string | null>(
+      selectedCryptoWalletId
+    )
     const pagerRef = useRef<PagerView>(null)
     const insets = useSafeAreaInsets()
 
@@ -72,17 +90,58 @@ export const ConnectionRequestScreenContent = React.memo(
       setDetailsOpen((prevValue) => !prevValue)
     }
 
-    const dispatch = useAppDispatch()
-
     const handleWalletSelection = async (item: LegacyCryptoWallet) => {
       dispatch(await selectCryptoWallet(item.id))
+    }
+
+    const handleWalletSelectorButton = () => {
+      setPreviousWalletId(selectedCryptoWalletId)
+      pagerRef.current?.setPage(PageType.SelectWallet)
+    }
+
+    const handleConfirmWalletSelect = () => {
       pagerRef.current?.setPage(PageType.ConnectionRequest)
     }
+
+    const handleRejectWalletSelect = useCallback(async () => {
+      if (previousWalletId) {
+        dispatch(await selectCryptoWallet(previousWalletId))
+      }
+      pagerRef.current?.setPage(PageType.ConnectionRequest)
+    }, [dispatch, previousWalletId])
 
     // const maybeWalletSelectorButtonProps = useMaybeWalletSelectorButtonProps({
     //   aggregateWalletBannerBalance,
     //   resource: chainId,
     // })
+
+    useEffect(() => {
+      if (currentPage === PageType.SelectWallet) {
+        navigation.setOptions({
+          title: 'Select a Wallet',
+          headerRight: () => (
+            <ButtonNativeBase transparent onPress={handleRejectWalletSelect}>
+              <IconNativeBase name='close' style={{ color: '#000' }} />
+            </ButtonNativeBase>
+          ),
+        })
+      } else if (currentPage === PageType.ConnectionRequest) {
+        navigation.setOptions({
+          title: 'Connection Request',
+          headerRight: () => (
+            <ButtonNativeBase transparent onPress={handleReject}>
+              <IconNativeBase name='close' style={{ color: '#000' }} />
+            </ButtonNativeBase>
+          ),
+        })
+      }
+    }, [navigation, handleRejectWalletSelect, handleReject, currentPage])
+
+    useEffect(() => {
+      if ((success || processing || error) && pagerRef.current) {
+        pagerRef.current.setPage(PageType.ConnectionRequestResult)
+      }
+    }, [success, processing, error, pagerRef])
 
     return (
       <>
@@ -90,7 +149,10 @@ export const ConnectionRequestScreenContent = React.memo(
         <PagerView
           initialPage={currentPage}
           style={styles.pagerView}
-          ref={pagerRef}>
+          ref={pagerRef}
+          onPageSelected={(e) => {
+            setCurrentPage(e.nativeEvent.position)
+          }}>
           <View
             key={`ConnectionRequest`}
             style={[
@@ -104,117 +166,115 @@ export const ConnectionRequestScreenContent = React.memo(
             <ScrollView
               style={styles.container}
               contentContainerStyle={styles.containerContent}>
-              {!processing && !error && !success ? (
-                <>
-                  <Avatar
-                    source={logo}
-                    fallbackType='person'
-                    style={styles.logo}
-                  />
-                  {details.url ? (
-                    <Typography variant='bodySemiBold' style={styles.url}>
-                      {details.url}
-                    </Typography>
-                  ) : null}
-                  <Typography
-                    variant='h2'
-                    style={
-                      styles.connectMessage
-                    }>{`Connect to ${name}`}</Typography>
-                  {details.message ? (
-                    <RequestMessage style={styles.messageContainer}>
-                      {details.message}
-                    </RequestMessage>
-                  ) : null}
+              <Avatar source={logo} fallbackType='person' style={styles.logo} />
+              {details.url ? (
+                <Typography variant='bodySemiBold' style={styles.url}>
+                  {details.url}
+                </Typography>
+              ) : null}
+              <Typography
+                variant='h2'
+                style={
+                  styles.connectMessage
+                }>{`Connect to ${name}`}</Typography>
+              {details.message ? (
+                <RequestMessage style={styles.messageContainer}>
+                  {details.message}
+                </RequestMessage>
+              ) : null}
 
-                  <TouchableOpacity
-                    onPress={handleToggleDetails}
-                    style={styles.detailsButton}>
-                    <Typography
-                      variant='bodySemiBold'
-                      style={styles.detailsButtonLabel}>
-                      Request details
-                    </Typography>
-                    <Feather
-                      name={detailsOpen ? 'chevron-up' : 'chevron-down'}
-                      size={16}
-                      style={styles.detailsButtonLabelIcon}
-                    />
-                  </TouchableOpacity>
-                  {detailsOpen ? (
-                    <RequestDetails
-                      properties={detailProperties}
-                      style={styles.detailsContainer}
-                    />
-                  ) : null}
-                  {maybeWalletSelectorButtonProps && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        pagerRef.current?.setPage(PageType.SelectWallet)
-                      }}
-                      style={styles.walletSelectorButton}>
-                      <WalletSelectorButton
-                        {...maybeWalletSelectorButtonProps}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </>
-              ) : (
-                <StatusInfo
-                  style={styles.statusContainer}
-                  statusType={
-                    processing ? 'processsing' : success ? 'success' : 'error'
-                  }
-                  title={
-                    processing
-                      ? 'Connecting...'
-                      : success
-                        ? 'Success!'
-                        : 'Error!'
-                  }
-                  subtitle={
-                    processing
-                      ? 'Please wait a moment, we are securely setting up the connection.'
-                      : success
-                        ? `You are successfully connected to ${name}.`
-                        : erroMessage ||
-                          'Something went wrong. Try again later.'
-                  }
+              <TouchableOpacity
+                onPress={handleToggleDetails}
+                style={styles.detailsButton}>
+                <Typography
+                  variant='bodySemiBold'
+                  style={styles.detailsButtonLabel}>
+                  Request details
+                </Typography>
+                <Feather
+                  name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  style={styles.detailsButtonLabelIcon}
                 />
+              </TouchableOpacity>
+
+              {detailsOpen ? (
+                <RequestDetails
+                  properties={detailProperties}
+                  style={styles.detailsContainer}
+                />
+              ) : null}
+              {maybeWalletSelectorButtonProps && (
+                <TouchableOpacity
+                  onPress={handleWalletSelectorButton}
+                  style={styles.walletSelectorButton}>
+                  <WalletSelectorButton {...maybeWalletSelectorButtonProps} />
+                </TouchableOpacity>
               )}
             </ScrollView>
             <BottomActionBar
               alertType='error'
               alertContent={errorMessage}
               alertOnPress={handleAlertProcess}
-              actions={
-                processing || error || success
-                  ? [
-                      {
-                        label: 'Close',
-                        onPress: handleReject,
-                        disabled: processing,
-                      },
-                    ]
-                  : [
-                      {
-                        label: 'Decline',
-                        onPress: handleReject,
-                        color: 'grey',
-                      },
-                      {
-                        label: 'Connect',
-                        onPress: handleConnect,
-                        disabled: processButtonDisabled,
-                      },
-                    ]
-              }
+              actions={[
+                {
+                  label: 'Decline',
+                  onPress: handleReject,
+                  color: 'grey',
+                },
+                {
+                  label: 'Connect',
+                  onPress: handleConnect,
+                  disabled: processButtonDisabled,
+                },
+              ]}
             />
           </View>
           <View key={`SelectWallet`}>
             <CryptoWalletList
               style={styles.walletListContainer}
               onPressItem={handleWalletSelection}
+            />
+            <BottomActionBar
+              actions={[
+                {
+                  label: 'Confirm Selection',
+                  onPress: handleConfirmWalletSelect,
+                  disabled: false,
+                },
+              ]}
+            />
+          </View>
+          <View key={`ConnectionRequestResult`}>
+            <View style={styles.container}>
+              <StatusInfo
+                style={styles.statusContainer}
+                statusType={
+                  processing ? 'processsing' : success ? 'success' : 'error'
+                }
+                title={
+                  processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
+                }
+                subtitle={
+                  processing
+                    ? 'Please wait a moment, we are securely setting up the connection.'
+                    : success
+                      ? `You are successfully connected to ${name}.`
+                      : erroMessage || 'Something went wrong. Try again later.'
+                }
+              />
+            </View>
+            <BottomActionBar
+              alertType='error'
+              alertContent={errorMessage}
+              alertOnPress={handleAlertProcess}
+              actions={[
+                {
+                  label: 'Done',
+                  onPress: handleReject,
+                  disabled: processing,
+                },
+              ]}
             />
           </View>
         </PagerView>

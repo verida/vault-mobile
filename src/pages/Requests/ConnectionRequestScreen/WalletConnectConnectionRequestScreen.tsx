@@ -8,6 +8,7 @@ import {
   getAggregateWalletBannerBalanceResult,
   getCryptoWalletAccountId,
   useAggregateWalletBannerBalances,
+  useSelectedCryptoWallet,
   useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
@@ -18,8 +19,7 @@ import {
   useWalletConnectProposalRequiredCaipChainIds,
 } from 'features/walletConnect/hooks'
 import { createWalletConnectSessionApprovalConfiguration } from 'features/walletConnect/utils'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Alert } from 'react-native'
 
 import {
@@ -62,10 +62,14 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
   const { details } = params
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
-  const [processing] = useState(false)
+  const [processing, setProcessing] = useState(false)
   const [error] = useState(false)
   const [erroMessage] = useState<string | undefined>()
-  const [success] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+
+  console.log('*****', selectedCryptoWallet?.id, selectedCryptoWallet)
 
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
@@ -84,6 +88,8 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
       selectedMinifiedBlockchainAccounts,
       onlyMatchingNamespaces,
     })
+
+  console.log('^^^^^^^^', wallets)
 
   const defaultValue = wallets?.length === 1 ? wallets[0] : undefined
 
@@ -137,6 +143,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
     if (!selectedWallet) return Alert.alert('Warning', 'Please select a wallet')
 
     try {
+      setProcessing(true)
       maybeThrowMissingDependenciesError(proposal, web3wallet)
 
       // setLoading(true)
@@ -184,6 +191,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
         })
       )
 
+      setSuccess(true)
       // setActiveSessions(await web3wallet.getActiveSessions())
       // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
     } catch (error) {
@@ -195,32 +203,12 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
       )
       logger.error(error)
     } finally {
-      // setLoading(false)
+      setProcessing(false)
       // InteractionManager.runAfterInteractions(dismissModal)
-      navigation.goBack()
     }
-  }, [
-    selectedWallet,
-    proposal,
-    web3wallet,
-    selectedMinifiedBlockchainAccounts,
-    navigation,
-  ])
+  }, [selectedWallet, proposal, web3wallet, selectedMinifiedBlockchainAccounts])
 
   const handleGoToPolygonIdStatus = () => {}
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Connection Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
-    })
-  }, [navigation, handleClose])
 
   const [maybeAggregateWalletBannerBalance] =
     getAggregateWalletBannerBalanceResult(
