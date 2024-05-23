@@ -139,7 +139,7 @@ export const ImportCryptoWalletScreen: React.FC<
     importType,
   ])
 
-  const handleCancellButtonPress = useCallback(() => {
+  const handleCancelButtonPress = useCallback(() => {
     navigation.goBack()
   }, [navigation])
 
@@ -235,7 +235,7 @@ export const ImportCryptoWalletScreen: React.FC<
         actions={[
           {
             label: 'Cancel',
-            onPress: handleCancellButtonPress,
+            onPress: handleCancelButtonPress,
             variant: 'secondary',
           },
           {

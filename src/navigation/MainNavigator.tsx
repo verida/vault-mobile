@@ -71,6 +71,7 @@ import {
   WalletConnectActiveSessionsScreen,
 } from '~/pages/WalletConnect'
 import {
+  AddWatchedCryptoWalletScreen,
   CreateCryptoWalletScreen,
   ImportCryptoWalletScreen,
   ManageWalletsScreen,
@@ -219,6 +220,10 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen
               name='ImportCryptoWallet'
               component={ImportCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='AddWatchedCryptoWallet'
+              component={AddWatchedCryptoWalletScreen}
             />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen

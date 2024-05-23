@@ -1,3 +1,4 @@
+export * from './AddWatchedCryptoWalletScreen'
 export * from './CreateCryptoWalletScreen'
 export * from './ImportCryptoWalletScreen'
 export * from './ManageWalletsScreen'

@@ -85,6 +85,7 @@ import {
   WalletConnectActiveSessionsScreenParams,
 } from '~/pages/WalletConnect'
 import {
+  AddWatchedCryptoWalletScreenParams,
   CreateCryptoWalletScreenParams,
   ImportCryptoWalletScreenParams,
   ManageWalletsScreenParams,
@@ -143,6 +144,7 @@ export type MainStackParams = {
   ManageWallets: ManageWalletsScreenParams
   CreateCryptoWallet: CreateCryptoWalletScreenParams
   ImportCryptoWallet: ImportCryptoWalletScreenParams
+  AddWatchedCryptoWallet: AddWatchedCryptoWalletScreenParams
   SingleCurrency: SingleCurrencyScreenParams
   SendToken: SendTokenScreenParams
   TokenRecipient: TokenRecipientScreenParams

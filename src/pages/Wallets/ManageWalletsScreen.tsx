@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Alert, StyleSheet, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -8,8 +8,6 @@ import { CryptoWalletList } from '~/components/CryptoWallet'
 import { HIT_SLOP_10_10 } from '~/constants'
 import { useTheme } from '~/contexts'
 import {
-  addWatchedCryptoWallet,
-  AddWatchedCryptoWalletData,
   deleteCryptoWallet,
   LegacyCryptoWallet,
   selectCryptoWallet,
@@ -19,8 +17,6 @@ import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
-
-import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 
 export type ManageWalletsScreenParams = undefined
 
@@ -42,22 +38,12 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     [dispatch]
   )
 
-  const handleAddWatchedWallet = useCallback(
-    (data: AddWatchedCryptoWalletData) => {
-      dispatch(addWatchedCryptoWallet(data))
-    },
-    [dispatch]
-  )
-
   const handleDeleteWallet = useCallback(
     (walletId: string) => {
       dispatch(deleteCryptoWallet(walletId))
     },
     [dispatch]
   )
-
-  const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
-    useState(false)
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
@@ -99,8 +85,8 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
   }, [navigation])
 
   const handlePressAddWatchedWallet = useCallback(() => {
-    setAddWatchedWalletModalVisible(true)
-  }, [])
+    navigation.navigate('AddWatchedCryptoWallet')
+  }, [navigation])
 
   const handleAddWalletPress = useCallback(() => {
     showActionSheetWithOptions(
@@ -238,22 +224,15 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
   const { bottom } = useSafeAreaInsets()
 
   return (
-    <>
-      <ScreenWrapper safeAreaEdges={['left', 'right']}>
-        <CryptoWalletList
-          onPressItem={handlePressWalletListItem}
-          showMoreIcon
-          contentContainerStyle={{
-            paddingBottom: bottom,
-          }}
-        />
-      </ScreenWrapper>
-      <AddWatchedWalletModal
-        hideModal={() => setAddWatchedWalletModalVisible(false)}
-        visible={addWatchedWalletModalVisible}
-        onAddWatchedWallet={handleAddWatchedWallet}
+    <ScreenWrapper safeAreaEdges={['left', 'right']}>
+      <CryptoWalletList
+        onPressItem={handlePressWalletListItem}
+        showMoreIcon
+        contentContainerStyle={{
+          paddingBottom: bottom,
+        }}
       />
-    </>
+    </ScreenWrapper>
   )
 }
 
