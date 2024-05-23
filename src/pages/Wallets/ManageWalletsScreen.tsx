@@ -11,8 +11,6 @@ import {
   addWatchedCryptoWallet,
   AddWatchedCryptoWalletData,
   deleteCryptoWallet,
-  importCryptoWallet,
-  ImportCryptoWalletData,
   LegacyCryptoWallet,
   selectCryptoWallet,
   useCryptoWalletsCount,
@@ -23,7 +21,6 @@ import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
-import { ImportWalletModal } from './ImportWalletModal'
 
 export type ManageWalletsScreenParams = undefined
 
@@ -45,13 +42,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     [dispatch]
   )
 
-  const handleImportWallet = useCallback(
-    (data: ImportCryptoWalletData) => {
-      dispatch(importCryptoWallet(data))
-    },
-    [dispatch]
-  )
-
   const handleAddWatchedWallet = useCallback(
     (data: AddWatchedCryptoWalletData) => {
       dispatch(addWatchedCryptoWallet(data))
@@ -66,8 +56,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     [dispatch]
   )
 
-  const [importWalletModalVisible, setImportWalletModalVisible] =
-    useState(false)
   const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
     useState(false)
 
@@ -107,8 +95,8 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
   }, [navigation])
 
   const handlePressImportWallet = useCallback(() => {
-    setImportWalletModalVisible(true)
-  }, [])
+    navigation.navigate('ImportCryptoWallet')
+  }, [navigation])
 
   const handlePressAddWatchedWallet = useCallback(() => {
     setAddWatchedWalletModalVisible(true)
@@ -260,11 +248,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
           }}
         />
       </ScreenWrapper>
-      <ImportWalletModal
-        hideModal={() => setImportWalletModalVisible(false)}
-        visible={importWalletModalVisible}
-        onImportWallet={handleImportWallet}
-      />
       <AddWatchedWalletModal
         hideModal={() => setAddWatchedWalletModalVisible(false)}
         visible={addWatchedWalletModalVisible}

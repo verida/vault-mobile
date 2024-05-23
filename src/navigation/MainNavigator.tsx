@@ -72,6 +72,7 @@ import {
 } from '~/pages/WalletConnect'
 import {
   CreateCryptoWalletScreen,
+  ImportCryptoWalletScreen,
   ManageWalletsScreen,
   SingleWalletScreen,
 } from '~/pages/Wallets'
@@ -214,6 +215,10 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen
               name='CreateCryptoWallet'
               component={CreateCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='ImportCryptoWallet'
+              component={ImportCryptoWalletScreen}
             />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
