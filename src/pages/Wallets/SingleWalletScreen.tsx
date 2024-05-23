@@ -1,9 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import {
-  updateCryptoWallet,
-  UpdateCryptoWalletData,
-  useCryptoWallets,
-} from 'features/cryptoWallet'
+import { useCryptoWallets } from 'features/cryptoWallet'
 import React, { useCallback, useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -20,10 +16,8 @@ import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarning
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
-import RenameWalletModal from './RenameWalletModal'
 
 export type SingleWalletScreenParams = {
   walletId: string
@@ -37,9 +31,7 @@ export const SingleWalletScreen: React.FC<SingleWalletScreenProps> = (
   const { navigation, route } = props
   const { walletId } = route.params
 
-  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
-  const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
   const [copyPrivateKeyModalVisible, toggleCopyPrivateKeyModal] =
@@ -53,23 +45,9 @@ export const SingleWalletScreen: React.FC<SingleWalletScreenProps> = (
   const cryptoWallets = useCryptoWallets()
   const cryptoWallet = cryptoWallets.find((wallet) => wallet.id === walletId)
 
-  const handleRenameWallet = useCallback(
-    async (id: string, data: UpdateCryptoWalletData) => {
-      setLoading(true)
-      await dispatch(
-        updateCryptoWallet({
-          walletId: id,
-          data,
-        })
-      )
-      setLoading(false)
-    },
-    [dispatch]
-  )
-
   const handleEditButtonPress = useCallback(() => {
-    setRenameModalVisible(true)
-  }, [])
+    navigation.navigate('EditCryptoWallet', { walletId })
+  }, [navigation, walletId])
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
@@ -152,12 +130,6 @@ export const SingleWalletScreen: React.FC<SingleWalletScreenProps> = (
             onPressPrivateKey={(privateKey: string) => {
               showPrivateKey(privateKey)
             }}
-          />
-          <RenameWalletModal
-            hideModal={() => setRenameModalVisible(false)}
-            visible={renameModalVisible}
-            onPressRename={handleRenameWallet as any}
-            data={{ id: cryptoWallet.id, label: cryptoWallet.label }}
           />
           <SeedPhraseWarningModal
             hideModal={() => setSeedPhraseModalVisible(false)}

@@ -87,6 +87,7 @@ import {
 import {
   AddWatchedCryptoWalletScreenParams,
   CreateCryptoWalletScreenParams,
+  EditCryptoWalletScreenParams,
   ImportCryptoWalletScreenParams,
   ManageWalletsScreenParams,
   SingleWalletScreenParams,
@@ -145,6 +146,7 @@ export type MainStackParams = {
   CreateCryptoWallet: CreateCryptoWalletScreenParams
   ImportCryptoWallet: ImportCryptoWalletScreenParams
   AddWatchedCryptoWallet: AddWatchedCryptoWalletScreenParams
+  EditCryptoWallet: EditCryptoWalletScreenParams
   SingleCurrency: SingleCurrencyScreenParams
   SendToken: SendTokenScreenParams
   TokenRecipient: TokenRecipientScreenParams

@@ -73,6 +73,7 @@ import {
 import {
   AddWatchedCryptoWalletScreen,
   CreateCryptoWalletScreen,
+  EditCryptoWalletScreen,
   ImportCryptoWalletScreen,
   ManageWalletsScreen,
   SingleWalletScreen,
@@ -224,6 +225,10 @@ export const MainNavigator: React.FC = () => {
             <Stack.Screen
               name='AddWatchedCryptoWallet'
               component={AddWatchedCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='EditCryptoWallet'
+              component={EditCryptoWalletScreen}
             />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
