@@ -1,11 +1,10 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { Icon, IdentityAvatar } from 'components'
+import { IdentityAvatar } from 'components'
 import { useTheme } from 'contexts'
 import { useIdentityDrawer } from 'features/identityDrawer'
-import { selectNewMessagesCount } from 'features/inbox'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
-import React, { useCallback } from 'react'
+import React from 'react'
 import {
   StatusBar,
   StyleSheet,
@@ -19,7 +18,6 @@ import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
-const MAX_INBOX_COUNT = 10
 
 export type TabScreenHeaderProps = {
   hideSeparator?: boolean
@@ -28,7 +26,7 @@ export type TabScreenHeaderProps = {
 export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
   props
 ) => {
-  const { navigation, options, hideSeparator = false } = props
+  const { options, hideSeparator = false } = props
 
   const { title, headerTitle } = options
 
@@ -39,16 +37,6 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
   const { avatar } = useAppSelector(selectSelectedPublicProfile)
 
   const { toggle: toggleDrawer } = useIdentityDrawer()
-
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
-
-  const handleInboxPress = useCallback(() => {
-    navigation.navigate('Inbox')
-  }, [navigation])
 
   return (
     <>
@@ -81,21 +69,7 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
             </Text>
           )}
         </View>
-        <View style={styles.actionsContainer}>
-          {/* TODO: Factorise the icon buttons */}
-          <TouchableOpacity onPress={handleInboxPress} hitSlop={HIT_SLOP}>
-            {/* TODO: Factorise an Inbox icon button with its badge for unread messages */}
-            <Icon name='inbox' size={theme.iconSize.m} />
-            {/* TODO: Factorise a Badge component */}
-            {unreadMessagesCount ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText} numberOfLines={1}>
-                  {displayedInboxCount}
-                </Text>
-              </View>
-            ) : null}
-          </TouchableOpacity>
-        </View>
+        <View style={styles.actionsContainer} />
       </View>
     </>
   )
@@ -133,33 +107,9 @@ const createStyles = (theme: Theme) =>
     },
     actionsContainer: {
       marginVertical: theme.spacing.sm,
-      marginLeft: theme.spacing.m,
+      marginLeft: theme.spacing.m + theme.spacing.s,
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    actionIcon: {
-      marginLeft: theme.spacing.s,
-      color: theme.color.iconDefault,
-    },
-    badge: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 4,
-      position: 'absolute',
-      right: -7,
-      top: -9,
-      height: 20,
-      minWidth: 20,
-      backgroundColor: theme.color.orange,
-      borderRadius: theme.roundness.full,
-      overflow: 'hidden',
-      borderColor: theme.color.background,
-      borderWidth: 2,
-    },
-    badgeText: {
-      fontFamily: theme.fontFamily.semibold,
-      fontSize: 10,
-      lineHeight: 12,
-      color: theme.color.onError,
+      width: theme.iconSize.m,
     },
   })
