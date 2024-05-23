@@ -8,7 +8,6 @@ import {
   getAggregateWalletBannerBalanceResult,
   getCryptoWalletAccountId,
   useAggregateWalletBannerBalances,
-  useSelectedCryptoWallet,
   useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
@@ -19,7 +18,7 @@ import {
   useWalletConnectProposalRequiredCaipChainIds,
 } from 'features/walletConnect/hooks'
 import { createWalletConnectSessionApprovalConfiguration } from 'features/walletConnect/utils'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert } from 'react-native'
 
 import {
@@ -67,10 +66,6 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
   const [erroMessage] = useState<string | undefined>()
   const [success, setSuccess] = useState(false)
 
-  const selectedCryptoWallet = useSelectedCryptoWallet()
-
-  console.log('*****', selectedCryptoWallet?.id, selectedCryptoWallet)
-
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
 
@@ -89,11 +84,9 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
       onlyMatchingNamespaces,
     })
 
-  console.log('^^^^^^^^', wallets)
-
   const defaultValue = wallets?.length === 1 ? wallets[0] : undefined
 
-  const [selectedWallet] = React.useState<
+  const [selectedWallet, setSelectedWallet] = React.useState<
     VeridaWalletAccountOption | undefined
   >(defaultValue)
 
@@ -221,6 +214,10 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
     resource: onlyMatchingCaipChainIds?.[0],
   })
+
+  useEffect(() => {
+    setSelectedWallet(wallets?.length === 1 ? wallets[0] : undefined)
+  }, [wallets])
 
   return (
     <>

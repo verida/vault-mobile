@@ -57,17 +57,17 @@ export const ConnectionRequestScreenContent = React.memo(
     handleReject,
     handleAlertProcess,
   }: {
-    params: ConnectionRequestScreenParams
-    processing: boolean
-    error: boolean
-    errorMessage: string | undefined
-    success: boolean
-    processButtonDisabled: boolean
-    detailProperties: RequestDetailProperty[]
-    maybeWalletSelectorButtonProps?: WalletSelectorButtonProps | null
-    handleConnect: () => Promise<void>
-    handleReject: () => Promise<void> | void
-    handleAlertProcess: () => void
+    readonly params: ConnectionRequestScreenParams
+    readonly processing: boolean
+    readonly error: boolean
+    readonly errorMessage: string | undefined
+    readonly success: boolean
+    readonly processButtonDisabled: boolean
+    readonly detailProperties: RequestDetailProperty[]
+    readonly maybeWalletSelectorButtonProps?: WalletSelectorButtonProps | null
+    readonly handleConnect: () => Promise<void>
+    readonly handleReject: () => Promise<void> | void
+    readonly handleAlertProcess: () => void
   }): JSX.Element {
     const { name, logo, details } = params
     const styles = useThemeAwareStyle(createStyles)
