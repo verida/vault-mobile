@@ -35,6 +35,7 @@ type LibIconName =
   | 'calculator'
   | 'wallet'
   | 'clipboard' // TODO: replace the clipboard by copy?
+  | 'paste'
   | 'inbox'
   | 'info-circle'
   | 'question-circle'
@@ -106,7 +107,17 @@ export const Icon = (props: {
     case 'copy':
       return <CopyIcon {...svgProps} />
     case 'clipboard':
-      return <Ionicon name='copy-outline' {...iconProps} />
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='copy-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'paste':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='clipboard-outline' {...iconProps} />
+        </IconWrapper>
+      )
     case 'edit':
       return <EditIcon {...svgProps} />
     case 'goto':
