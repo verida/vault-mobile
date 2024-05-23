@@ -76,6 +76,7 @@ import {
   EditCryptoWalletScreen,
   ImportCryptoWalletScreen,
   ManageWalletsScreen,
+  SelectCryptoWalletScreen,
   SingleWalletScreen,
 } from '~/pages/Wallets'
 
@@ -214,6 +215,10 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen
+              name='SelectCryptoWallet'
+              component={SelectCryptoWalletScreen}
+            />
             <Stack.Screen
               name='CreateCryptoWallet'
               component={CreateCryptoWalletScreen}

@@ -90,6 +90,7 @@ import {
   EditCryptoWalletScreenParams,
   ImportCryptoWalletScreenParams,
   ManageWalletsScreenParams,
+  SelectCryptoWalletScreenParams,
   SingleWalletScreenParams,
 } from '~/pages/Wallets'
 
@@ -143,6 +144,7 @@ export type MainStackParams = {
   UnlockVeridaOne: UnlockVeridaOneScreenParams
   VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
+  SelectCryptoWallet: SelectCryptoWalletScreenParams
   CreateCryptoWallet: CreateCryptoWalletScreenParams
   ImportCryptoWallet: ImportCryptoWalletScreenParams
   AddWatchedCryptoWallet: AddWatchedCryptoWalletScreenParams
