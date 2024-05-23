@@ -70,6 +70,11 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
     close()
   }, [navigation, close])
 
+  const handleInboxPress = useCallback(() => {
+    navigation.navigate('Inbox')
+    close()
+  }, [navigation, close])
+
   const handleIdentitySwitch = useCallback(() => {
     close()
   }, [close])
@@ -152,6 +157,18 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleSettingsPress}
+                  style={styles.shortcutButton}
+                />
+                <DrawerShortcutButton
+                  label='Inbox'
+                  icon={
+                    <Icon
+                      name='inbox'
+                      size={24}
+                      color={theme.color.iconDefault}
+                    />
+                  }
+                  onPress={handleInboxPress}
                   style={styles.shortcutButton}
                 />
               </View>
