@@ -85,6 +85,7 @@ import {
   WalletConnectActiveSessionsScreenParams,
 } from '~/pages/WalletConnect'
 import {
+  CreateCryptoWalletScreenParams,
   ManageWalletsScreenParams,
   SingleWalletScreenParams,
 } from '~/pages/Wallets'
@@ -139,6 +140,7 @@ export type MainStackParams = {
   UnlockVeridaOne: UnlockVeridaOneScreenParams
   VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
+  CreateCryptoWallet: CreateCryptoWalletScreenParams
   SingleCurrency: SingleCurrencyScreenParams
   SendToken: SendTokenScreenParams
   TokenRecipient: TokenRecipientScreenParams

@@ -10,8 +10,6 @@ import { useTheme } from '~/contexts'
 import {
   addWatchedCryptoWallet,
   AddWatchedCryptoWalletData,
-  createCryptoWallet,
-  CreateCryptoWalletData,
   deleteCryptoWallet,
   importCryptoWallet,
   ImportCryptoWalletData,
@@ -25,7 +23,6 @@ import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
-import { CreateWalletModal } from './CreateWalletModal'
 import { ImportWalletModal } from './ImportWalletModal'
 
 export type ManageWalletsScreenParams = undefined
@@ -44,13 +41,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
   const handleSelectWallet = useCallback(
     (walletId: string) => {
       dispatch(selectCryptoWallet(walletId))
-    },
-    [dispatch]
-  )
-
-  const handleCreateWallet = useCallback(
-    (data: CreateCryptoWalletData) => {
-      dispatch(createCryptoWallet(data))
     },
     [dispatch]
   )
@@ -76,8 +66,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     [dispatch]
   )
 
-  const [createWalletModalVisible, setCreateWalletModalVisible] =
-    useState(false)
   const [importWalletModalVisible, setImportWalletModalVisible] =
     useState(false)
   const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
@@ -114,12 +102,12 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     [handleDeleteWallet]
   )
 
+  const handlePressCreateWallet = useCallback(() => {
+    navigation.navigate('CreateCryptoWallet')
+  }, [navigation])
+
   const handlePressImportWallet = useCallback(() => {
     setImportWalletModalVisible(true)
-  }, [])
-
-  const handlePressCreateWallet = useCallback(() => {
-    setCreateWalletModalVisible(true)
   }, [])
 
   const handlePressAddWatchedWallet = useCallback(() => {
@@ -272,11 +260,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
           }}
         />
       </ScreenWrapper>
-      <CreateWalletModal
-        hideModal={() => setCreateWalletModalVisible(false)}
-        visible={createWalletModalVisible}
-        onCreateNewWallet={handleCreateWallet}
-      />
       <ImportWalletModal
         hideModal={() => setImportWalletModalVisible(false)}
         visible={importWalletModalVisible}

@@ -70,7 +70,11 @@ import {
   WalletConnectActiveSessionDetailsScreen,
   WalletConnectActiveSessionsScreen,
 } from '~/pages/WalletConnect'
-import { ManageWalletsScreen, SingleWalletScreen } from '~/pages/Wallets'
+import {
+  CreateCryptoWalletScreen,
+  ManageWalletsScreen,
+  SingleWalletScreen,
+} from '~/pages/Wallets'
 
 import { TabsNavigator } from './TabsNavigator'
 import { MainStackParams } from './types'
@@ -125,8 +129,8 @@ export const MainNavigator: React.FC = () => {
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
-          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
           <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
+          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}
@@ -207,6 +211,10 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen
+              name='CreateCryptoWallet'
+              component={CreateCryptoWalletScreen}
+            />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
               name='UnlockVeridaOne'
