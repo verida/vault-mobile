@@ -2,10 +2,10 @@
 
 ## Bug fixes
 
-- Fix sending large amount of token
+- Fix sending large amount of tokens
 - Handle errors when fetching crypto transaction details
 - Show loading indicator in UI when loading crypto wallets
-- Fix identity drawer UI freeze shaking issue
+- Fix identity drawer UI freeze issue
 
 # 1.4.1 (2024-05-08)
 
