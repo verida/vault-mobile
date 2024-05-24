@@ -1,8 +1,17 @@
+# 1.4.2 (2024-05-24)
+
+## Bug fixes
+
+- Fix sending large amount of token
+- Handle errors when fetching crypto transaction details
+- Show loading indicator in UI when loading crypto wallets
+- Fix identity drawer UI freeze shaking issue
+
 # 1.4.1 (2024-05-08)
 
 ## Bug fixes
 
-* Fix profile country not updatable
+- Fix profile country not updatable
 
 # 1.4.0 (2024-04-26)
 
