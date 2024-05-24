@@ -38,7 +38,7 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
 
   const { avatar } = useAppSelector(selectSelectedPublicProfile)
 
-  const { toggle: toggleDrawer } = useIdentityDrawer()
+  const { open: openIdentityDrawer } = useIdentityDrawer()
 
   const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   const displayedInboxCount =
@@ -68,7 +68,7 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
           },
         ]}>
         <View style={styles.avatarContainer}>
-          <TouchableOpacity onPress={toggleDrawer} hitSlop={HIT_SLOP}>
+          <TouchableOpacity onPress={openIdentityDrawer} hitSlop={HIT_SLOP}>
             <IdentityAvatar source={avatar?.uri} style={styles.avatar} />
           </TouchableOpacity>
         </View>
