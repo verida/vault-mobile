@@ -1,16 +1,17 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
 import { PolygonIdStatusScreen } from '~/pages/PolygonId'
 
-import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
+import LoadingView from 'components/LoadingView'
+import { useAuth } from 'hooks/useAuth'
 import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
+import { CreatePin } from 'pages/Authentication/CreatePin'
 import {
   BlockchainNetworkEditorScreen,
   BlockchainNetworksScreen,
@@ -32,6 +33,7 @@ import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
+import { OnboardingScreen } from 'pages/Onboarding'
 import {
   AddVeridaOneCustomLinkScreen,
   AddVeridaOnePlatformLinkScreen,
@@ -71,15 +73,36 @@ import SingleWallet from 'pages/Wallets/SingleWallet'
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 export const MainNavigator: React.FunctionComponent = () => {
+  const { authenticated, loaded } = useAuth()
+
+  if (!loaded) {
+    return <LoadingView />
+  }
+
   return (
-    <>
-      {/* As the MainNavigator is only mounted after the user is authenticated, so are these context providers. */}
-      <BehindAuthContextProviders>
-        {/* An empty component, just to register all of the main app events after the user has authenticated. */}
-        <BehindAuthHandlers />
-        <Stack.Navigator
-          initialRouteName='Tabs'
-          screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName={authenticated ? 'Tabs' : 'Onboarding'}
+      screenOptions={{ headerShown: false }}>
+      {/* Common group of screens, available when authenticated or not */}
+      <Stack.Group>
+        <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
+        <Stack.Screen name='CreateIdentity' component={CreateIdentityScreen} />
+        <Stack.Screen name='ImportIdentity' component={ImportIdentityScreen} />
+        <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
+        <Stack.Screen
+          name={'SeedPhraseGenerated'}
+          component={SeedPhraseGenerated}
+        />
+        <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
+      </Stack.Group>
+
+      {!authenticated ? (
+        <>
+          <Stack.Screen name={'Onboarding'} component={OnboardingScreen} />
+          <Stack.Screen name={'CreatePin'} component={CreatePin} />
+        </>
+      ) : (
+        <>
           <Stack.Screen name={'Tabs'} component={TabsNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
@@ -150,15 +173,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
           <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
 
-          <Stack.Screen name={'AddIdentity'} component={AddIdentityScreen} />
-          <Stack.Screen
-            name='CreateIdentity'
-            component={CreateIdentityScreen}
-          />
-          <Stack.Screen
-            name={'ImportIdentity'}
-            component={ImportIdentityScreen}
-          />
           <Stack.Screen
             name={'RemoveIdentity'}
             component={RemoveIdentityScreen}
@@ -179,12 +193,6 @@ export const MainNavigator: React.FunctionComponent = () => {
             component={MigrateIdentityExecutionScreen}
           />
 
-          <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
-          <Stack.Screen
-            name={'SeedPhraseGenerated'}
-            component={SeedPhraseGenerated}
-          />
-          <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
           <Stack.Screen
             name={'BlockchainNetworks'}
@@ -264,8 +272,8 @@ export const MainNavigator: React.FunctionComponent = () => {
               component={ShareIdentityScreen}
             />
           </Stack.Group>
-        </Stack.Navigator>
-      </BehindAuthContextProviders>
-    </>
+        </>
+      )}
+    </Stack.Navigator>
   )
 }

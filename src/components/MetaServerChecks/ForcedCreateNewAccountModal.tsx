@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { logout } from 'features/auth'
 import { ForcedCreateAccountType } from 'features/config'
@@ -15,7 +16,6 @@ import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { navigate } from 'navigation/RootNavigator'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -37,6 +37,7 @@ export const ForcedCreateNewAccountModal = ({
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const selectedAccount = useAppSelector(selectSelectedAccount)
+  const navigation = useNavigation()
 
   const onForcedCreateAccountPress = async () => {
     // Log out
@@ -47,7 +48,7 @@ export const ForcedCreateNewAccountModal = ({
     setLoading(false)
     dismissModal()
 
-    navigate('Onboarding', undefined)
+    navigation.navigate('Onboarding', undefined)
   }
 
   const onFurtherInfoPress = () => {

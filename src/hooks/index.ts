@@ -1,3 +1,4 @@
+export * from './useAppInit'
 export * from './useEmitter'
 export * from './useEventHandlers'
 export * from './useModal'

@@ -61,25 +61,6 @@ import { TransactionFailureScreenProps } from 'pages/Tokens/TransactionFailure'
 import { TransactionSuccessScreenProps } from 'pages/Tokens/TransactionSuccess'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
-export type RootStackParams = {
-  Auth: undefined
-  Main: undefined
-}
-
-export type AuthStackParams = {
-  Onboarding: OnboardingScreenParams
-  AddIdentity: AddIdentityScreenParams
-  CreateIdentity: CreateIdentityScreenParams
-  ImportIdentity: ImportIdentityScreenParams
-  SeedPhrase: undefined
-  SeedPhraseGenerated: undefined
-  VerifyPhrase: { shuffled: string[] }
-  CreatePin: undefined
-}
-
-export type AuthStackScreenProps<S extends keyof AuthStackParams> =
-  NativeStackScreenProps<AuthStackParams, S>
-
 export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
@@ -96,6 +77,9 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
 
 export type MainStackParams = {
   Tabs: NavigatorScreenParams<TabsScreenParams>
+  Onboarding: OnboardingScreenParams
+  CreatePin: undefined
+
   Inbox: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
@@ -140,7 +124,7 @@ export type MainStackParams = {
 
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
-  VerifyPhrase: undefined
+  VerifyPhrase: { shuffled: string[] }
   ShareableData: {
     schemaUrl: string
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
