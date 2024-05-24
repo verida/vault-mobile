@@ -8,6 +8,9 @@ import {
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
+import { View } from 'react-native'
+
+import { Typography } from '~/components'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -49,7 +52,7 @@ const TransactionDetails = () => {
     aggregateWalletBannerBalance,
   })
 
-  const { data: transaction, isLoading } = useGetTransactionDetailsQuery({
+  const { data: transaction, isError } = useGetTransactionDetailsQuery({
     transactionId: id,
     userAddress: address || null,
     asset: maybeAsset || null,
@@ -64,13 +67,21 @@ const TransactionDetails = () => {
         }}
         title={'Transaction Details'}
       />
-      {isLoading || !transaction || !aggregateWalletBannerBalance ? (
-        <LoadingIndicator />
-      ) : (
+      {transaction && aggregateWalletBannerBalance ? (
         <TransactionInfo
           transaction={transaction}
           aggregateWalletBannerBalance={aggregateWalletBannerBalance}
         />
+      ) : isError ? (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant='bodySemiBold'>
+            {/* TODO: Improve the UX for errors here */}
+            {`An error occured while fetching the transaction details`}
+          </Typography>
+        </View>
+      ) : (
+        <LoadingIndicator />
       )}
     </Container>
   )
