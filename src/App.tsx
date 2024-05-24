@@ -5,7 +5,6 @@ import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { BlockchainProvider } from 'features/blockchain'
 import { ConfigProvider } from 'features/config'
 import {
   CryptoWalletBalanceProvider,
@@ -112,18 +111,16 @@ function App() {
                       <Authenticate>
                         <RootSiblingParent>
                           <ActionSheetProvider>
-                            <BlockchainProvider>
-                              <CryptoWalletBalanceProvider>
-                                <CryptoWalletProvider>
-                                  <WalletConnectProvider>
-                                    <GestureHandlerRootView style={styles.flex}>
-                                      <RootNavigator />
-                                    </GestureHandlerRootView>
-                                    <MetaServerChecks />
-                                  </WalletConnectProvider>
-                                </CryptoWalletProvider>
-                              </CryptoWalletBalanceProvider>
-                            </BlockchainProvider>
+                            <CryptoWalletBalanceProvider>
+                              <CryptoWalletProvider>
+                                <WalletConnectProvider>
+                                  <GestureHandlerRootView style={styles.flex}>
+                                    <RootNavigator />
+                                  </GestureHandlerRootView>
+                                  <MetaServerChecks />
+                                </WalletConnectProvider>
+                              </CryptoWalletProvider>
+                            </CryptoWalletBalanceProvider>
                           </ActionSheetProvider>
                         </RootSiblingParent>
                       </Authenticate>

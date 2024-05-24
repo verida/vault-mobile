@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { ChainId } from 'caip'
 
-import { ChainMetadatas } from '~/features/caip'
-
-import { SupportedBlockchainNamespace } from '../../types'
+import { Blockchain, SupportedBlockchainNamespace } from '../../types'
 import {
   AddEthereumChainRequestParam,
   AddEthereumChainRequestParamBlockExplorerUrls,
@@ -69,7 +67,7 @@ export const chainMetadatasToAddEthereumChainRequestParamsOrThrow = ({
   chainMetadatas,
   chainsList,
 }: {
-  readonly chainMetadatas: ChainMetadatas
+  readonly chainMetadatas: Blockchain[]
   readonly chainsList: ChainsList
 }): readonly AddEthereumChainRequestParam[] => {
   // Ensure all of the chainMetadatas are EVM-based. If not, this is a development

@@ -1,22 +1,23 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
-import {
-  ChainMetadata,
-  ChainMetadataSchema,
-  HACK__getFirstRpcUrl,
-  isSupportedCaipNamespace,
-} from 'features/caip'
 import * as React from 'react'
 import { ZodError } from 'zod-validation-error'
 
+import {
+  Blockchain,
+  HACK__getFirstRpcUrl,
+  isSupportedBlockchainNamespace,
+  LegacyBlockchainSchema,
+  SupportedBlockchainNamespace,
+} from '~/features/blockchain'
+
 type EvaluationResult = {
-  readonly data: ChainMetadata | null
+  readonly data: Blockchain | null
   readonly error?: ZodError
 }
 
 export function useCreateChainMetadataFormFields({
   initialValue,
 }: {
-  readonly initialValue: ChainMetadata | null | undefined
+  readonly initialValue: Blockchain | null | undefined
 }) {
   const [name, setName] = React.useState<string>(initialValue?.name || '')
 
@@ -31,7 +32,7 @@ export function useCreateChainMetadataFormFields({
 
   const [namespace, setNamespace] =
     React.useState<SupportedBlockchainNamespace>(
-      isSupportedCaipNamespace(maybeInitialNamespace)
+      isSupportedBlockchainNamespace(maybeInitialNamespace)
         ? maybeInitialNamespace
         : SupportedBlockchainNamespace.EIP_155
     )
@@ -85,9 +86,11 @@ export function useCreateChainMetadataFormFields({
         blockExplorers,
         isMainnet,
       }
-      const result = ChainMetadataSchema.safeParse(maybeChainMetadata)
+      const result = LegacyBlockchainSchema.safeParse(maybeChainMetadata)
 
-      if (!result.success) return { data: null, error: result.error }
+      if (!result.success) {
+        return { data: null, error: result.error }
+      }
 
       const { data } = result
 

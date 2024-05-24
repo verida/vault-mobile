@@ -1,14 +1,3 @@
-import { $enum } from 'ts-enum-util' // TODO: Uninstall when no longer needed
-
-import { SupportedBlockchainNamespace } from '~/features/blockchain/types'
-
-/**
- * @deprecated use `BLOCKCHAIN_NAMESPACES` instead
- */
-export const SUPPORTED_BLOCKCHAIN_NAMESPACES = [
-  ...$enum(SupportedBlockchainNamespace).values(),
-]
-
 // Keep BLOCKCHAIN_NAMESPACES and BLOCKCHAIN_NAMESPACE_DEFINITIONS in sync
 export const BLOCKCHAIN_NAMESPACES = ['eip155', 'near'] as const
 export const BLOCKCHAIN_NAMESPACE_DEFINITIONS = {

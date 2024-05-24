@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
 import { BottomActionBar, ScreenWrapper } from 'components'
 import {
+  Blockchain,
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
@@ -30,7 +30,7 @@ const logger = Logger.create('BlockchainNetworkEditorScreen')
 
 export type BlockchainNetworkEditorScreenParams = {
   readonly title: string
-  readonly initialValue: ChainMetadata | null
+  readonly initialValue: Blockchain | null
   readonly isEditable: boolean
 }
 
@@ -92,7 +92,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
     if (!shouldDelete) return
 
-    await removeCustomNetworks([maybeChainIdToDelete])
+    removeCustomNetworks([maybeChainIdToDelete])
 
     return navigation.goBack()
   }, [isEditable, maybeChainIdToDelete, removeCustomNetworks, navigation])
@@ -147,7 +147,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
       // HACK: Adding a custom network will implicitly overwrite
       //       duplicate fields.
-      await addCustomNetworks([data])
+      addCustomNetworks([data])
 
       return navigation.goBack()
     } catch (e) {

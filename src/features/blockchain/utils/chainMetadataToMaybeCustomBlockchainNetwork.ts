@@ -1,6 +1,5 @@
-import type { ChainMetadata } from 'features/caip'
-
-import { CustomBlockchainNetwork } from '../types'
+import { CustomBlockchainSchema } from '../schemas'
+import { Blockchain, CustomBlockchain } from '../types'
 
 export function chainMetadataToMaybeCustomBlockchainNetwork({
   chainMetadata: {
@@ -16,9 +15,9 @@ export function chainMetadataToMaybeCustomBlockchainNetwork({
     blockExplorers,
   },
 }: {
-  readonly chainMetadata: ChainMetadata
-}): CustomBlockchainNetwork | undefined {
-  const result = CustomBlockchainNetwork.safeParse({
+  readonly chainMetadata: Blockchain
+}): CustomBlockchain | undefined {
+  const result = CustomBlockchainSchema.safeParse({
     label,
     rpcUrls,
     chainId: { namespace, reference },

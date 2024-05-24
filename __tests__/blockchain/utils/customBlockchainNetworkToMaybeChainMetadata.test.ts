@@ -1,14 +1,12 @@
 import 'jest'
 
-import { CustomBlockchainNetwork } from '~/features/blockchain/types'
-import {
-  chainMetadataToMaybeCustomBlockchainNetwork,
-  customBlockchainNetworkToMaybeChainMetadata,
-} from '~/features/blockchain/utils'
+import { CustomBlockchain } from '~/features/blockchain/types/blockchain'
+import { chainMetadataToMaybeCustomBlockchainNetwork } from '~/features/blockchain/utils/chainMetadataToMaybeCustomBlockchainNetwork'
+import { customBlockchainNetworkToMaybeChainMetadata } from '~/features/blockchain/utils/customBlockchainNetworkToMaybeChainMetadata'
 
 describe('blockchain/utils/customBlockchainNetworkToMaybeChainMetadata', () => {
   it('customBlockchainNetworkToMaybeChainMetadata', () => {
-    const customBlockchainNetwork: CustomBlockchainNetwork = {
+    const customBlockchainNetwork: CustomBlockchain = {
       label: 'My custom blockchain network',
       rpcUrls: ['https://mycustomrpc.com/'],
       chainId: {

@@ -2,11 +2,11 @@ import { ChainId } from 'caip'
 import { ScreenWrapper, Typography } from 'components'
 import { config } from 'config'
 import {
+  Blockchain,
   getMaybeChainMetadatas,
   useChainMetadataDetails,
   useChainMetadatas,
 } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import {
@@ -43,7 +43,7 @@ const tabs: SegmentData[] = [
   },
 ]
 
-const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
+const keyExtractor = (e: Blockchain) => new ChainId(e).toString()
 
 export type BlockchainNetworksScreenParams = undefined
 
@@ -68,7 +68,7 @@ export const BlockchainNetworksScreen: React.FC<
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const renderItem: ListRenderItem<ChainMetadata> = React.useCallback(
+  const renderItem: ListRenderItem<Blockchain> = React.useCallback(
     ({ item: chainMetadata }) => {
       const { isCustom } = getChainMetadataDetails(chainMetadata)
       return (

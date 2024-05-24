@@ -1,14 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { IDatastore } from '@verida/types'
 
-import { BLOCKCHAIN_SLICE_NAME, CustomChains } from '../types'
-import { addCustomNetwork, removeCustomNetwork } from './actions'
+import AccountManager from '~/api/AccountManager'
+import { logout } from '~/features/auth'
+import { createAppAsyncThunk } from '~/reduxStore/types'
 
-export type BlockchainSliceState = {
-  customNetworks: CustomChains
+import { CUSTOM_BLOCKCHAIN_SCHEMA_URL } from '../constants'
+import {
+  AddCustomBlockchainsParams,
+  Blockchain,
+  RemoveCustomBlockchainsParams,
+} from '../types'
+import { batchModifyCustomNetworks } from '../utils'
+
+export const BLOCKCHAIN_SLICE_NAME = 'blockchains'
+
+// TODO: Move to types folder
+export type BlockchainsReduxState = {
+  customBlockchains: {
+    data: Blockchain[]
+    status: {
+      processing: boolean
+      error?: Error
+    }
+  }
 }
 
-const initialState: BlockchainSliceState = {
-  customNetworks: { loading: false, result: [] },
+const initialState: BlockchainsReduxState = {
+  customBlockchains: {
+    data: [],
+    status: {
+      processing: false,
+    },
+  },
 }
 
 export const blockchainSlice = createSlice({
@@ -16,56 +40,106 @@ export const blockchainSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    /* addCustomNetwork */
-    builder
-      .addCase(addCustomNetwork.pending, (state) => {
-        const {
-          customNetworks: { result },
-        } = state
+    // Log out
+    builder.addCase(logout, () => initialState)
 
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = { loading: true, result }
+    // Add custom blockchains
+    builder
+      .addCase(addCustomBlockchains.pending, (state) => {
+        state.customBlockchains.status = {
+          processing: true,
+          error: undefined,
+        }
       })
-      .addCase(addCustomNetwork.fulfilled, (state, { payload: result }) => {
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = { loading: false, result }
+      .addCase(addCustomBlockchains.fulfilled, (state, action) => {
+        state.customBlockchains = {
+          data: action.payload,
+          status: {
+            processing: false,
+            error: undefined,
+          },
+        }
       })
-      .addCase(addCustomNetwork.rejected, (state, action) => {
-        const {
-          customNetworks: { result },
-        } = state
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = {
-          result,
-          loading: false,
+      .addCase(addCustomBlockchains.rejected, (state, action) => {
+        state.customBlockchains.status = {
+          processing: false,
           error: new Error(action.payload),
         }
       })
 
-    /* removeCustomNetwork */
+    // Remove custom blockchains
     builder
-      .addCase(removeCustomNetwork.pending, (state) => {
-        const {
-          customNetworks: { result },
-        } = state
-
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = { loading: true, result }
+      .addCase(removeCustomBlockchains.pending, (state) => {
+        state.customBlockchains.status = {
+          processing: true,
+          error: undefined,
+        }
       })
-      .addCase(removeCustomNetwork.fulfilled, (state, { payload: result }) => {
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = { loading: false, result }
+      .addCase(removeCustomBlockchains.fulfilled, (state, action) => {
+        state.customBlockchains = {
+          data: action.payload,
+          status: {
+            processing: false,
+            error: undefined,
+          },
+        }
       })
-      .addCase(removeCustomNetwork.rejected, (state, action) => {
-        const {
-          customNetworks: { result },
-        } = state
-        // HACK: Keep the customNetworks in memory.
-        state.customNetworks = {
-          result,
-          loading: false,
+      .addCase(removeCustomBlockchains.rejected, (state, action) => {
+        state.customBlockchains.status = {
+          processing: false,
           error: new Error(action.payload),
         }
       })
   },
 })
+
+export const addCustomBlockchains = createAppAsyncThunk(
+  `${BLOCKCHAIN_SLICE_NAME}/addCustomBlockchains`,
+  async (params: AddCustomBlockchainsParams, { rejectWithValue }) => {
+    const { blockchains, reset = false } = params
+
+    try {
+      const datastore = await getCustomBlockchainsDatastore()
+
+      const result = await batchModifyCustomNetworks({
+        networksToAdd: blockchains,
+        chainIdsToRemove: [],
+        reset,
+        datastore,
+      })
+
+      return result
+    } catch (error) {
+      return rejectWithValue(`Failed to add custom blockchains`)
+    }
+  }
+)
+
+export const removeCustomBlockchains = createAppAsyncThunk(
+  `${BLOCKCHAIN_SLICE_NAME}/removeCustomBlockchains`,
+  async (params: RemoveCustomBlockchainsParams, { rejectWithValue }) => {
+    const { chainIds } = params
+
+    try {
+      const datastore = await getCustomBlockchainsDatastore()
+
+      return batchModifyCustomNetworks({
+        networksToAdd: [],
+        chainIdsToRemove: chainIds,
+        datastore,
+      })
+    } catch (error) {
+      return rejectWithValue(`Failed to remove custom blockchains`)
+    }
+  }
+)
+
+function getCustomBlockchainsDatastore(): Promise<IDatastore> {
+  const vault = AccountManager.getInstance().context
+
+  if (!vault) {
+    throw new Error('Unable to allocate vault for custom networks.')
+  }
+
+  return vault.openDatastore(CUSTOM_BLOCKCHAIN_SCHEMA_URL)
+}

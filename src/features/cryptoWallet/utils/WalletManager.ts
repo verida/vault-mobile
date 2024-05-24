@@ -3,14 +3,14 @@ import * as bip39 from 'bip39'
 
 import {
   BlockchainNamespace,
-  BlockchainNetwork,
   getBlockchainNetworks,
   IBlockchain,
+  isSupportedBlockchainNamespace,
+  LegacyBlockchain,
   WalletUtilsWallet,
 } from '~/features/blockchain'
 import { eip155Blockchain } from '~/features/blockchain/eip155'
 import { nearBlockchain } from '~/features/blockchain/near'
-import { isSupportedCaipNamespace } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 import { VeridaSaveRecordResult } from '~/features/verida'
 import * as SecureStore from '~/helpers/VeridaSecureStore'
@@ -289,14 +289,14 @@ export class WalletManager {
 
   private static generateAccountsForWallet(
     walletRecord: CryptoWalletRecord,
-    blockchainNetworks: BlockchainNetwork[] = []
+    blockchainNetworks: LegacyBlockchain[] = []
   ): LegacyCryptoWalletAccount[] {
     const accounts: LegacyCryptoWalletAccount[] = []
 
     // Not actually necessary because the walletRecord has been updated with the new walletType just before entering this function, but just in case and at least it gives the proper type to the variable
     const walletType = getWalletTypeFromLegacy(walletRecord.walletType)
 
-    if (walletType !== 'multi' && !isSupportedCaipNamespace(walletType)) {
+    if (walletType !== 'multi' && !isSupportedBlockchainNamespace(walletType)) {
       logger.warn(`Blockchain namespace not supported: "${walletType}"`)
       return accounts
     }

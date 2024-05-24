@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/caip'
-import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
+
+import { Blockchain } from '~/features/blockchain'
+import { fixedPointCryptoAsBigDecimal } from '~/features/cryptoWallet'
 
 import { AmountWithSymbol } from '../types'
 
@@ -9,7 +10,7 @@ export function convertPredictedTransactionFeeToString({
   predictedMaxTransactionFee,
 }: {
   readonly predictedMaxTransactionFee: BigNumber
-  readonly chainMetadata: ChainMetadata
+  readonly chainMetadata: Blockchain
 }): AmountWithSymbol | null {
   const feeIsUnknown = predictedMaxTransactionFee.lte(BigNumber.from('0'))
 

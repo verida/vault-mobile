@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import {
   getMaybeChainMetadatas,
+  getRpcUrlOrThrow,
   SupportedBlockchainNamespace,
   useChainMetadatas,
 } from '~/features/blockchain'
@@ -16,7 +17,6 @@ import {
   sendNativeCurrencyNear,
   useBlockchainRequestHandlersNear,
 } from '~/features/blockchain/near'
-import { getRpcUrlOrThrow } from '~/features/caip'
 import { Logger } from '~/features/telemetry'
 import { Stateful } from '~/types'
 

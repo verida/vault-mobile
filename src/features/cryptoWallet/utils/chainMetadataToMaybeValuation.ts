@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 
-import { ChainMetadata } from '~/features/caip'
+import { Blockchain } from '~/features/blockchain'
 
 import { BalanceByChainResult, DetailedValuation } from '../types'
 import { balanceByChainResultToValuation } from './balanceByChainResultToValuation'
@@ -13,7 +13,7 @@ export function chainMetadataToMaybeValuation({
 }: {
   readonly decimals: number
   readonly balance: `${number}`
-  readonly chainMetadata: ChainMetadata
+  readonly chainMetadata: Blockchain
   readonly balanceByChainResults: readonly BalanceByChainResult[]
 }): DetailedValuation | null {
   // Determine if we can find a matching BalanceByChainResult.

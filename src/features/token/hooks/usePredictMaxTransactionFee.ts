@@ -3,10 +3,11 @@ import { BigNumber, ethers } from 'ethers'
 import {
   calculateTransactionFeeEip155,
   getMaybeChainMetadatas,
+  getRpcUrlOrThrow,
+  isSupportedBlockchainNamespace,
   SupportedBlockchainNamespace,
   useChainMetadatas,
 } from 'features/blockchain'
-import { getRpcUrlOrThrow, isSupportedCaipNamespace } from 'features/caip'
 import * as React from 'react'
 
 import { GAS_TO_TRANSFER_NATIVE_CURRENCY } from '../constants'
@@ -44,17 +45,19 @@ export function usePredictMaxTransactionFee({
         try {
           setState(loadingState)
 
-          if (!maybeAmountOfGasConsumed)
+          if (!maybeAmountOfGasConsumed) {
             throw new Error('Unknown amount of gas consumed.')
+          }
 
           const { namespace } = chainId
 
-          if (!isSupportedCaipNamespace(namespace))
+          if (!isSupportedBlockchainNamespace(namespace)) {
             throw new Error(
               `Unable to predict transaction fee for "${namespace}".`
             )
+          }
 
-          const rpc = await getRpcUrlOrThrow({
+          const rpc = getRpcUrlOrThrow({
             chainId,
             chainMetadatas,
           })
@@ -64,10 +67,11 @@ export function usePredictMaxTransactionFee({
             const { maxFeePerGas } = await provider.getFeeData()
 
             // TODO: Here we could calculate non-EIP-155 prices.
-            if (!maxFeePerGas)
+            if (!maxFeePerGas) {
               throw new Error(
                 `Expected maxFeePerGas, encountered ${String(maxFeePerGas)}.`
               )
+            }
 
             // TODO: Note, this is an EIP-155 dependent calculation.
             const predictedMaxTransactionFee = calculateTransactionFeeEip155({
@@ -81,10 +85,11 @@ export function usePredictMaxTransactionFee({
             })
           }
 
-          if (namespace === SupportedBlockchainNamespace.NEAR)
+          if (namespace === SupportedBlockchainNamespace.NEAR) {
             throw new Error(
               'Transaction get estimate detection for NEAR is not yet supported.'
             )
+          }
 
           throw new Error(
             `Missing transaction fee estimates for "${namespace}".`

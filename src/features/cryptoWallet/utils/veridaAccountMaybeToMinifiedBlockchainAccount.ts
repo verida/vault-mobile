@@ -1,7 +1,9 @@
 import { ethers } from 'ethers'
 
-import { SupportedBlockchainNamespace } from '~/features/blockchain'
-import { isSupportedCaipNamespace } from '~/features/caip'
+import {
+  isSupportedBlockchainNamespace,
+  SupportedBlockchainNamespace,
+} from '~/features/blockchain'
 import { Logger } from '~/features/telemetry'
 
 import {
@@ -18,11 +20,14 @@ const transformLegacyWalletAccountToEip155CryptoWalletAccount = (
 ): CryptoWalletAccountEip155 | undefined => {
   const { address, privateKey } = legacyCryptoWalletAccount
 
-  if (typeof address !== 'string' || !ethers.utils.isAddress(address))
+  if (typeof address !== 'string' || !ethers.utils.isAddress(address)) {
     throw new Error(`Expected Ethereum address, encountered "${address}".`)
+  }
 
   // Ignore watched wallets.
-  if (typeof privateKey !== 'string' || !privateKey.length) return undefined
+  if (typeof privateKey !== 'string' || !privateKey.length) {
+    return undefined
+  }
 
   return {
     namespace: SupportedBlockchainNamespace.EIP_155,
@@ -37,13 +42,16 @@ const transformLegacyWalletAccountToNearCryptoWalletAccount = (
 ): CryptoWalletAccountNear | undefined => {
   const { address, privateKey } = legacyCryptoWalletAccount
 
-  if (typeof address !== 'string' || !address.length)
+  if (typeof address !== 'string' || !address.length) {
     throw new Error(
       `Expected non-empty string address, encountered "${String(address)}".`
     )
+  }
 
   // Ignore watched wallets.
-  if (typeof privateKey !== 'string' || !privateKey.length) return undefined
+  if (typeof privateKey !== 'string' || !privateKey.length) {
+    return undefined
+  }
 
   return {
     namespace: SupportedBlockchainNamespace.NEAR,
@@ -58,10 +66,11 @@ export function transformLegacyWalletAccountToCryptoWalletAccount(
 ): CryptoWalletAccount | undefined {
   const { namespace } = legacyCryptoWalletAccount
 
-  if (typeof namespace !== 'string' || !namespace)
+  if (typeof namespace !== 'string' || !namespace) {
     throw new Error(
       `Expected non-empty string namespace, encountered "${namespace}".`
     )
+  }
 
   if (namespace === SupportedBlockchainNamespace.EIP_155) {
     return transformLegacyWalletAccountToEip155CryptoWalletAccount(
@@ -74,7 +83,7 @@ export function transformLegacyWalletAccountToCryptoWalletAccount(
   }
 
   logger.warn(
-    `[veridaAccountMaybeToMinifiedVeridaAccount]: Encountered unimplemented namespace, "${namespace}". (Supported?: ${isSupportedCaipNamespace(
+    `[veridaAccountMaybeToMinifiedVeridaAccount]: Encountered unimplemented namespace, "${namespace}". (Supported?: ${isSupportedBlockchainNamespace(
       namespace
     )})`
   )

@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { isSupportedCaipNamespace } from '~/features/caip'
+import { isSupportedBlockchainNamespace } from '~/features/blockchain'
 
 import {
   CryptoWalletAccount,
@@ -28,7 +28,9 @@ export const minifiedBlockchainAccountsToDropdownOptions = ({
       // Just to be sure. Note it is possible that there are some legacy
       // unsupported private keys in local storage that we wouldn't want
       // to outright remove.
-      if (!isSupportedCaipNamespace(namespace)) return []
+      if (!isSupportedBlockchainNamespace(namespace)) {
+        return []
+      }
 
       const isMatchingNamespace = (onlyMatchingNamespaces || []).includes(
         namespace
@@ -36,8 +38,9 @@ export const minifiedBlockchainAccountsToDropdownOptions = ({
 
       // If an array of ParsedCaipTypes has been provided, we should filter out the
       // results to contain only caips that are supported.
-      if (Array.isArray(onlyMatchingNamespaces) && !isMatchingNamespace)
+      if (Array.isArray(onlyMatchingNamespaces) && !isMatchingNamespace) {
         return []
+      }
 
       const option: VeridaWalletAccountOption = {
         label: getCryptoWalletAccountAddress(minifiedBlockchainAccount),

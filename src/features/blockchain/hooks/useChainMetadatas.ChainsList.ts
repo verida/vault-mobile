@@ -2,27 +2,28 @@ import { ChainId } from 'caip'
 import { config } from 'config'
 import * as React from 'react'
 
-import {
-  ChainMetadata,
-  ChainMetadataBlockExplorers,
-  ChainMetadataBlockExplorerUrl,
-  ChainMetadatas,
-  isSupportedCaipNamespace,
-  UseChainMetadataState,
-} from '../../caip'
 import { useGetBlockchainNetworksQuery } from '../redux'
-import { BlockchainNetwork } from '../types'
+import { BlockchainExplorerUrlSchema } from '../schemas'
+import {
+  Blockchain,
+  BlockchainExplorer,
+  LegacyBlockchain,
+  UseChainMetadataState,
+} from '../types'
+import { isSupportedBlockchainNamespace } from '../utils'
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,
   caipChainId,
 }: {
-  readonly blockchainNetwork: BlockchainNetwork
+  readonly blockchainNetwork: LegacyBlockchain
   readonly caipChainId: ChainId
-}): ChainMetadata | undefined => {
+}): Blockchain | undefined => {
   const { namespace, reference } = caipChainId
 
-  if (!isSupportedCaipNamespace(namespace)) return undefined
+  if (!isSupportedBlockchainNamespace(namespace)) {
+    return undefined
+  }
 
   const {
     rpcUrl,
@@ -37,9 +38,9 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.blockchain.infuraApiKey)
 
   const explorerURLResult =
-    ChainMetadataBlockExplorerUrl.safeParse(maybeExplorerUrl)
+    BlockchainExplorerUrlSchema.safeParse(maybeExplorerUrl)
 
-  const blockExplorers: ChainMetadataBlockExplorers = explorerURLResult.success
+  const blockExplorers: BlockchainExplorer[] = explorerURLResult.success
     ? [{ url: explorerURLResult.data }]
     : []
 
@@ -57,14 +58,14 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   }
 }
 
-const DEFAULT_RESULT: ChainMetadatas = Object.freeze([])
-
 const DEFAULT_CHAIN_LIST_QUERY = Object.freeze({})
 
 export function getMaybeChainMetadatas(
   state: UseChainMetadataState
-): ChainMetadatas {
-  if (!('result' in state) || !state.result) return DEFAULT_RESULT
+): Blockchain[] {
+  if (!('result' in state) || !state.result) {
+    return []
+  }
 
   return state.result
 }
@@ -72,7 +73,9 @@ export function getMaybeChainMetadatas(
 export function getMaybeChainMetadatasError(
   state: UseChainMetadataState
 ): Error | undefined {
-  if (!('error' in state)) return undefined
+  if (!('error' in state)) {
+    return undefined
+  }
 
   return state.error
 }
@@ -86,32 +89,36 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
   } = useGetBlockchainNetworksQuery(DEFAULT_CHAIN_LIST_QUERY)
 
   return React.useMemo<UseChainMetadataState>(() => {
-    if (isLoadingChainsList) return { loading: true }
+    if (isLoadingChainsList) {
+      return { loading: true }
+    }
 
-    if (cause)
+    if (cause) {
       return {
         loading: false,
         error: new Error('Failed to fetch ChainsList.', { cause }),
       }
+    }
 
-    if (!data || !Object.keys(data).length)
+    if (!data || !Object.keys(data).length) {
       return {
         loading: false,
         error: new Error(
           `The walletsApi has not returned any BlockchainNetworks.`
         ),
       }
+    }
 
-    const result: ChainMetadatas = Object.entries(data)
+    const result: Blockchain[] = Object.entries(data)
       .map(
-        ([maybeSupportedCaip, blockchainNetwork]):
-          | ChainMetadata
-          | undefined => {
+        ([maybeSupportedCaip, blockchainNetwork]): Blockchain | undefined => {
           const caipChainId = new ChainId(maybeSupportedCaip)
 
           const { namespace } = caipChainId
 
-          if (!isSupportedCaipNamespace(namespace)) return undefined
+          if (!isSupportedBlockchainNamespace(namespace)) {
+            return undefined
+          }
 
           const maybeChainMetadata = maybeBlockchainNetworkEntryToChainMetadata(
             {
@@ -120,7 +127,9 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
             }
           )
 
-          if (!maybeChainMetadata) return undefined
+          if (!maybeChainMetadata) {
+            return undefined
+          }
 
           return maybeChainMetadata
         }

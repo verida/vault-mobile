@@ -1,13 +1,13 @@
 import { AccountId } from 'caip'
 
-import { BlockchainNetwork } from '~/features/blockchain'
+import { LegacyBlockchain } from '~/features/blockchain'
 
 import { WALLET_TYPE_DEFINITIONS } from '../constants'
 import { LegacyCryptoWallet, WalletType } from '../types'
 
 export function getCryptoWalletAccountIds(
   wallet: LegacyCryptoWallet,
-  blockchains: BlockchainNetwork[]
+  blockchains: LegacyBlockchain[]
 ): AccountId[] {
   const accountIds: AccountId[] = []
 

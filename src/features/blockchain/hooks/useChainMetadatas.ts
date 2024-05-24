@@ -1,6 +1,6 @@
-import { ChainMetadatas, UseChainMetadataState } from 'features/caip'
 import * as React from 'react'
 
+import { Blockchain, UseChainMetadataState } from '../types'
 import {
   getMaybeChainMetadatas,
   getMaybeChainMetadatasError,
@@ -36,7 +36,7 @@ export function useChainMetadatas(): UseChainMetadataState {
     const customResult = resultCustom || []
     const regionalResult = resultRegional || []
 
-    const result: ChainMetadatas = [
+    const result: Blockchain[] = [
       ...chainsResult,
       ...regionalResult,
       ...customResult,

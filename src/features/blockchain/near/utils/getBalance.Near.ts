@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/caip'
 import { keyStores } from 'near-api-js'
 
+import { Blockchain } from '../../types'
 import { nearCreateConnection } from './nearCreateConnection'
 
 export async function getBalanceNear({
@@ -11,7 +11,7 @@ export async function getBalanceNear({
 }: {
   readonly address: string
   readonly chainId: ChainId
-  readonly chainMetadatas: ChainMetadatas
+  readonly chainMetadatas: Blockchain[]
 }) {
   // TODO: Why do we need to pass a keystore?!
   const connection = await nearCreateConnection({

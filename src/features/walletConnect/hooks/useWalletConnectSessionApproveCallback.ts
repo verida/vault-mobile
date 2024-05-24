@@ -1,12 +1,12 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getChainMetadataByCaipTypeOrThrow,
-  isSupportedCaipNamespace,
-} from 'features/caip'
+  getMaybeChainMetadatas,
+  isSupportedBlockchainNamespace,
+  SupportedBlockchainNamespace,
+  useChainMetadatas,
+} from 'features/blockchain'
 import * as React from 'react'
-
-import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 import { SupportedCaipProtocolSessionHandlers } from '../types'
 import {
@@ -44,20 +44,23 @@ export function useWalletConnectSessionApproveCallback() {
         chainId
       )
 
-      if (!chainMetadata)
+      if (!chainMetadata) {
         throw new Error(
           `Unable to find ChainMetadata for "${chainId.toString()}".`
         )
+      }
 
       const { namespace } = chainMetadata
 
-      if (!isSupportedCaipNamespace(namespace))
+      if (!isSupportedBlockchainNamespace(namespace)) {
         throw new Error(`"${namespace}" is not a supported namespace.`)
+      }
 
       const { [namespace]: maybeStandardHandler } = supportedStandardHandlers
 
-      if (!maybeStandardHandler)
+      if (!maybeStandardHandler) {
         throw new Error(`Sorry, ${chainId.toString()} is not supported.`)
+      }
 
       return maybeStandardHandler({ web3wallet, request })
     },

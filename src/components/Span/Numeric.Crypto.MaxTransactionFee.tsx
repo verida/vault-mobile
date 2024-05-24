@@ -5,7 +5,7 @@ import { convertPredictedTransactionFeeToString } from 'features/token/utils/con
 import * as React from 'react'
 import { ActivityIndicator } from 'react-native'
 
-import { ChainMetadata } from '~/features/caip'
+import { Blockchain } from '~/features/blockchain'
 import { DetailedValuation } from '~/features/cryptoWallet'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
@@ -17,7 +17,7 @@ export const NumericCryptoMaxTransactionFee = React.memo(
     predictedMaxTransactionFee,
     detailedValuation /* when truthy, render in fiat */,
   }: {
-    readonly chainMetadata: ChainMetadata
+    readonly chainMetadata: Blockchain
     readonly predictedMaxTransactionFee: ethers.BigNumber
     readonly detailedValuation: DetailedValuation | null | undefined
   }): JSX.Element {

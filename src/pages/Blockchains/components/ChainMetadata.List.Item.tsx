@@ -1,7 +1,6 @@
 import { Logo } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
-import { useChainMetadataDetails } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
+import { Blockchain, useChainMetadataDetails } from 'features/blockchain'
 import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -13,7 +12,7 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { ChainMetadataListItemTag } from './ChainMetadata.List.Item.Tag'
 
 type ChainMetadataListItemProps = {
-  readonly chainMetadata: ChainMetadata
+  readonly chainMetadata: Blockchain
 }
 
 export const ChainMetadataListItem: React.FunctionComponent<
