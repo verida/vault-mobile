@@ -1,5 +1,3 @@
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { TabScreenHeader } from 'components'
 import {
   useCryptoWalletsStatus,
   useSelectedCryptoWallet,
@@ -80,14 +78,8 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore until the branch reworking the header is merged
-      header: (headerProps: BottomTabHeaderProps) => (
-        <TabScreenHeader hideSeparator {...headerProps} />
-      ),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore until the branch reworking the header is merged
-      headerTitle: walletSelect,
+      headerShadowVisible: false,
+      headerTitle: () => walletSelect,
     })
   }, [navigation, walletSelect])
 

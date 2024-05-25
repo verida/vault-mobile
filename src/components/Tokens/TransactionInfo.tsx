@@ -15,13 +15,13 @@ import Text from 'components/Text'
 import { DEFAULT_LOCALE } from 'constants/locale'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({
-  transaction,
-  aggregateWalletBannerBalance,
-}: {
+export type TransactionInfoProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly transaction: DetailedTransaction
-}) => {
+}
+
+export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
+  const { transaction, aggregateWalletBannerBalance } = props
   const { resource, decimals, symbol } = aggregateWalletBannerBalance
 
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
@@ -154,8 +154,6 @@ export default ({
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.1)',
     flex: 1,
   },
   content: {

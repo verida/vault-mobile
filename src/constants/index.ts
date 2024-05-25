@@ -1,4 +1,5 @@
 export * from './application'
+export * from './buttons'
 export * from './color'
 export * from './locale'
 export * from './profile'

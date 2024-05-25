@@ -24,7 +24,6 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Migrate Identity',
-      headerBackVisible: false, // TODO: Update when reworking headers
     })
   }, [navigation])
 
@@ -109,14 +108,14 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<
         actions={[
           {
             label: 'Cancel',
-            color: 'grey',
             onPress: handleCancel,
+            variant: 'secondary',
           },
           {
             label: 'Migrate',
             onPress: handleMigrate,
+            variant: 'danger',
             disabled: !canMigrate,
-            color: 'danger',
           },
         ]}
       />

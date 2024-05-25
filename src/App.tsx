@@ -1,7 +1,6 @@
 import 'react-native-url-polyfill/auto'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
@@ -11,7 +10,6 @@ import {
   CryptoWalletBalanceProvider,
   CryptoWalletProvider,
 } from 'features/cryptoWallet'
-import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { IdentityDrawerProvider } from 'features/identityDrawer'
 import { requestNotificationPermission } from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
@@ -34,7 +32,8 @@ import { initApplication } from 'utils'
 import { MetaServerChecks } from 'components/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
-import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
+import { NavigationProvider } from 'navigation/NavigationProvider'
+import { RootNavigator } from 'navigation/RootNavigator'
 import { Authenticate } from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
@@ -104,9 +103,7 @@ function App() {
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <ThemeProvider initial={defaultTheme}>
               <AuthProvider>
-                <NavigationContainer
-                  linking={navigationLinkingConfiguration}
-                  ref={navigationRef}>
+                <NavigationProvider>
                   <IdentityDrawerProvider>
                     <ModalProvider>
                       <Authenticate>
@@ -130,7 +127,7 @@ function App() {
                       <SwitchAccountToast />
                     </ModalProvider>
                   </IdentityDrawerProvider>
-                </NavigationContainer>
+                </NavigationProvider>
               </AuthProvider>
             </ThemeProvider>
           </SafeAreaProvider>

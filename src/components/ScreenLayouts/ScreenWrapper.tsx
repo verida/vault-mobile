@@ -1,4 +1,3 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import {
   KeyboardAvoidingView,
@@ -9,7 +8,9 @@ import {
 } from 'react-native'
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks'
+import { useNavigationHeaderHeight } from '~/navigation'
+import { Theme } from '~/styles/types'
 
 export type ScreenWrapperProps = {
   children: React.ReactNode
@@ -23,6 +24,8 @@ export type ScreenWrapperProps = {
   keyboardAvoiding?: boolean
   keyboardAvoidingBehavior?: KeyboardAvoidingViewProps['behavior']
   keyboardVerticalOffset?: KeyboardAvoidingViewProps['keyboardVerticalOffset']
+  /** Allow adjusting some specificities, particularly on iOS, such as the keyboard avoiding offset */
+  isModal?: boolean
 }
 
 /**
@@ -41,7 +44,15 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
     keyboardAvoiding = false,
     keyboardAvoidingBehavior,
     keyboardVerticalOffset,
+    isModal = false,
   } = props
+
+  // Get the total height of the header and status bar to use as a default forthe keyboard avoiding offset.
+  const { totalHeaderAndStatusBarHeight } = useNavigationHeaderHeight({
+    isModal,
+  })
+  const resolvedKeyboardVerticalOffset =
+    keyboardVerticalOffset || totalHeaderAndStatusBarHeight
 
   const insets = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
@@ -83,8 +94,8 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             ? 'padding'
             : 'height'
         }
-        keyboardVerticalOffset={keyboardVerticalOffset}
-        style={{ flex: 1 }}>
+        keyboardVerticalOffset={resolvedKeyboardVerticalOffset}
+        style={styles.keyboardAvoidingView}>
         {children}
       </KeyboardAvoidingView>
     </View>
@@ -96,5 +107,8 @@ const createStyles = (theme: Theme) =>
     wrapper: {
       flex: 1,
       backgroundColor: theme.color.background,
+    },
+    keyboardAvoidingView: {
+      flexGrow: 1,
     },
   })

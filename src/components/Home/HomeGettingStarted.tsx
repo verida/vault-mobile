@@ -30,6 +30,7 @@ export const HomeGettingStarted: React.FC<HomeGettingStartedProps> = (
     <View {...viewProps}>
       <Text style={styles.headerLlabel}>What you could do next</Text>
       <ScrollView
+        alwaysBounceVertical={false}
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContentContainer}>
         {homeGettingStartedItems.map((item, index) => (

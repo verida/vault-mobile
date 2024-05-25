@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from 'reduxStore/types'
 
 export interface SeedphrasesState {
-  template: string[]
+  template: number[]
 }
 
 const initialState: SeedphrasesState = {
@@ -15,12 +15,12 @@ export const seedphrasesSlice = createSlice({
   name: 'seedphrases',
   initialState,
   reducers: {
-    addWord: (state, action: PayloadAction<string>) => {
+    addWord: (state, action: PayloadAction<number>) => {
       if (!state.template.includes(action.payload)) {
         state.template = [...state.template, action.payload]
       }
     },
-    removeWord: (state, action: PayloadAction<string>) => {
+    removeWord: (state, action: PayloadAction<number>) => {
       state.template = state.template.filter((item) => item !== action.payload)
     },
     resetPhrase: (state) => {

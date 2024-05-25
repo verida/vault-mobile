@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  StatusBar,
   StyleSheet,
   View,
   ViewStyle,
@@ -34,6 +33,9 @@ interface ContainerProps {
   keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
+/**
+ * @deprecated use <ScreenWrapper> instead
+ */
 const Container = (props: ContainerProps) => {
   const {
     withSafeAreaView,
@@ -117,7 +119,6 @@ const Container = (props: ContainerProps) => {
               )}
             </>
           )}>
-          <StatusBar barStyle='dark-content' translucent />
           <View
             style={[
               styles.container,

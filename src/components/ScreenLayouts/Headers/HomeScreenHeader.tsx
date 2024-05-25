@@ -79,9 +79,9 @@ export const HomeScreenHeader: React.FunctionComponent<
   return (
     <>
       <StatusBar
-        barStyle='dark-content'
+        barStyle={theme.statusBar.defaultStyle}
+        backgroundColor='transparent'
         translucent
-        backgroundColor={theme.color.background}
       />
       <View
         style={[
