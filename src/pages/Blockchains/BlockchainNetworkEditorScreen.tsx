@@ -12,10 +12,9 @@ import { Alert, StyleSheet } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
-import {
+import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -59,9 +58,9 @@ export const BlockchainNetworkEditorScreen: React.FC<
     () =>
       maybeInitialNamespace && maybeInitialReference
         ? new ChainId({
-          reference: maybeInitialReference,
-          namespace: maybeInitialNamespace,
-        })
+            reference: maybeInitialReference,
+            namespace: maybeInitialNamespace,
+          })
         : null,
     [maybeInitialNamespace, maybeInitialReference]
   )
@@ -189,12 +188,12 @@ export const BlockchainNetworkEditorScreen: React.FC<
         actions={
           isEditable
             ? [
-              {
-                label: 'Save',
-                onPress: onPressSave,
-                disabled: hasErrors,
-              },
-            ]
+                {
+                  label: 'Save',
+                  onPress: onPressSave,
+                  disabled: hasErrors,
+                },
+              ]
             : []
         }
       />

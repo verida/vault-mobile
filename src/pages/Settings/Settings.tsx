@@ -3,12 +3,12 @@ import { useTheme } from 'contexts'
 import { useCurrentIdentity } from 'features/identities'
 import { canMigrateToMainnet } from 'features/identities/utils/migration'
 import { useThemeAwareStyle } from 'hooks'
-import { Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import LeftArrowIcon from 'assets/left_arrow_icon.svg'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import PropertyList from 'components/PropertyList'
 import Text from 'components/Text'
@@ -63,13 +63,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     : false
   const migrateIdentityItem: SettingsItem[] = displayMigrateToMainnet
     ? [
-      {
-        label: 'Migrate Identity to Mainnet',
-        action: 'arrow',
-        optional: true,
-        onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
-      },
-    ]
+        {
+          label: 'Migrate Identity to Mainnet',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
+        },
+      ]
     : []
 
   const settingsItems: SettingsCategory[] = [
@@ -165,7 +165,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       <NavigationHeader // TODO: Get rid of the following when properly handling a common header in the navigator
         title='Settings'
         left={{
-          icon: <IconNativeBase name='arrow-back' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => props.navigation.goBack(),
         }}
       />

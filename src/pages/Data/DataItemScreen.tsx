@@ -42,9 +42,9 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
         setLoading(true)
         const _data = isCredential
           ? await folder.getDetail(
-            item.credentialData.credentialSubject || item.credentialData,
-            item.credentialData.credentialSchema?.id || item.credentialSchema
-          )
+              item.credentialData.credentialSubject || item.credentialData,
+              item.credentialData.credentialSchema?.id || item.credentialSchema
+            )
           : await folder.getDetail(item)
         setData(_data)
       } catch (error) {

@@ -7,10 +7,9 @@ import { StyleSheet, View } from 'react-native'
 import { LayoutStyle, text } from 'styles'
 
 import Layout from 'components/Layouts/Layout'
-import {
+import NavigationHeader, {
   HeaderProps,
 } from 'components/Navigation/NavigationHeader'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
 import { MainStackScreenProps } from 'navigation/types'

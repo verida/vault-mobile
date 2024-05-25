@@ -22,10 +22,9 @@ import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import PlusIcon from 'assets/plus_icon.svg'
 import { Line } from 'components/Line'
-import {
+import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
 import { MainStackScreenProps } from 'navigation/types'
@@ -95,10 +94,10 @@ export const BlockchainNetworksScreen: React.FC<
       typeof searchText !== 'string' || !searchText.length
         ? chainMetadatas
         : chainMetadatas.filter((e) =>
-          `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
-            .toLocaleLowerCase()
-            .includes(searchText.toLocaleLowerCase())
-        )
+            `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
+              .toLocaleLowerCase()
+              .includes(searchText.toLocaleLowerCase())
+          )
     return {
       mainnets: filteredNetworks.filter((e) => e.isMainnet),
       testnets: filteredNetworks.filter((e) => !e.isMainnet),
@@ -118,9 +117,9 @@ export const BlockchainNetworksScreen: React.FC<
   const headerSideButton: HeaderSideButton | undefined = React.useMemo(() => {
     return config.features.blockchain.enableCustomNetwork
       ? {
-        icon: <PlusIcon />,
-        action: onPressAddNetwork,
-      }
+          icon: <PlusIcon />,
+          action: onPressAddNetwork,
+        }
       : undefined
   }, [onPressAddNetwork])
 
