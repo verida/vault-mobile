@@ -76,8 +76,8 @@ import {
   EditCryptoWalletScreen,
   ImportCryptoWalletScreen,
   ManageWalletsScreen,
-  SelectCryptoWalletScreen,
   SingleWalletScreen,
+  SwitchSelectedCryptoWalletScreen,
 } from '~/pages/Wallets'
 
 import { TabsNavigator } from './TabsNavigator'
@@ -216,8 +216,8 @@ export const MainNavigator: React.FC = () => {
               headerShadowVisible: true,
             }}>
             <Stack.Screen
-              name='SelectCryptoWallet'
-              component={SelectCryptoWalletScreen}
+              name='SwitchSelectedCryptoWallet'
+              component={SwitchSelectedCryptoWalletScreen}
             />
             <Stack.Screen
               name='CreateCryptoWallet'

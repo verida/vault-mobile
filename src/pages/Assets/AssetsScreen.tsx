@@ -56,7 +56,7 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const styles = useThemeAwareStyle(createStyles)
 
   const handleWalletHeaderPress = useCallback(() => {
-    navigation.navigate('SelectCryptoWallet')
+    navigation.navigate('SwitchSelectedCryptoWallet')
   }, [navigation])
 
   const walletSelect = useMemo(

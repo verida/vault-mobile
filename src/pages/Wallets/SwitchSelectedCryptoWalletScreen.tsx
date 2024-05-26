@@ -8,12 +8,13 @@ import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation'
 import { useAppDispatch } from '~/reduxStore/types'
 
-export type SelectCryptoWalletScreenParams = undefined
+export type SwitchSelectedCryptoWalletScreenParams = undefined
 
-type SelectCryptoWalletScreenProps = MainStackScreenProps<'SelectCryptoWallet'>
+type SwitchSelectedCryptoWalletScreenProps =
+  MainStackScreenProps<'SwitchSelectedCryptoWallet'>
 
-export const SelectCryptoWalletScreen: React.FC<
-  SelectCryptoWalletScreenProps
+export const SwitchSelectedCryptoWalletScreen: React.FC<
+  SwitchSelectedCryptoWalletScreenProps
 > = (props) => {
   const { navigation } = props
 
