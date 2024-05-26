@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import { ScreenWrapper } from '~/components'
+import { ScreenWrapper, Typography } from '~/components'
 import LoadingIndicator from '~/components/LoadingIndicator'
 import { TransactionInfo } from '~/components/Tokens'
 import {
@@ -11,6 +12,7 @@ import {
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useSelectedMinifiedBlockchainAccounts,
 } from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 
 export type TransactionDetailsScreenParams = {
@@ -47,22 +49,40 @@ export const TransactionDetailsScreen: React.FC<
     aggregateWalletBannerBalance,
   })
 
-  const { data: transaction, isLoading } = useGetTransactionDetailsQuery({
+  const { data: transaction, isError } = useGetTransactionDetailsQuery({
     transactionId: id,
     userAddress: address || null,
     asset: maybeAsset || null,
   })
 
+  const styles = useThemeAwareStyle(createStyles)
+
   return (
     <ScreenWrapper>
-      {isLoading || !transaction || !aggregateWalletBannerBalance ? (
-        <LoadingIndicator />
-      ) : (
+      {transaction && aggregateWalletBannerBalance ? (
         <TransactionInfo
           transaction={transaction}
           aggregateWalletBannerBalance={aggregateWalletBannerBalance}
         />
+      ) : isError ? (
+        <View style={styles.container}>
+          <Typography variant='bodySemiBold'>
+            {/* TODO: Improve the UX for errors here */}
+            {`An error occured while fetching the transaction details`}
+          </Typography>
+        </View>
+      ) : (
+        <LoadingIndicator />
       )}
     </ScreenWrapper>
   )
 }
+
+const createStyles = () =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  })

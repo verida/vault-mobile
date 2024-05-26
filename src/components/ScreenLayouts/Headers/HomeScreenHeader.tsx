@@ -58,7 +58,7 @@ export const HomeScreenHeader: React.FunctionComponent<
     : EnvironmentType.MAINNET
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
-  const { toggle: toggleDrawer } = useIdentityDrawer()
+  const { open: openIdentityDrawer } = useIdentityDrawer()
 
   const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   const displayedInboxCount =
@@ -93,7 +93,7 @@ export const HomeScreenHeader: React.FunctionComponent<
           },
         ]}>
         <TouchableOpacity
-          onPress={toggleDrawer}
+          onPress={openIdentityDrawer}
           activeOpacity={0.4}
           hitSlop={HIT_SLOP}
           style={styles.identityContainer}>
