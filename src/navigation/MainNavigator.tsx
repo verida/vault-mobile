@@ -44,9 +44,9 @@ import {
 } from '~/pages/Profiles'
 import { QrCodeScannerScreen } from '~/pages/QrCodeScanner'
 import {
+  DisplayPrivateInfoScreen,
   SeedPhraseGeneratedScreen,
   SeedPhraseScreen,
-  SeedPhraseViewScreen,
   VerifyPhraseScreen,
 } from '~/pages/RecoveryPhrase'
 import {
@@ -70,7 +70,15 @@ import {
   WalletConnectActiveSessionDetailsScreen,
   WalletConnectActiveSessionsScreen,
 } from '~/pages/WalletConnect'
-import { ManageWalletsScreen, SingleWalletScreen } from '~/pages/Wallets'
+import {
+  AddWatchedCryptoWalletScreen,
+  CreateCryptoWalletScreen,
+  EditCryptoWalletScreen,
+  ImportCryptoWalletScreen,
+  ManageWalletsScreen,
+  SingleWalletScreen,
+  SwitchSelectedCryptoWalletScreen,
+} from '~/pages/Wallets'
 
 import { TabsNavigator } from './TabsNavigator'
 import { MainStackParams } from './types'
@@ -125,8 +133,8 @@ export const MainNavigator: React.FC = () => {
             name='SingleConnection'
             component={SingleConnectionScreen}
           />
-          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
           <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
+          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}
@@ -159,10 +167,6 @@ export const MainNavigator: React.FC = () => {
           <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
           <Stack.Screen name='Settings' component={SettingsScreen} />
           <Stack.Screen name='ChangePin' component={ChangePinScreen} />
-          <Stack.Screen
-            name='SeedPhraseView'
-            component={SeedPhraseViewScreen}
-          />
           <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
           <Stack.Screen
             name='RemoveIdentity'
@@ -207,6 +211,30 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen
+              name='DisplayPrivateInfo'
+              component={DisplayPrivateInfoScreen}
+            />
+            <Stack.Screen
+              name='SwitchSelectedCryptoWallet'
+              component={SwitchSelectedCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='CreateCryptoWallet'
+              component={CreateCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='ImportCryptoWallet'
+              component={ImportCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='AddWatchedCryptoWallet'
+              component={AddWatchedCryptoWalletScreen}
+            />
+            <Stack.Screen
+              name='EditCryptoWallet'
+              component={EditCryptoWalletScreen}
+            />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
               name='UnlockVeridaOne'

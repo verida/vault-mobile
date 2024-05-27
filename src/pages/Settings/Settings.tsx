@@ -88,7 +88,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           label: 'Seed Phrase',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('SeedPhraseView'),
+          onPress: () =>
+            navigation.navigate('DisplayPrivateInfo', {
+              source: 'currentVeridaDid',
+              type: 'recoveryPhrase',
+            }),
         },
         {
           label: 'Login History',
@@ -121,6 +125,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           action: 'arrow',
           optional: true,
           onPress: () => navigation.navigate('BlockchainNetworks'),
+        },
+        {
+          label: 'Crypto Wallets',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('ManageWallets'),
         },
         {
           label: 'DApp Connections',

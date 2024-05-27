@@ -12,6 +12,7 @@ export type SeedPhraseScreenParams = undefined
 
 type SeedPhraseScreenProps = MainStackScreenProps<'SeedPhrase'>
 
+// TODO: To rework, take inspiration from DisplayPrivateInfoScreen
 export const SeedPhraseScreen: React.FC<SeedPhraseScreenProps> = (props) => {
   const { navigation } = props
 
