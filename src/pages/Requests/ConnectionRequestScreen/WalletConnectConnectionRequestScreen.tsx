@@ -80,7 +80,6 @@ enum PageType {
 export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
   ConnectionRequestScreenProps
 > = (props) => {
-  console.log('****', props)
   const { navigation, route } = props
   const { name, logo, details, data } = route.params
   const { proposal, web3wallet } = data as Web3WalletData
@@ -93,7 +92,9 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
   const [currentPage, setCurrentPage] = useState<PageType>(
     PageType.ConnectionRequest
   )
-  const [erroMessage] = useState<string | undefined>()
+
+  const [error, setError] = useState(false)
+  const [erroMessage, setErrorMessage] = useState<string | undefined>()
   const [success, setSuccess] = useState(false)
   const [previousWalletId, setPreviousWalletId] = useState<string | null>(
     selectedCryptoWalletId
@@ -224,6 +225,12 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
       // setActiveSessions(await web3wallet.getActiveSessions())
       // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
     } catch (error) {
+      setError(true)
+      setErrorMessage(
+        `Unable to connect${
+          error instanceof Error ? `: ${error.message}` : '.'
+        }`
+      )
       Alert.alert(
         'Error',
         `Unable to connect${
@@ -298,6 +305,12 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
       })
     }
   }, [navigation, handleRejectWalletSelect, handleClose, currentPage])
+
+  useEffect(() => {
+    if ((success || processing || error) && pagerRef.current) {
+      pagerRef.current.setPage(PageType.ConnectionRequestResult)
+    }
+  }, [success, processing, error, pagerRef])
 
   return (
     <>
