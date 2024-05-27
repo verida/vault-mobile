@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from '~/api/AccountManager'
+import PrivateKeyIllustration from '~/assets/private_key_illustration.svg'
 import SeedPhraseIllustration from '~/assets/seed_phrase_illustration.svg'
 import {
   Alert,
@@ -35,7 +36,7 @@ export type DisplayPrivateInfoScreenParams = {
   noAuthCheck?: boolean
 } & (
   | {
-      source: 'veridaDid'
+      source: 'currentVeridaDid'
       type: 'recoveryPhrase'
     }
   | {
@@ -90,7 +91,7 @@ export const DisplayPrivateInfoScreen: React.FC<
 
   useEffect(() => {
     async function getPrivateInfo() {
-      if (source === 'veridaDid') {
+      if (source === 'currentVeridaDid') {
         const account = AccountManager.getInstance().getSelectedAccount()
         setPrivateInfo(account?.mnemonic || '')
         return
@@ -124,6 +125,7 @@ export const DisplayPrivateInfoScreen: React.FC<
   }, [navigation])
 
   const handleGoToAuthCheck = useCallback(async () => {
+    // TODO: Handle biometric as well
     const isPinCodeSet = await hasUserSetPinCode()
     if (!isPinCodeSet || noAuthCheck) {
       setCurrentPage(PageType.PrivateInfoDisplay)
@@ -149,7 +151,11 @@ export const DisplayPrivateInfoScreen: React.FC<
         <View key='Warning' style={styles.container}>
           <View style={styles.warningPageContainer}>
             <View style={styles.warningContent}>
-              <SeedPhraseIllustration style={styles.warningIllustration} />
+              {type === 'recoveryPhrase' ? (
+                <SeedPhraseIllustration style={styles.warningIllustration} />
+              ) : (
+                <PrivateKeyIllustration style={styles.warningIllustration} />
+              )}
               {type === 'recoveryPhrase' ? (
                 <>
                   <Typography>
@@ -206,6 +212,13 @@ export const DisplayPrivateInfoScreen: React.FC<
         </View>
         <View key='PrivateInfoDisplay' style={styles.container}>
           <View style={styles.displayPageContainer}>
+            <Typography variant='h5SemiBold'>
+              {source === 'currentVeridaDid'
+                ? 'The seed phrase for your Verida Identity is:'
+                : source === 'cryptoWallet' && type === 'recoveryPhrase'
+                  ? 'The seed phrase for your crypto wallet is:'
+                  : 'The private key for your crypto wallet is:'}
+            </Typography>
             <View style={styles.privateInfoContainer}>
               <View style={styles.privateInfoWrapper}>
                 <Typography variant='h4' style={styles.privateInfoText}>

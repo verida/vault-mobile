@@ -90,7 +90,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           optional: true,
           onPress: () =>
             navigation.navigate('DisplayPrivateInfo', {
-              source: 'veridaDid',
+              source: 'currentVeridaDid',
               type: 'recoveryPhrase',
             }),
         },
