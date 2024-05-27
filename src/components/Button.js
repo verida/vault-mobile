@@ -67,8 +67,8 @@ export default function Button(props) {
         type,
         style,
         props.disabled &&
-        !props.color?.includes('transparent') &&
-        ButtonStyles.disabled,
+          !props.color?.includes('transparent') &&
+          ButtonStyles.disabled,
       ]}
       hitSlop={
         hasButtonBackground && !props.color?.includes('transparent')
