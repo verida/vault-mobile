@@ -51,6 +51,8 @@ const acaciaTestnetInfo = {
     'The Acacia Testnet has been shutdown, This identity is no longer operational. You can remove it from your wallet.\n\n',
 }
 
+// TODO: Transform this component as a screen defined in the navigator, then handle how it's triggered inside the navigator.
+// Will be easier when only one navigator will be used.
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
   const styles = useThemeAwareStyle(createStyles)
@@ -211,6 +213,7 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
         </View>
 
         <CopySeedPhraseModal
+          // TODO: Remove this modal and navigate to DisplayPrivateInfo when this component is integrated into the navigator
           visible={showSeedPhraseModal}
           phrase={seedPhraseData}
           toggleConfirmModal={() => setShowSeedPhraseModal(false)}
