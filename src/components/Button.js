@@ -2,8 +2,9 @@ import LottieView from 'lottie-react-native'
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native'
 
-import ButtonStyles from '../styles/button'
-import TextStyles from '../styles/text'
+import ButtonStyles from '~/styles/button'
+import TextStyles from '~/styles/text'
+
 import Text from './Text'
 
 /**
@@ -66,8 +67,8 @@ export default function Button(props) {
         type,
         style,
         props.disabled &&
-          !props.color?.includes('transparent') &&
-          ButtonStyles.disabled,
+        !props.color?.includes('transparent') &&
+        ButtonStyles.disabled,
       ]}
       hitSlop={
         hasButtonBackground && !props.color?.includes('transparent')

@@ -1,19 +1,19 @@
-import {
-  useCryptoWalletsStatus,
-  useSelectedCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
-import { SegmentData, SegmentsControl } from 'components/SegmentControl'
-import { WalletNavigationHeader } from 'components/WalletSelectorNavigation/WalletNavigationHeader'
-import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
-import { TabsScreenProps } from 'navigation/types'
-import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
-import { Theme } from 'styles/types'
+import { SegmentData, SegmentsControl } from '~/components/SegmentControl'
+import { WalletNavigationHeader } from '~/components/WalletSelectorNavigation/WalletNavigationHeader'
+import WalletSelectorModal from '~/components/WalletSelectorNavigation/WalletSelectorModal'
+import {
+  useCryptoWalletsStatus,
+  useSelectedCryptoWallet,
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { TabsScreenProps } from '~/navigation/types'
+import { TokenDashboard } from '~/pages/Tokens/TokenDashboard'
+import { Theme } from '~/styles/types'
 
 import Collectibles from './Collectibles'
 

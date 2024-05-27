@@ -1,4 +1,4 @@
-import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from '~/features/cryptoWallet'
 
 import { AmountWithMaybeCurrency } from '../types'
 import { convertFromCryptoIntegerToDecimal } from './convertFromCryptoIntegerToDecimal'

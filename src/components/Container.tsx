@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   Animated,
@@ -12,8 +11,9 @@ import {
 } from 'react-native'
 import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 import { ConditionalWrap } from './ConditionalWrap'
 import LoadingIndicator from './LoadingIndicator'

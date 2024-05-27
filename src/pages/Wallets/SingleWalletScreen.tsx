@@ -1,26 +1,25 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+import React, { useCallback, useEffect, useState } from 'react'
+import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
+
+import ExportSeedphraseSvg from '~/assets/export_seedphrase.svg'
+import { Icon } from '~/components'
+import { ChainAddressesList } from '~/components/ChainsAddressesList'
+import Container from '~/components/Container'
+import CopySeedPhraseModal from '~/components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from '~/components/SeedPhraseModal/SeedPhraseWarningModal'
+import Text from '~/components/Text'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { useTheme } from '~/contexts'
 import {
   updateCryptoWallet,
   UpdateCryptoWalletData,
   useCryptoWallets,
-} from 'features/cryptoWallet'
-import React, { useCallback, useEffect, useState } from 'react'
-import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
-
-import { Icon } from '~/components'
-import { useTheme } from '~/contexts'
+} from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppDispatch } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
-
-import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import { ChainAddressesList } from 'components/ChainsAddressesList'
-import Container from 'components/Container'
-import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
-import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
-import Text from 'components/Text'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'

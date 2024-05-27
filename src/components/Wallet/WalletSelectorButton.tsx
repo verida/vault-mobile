@@ -1,21 +1,21 @@
 import { ChainIdParams } from 'caip'
+import React from 'react'
+import { StyleSheet, View, ViewProps } from 'react-native'
+
+import { Alert, AlertType } from '~/components/Alert'
+import { Logo } from '~/components/Images'
+import { NumberCrypto } from '~/components/Numbers'
+import { Typography } from '~/components/Typography'
 import {
   AggregateWalletBannerBalance,
   fixedPointCryptoAsBigDecimal,
   useMaybeBlockchainAccountForResource,
   useMaybeChainMetadataForResource,
   useMaybeFromAddressForResource,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { StyleSheet, View, ViewProps } from 'react-native'
-import { getSignificantDecimalsFromPrice } from 'utils'
-
-import { Alert, AlertType } from 'components/Alert'
-import { Logo } from 'components/Images'
-import { NumberCrypto } from 'components/Numbers'
-import { Typography } from 'components/Typography'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
+import { getSignificantDecimalsFromPrice } from '~/utils'
 
 export type WalletSelectorButtonProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance | null

@@ -6,7 +6,7 @@ import {
   BLACK_COLOR_OPACITY,
   PRIMARY_COLOR,
   WHITE_COLOR,
-} from '../constants/color'
+} from '~/constants/color'
 
 export default ({ selected }) => {
   const [value, setValue] = useState(selected)

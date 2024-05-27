@@ -1,4 +1,3 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import {
   StyleSheet,
@@ -9,7 +8,8 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type RadioButtonProps = {
   checked?: boolean

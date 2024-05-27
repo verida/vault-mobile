@@ -1,14 +1,13 @@
-import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 
+import AccountManager from '~/api/AccountManager'
+import Folder from '~/api/VaultCommon/managers/data/folder'
 import { ScreenWrapper } from '~/components'
-
-import AccountManager from 'api/AccountManager'
-import Folder from 'api/VaultCommon/managers/data/folder'
-import { DataCardView, DataListView } from 'components/Data'
-import LoadingView from 'components/LoadingView'
-import { MainStackScreenProps } from 'navigation/types'
+import { DataCardView, DataListView } from '~/components/Data'
+import LoadingView from '~/components/LoadingView'
+import { Logger } from '~/features/telemetry'
+import { MainStackScreenProps } from '~/navigation/types'
 
 const logger = Logger.create('Pages/Data/DataFolderScreen')
 

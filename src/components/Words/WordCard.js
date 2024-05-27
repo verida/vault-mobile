@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-import { LIGHTGREY_COLOR } from '../../constants/color'
-import Text from '../Text'
+import Text from '~/components/Text'
+import { LIGHTGREY_COLOR } from '~/constants/color'
 
 export default ({ words }) => (
   <Text style={style.words} selectable>

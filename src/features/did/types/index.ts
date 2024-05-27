@@ -1,8 +1,9 @@
+import { z } from 'zod'
+
 import {
   DidMetadataRecordSchema,
   DidMetadataSchema,
-} from 'features/did/schemas'
-import { z } from 'zod'
+} from '~/features/did/schemas'
 
 export type DidMetadata = z.infer<typeof DidMetadataSchema>
 

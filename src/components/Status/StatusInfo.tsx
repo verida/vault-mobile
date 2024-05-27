@@ -1,13 +1,13 @@
-import { useThemeAwareStyle } from 'hooks'
 import LottieView from 'lottie-react-native'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import BlurCircle from 'assets/blur_circle.svg'
-import FailureCross from 'assets/failure_cross.svg'
-import SuccessTick from 'assets/success_tick.svg'
-import { Typography } from 'components/Typography'
-import { Theme } from 'styles/types'
+import BlurCircle from '~/assets/blur_circle.svg'
+import FailureCross from '~/assets/failure_cross.svg'
+import SuccessTick from '~/assets/success_tick.svg'
+import { Typography } from '~/components/Typography'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 type StatusInfoProps = {
   statusType: 'processsing' | 'error' | 'success'

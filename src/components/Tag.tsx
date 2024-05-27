@@ -2,9 +2,9 @@ import { BlurView, BlurViewProps } from '@react-native-community/blur'
 import React from 'react'
 import { Platform, StyleSheet, TextProps, View, ViewProps } from 'react-native'
 
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 import { Label } from './Typography/Label'
 

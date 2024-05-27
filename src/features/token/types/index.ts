@@ -1,4 +1,4 @@
-import { Currency } from 'features/cryptoWallet'
+import { Currency } from '~/features/cryptoWallet'
 
 export enum CurrencyFormat {
   CRYPTO = 'crypto',

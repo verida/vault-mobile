@@ -1,16 +1,20 @@
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import {
-  NearRpcMethod,
-  useBlockchainRequestHandlersNear,
-} from 'features/blockchain/near'
-import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
-import {
-  extractWalletConnectRpcOrThrow,
-  getNearAccountForWalletConnectRequestOrThrow,
-} from 'features/walletConnect'
 import { providers } from 'near-api-js'
 import * as React from 'react'
 import { $enum } from 'ts-enum-util'
+
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import {
+  NearRpcMethod,
+  useBlockchainRequestHandlersNear,
+} from '~/features/blockchain/near'
+import { useSelectedMinifiedBlockchainAccounts } from '~/features/cryptoWallet'
+import {
+  extractWalletConnectRpcOrThrow,
+  getNearAccountForWalletConnectRequestOrThrow,
+} from '~/features/walletConnect'
 
 import {
   NearSessionRequestHandlers,

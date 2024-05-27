@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 
-import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
-import Text from '../Text'
+import Text from '~/components/Text'
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '~/constants/color'
 
 export default ({ words, template, onSelect, id, containerStyle }) => {
   let displayWords = []

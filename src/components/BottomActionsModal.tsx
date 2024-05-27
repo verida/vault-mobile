@@ -15,8 +15,8 @@ import {
   LIGHTGREY_COLOR,
   SEPARATOR,
   WHITE_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 import Text from './Text'
 

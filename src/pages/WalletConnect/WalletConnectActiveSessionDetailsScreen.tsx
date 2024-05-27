@@ -1,10 +1,10 @@
-import { Spacer } from 'components'
-import { WalletConnectActiveSession } from 'features/walletConnect'
 import * as React from 'react'
 import { ScrollView, View } from 'react-native'
-import { LAYOUT_BASE } from 'styles'
 
-import { MainStackScreenProps } from 'navigation/types'
+import { Spacer } from '~/components'
+import { WalletConnectActiveSession } from '~/features/walletConnect'
+import { MainStackScreenProps } from '~/navigation/types'
+import { LAYOUT_BASE } from '~/styles'
 
 export type WalletConnectActiveSessionDetailsScreenParams = {
   walletConnectSessionKey: string

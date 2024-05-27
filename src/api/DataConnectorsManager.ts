@@ -1,11 +1,12 @@
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
-import { config } from 'config'
 import EventEmitter from 'events'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
 import moment from 'moment'
 import { Linking } from 'react-native'
+
+import { config } from '~/config'
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
 
 import AccountManager from './AccountManager'
 

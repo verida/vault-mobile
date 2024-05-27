@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import BottomActionsModal from 'components/BottomActionsModal'
-import Button from 'components/Button'
+import BottomActionsModal from '~/components/BottomActionsModal'
+import Button from '~/components/Button'
 
 type Props = {
   visible: boolean

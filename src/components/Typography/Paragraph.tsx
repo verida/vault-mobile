@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, TextProps } from 'react-native'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 import { Text } from './Text'
 

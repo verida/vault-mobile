@@ -1,8 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import Color from 'color'
-import { useTheme } from 'contexts/ThemeContext'
-import { getVeridaOneProfileUrl } from 'features/veridaOne'
 import React from 'react'
 import {
   Image,
@@ -17,12 +15,14 @@ import {
 } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 
-import Button from 'components/Button'
-import { Icon } from 'components/Icon'
-import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
-import { SubHeadline } from 'components/Typography/SubHeadline'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import Button from '~/components/Button'
+import { Icon } from '~/components/Icon'
+import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
+import { SubHeadline } from '~/components/Typography/SubHeadline'
+import { useTheme } from '~/contexts/ThemeContext'
+import { getVeridaOneProfileUrl } from '~/features/veridaOne'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 type Props = {
   did: string

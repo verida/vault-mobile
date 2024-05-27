@@ -2,14 +2,14 @@ import Moment from 'moment'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import VeridaLogo from '../../assets/icons/verida.svg'
-import Text from '../../components/Text'
+import VeridaLogo from '~/assets/icons/verida.svg'
+import Text from '~/components/Text'
 import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   WHITE_COLOR,
-} from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 // On press disabled for now
 //const onPress = (props) => Actions[LOGIN_REQUEST](props);

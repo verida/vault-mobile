@@ -1,6 +1,6 @@
-import { assetsApi } from 'features/assets'
-import { blockchainApi } from 'features/blockchain'
-import { cryptoWalletApi } from 'features/cryptoWallet'
+import { assetsApi } from '~/features/assets'
+import { blockchainApi } from '~/features/blockchain'
+import { cryptoWalletApi } from '~/features/cryptoWallet'
 
 import { RootState } from './types'
 

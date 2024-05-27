@@ -1,17 +1,17 @@
-import { useTheme } from 'contexts/ThemeContext'
-import { VeridaOneWalletAddress } from 'features/veridaOne'
 import React from 'react'
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import DragIcon from 'assets/drag_icon.svg'
-import EditIcon from 'assets/edit_icon.svg'
-import Button from 'components/Button'
-import Text from 'components/Text'
-import { SubHeadline } from 'components/Typography/SubHeadline'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { smallButtonHitSlop } from 'styles/button'
-import { Theme } from 'styles/types'
+import DragIcon from '~/assets/drag_icon.svg'
+import EditIcon from '~/assets/edit_icon.svg'
+import Button from '~/components/Button'
+import Text from '~/components/Text'
+import { SubHeadline } from '~/components/Typography/SubHeadline'
+import { useTheme } from '~/contexts/ThemeContext'
+import { VeridaOneWalletAddress } from '~/features/veridaOne'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { smallButtonHitSlop } from '~/styles/button'
+import { Theme } from '~/styles/types'
 
 type Props = {
   walletAddress: VeridaOneWalletAddress

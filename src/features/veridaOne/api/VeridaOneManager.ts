@@ -1,8 +1,8 @@
 import { Context } from '@verida/client-rn'
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
-import { Logger } from 'features/telemetry'
 
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
+import { Logger } from '~/features/telemetry'
 
 import {
   VERIDA_ONE_CONTEXT_NAME,

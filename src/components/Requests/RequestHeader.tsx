@@ -1,9 +1,9 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 
 import { Avatar, Icon, Typography } from '~/components'
 import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
 const SENDER_NAME_FALLBACK = 'Unknown'

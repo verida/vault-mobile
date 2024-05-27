@@ -2,13 +2,12 @@ import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
+import Button from '~/components/Button'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { UpdateCryptoWalletData } from '~/features/cryptoWallet'
-
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import InputStyles from 'styles/inputs'
+import InputStyles from '~/styles/inputs'
 
 type Props = {
   visible: boolean

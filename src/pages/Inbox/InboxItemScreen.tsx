@@ -1,18 +1,17 @@
 import { Logger } from 'ethers/lib/utils'
-import { buildItem, findTypeById } from 'helpers/inbox'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
+import AccountManager from '~/api/AccountManager'
 import { ScreenWrapper } from '~/components'
-
-import AccountManager from 'api/AccountManager'
-import TypeDatabaseSync from 'components/Inbox/types/DatabaseSync'
-import TypeDataRequest from 'components/Inbox/types/DataRequest'
-import TypeDataSend from 'components/Inbox/types/DataSend'
-import TypeDatastoreSync from 'components/Inbox/types/DatastoreSync'
-import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
-import LoadingView from 'components/LoadingView'
-import { MainStackScreenProps } from 'navigation/types'
+import TypeDatabaseSync from '~/components/Inbox/types/DatabaseSync'
+import TypeDataRequest from '~/components/Inbox/types/DataRequest'
+import TypeDataSend from '~/components/Inbox/types/DataSend'
+import TypeDatastoreSync from '~/components/Inbox/types/DatastoreSync'
+import TypeGenericMessage from '~/components/Inbox/types/GenericMessage'
+import LoadingView from '~/components/LoadingView'
+import { buildItem, findTypeById } from '~/helpers/inbox'
+import { MainStackScreenProps } from '~/navigation/types'
 
 const inboxItemComponents = {
   'inbox/type/dataSend': TypeDataSend,

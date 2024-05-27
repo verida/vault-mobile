@@ -2,19 +2,19 @@ import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
 import { EnvironmentType, IContext } from '@verida/types'
-import { config } from 'config'
-import {
-  fetchAllPublicProfilesData,
-  useCurrentProfile,
-} from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { getDidClientConfigForNetwork } from 'features/verida'
-import { getCountryCode } from 'helpers'
 import { merge } from 'lodash'
 import { useCallback } from 'react'
 
-import AccountManager from 'api/AccountManager'
-import { useAppDispatch } from 'reduxStore/types'
+import AccountManager from '~/api/AccountManager'
+import { config } from '~/config'
+import {
+  fetchAllPublicProfilesData,
+  useCurrentProfile,
+} from '~/features/profiles'
+import { Logger } from '~/features/telemetry'
+import { getDidClientConfigForNetwork } from '~/features/verida'
+import { getCountryCode } from '~/helpers'
+import { useAppDispatch } from '~/reduxStore/types'
 
 import {
   IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES,

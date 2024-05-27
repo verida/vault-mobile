@@ -1,15 +1,15 @@
-import { NFT, NFTMetadata } from 'features/assets'
-import { getNFTImageUri } from 'helpers/nft'
 import React from 'react'
 import { ImageStyle, Platform, StyleSheet, View, ViewStyle } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { SvgCss, SvgCssUri } from 'react-native-svg'
 
-import { ErrorBoundary } from 'components/ErrorBoundary'
-import { Tag } from 'components/Tag'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { IMAGE_WIDTH } from 'pages/Assets/constants'
-import { Theme } from 'styles/types'
+import { ErrorBoundary } from '~/components/ErrorBoundary'
+import { Tag } from '~/components/Tag'
+import { NFT, NFTMetadata } from '~/features/assets'
+import { getNFTImageUri } from '~/helpers/nft'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { IMAGE_WIDTH } from '~/pages/Assets/constants'
+import { Theme } from '~/styles/types'
 
 type Props = {
   nft: NFT

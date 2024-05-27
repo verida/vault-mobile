@@ -1,20 +1,20 @@
-import { AlertType, BottomActionBar, RequestHeaderProps } from 'components'
+import * as React from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+
+import { AlertType, BottomActionBar, RequestHeaderProps } from '~/components'
 import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
   useChainIdForResourceParams,
   useLazyConfirmTransaction,
-} from 'features/cryptoWallet'
+} from '~/features/cryptoWallet'
 import {
   convertFromCryptoIntegerToDecimal,
   usePredictMaxTransactionFeeOrZero,
   useTokenCalculator,
-} from 'features/token'
-import { useThemeAwareStyle } from 'hooks'
-import * as React from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
-
-import { Theme } from 'styles/types'
+} from '~/features/token'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import type { PaymentRequestScreenParams } from '.'
 import { PaymentRequestScreenContent } from './PaymentRequestScreen.Content'

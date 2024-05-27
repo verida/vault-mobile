@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 import {
   VERIDA_ONE_INVITE_CODE,

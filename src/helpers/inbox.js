@@ -2,9 +2,9 @@ import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import { DefaultAvatar, getPublicProfile } from '../api/utils'
-import DataSnapshot from '../assets/inbox/snapshot.svg'
-import DataSynchronization from '../assets/inbox/synchronization.svg'
+import { DefaultAvatar, getPublicProfile } from '~/api/utils'
+import DataSnapshot from '~/assets/inbox/snapshot.svg'
+import DataSynchronization from '~/assets/inbox/synchronization.svg'
 
 export const TYPES = [
   {

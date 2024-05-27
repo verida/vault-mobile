@@ -1,7 +1,7 @@
 import React from 'react'
-import { formatNumber } from 'utils'
 
-import { Typography, TypographyProps } from 'components/Typography'
+import { Typography, TypographyProps } from '~/components/Typography'
+import { formatNumber } from '~/utils'
 
 export type NumberProps = {
   isLoading?: boolean

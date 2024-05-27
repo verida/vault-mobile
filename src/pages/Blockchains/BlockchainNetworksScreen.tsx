@@ -1,12 +1,4 @@
 import { ChainId } from 'caip'
-import { Icon, ScreenWrapper, Typography } from 'components'
-import {
-  getMaybeChainMetadatas,
-  useChainMetadataDetails,
-  useChainMetadatas,
-} from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ListRenderItem,
@@ -19,15 +11,22 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { TabView } from 'react-native-tab-view'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
+import { Icon, ScreenWrapper, Typography } from '~/components'
+import { Line } from '~/components/Line'
+import { SearchBar } from '~/components/SearchBar/SearchBar'
+import { SegmentData, SegmentsControl } from '~/components/SegmentControl'
 import { config } from '~/config'
 import { HIT_SLOP_10_10 } from '~/constants'
 import { useTheme } from '~/contexts'
-
-import { Line } from 'components/Line'
-import { SearchBar } from 'components/SearchBar/SearchBar'
-import { SegmentData, SegmentsControl } from 'components/SegmentControl'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadataDetails,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { ChainMetadata } from '~/features/caip'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 import { ChainMetadataListItem } from './components'
 

@@ -12,13 +12,13 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-import Text from 'components/Text'
+import Text from '~/components/Text'
 import {
   BLACK_COLOR_OPACITY,
   GREY_COLOR,
   LIGHTGREY_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 

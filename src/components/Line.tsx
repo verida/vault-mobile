@@ -1,6 +1,7 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { View, ViewProps } from 'react-native'
+
+import { useTheme } from '~/contexts/ThemeContext'
 
 interface LineProps extends ViewProps {
   vertical?: boolean

@@ -1,17 +1,17 @@
 import { useNavigation } from '@react-navigation/native'
-import {
-  AggregateWalletBannerBalance,
-  Transaction,
-  TransactionType,
-} from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import ReceivedIcon from 'assets/received_icon.svg'
-import SentIcon from 'assets/sent_icon.svg'
-import { NumericCryptoBalance } from 'components/Span'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import ReceivedIcon from '~/assets/received_icon.svg'
+import SentIcon from '~/assets/sent_icon.svg'
+import { NumericCryptoBalance } from '~/components/Span'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import {
+  AggregateWalletBannerBalance,
+  Transaction,
+  TransactionType,
+} from '~/features/cryptoWallet'
 
 const icons: { readonly [key in TransactionType]: JSX.Element } = {
   sent: <SentIcon />,

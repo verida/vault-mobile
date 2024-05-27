@@ -1,19 +1,19 @@
 import Clipboard from '@react-native-community/clipboard'
+import { Icon } from 'native-base'
+import React from 'react'
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+
+import CompleteSVG from '~/assets/complete.svg'
+import Text from '~/components/Text'
+import { DEFAULT_LOCALE } from '~/constants/locale'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import {
   AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import { Icon } from 'native-base'
-import React from 'react'
-import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-
-import CompleteSVG from 'assets/complete.svg'
-import Text from 'components/Text'
-import { DEFAULT_LOCALE } from 'constants/locale'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+} from '~/features/cryptoWallet'
 
 export type TransactionInfoProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance

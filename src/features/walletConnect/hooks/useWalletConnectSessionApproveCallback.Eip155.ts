@@ -1,6 +1,7 @@
-import { throwIfInvalidEip155RpcMethod } from 'features/blockchain/eip155'
-import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import * as React from 'react'
+
+import { throwIfInvalidEip155RpcMethod } from '~/features/blockchain/eip155'
+import { useSelectedMinifiedBlockchainAccounts } from '~/features/cryptoWallet'
 
 import { WalletConnectSessionRequestCallbackParams } from '../types'
 import { getMinifiedBlockchainAccountForWalletConnectRequestOrThrow } from '../utils'

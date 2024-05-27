@@ -2,8 +2,8 @@ import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-import AddressSvg from '../../assets/icons/address.svg'
-import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
+import AddressSvg from '~/assets/icons/address.svg'
+import RightArrowSvg from '~/assets/icons/data/right-arrow.svg'
 
 export default ({ item }) => {
   return (

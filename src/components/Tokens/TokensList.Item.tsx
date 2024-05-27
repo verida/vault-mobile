@@ -1,11 +1,4 @@
 import { ChainId } from 'caip'
-import { Logo, Typography } from 'components'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import {
-  AggregateWalletBannerBalance,
-  fixedPointCryptoAsBigDecimal,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import {
   GestureResponderEvent,
@@ -14,10 +7,20 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import { getSignificantDecimalsFromPrice } from 'utils'
 
-import { NumberCrypto } from 'components/Numbers'
-import { Theme } from 'styles/types'
+import { Logo, Typography } from '~/components'
+import { NumberCrypto } from '~/components/Numbers'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import {
+  AggregateWalletBannerBalance,
+  fixedPointCryptoAsBigDecimal,
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
+import { getSignificantDecimalsFromPrice } from '~/utils'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
 

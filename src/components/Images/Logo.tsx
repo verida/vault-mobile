@@ -1,10 +1,10 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { Theme } from 'styles/types'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 // TODO: Add fallback image
 

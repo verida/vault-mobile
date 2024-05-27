@@ -2,8 +2,9 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
-import { LIGHTGREY_COLOR, SUCCESS_COLOR } from '../constants/color'
-import { NUNITO_SANS_SEMIBOLD } from '../constants/text'
+import { LIGHTGREY_COLOR, SUCCESS_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+
 import Text from './Text'
 
 export default ({ network, selected, onSelect }) => {

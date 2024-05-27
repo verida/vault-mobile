@@ -1,7 +1,7 @@
-import { useTheme } from 'contexts'
 import React, { ComponentProps } from 'react'
 
 import { Icon } from '~/components/Icon'
+import { useTheme } from '~/contexts'
 
 export type CheckmarkProps = Omit<ComponentProps<typeof Icon>, 'name'>
 

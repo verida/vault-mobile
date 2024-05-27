@@ -1,9 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useTheme } from 'contexts/ThemeContext'
-// import { HomeScreenPromoBanner, promoBanners } from 'features/homeScreen'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import {
   Animated,
@@ -21,11 +17,14 @@ import PagerView, {
   PagerViewOnPageScrollEventData,
 } from 'react-native-pager-view'
 
+import { Icon } from '~/components/Icon'
+import { WHITE_COLOR_OPACITY } from '~/constants/color'
+import { useTheme } from '~/contexts/ThemeContext'
 import { Banner, usePromoBanners } from '~/features/promoBanners'
-
-import { Icon } from 'components/Icon'
-import { WHITE_COLOR_OPACITY } from 'constants/color'
-import { Theme } from 'styles/types'
+// import { HomeScreenPromoBanner, promoBanners } from 'features/homeScreen'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('HomePromoBanners')
 

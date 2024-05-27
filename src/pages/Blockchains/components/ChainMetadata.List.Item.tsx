@@ -1,14 +1,14 @@
-import { Logo } from 'components'
-import { useTheme } from 'contexts/ThemeContext'
-import { useChainMetadataDetails } from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
 import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import EditIcon from 'assets/edit_icon.svg'
-import HouseIcon from 'assets/icons/earth.svg'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import EditIcon from '~/assets/edit_icon.svg'
+import HouseIcon from '~/assets/icons/earth.svg'
+import { Logo } from '~/components'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useChainMetadataDetails } from '~/features/blockchain'
+import { ChainMetadata } from '~/features/caip'
 
 import { ChainMetadataListItemTag } from './ChainMetadata.List.Item.Tag'
 

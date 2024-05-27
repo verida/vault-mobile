@@ -1,7 +1,4 @@
 import remoteConfig from '@react-native-firebase/remote-config'
-import { config as appConfig, mergeWithRemoteConfig } from 'config'
-import { Logger } from 'features/telemetry'
-import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, isEqual } from 'lodash'
 import React, {
   createContext,
@@ -14,8 +11,11 @@ import React, {
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
-import { APP_REMOTE_CONFIG_STORAGE_KEY } from 'constants/storageKeys'
-import { MaintenanceScreen } from 'pages/Maintenance'
+import { config as appConfig, mergeWithRemoteConfig } from '~/config'
+import { APP_REMOTE_CONFIG_STORAGE_KEY } from '~/constants/storageKeys'
+import { Logger } from '~/features/telemetry'
+import * as SecureStore from '~/helpers/VeridaSecureStore'
+import { MaintenanceScreen } from '~/pages/Maintenance'
 
 import {
   ConfigContextType,

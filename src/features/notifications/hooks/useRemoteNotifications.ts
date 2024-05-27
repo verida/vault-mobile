@@ -1,8 +1,9 @@
 import messaging from '@react-native-firebase/messaging'
-import { selectSelectedAccount } from 'features/identities'
-import { Logger } from 'features/telemetry'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
+
+import { selectSelectedAccount } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
 
 import { registerRemoteNotification } from '../api'
 

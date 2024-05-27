@@ -1,10 +1,10 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
-import { CryptoWalletAccounts } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
+import { NearAccount, throwIfNotNearTestnet } from '~/features/blockchain/near'
 import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
+import { CryptoWalletAccounts } from '~/features/cryptoWallet'
 
 import { getMaybeMinifiedBlockchainAccountForWalletConnectRequest } from './getMaybeMinifiedBlockchainAccountForWalletConnectRequest'
 

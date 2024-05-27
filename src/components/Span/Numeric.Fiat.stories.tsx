@@ -1,6 +1,7 @@
-import { Currency } from 'features/cryptoWallet'
 import React from 'react'
 import { View } from 'react-native'
+
+import { Currency } from '~/features/cryptoWallet'
 
 import { NumericFiat } from './Numeric.Fiat'
 

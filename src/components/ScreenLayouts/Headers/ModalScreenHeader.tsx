@@ -1,13 +1,13 @@
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
-import { useTheme } from 'contexts'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { useSafeAreaFrame } from 'react-native-safe-area-context'
 
-import { Icon } from 'components/Icon'
-import { HIT_SLOP_10_10 } from 'constants/buttons'
-import { Theme } from 'styles/types'
+import { Icon } from '~/components/Icon'
+import { HIT_SLOP_10_10 } from '~/constants/buttons'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import { BaseScreenHeader } from './BaseScreenHeader'
 
