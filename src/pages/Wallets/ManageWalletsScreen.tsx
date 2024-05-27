@@ -153,7 +153,7 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
         options = ['Select this wallet', 'Delete Wallet', 'Cancel']
       } else {
         options = [
-          'View seed phrases',
+          'View details',
           'Select this wallet',
           'Delete Wallet',
           'Cancel',
