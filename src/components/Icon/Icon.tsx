@@ -72,6 +72,8 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'checkbox-unchecked'
+  | 'checkbox-checked'
   | 'send'
   | 'receive'
   | 'delete'
@@ -361,6 +363,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-unchecked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='square-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-checked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='checkbox' {...iconProps} />
         </IconWrapper>
       )
     case 'send':
