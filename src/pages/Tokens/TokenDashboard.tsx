@@ -1,22 +1,26 @@
-import { CryptoWalletValueBanner } from 'components'
+import { useNavigation } from '@react-navigation/native'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+
+import { CryptoWalletValueBanner } from '~/components'
+import { ErrorBoundary } from '~/components/ErrorBoundary'
+import { TokensList } from '~/components/Tokens'
 import {
   AggregateWalletBannerBalance,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-
-import { ErrorBoundary } from 'components/ErrorBoundary'
-import { TokensList } from 'components/Tokens/TokensList'
-import { useMainNavigation } from 'navigation/hooks'
-import { Theme } from 'styles/types'
+  useCryptoWalletsStatus,
+  useSelectedCryptoWallet,
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export const TokenDashboard: React.FC = () => {
-  const navigation = useMainNavigation()
+  const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
 
+  const { processsing } = useCryptoWalletsStatus()
+  const selectedWallet = useSelectedCryptoWallet()
   const cachedAggregateWalletBannerBalances =
     useAggregateWalletBannerBalancesWithResultCaching()
 
@@ -36,7 +40,11 @@ export const TokenDashboard: React.FC = () => {
     <ErrorBoundary>
       <View style={styles.contentContainer}>
         <View style={styles.walletValueBannerWrapper}>
-          <CryptoWalletValueBanner value={walletValue} unit={currency} />
+          <CryptoWalletValueBanner
+            value={walletValue}
+            unit={currency}
+            isLoading={processsing && !selectedWallet}
+          />
         </View>
         <TokensList
           aggregateWalletBannerBalances={aggregateWalletBannerBalances}
@@ -52,6 +60,7 @@ export const TokenDashboard: React.FC = () => {
           onPullToRefresh={pullToRefresh}
           refreshing={loading}
           error={error}
+          isCryptoWalletLoading={processsing && !selectedWallet}
         />
       </View>
     </ErrorBoundary>

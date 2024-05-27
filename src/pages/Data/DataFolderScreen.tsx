@@ -1,12 +1,13 @@
 import { Logger } from 'features/telemetry'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
+
+import { ScreenWrapper } from '~/components'
 
 import AccountManager from 'api/AccountManager'
 import Folder from 'api/VaultCommon/managers/data/folder'
 import { DataCardView, DataListView } from 'components/Data'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
 const logger = Logger.create('Pages/Data/DataFolderScreen')
@@ -20,7 +21,7 @@ type DataItemScreenProps = MainStackScreenProps<'DataFolder'>
 export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
   props
 ) => {
-  const { route } = props
+  const { navigation, route } = props
   const { folderName } = route.params
 
   const [folder, setFolder] = useState<Folder>()
@@ -53,11 +54,14 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
     init()
   }, [folderName])
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: folder ? folder.config.titlePlural || folder.config.title : '',
+    })
+  }, [navigation, folder])
+
   return (
-    <Container>
-      <NavigationHeader
-        title={folder ? folder.config.titlePlural || folder.config.title : ''}
-      />
+    <ScreenWrapper>
       {loading ? (
         <LoadingView />
       ) : folder ? (
@@ -69,6 +73,6 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
           )}
         </Content>
       ) : null}
-    </Container>
+    </ScreenWrapper>
   )
 }

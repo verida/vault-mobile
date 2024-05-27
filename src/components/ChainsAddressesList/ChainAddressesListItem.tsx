@@ -32,11 +32,15 @@ export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
     return optionItems
   }, [item.privateKey])
 
+  const { theme } = useTheme()
+  const styles = useThemeAwareStyle(createStyles)
+
   const handlePress = useCallback(() => {
     showActionSheetWithOptions(
       {
-        options: options,
-        cancelButtonIndex: options.length,
+        options,
+        cancelButtonIndex: options.length - 1,
+        tintColor: theme.color.black,
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
@@ -55,10 +59,8 @@ export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
     item.privateKey,
     onPressPrivateKey,
     showActionSheetWithOptions,
+    theme.color.black,
   ])
-
-  const { theme } = useTheme()
-  const styles = useThemeAwareStyle(createStyles)
 
   return (
     <TouchableHighlight onPress={handlePress} underlayColor={theme.color.snow}>

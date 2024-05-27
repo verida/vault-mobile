@@ -202,7 +202,7 @@ export const PolygonIdConnectionRequestScreen: React.FunctionComponent<
                 {
                   label: 'Decline',
                   onPress: handleClose,
-                  color: 'grey',
+                  variant: 'secondary',
                 },
                 {
                   label: 'Connect',

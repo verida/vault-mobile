@@ -22,10 +22,10 @@ export type CreateIdentityStep =
   | 'CreateProfile'
 
 export type CreateIdentityStepStatus =
-  | 'None'
-  | 'Loading'
-  | 'Success'
-  | 'Failure'
+  | 'idle'
+  | 'processing'
+  | 'success'
+  | 'error'
 
 export type MigrateIdentityStep =
   | 'createDID'

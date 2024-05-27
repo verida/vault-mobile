@@ -1,6 +1,7 @@
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { TabScreenHeader } from 'components'
-import { useSelectedCryptoWallet } from 'features/cryptoWallet'
+import {
+  useCryptoWalletsStatus,
+  useSelectedCryptoWallet,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -48,6 +49,7 @@ type AssetsScreenProps = TabsScreenProps<'Assets'>
 export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const { navigation } = props
 
+  const { processsing: cryptoWalletProcessing } = useCryptoWalletsStatus()
   const selectedCryptoWallet = useSelectedCryptoWallet()
   const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -66,23 +68,18 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
   const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
+        isWalletLoading={cryptoWalletProcessing && !selectedCryptoWallet}
         selectedWallet={selectedCryptoWallet}
         onPress={openWalletModal}
       />
     ),
-    [openWalletModal, selectedCryptoWallet]
+    [cryptoWalletProcessing, openWalletModal, selectedCryptoWallet]
   )
 
   useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore until the branch reworking the header is merged
-      header: (headerProps: BottomTabHeaderProps) => (
-        <TabScreenHeader hideSeparator {...headerProps} />
-      ),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore until the branch reworking the header is merged
-      headerTitle: walletSelect,
+      headerShadowVisible: false,
+      headerTitle: () => walletSelect,
     })
   }, [navigation, walletSelect])
 

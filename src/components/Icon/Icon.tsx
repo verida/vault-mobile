@@ -30,6 +30,7 @@ type CustomIconName =
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
+  | 'back'
   | 'business'
   | 'calculator'
   | 'wallet'
@@ -72,6 +73,8 @@ type LibIconName =
   | 'radio-button-checked'
   | 'send'
   | 'receive'
+  | 'delete'
+  | 'import'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -114,6 +117,12 @@ export const Icon = (props: {
       return <WarningIcon {...svgProps} />
     case 'tick':
       return <TickIcon {...svgProps} />
+    case 'back':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='arrowleft' {...iconProps} />
+        </IconWrapper>
+      )
     case 'business':
       return (
         <IconWrapper size={size}>
@@ -273,7 +282,7 @@ export const Icon = (props: {
     case 'add':
       return (
         <IconWrapper size={size}>
-          <Ionicon name='add' {...iconProps} />
+          <MaterialIcon name='add' {...iconProps} />
         </IconWrapper>
       )
     case 'settings':
@@ -353,6 +362,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialIcon name='vertical-align-bottom' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'delete':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='delete' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'import':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
         </IconWrapper>
       )
   }

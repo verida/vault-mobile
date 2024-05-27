@@ -274,12 +274,12 @@ class AccountManager extends EventEmitter {
     ) => void
   ): Promise<Account | undefined> {
     let connected = false
-    updateProgress?.('StorageLocation', 'None')
-    updateProgress?.('CreateProfile', 'None')
-    updateProgress?.('ClaimUsername', 'None')
+    updateProgress?.('StorageLocation', 'idle')
+    updateProgress?.('CreateProfile', 'idle')
+    updateProgress?.('ClaimUsername', 'idle')
 
     try {
-      updateProgress?.('CreateIdentifier', 'Loading')
+      updateProgress?.('CreateIdentifier', 'processing')
 
       const { mnemonic, privateKey } = generateIdentityMnemonic()
 
@@ -298,7 +298,7 @@ class AccountManager extends EventEmitter {
           cause: error,
         })
       )
-      updateProgress?.('CreateIdentifier', 'Failure')
+      updateProgress?.('CreateIdentifier', 'error')
       throw error
     }
 
@@ -333,7 +333,7 @@ class AccountManager extends EventEmitter {
         notificationEndpoints,
       })
 
-      updateProgress?.('StorageLocation', 'Loading')
+      updateProgress?.('StorageLocation', 'processing')
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
@@ -360,16 +360,16 @@ class AccountManager extends EventEmitter {
       connected = true
     } catch (error) {
       logger.error(new Error('Failed to create new account', { cause: error }))
-      updateProgress?.('CreateIdentifier', 'Failure')
-      updateProgress?.('StorageLocation', 'Failure')
+      updateProgress?.('CreateIdentifier', 'error')
+      updateProgress?.('StorageLocation', 'error')
       throw error
     }
 
-    updateProgress?.('CreateIdentifier', 'Success')
-    updateProgress?.('StorageLocation', 'Success')
+    updateProgress?.('CreateIdentifier', 'success')
+    updateProgress?.('StorageLocation', 'success')
 
     try {
-      updateProgress?.('CreateProfile', 'Loading')
+      updateProgress?.('CreateProfile', 'processing')
 
       const setPublicProfileSuccess = await executeWithTimeout(
         this.setPublicProfile(userData),
@@ -389,12 +389,12 @@ class AccountManager extends EventEmitter {
       store.dispatch(createCryptoWallet({}))
       this.setBackedupSeedPhraseConfig(false)
 
-      updateProgress?.('CreateProfile', 'Success')
+      updateProgress?.('CreateProfile', 'success')
     } catch (error) {
       logger.error(
         new Error('Failed to set profile on new account', { cause: error })
       )
-      updateProgress?.('CreateProfile', 'Failure')
+      updateProgress?.('CreateProfile', 'error')
 
       // If the corrupted account is already connected, we need to remove it
       if (connected && this.selectedAccount) {

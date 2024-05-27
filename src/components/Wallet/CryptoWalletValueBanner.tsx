@@ -10,12 +10,13 @@ import { Theme } from 'styles/types'
 export type CryptoWalletValueBannerProps = {
   value: BigDecimal
   unit?: string
+  isLoading?: boolean
 } & ViewProps
 
 export const CryptoWalletValueBanner: React.FunctionComponent<
   CryptoWalletValueBannerProps
 > = (props) => {
-  const { value, unit, ...viewProps } = props
+  const { value, unit, isLoading = false, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -27,6 +28,7 @@ export const CryptoWalletValueBanner: React.FunctionComponent<
         </Typography>
         <NumberFiat
           value={value ? value.toNumber() : 0}
+          isLoading={isLoading}
           unit={unit}
           variant='h3'
           style={styles.value}

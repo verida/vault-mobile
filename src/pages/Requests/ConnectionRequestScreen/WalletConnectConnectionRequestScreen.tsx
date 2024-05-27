@@ -385,7 +385,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
               {
                 label: 'Decline',
                 onPress: handleClose,
-                color: 'grey',
+                variant: 'secondary',
               },
               {
                 label: 'Connect',

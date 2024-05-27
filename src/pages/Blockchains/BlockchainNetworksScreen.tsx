@@ -1,6 +1,5 @@
 import { ChainId } from 'caip'
-import { ScreenWrapper, Typography } from 'components'
-import { config } from 'config'
+import { Icon, ScreenWrapper, Typography } from 'components'
 import {
   getMaybeChainMetadatas,
   useChainMetadataDetails,
@@ -8,7 +7,7 @@ import {
 } from 'features/blockchain'
 import { ChainMetadata } from 'features/caip'
 import { useThemeAwareStyle } from 'hooks'
-import * as React from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ListRenderItem,
   StyleSheet,
@@ -20,11 +19,11 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { TabView } from 'react-native-tab-view'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
-import PlusIcon from 'assets/plus_icon.svg'
+import { config } from '~/config'
+import { HIT_SLOP_10_10 } from '~/constants'
+import { useTheme } from '~/contexts'
+
 import { Line } from 'components/Line'
-import NavigationHeader, {
-  HeaderSideButton,
-} from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
 import { MainStackScreenProps } from 'navigation/types'
@@ -55,12 +54,12 @@ export const BlockchainNetworksScreen: React.FC<
   const { navigation } = props
 
   const layout = useWindowDimensions()
-  const [searchText, setSearchText] = React.useState<string>('')
-  const [activeTabIndex, setActiveTabIndex] = React.useState(0)
+  const [searchText, setSearchText] = useState<string>('')
+  const [activeTabIndex, setActiveTabIndex] = useState(0)
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const handleActiveTabIndexChange = React.useCallback((index: number) => {
+  const handleActiveTabIndexChange = useCallback((index: number) => {
     setActiveTabIndex(index)
   }, [])
 
@@ -68,7 +67,7 @@ export const BlockchainNetworksScreen: React.FC<
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const renderItem: ListRenderItem<ChainMetadata> = React.useCallback(
+  const renderItem: ListRenderItem<ChainMetadata> = useCallback(
     ({ item: chainMetadata }) => {
       const { isCustom } = getChainMetadataDetails(chainMetadata)
       return (
@@ -89,7 +88,7 @@ export const BlockchainNetworksScreen: React.FC<
     [navigation, getChainMetadataDetails]
   )
 
-  const { mainnets, testnets } = React.useMemo(() => {
+  const { mainnets, testnets } = useMemo(() => {
     const filteredNetworks =
       typeof searchText !== 'string' || !searchText.length
         ? chainMetadatas
@@ -104,7 +103,7 @@ export const BlockchainNetworksScreen: React.FC<
     }
   }, [chainMetadatas, searchText])
 
-  const onPressAddNetwork = React.useCallback(
+  const handlePressAddNetwork = useCallback(
     () =>
       navigation.navigate('BlockchainNetworkEditor', {
         title: 'Create custom network',
@@ -114,25 +113,34 @@ export const BlockchainNetworksScreen: React.FC<
     [navigation]
   )
 
-  const headerSideButton: HeaderSideButton | undefined = React.useMemo(() => {
-    return config.features.blockchain.enableCustomNetwork
-      ? {
-          icon: <PlusIcon />,
-          action: onPressAddNetwork,
-        }
-      : undefined
-  }, [onPressAddNetwork])
+  const { theme } = useTheme()
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Blockchain Networks',
+      headerShadowVisible: false,
+      headerRight: config.features.blockchain.enableCustomNetwork
+        ? () => (
+            <TouchableOpacity
+              onPress={handlePressAddNetwork}
+              hitSlop={HIT_SLOP_10_10}
+              style={styles.headerAddNetworkButton}>
+              <Icon name='add' size={24} color={theme.color.primary} />
+            </TouchableOpacity>
+          )
+        : undefined,
+    })
+  }, [
+    navigation,
+    handlePressAddNetwork,
+    styles.headerAddNetworkButton,
+    theme.color.primary,
+  ])
 
   useImmediateLayoutAnimation([searchText])
 
   return (
     <ScreenWrapper>
-      <NavigationHeader
-        bottomBorder={false}
-        title='Blockchain Networks'
-        renderNetInfo={false}
-        right={headerSideButton}
-      />
       <View style={styles.searchAndTabsContainer}>
         <SearchBar
           showSortButton={false}
@@ -180,6 +188,9 @@ export const BlockchainNetworksScreen: React.FC<
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    headerAddNetworkButton: {
+      marginRight: theme.spacing.m,
+    },
     searchAndTabsContainer: {
       paddingTop: 0, // TODO: May have to adjust when the header has been properly reworked
       paddingBottom: theme.spacing.m,

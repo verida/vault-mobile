@@ -7,6 +7,9 @@ import { Text } from 'react-native'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericCryptoBalance = React.memo(function NumericCryptoBalance({
   decimals = 18,
   balance: amount,

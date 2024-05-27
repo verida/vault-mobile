@@ -25,10 +25,11 @@ export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
 }
 
+// TODO: Rework the layout properly
 export const ClaimUsernameView = React.forwardRef(
   (_, receivedRef: React.ForwardedRef<ClaimUsernameViewRefProps>) => {
     const navigation = useNavigation()
-    const { bottom, top } = useSafeAreaInsets()
+    const { bottom } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
     const [inputUsername, setInputUsername] = useState('')
@@ -67,18 +68,14 @@ export const ClaimUsernameView = React.forwardRef(
     }
 
     return (
-      <Container
-        key='ClaimUsername'
-        withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+      <Container key='ClaimUsername'>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             paddingBottom: theme.spacing.xxl,
             paddingTop: theme.spacing.l,
             paddingHorizontal: theme.spacing.m,
-          }}
-          keyboardShouldPersistTaps='handled'>
+          }}>
           <View
             style={{
               width: 128,

@@ -168,7 +168,7 @@ export const PaymentRequestScreenContainer = React.memo(
                   {
                     label: 'Decline',
                     onPress: onRequestClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Pay',
