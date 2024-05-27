@@ -44,6 +44,7 @@ import {
 } from '~/pages/Profiles'
 import { QrCodeScannerScreen } from '~/pages/QrCodeScanner'
 import {
+  DisplayPrivateInfoScreen,
   SeedPhraseGeneratedScreen,
   SeedPhraseScreen,
   SeedPhraseViewScreen,
@@ -215,6 +216,10 @@ export const MainNavigator: React.FC = () => {
               header: (props) => <ModalScreenHeader {...props} />,
               headerShadowVisible: true,
             }}>
+            <Stack.Screen
+              name='DisplayPrivateInfo'
+              component={DisplayPrivateInfoScreen}
+            />
             <Stack.Screen
               name='SwitchSelectedCryptoWallet'
               component={SwitchSelectedCryptoWalletScreen}

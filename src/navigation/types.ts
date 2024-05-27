@@ -58,6 +58,7 @@ import {
 } from '~/pages/Profiles'
 import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
 import {
+  DisplayPrivateInfoScreenParams,
   SeedPhraseGeneratedScreenParams,
   SeedPhraseScreenParams,
   SeedPhraseViewScreenParams,
@@ -171,6 +172,7 @@ export type MainStackParams = {
   RemoveIdentity: RemoveIdentityScreenParams
   MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
   MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
+  DisplayPrivateInfo: DisplayPrivateInfoScreenParams
   SeedPhrase: SeedPhraseScreenParams
   SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
   VerifyPhrase: VerifyPhraseScreenParams
