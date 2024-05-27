@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native'
 import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '~/constants/color'
 
-export default ({ words, template, onSelect, id, containerStyle }) => {
+export default ({ words, template, onSelect, id, containerStyle = {} }) => {
   let displayWords = []
   words.forEach((word, index) => {
     if (id === 'selected' && template.indexOf(index) !== -1) {
@@ -14,14 +14,18 @@ export default ({ words, template, onSelect, id, containerStyle }) => {
     }
   })
 
-  return displayWords.map((value, index) => (
-    <TouchableOpacity
-      key={`${id} - ${index}`}
-      style={[style.word, containerStyle]}
-      onPress={() => onSelect(value)}>
-      <Text>{words[value]}</Text>
-    </TouchableOpacity>
-  ))
+  return (
+    <>
+      {displayWords.map((value, index) => (
+        <TouchableOpacity
+          key={`${id} - ${index}`}
+          style={[style.word, containerStyle]}
+          onPress={() => onSelect(value)}>
+          <Text>{words[value]}</Text>
+        </TouchableOpacity>
+      ))}
+    </>
+  )
 }
 
 const style = StyleSheet.create({
