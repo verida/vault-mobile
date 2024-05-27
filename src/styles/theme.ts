@@ -31,12 +31,12 @@ import {
   VERY_LIGHTGREY_COLOR,
   WARNING_LIGHT_COLOR,
   WHITE_COLOR,
-} from 'constants/color'
+} from '~/constants/color'
 import {
   NUNITO_SANS,
   NUNITO_SANS_BOLD,
   NUNITO_SANS_SEMIBOLD,
-} from 'constants/text'
+} from '~/constants/text'
 
 export const defaultTheme = {
   color: {
