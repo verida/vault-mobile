@@ -47,7 +47,6 @@ import {
   DisplayPrivateInfoScreen,
   SeedPhraseGeneratedScreen,
   SeedPhraseScreen,
-  SeedPhraseViewScreen,
   VerifyPhraseScreen,
 } from '~/pages/RecoveryPhrase'
 import {
@@ -168,10 +167,6 @@ export const MainNavigator: React.FC = () => {
           <Stack.Screen name={'NFTDetail'} component={NFTDetailScreen} />
           <Stack.Screen name='Settings' component={SettingsScreen} />
           <Stack.Screen name='ChangePin' component={ChangePinScreen} />
-          <Stack.Screen
-            name='SeedPhraseView'
-            component={SeedPhraseViewScreen}
-          />
           <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
           <Stack.Screen
             name='RemoveIdentity'

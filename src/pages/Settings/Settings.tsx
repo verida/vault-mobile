@@ -88,7 +88,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           label: 'Seed Phrase',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('SeedPhraseView'),
+          onPress: () =>
+            navigation.navigate('DisplayPrivateInfo', {
+              source: 'veridaDid',
+              type: 'recoveryPhrase',
+            }),
         },
         {
           label: 'Login History',

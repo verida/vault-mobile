@@ -61,7 +61,6 @@ import {
   DisplayPrivateInfoScreenParams,
   SeedPhraseGeneratedScreenParams,
   SeedPhraseScreenParams,
-  SeedPhraseViewScreenParams,
   VerifyPhraseScreenParams,
 } from '~/pages/RecoveryPhrase'
 import {
@@ -176,7 +175,6 @@ export type MainStackParams = {
   SeedPhrase: SeedPhraseScreenParams
   SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
   VerifyPhrase: VerifyPhraseScreenParams
-  SeedPhraseView: SeedPhraseViewScreenParams
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
   BlockchainNetworks: BlockchainNetworksScreenParams
