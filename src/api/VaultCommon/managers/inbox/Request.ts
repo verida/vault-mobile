@@ -1,4 +1,4 @@
-import { Logger } from 'features/telemetry'
+import { Logger } from '~/features/telemetry'
 
 import { InboxResponse, InboxType } from '../../interfaces/inbox/Inbox'
 import { DataAction } from './DataAction'

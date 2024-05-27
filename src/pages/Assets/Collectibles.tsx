@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-// import { getNFTImageUri } from 'helpers/nft'
+// import { getNFTImageUri } from '~/helpers/nft'
 import React, { useCallback } from 'react'
 import {
   ListRenderItem,
@@ -79,7 +79,7 @@ const Collectibles = () => {
   //           <View style={styles.column}>
   //             <FastImage
   //               style={styles.image}
-  //               defaultSource={require('assets/picture.png')}
+  //               defaultSource={require('~/assets/picture.png')}
   //               source={{
   //                 uri,
   //                 priority: FastImage.priority.high,

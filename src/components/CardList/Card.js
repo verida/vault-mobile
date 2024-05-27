@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native'
-import { useEmitter } from 'hooks'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -12,6 +11,7 @@ import {
 } from '~/constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import { findTypeById } from '~/helpers/inbox'
+import { useEmitter } from '~/hooks'
 
 /**
  * TODO: refactor + this component should be named sth likes InboxItem

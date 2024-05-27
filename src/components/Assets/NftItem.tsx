@@ -50,7 +50,7 @@ export const NftItem = ({ nft, containerStyle, imageStyle }: Props) => {
         ) : (
           <FastImage
             style={[styles.image, imageStyle as any]}
-            defaultSource={require('assets/picture.png')}
+            defaultSource={require('~/assets/picture.png')}
             source={{
               uri,
               priority: FastImage.priority.normal,

@@ -90,7 +90,7 @@ export const ClaimUsernameView = React.forwardRef(
               <>
                 <BlurCircle />
                 <LottieView
-                  source={require('assets/animations/dots-loader.json')}
+                  source={require('~/assets/animations/dots-loader.json')}
                   autoPlay
                   loop
                   style={styles.dotsLoader}

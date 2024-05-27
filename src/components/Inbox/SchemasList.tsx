@@ -86,7 +86,9 @@ function SchemasList(props: SchemasListProps) {
               <Image
                 style={styles.schemaLogo}
                 source={
-                  data.icon ? { uri: data.icon } : require('assets/picture.png')
+                  data.icon
+                    ? { uri: data.icon }
+                    : require('~/assets/picture.png')
                 }
               />
               <Text style={styles.folderName}>{data.name}</Text>

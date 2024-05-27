@@ -33,8 +33,8 @@ function getDataConnectorUrl(did: string) {
 // possible states for status: syncing, disabled, active
 
 // @todo: Pull this from the server
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
+const FacebookIcon = require('~/assets/social_icons/facebook.png')
+const TwitterIcon = require('~/assets/social_icons/twitter.png')
 
 const CONNECTIONS: any = {
   facebook: {

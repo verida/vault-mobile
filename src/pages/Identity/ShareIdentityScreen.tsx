@@ -17,7 +17,7 @@ import { MainStackScreenProps } from '~/navigation/types'
 import { useAppSelector } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
-const VeridaLogo = require('assets/vault-logo.png')
+const VeridaLogo = require('~/assets/vault-logo.png')
 
 const { width: screenWidth } = Dimensions.get('screen')
 

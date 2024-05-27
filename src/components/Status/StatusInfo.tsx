@@ -42,7 +42,7 @@ export const StatusInfo: React.FunctionComponent<StatusInfoProps> = (props) => {
         <BlurCircle />
         {/* FIXME: The animation doesn't seem to work */}
         <LottieView
-          source={require('assets/animations/dots-loader.json')}
+          source={require('~/assets/animations/dots-loader.json')}
           autoPlay
           loop
           style={styles.dotsLoader}

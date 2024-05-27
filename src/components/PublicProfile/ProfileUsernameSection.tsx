@@ -46,7 +46,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
       <View style={styles.oneProfileLinkContainer}>
         <ImageBackground
           resizeMode='stretch'
-          source={require('assets/profile_link_bg.png')}
+          source={require('~/assets/profile_link_bg.png')}
           style={styles.background}>
           <TouchableOpacity
             onPress={() => {
@@ -151,7 +151,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
                     width: 111,
                     height: 120,
                   }}
-                  source={require('assets/username_placehoder.png')}
+                  source={require('~/assets/username_placehoder.png')}
                 />
 
                 <Button
