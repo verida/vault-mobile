@@ -23,7 +23,7 @@ import {
   StatusListItem,
 } from '~/components'
 import { StepsIndicator } from '~/components/Indicators'
-import { AnimatedCheckbox, FormInput } from '~/components/Input'
+import { Checkbox, FormInput } from '~/components/Input'
 import { NetworkSelectorRadioButtonGroup } from '~/components/Network'
 import DropDownPicker, { Option } from '~/components/Select'
 import { Spacer } from '~/components/Spacer'
@@ -417,12 +417,11 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               onChangeItem={handleCountryChange}
             />
             <Spacer vertical='m' />
-            <AnimatedCheckbox
+            <Checkbox
               checked={showCountryInPublicProfile}
-              onToggle={toggleCountryCheckbox}
-              label='Show country in my public profile'
-              textStyle={{ fontSize: theme.fontSize.m }}
-            />
+              onToggle={toggleCountryCheckbox}>
+              Show country in my public profile
+            </Checkbox>
             <NetworkSelectorRadioButtonGroup
               selectedNetwork={network}
               onSelectionChange={setNetwork}
