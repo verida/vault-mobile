@@ -1,34 +1,32 @@
-import { useTheme } from 'contexts/ThemeContext'
-import {
-  saveVeridaOneStatus,
-  verifyVeridaOneInviteCode,
-} from 'features/veridaOne'
-import { emitter } from 'helpers/emitter'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Image, Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Snackbar from 'react-native-snackbar'
 
-import UsernameManager from 'api/UsernameManager'
-import SuccessTick from 'assets/success_tick.svg'
-import Container from 'components/Container'
-import { FormInput } from 'components/Input/FormInput'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+import UsernameManager from '~/api/UsernameManager'
+import SuccessTick from '~/assets/success_tick.svg'
+import { ScreenWrapper } from '~/components'
+import Button from '~/components/Button'
+import Container from '~/components/Container'
+import { FormInput } from '~/components/Input/FormInput'
 import {
   ClaimUsernameView,
   ClaimUsernameViewRefProps,
   InputUsernameView,
   InputUsernameViewRefProps,
-} from 'components/PublicProfile'
-import Screen from 'components/Screen'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
-
-import Button from '../../components/Button'
+} from '~/components/PublicProfile'
+import { Headline } from '~/components/Typography/Headline'
+import { Text } from '~/components/Typography/Text'
+import { useTheme } from '~/contexts'
+import {
+  saveVeridaOneStatus,
+  verifyVeridaOneInviteCode,
+} from '~/features/veridaOne'
+import { emitter } from '~/helpers/emitter'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from '~/navigation'
+import { Theme } from '~/styles/types'
 
 enum PageType {
   UnlockVeridaOne,
@@ -49,7 +47,7 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const { bottom, top } = useSafeAreaInsets()
+  const { bottom } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const [currentPage, setCurrentPage] = useState(PageType.UnlockVeridaOne)
@@ -60,14 +58,7 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
   const [invitationCode, setInvitationCode] = useState<string>()
   const [username, setUsername] = useState<string | undefined>(undefined)
 
-  const fetchUsername = async () => {
-    const accountUsernames = await UsernameManager.get()
-    if (accountUsernames?.length > 0) {
-      setUsername(accountUsernames[0])
-    }
-  }
-
-  const getPageName = () => {
+  const getPageName = useCallback(() => {
     switch (currentPage) {
       case PageType.UnlockVeridaOne:
       case PageType.InvitationSuccess:
@@ -78,9 +69,22 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
       case PageType.ClaimUsername:
         return 'Username'
     }
-  }
+  }, [currentPage])
 
-  const submitVeridaOneInvitationCode = () => {
+  useEffect(() => {
+    navigation.setOptions({
+      title: getPageName(),
+    })
+  }, [navigation, getPageName])
+
+  const fetchUsername = useCallback(async () => {
+    const accountUsernames = await UsernameManager.get()
+    if (accountUsernames?.length > 0) {
+      setUsername(accountUsernames[0])
+    }
+  }, [])
+
+  const submitVeridaOneInvitationCode = useCallback(() => {
     Keyboard.dismiss()
     if (verifyVeridaOneInviteCode(invitationCode!)) {
       saveVeridaOneStatus(true)
@@ -92,28 +96,26 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
         text: 'Wrong code, please try again!',
       })
     }
-  }
+  }, [invitationCode])
 
-  const handleVeridaOneInviationComplete = () => {
+  const handleVeridaOneInviationComplete = useCallback(() => {
     if (username) {
       navigation.goBack()
     } else {
       pagerRef.current?.setPage(PageType.SuggestClaimUsername)
     }
-  }
+  }, [navigation, username])
 
   useEffect(() => {
     fetchUsername()
-  }, [])
+  }, [fetchUsername])
 
   const bottomButtonsPadding = { marginBottom: bottom + theme.spacing.m }
 
   return (
-    <Screen
-      navBar={
-        <NavigationHeader title={getPageName()} left={{ icon: 'close' }} />
-      }>
+    <ScreenWrapper isModal keyboardAvoiding>
       <PagerView
+        // FIXME: bottom bar blink when the keyboard appears. Remove the footer button from within each Page and move it in a BottomActionBar at the same level as the PagerView.
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}
@@ -122,10 +124,7 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
         }}
         ref={pagerRef}>
         {/* UnlockVeridaOne */}
-        <Container
-          key='UnlockVeridaOne'
-          withKeyboardAvoidingView
-          keyboadAvoidingViewProps={{ keyboardVerticalOffset: 54 + top }}>
+        <Container key='UnlockVeridaOne'>
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -290,7 +289,7 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
         {/* ClaimUsername */}
         <ClaimUsernameView ref={claimUsernameViewRef} />
       </PagerView>
-    </Screen>
+    </ScreenWrapper>
   )
 }
 

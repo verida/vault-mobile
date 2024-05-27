@@ -7,6 +7,9 @@ import { CurrencyFormat } from '~/features/token'
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 import { NumericFiat } from './Numeric.Fiat'
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericCryptoFiatConversion = React.memo(
   function NumericCryptoFiatConversion({
     getCurrentValueStringAsFiatOrZero,

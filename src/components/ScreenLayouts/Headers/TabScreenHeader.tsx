@@ -1,115 +1,88 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { IdentityAvatar } from 'components'
-import { useTheme } from 'contexts'
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import {
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import React, { useCallback } from 'react'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 
+import { HIT_SLOP_10_10 } from 'constants/buttons'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
-const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
+import { BaseScreenHeader } from './BaseScreenHeader'
 
-export type TabScreenHeaderProps = {
-  hideSeparator?: boolean
-} & BottomTabHeaderProps
+export type TabScreenHeaderProps = BottomTabHeaderProps
 
 export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
   props
 ) => {
-  const { options, hideSeparator = false } = props
+  const { navigation, options, ...otherProps } = props
 
-  const { title, headerTitle } = options
+  const { headerLeft: customLeft, headerRight: customRight } = options
 
-  const insets = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
 
   const { avatar } = useAppSelector(selectSelectedPublicProfile)
 
-  const { toggle: toggleDrawer } = useIdentityDrawer()
+  const { open: openIdentityDrawer } = useIdentityDrawer()
+
+  const headerLeft: typeof options.headerLeft = useCallback(
+    () => (
+      <TouchableOpacity
+        onPress={openIdentityDrawer}
+        hitSlop={HIT_SLOP_10_10}
+        style={styles.avatarButton}>
+        <IdentityAvatar source={avatar?.uri} style={styles.avatar} />
+      </TouchableOpacity>
+    ),
+    [avatar?.uri, styles.avatarButton, styles.avatar, openIdentityDrawer]
+  )
 
   return (
-    <>
-      <StatusBar
-        barStyle='dark-content'
-        translucent
-        backgroundColor={theme.color.background}
-      />
-      <View
-        style={[
-          styles.container,
-          !hideSeparator && styles.containerSeparator,
-          {
-            paddingTop: insets.top,
-            paddingLeft: insets.left + theme.spacing.m,
-            paddingRight: insets.right + theme.spacing.m,
-          },
-        ]}>
-        <View style={styles.avatarContainer}>
-          <TouchableOpacity onPress={toggleDrawer} hitSlop={HIT_SLOP}>
-            <IdentityAvatar source={avatar?.uri} style={styles.avatar} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.titleContainer}>
-          {headerTitle ? (
-            headerTitle
-          ) : (
-            <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
-              {title}
-            </Text>
-          )}
-        </View>
-        <View style={styles.actionsContainer} />
-      </View>
-    </>
+    <BaseScreenHeader
+      {...otherProps}
+      navigation={navigation}
+      options={{
+        ...options,
+        headerLeft: customLeft || headerLeft,
+        headerRight: customRight,
+      }}
+    />
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    container: {
-      paddingHorizontal: theme.spacing.m,
-      backgroundColor: theme.color.background,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    containerSeparator: {
-      borderBottomWidth: 1,
-      borderBottomColor: theme.color.lightGrey,
-    },
-    avatarContainer: {
-      marginVertical: theme.spacing.sm,
-      marginRight: theme.spacing.m,
+    avatarButton: {
+      marginLeft: theme.spacing.m,
     },
     avatar: {
       width: 32,
       aspectRatio: 1,
     },
-    titleContainer: {
-      flex: 1,
+    inboxButton: {
+      marginRight: theme.spacing.m,
     },
-    title: {
-      marginVertical: theme.spacing.sm,
-      fontFamily: theme.fontFamily.bold,
-      fontSize: theme.fontSize.sl,
-      lineHeight: 32,
-      textAlign: 'center',
-    },
-    actionsContainer: {
-      marginVertical: theme.spacing.sm,
-      marginLeft: theme.spacing.m + theme.spacing.s,
-      flexDirection: 'row',
+    badge: {
       alignItems: 'center',
-      width: theme.iconSize.m,
+      justifyContent: 'center',
+      padding: 4,
+      position: 'absolute',
+      right: -7,
+      top: -9,
+      height: 20,
+      minWidth: 20,
+      backgroundColor: theme.color.orange,
+      borderRadius: theme.roundness.full,
+      overflow: 'hidden',
+      borderColor: theme.color.background,
+      borderWidth: 2,
+    },
+    badgeText: {
+      fontFamily: theme.fontFamily.semibold,
+      fontSize: 10,
+      lineHeight: 12,
+      color: theme.color.onError,
     },
   })

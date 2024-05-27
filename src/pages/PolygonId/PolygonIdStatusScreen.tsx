@@ -209,12 +209,12 @@ export const PolygonIdStatusScreen: React.FC<PolygonIdStatusScreenProps> = (
           {
             label: 'Restart engine',
             onPress: handleRestartEngine,
-            color: 'grey',
+            variant: 'secondary',
           },
           {
             label: 'Download circuits',
             onPress: handleDownloadCircuits,
-            color: 'grey',
+            variant: 'secondary',
           },
         ]}
       />

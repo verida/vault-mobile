@@ -5,6 +5,9 @@ import { Currency } from '~/features/cryptoWallet'
 
 import { DEFAULT_LOCALE } from 'constants/locale'
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericFiat = React.memo(function NumericFiat({
   style,
   value,

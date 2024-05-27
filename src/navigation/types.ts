@@ -4,23 +4,30 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { NFT, NFTCollection } from 'features/assets'
 
-import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
-import { SingleWalletScreenParams } from '~/pages/Wallets/SingleWallet'
-
-import { AssetsScreenParams } from 'pages/Assets'
-import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import {
+  NFTCollectionDetailScreenParams,
+  NFTDetailScreenParams,
+} from '~/pages/Assets'
+import { SelectAssetScreenParams } from '~/pages/Assets/SelectAsset'
+import {
+  ChangePinScreenParams,
+  CreatePinScreenParams,
+} from '~/pages/Authentication'
 import {
   BlockchainNetworkEditorScreenParams,
   BlockchainNetworksScreenParams,
-} from 'pages/Blockchains'
+} from '~/pages/Blockchains'
+import {
+  ConnectionsScreenParams,
+  SingleConnectionScreenParams,
+} from '~/pages/Connections'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
-  DataTabScreenParams,
-} from 'pages/Data'
-import { HomeScreenParams } from 'pages/Home'
+  DataScreenParams,
+} from '~/pages/Data'
+import { HomeScreenParams } from '~/pages/Home'
 import {
   AddIdentityScreenParams,
   CreateIdentityScreenParams,
@@ -30,9 +37,15 @@ import {
   MigrateIdentityExecutionScreenParams,
   RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
-} from 'pages/Identity'
-import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
-import { OnboardingScreenParams } from 'pages/Onboarding'
+} from '~/pages/Identity'
+import {
+  InboxItemScreenParams,
+  InboxScreenParams,
+  ShareableDataScreenParams,
+} from '~/pages/Inbox'
+import { LoginHistoryScreenParams } from '~/pages/Login'
+import { OnboardingScreenParams } from '~/pages/Onboarding'
+import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
   AddVeridaOneCustomLinkScreenParams,
   AddVeridaOnePlatformLinkScreenParams,
@@ -42,24 +55,39 @@ import {
   GenericEditPropertyScreenParams,
   PublicProfileScreenParams,
   UnlockVeridaOneScreenParams,
-} from 'pages/Profiles'
-import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
+} from '~/pages/Profiles'
+import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
+import {
+  SeedPhraseGeneratedScreenParams,
+  SeedPhraseScreenParams,
+  SeedPhraseViewScreenParams,
+  VerifyPhraseScreenParams,
+} from '~/pages/RecoveryPhrase'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
   PaymentRequestScreenParams,
   ProofRequestScreenParams,
-} from 'pages/Requests'
-import { SettingsScreenParams } from 'pages/Settings'
-import { ConfirmTransactionScreenProps } from 'pages/Tokens/ConfirmTransaction'
-import { ReceiveTokenScreenProps } from 'pages/Tokens/ReceiveToken'
-import { SendTokenScreenProps } from 'pages/Tokens/SendToken'
-import { SingleCurrencyScreenProps } from 'pages/Tokens/SingleCurrency'
-import { TokenRecipientScreenProps } from 'pages/Tokens/TokenRecipient'
-import { TransactionDetailsScreenProps } from 'pages/Tokens/TransactionDetails'
-import { TransactionFailureScreenProps } from 'pages/Tokens/TransactionFailure'
-import { TransactionSuccessScreenProps } from 'pages/Tokens/TransactionSuccess'
-import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
+} from '~/pages/Requests'
+import { SettingsScreenParams } from '~/pages/Settings'
+import {
+  ConfirmTransactionScreenParams,
+  ReceiveTokenScreenParams,
+  SendTokenScreenParams,
+  SingleCurrencyScreenParams,
+  TokenRecipientScreenParams,
+  TransactionDetailsScreenParams,
+  TransactionFailureScreenParams,
+  TransactionSuccessScreenParams,
+} from '~/pages/Tokens'
+import {
+  WalletConnectActiveSessionDetailsScreenParams,
+  WalletConnectActiveSessionsScreenParams,
+} from '~/pages/WalletConnect'
+import {
+  ManageWalletsScreenParams,
+  SingleWalletScreenParams,
+} from '~/pages/Wallets'
 
 export type RootStackParams = {
   Auth: undefined
@@ -71,10 +99,10 @@ export type AuthStackParams = {
   AddIdentity: AddIdentityScreenParams
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
-  SeedPhrase: undefined
-  SeedPhraseGenerated: undefined
-  VerifyPhrase: { shuffled: string[] }
-  CreatePin: undefined
+  SeedPhrase: SeedPhraseScreenParams
+  SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
+  VerifyPhrase: VerifyPhraseScreenParams
+  CreatePin: CreatePinScreenParams
 }
 
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
@@ -83,9 +111,9 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
 export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
-  Data: DataTabScreenParams
-  // Connections: undefined // TODO: uncomment when ready
-  Assets: AssetsScreenParams
+  Data: DataScreenParams
+  Connections: ConnectionsScreenParams
+  Assets: undefined
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
@@ -96,11 +124,11 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
 
 export type MainStackParams = {
   Tabs: NavigatorScreenParams<TabsScreenParams>
-  Inbox: undefined
-  InboxItem: { inboxItemId: string }
-  LoginHistory: undefined
+  Inbox: InboxScreenParams
+  InboxItem: InboxItemScreenParams
+  ShareableData: ShareableDataScreenParams
+  LoginHistory: LoginHistoryScreenParams
   LoginRequest: undefined
-
   PublicProfile: PublicProfileScreenParams
   EditProfile: EditProfileScreenParams
   ClaimUsername: ClaimUsernameScreenParams
@@ -108,65 +136,48 @@ export type MainStackParams = {
   AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
-  ShareIdentity: ShareIdentityScreenParams
-  MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
-  MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
-
-  SeedPhraseView: undefined
-  ManageWallets: undefined
-  SingleCurrency: SingleCurrencyScreenProps
-  SendToken: SendTokenScreenProps
-  TokenRecipient: TokenRecipientScreenProps
-  ConfirmTransaction: ConfirmTransactionScreenProps
-  TransactionSuccess: TransactionSuccessScreenProps
-  TransactionFailure: TransactionFailureScreenProps
-  TransactionDetails: TransactionDetailsScreenProps
-  BuyToken: undefined
-  ReceiveToken: ReceiveTokenScreenProps
+  UnlockVeridaOne: UnlockVeridaOneScreenParams
+  VeridaOneInvitationSuccess: undefined
+  ManageWallets: ManageWalletsScreenParams
+  SingleCurrency: SingleCurrencyScreenParams
+  SendToken: SendTokenScreenParams
+  TokenRecipient: TokenRecipientScreenParams
+  ConfirmTransaction: ConfirmTransactionScreenParams
+  TransactionSuccess: TransactionSuccessScreenParams
+  TransactionFailure: TransactionFailureScreenParams
+  TransactionDetails: TransactionDetailsScreenParams
+  ReceiveToken: ReceiveTokenScreenParams
   SingleWallet: SingleWalletScreenParams
-  OtherAddresses: undefined
-  SuccessFailure: undefined
-  DataFolder: DataFolderScreenParams
-  DataItem: DataItemScreenParams
-  ChangePin: undefined
+  NFTCollectionDetail: NFTCollectionDetailScreenParams
+  NFTDetail: NFTDetailScreenParams
+  SelectAsset: SelectAssetScreenParams
+  ChangePin: ChangePinScreenParams
   ScanQrCode: QrCodeScannerScreenParams
-
-  // Identity
   AddIdentity: AddIdentityScreenParams
+  ShareIdentity: ShareIdentityScreenParams
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
   DeleteIdentity: DeleteIdentityScreenParams
   RemoveIdentity: RemoveIdentityScreenParams
-
-  SeedPhrase: undefined
-  SeedPhraseGenerated: undefined
-  VerifyPhrase: undefined
-  ShareableData: {
-    schemaUrl: string
-    onConfirm: (selectedItems: ShareableDataItemType[]) => void
-    filter: any
-  }
+  MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
+  MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
+  SeedPhrase: SeedPhraseScreenParams
+  SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
+  VerifyPhrase: VerifyPhraseScreenParams
+  SeedPhraseView: SeedPhraseViewScreenParams
+  DataFolder: DataFolderScreenParams
+  DataItem: DataItemScreenParams
   BlockchainNetworks: BlockchainNetworksScreenParams
   BlockchainNetworkEditor: BlockchainNetworkEditorScreenParams
-  WalletConnectActiveSessions: undefined
-  WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
-  SingleConnection: { provider: string; connectNow?: boolean }
-
-  NFTCollectionDetail: { collection: NFTCollection }
-  NFTDetail: { nft: NFT }
-  SelectAsset: SelectAssetScreenProps
-
-  VeridaOneInvitationSuccess: undefined
-  UnlockVeridaOne: UnlockVeridaOneScreenParams
-
+  WalletConnectActiveSessions: WalletConnectActiveSessionsScreenParams
+  WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsScreenParams
+  SingleConnection: SingleConnectionScreenParams
   ConnectionRequest: ConnectionRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
-
   Settings: SettingsScreenParams
   PolygonIdStatus: PolygonIdStatusScreenParams
-
   __Storybook__: undefined
 }
 

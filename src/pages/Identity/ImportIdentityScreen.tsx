@@ -1,26 +1,22 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
-import { MNEMONIC_LENGTH } from 'features/seedphrases'
-import { getDefaultVeridaNetwork } from 'features/verida'
-import { useThemeAwareStyle } from 'hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Keyboard, StyleSheet } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import { FormInput } from 'components/Input/FormInput'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { NetworkSelectorRadioButtonGroup } from 'components/Network'
-import Screen from 'components/Screen'
-import { MainStackParams } from 'navigation/types'
-import { Theme } from 'styles/types'
-
-import Button from '../../components/Button'
-import Layout from '../../components/Layouts/Layout'
-import ModifierStyles from '../../styles/modifier'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import { FormInput } from '~/components/Input/FormInput'
+import Layout from '~/components/Layouts/Layout'
+import { NetworkSelectorRadioButtonGroup } from '~/components/Network'
+import { MNEMONIC_LENGTH } from '~/features/seedphrases'
+import { getDefaultVeridaNetwork } from '~/features/verida'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackParams } from '~/navigation/types'
+import ModifierStyles from '~/styles/modifier'
+import { Theme } from '~/styles/types'
 
 const cleanSeedPhrase = (phrase: string): string => {
   return phrase.trim().replace(/\s\s+/g, ' ')
@@ -80,7 +76,7 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
     verify()
   }, [phrase])
 
-  const onContinue = async () => {
+  const handleContinuePress = useCallback(async () => {
     try {
       Keyboard.dismiss()
       setProcessing(true)
@@ -98,6 +94,7 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
       }
 
       if (params.firstIdentity) {
+        // FIXME: CreateidentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
         navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
       } else {
         navigation.goBack()
@@ -107,15 +104,19 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
     } finally {
       setProcessing(false)
     }
-  }
+  }, [navigation, phrase, network, params.firstIdentity])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Import an Identity',
+    })
+  }, [navigation])
 
   const title = 'Seed Phrase'
   const label = 'Enter seed phrase'
 
   return (
-    <Screen
-      withKeyboardAvoidingView
-      navBar={<NavigationHeader title='Import an Identity' />}>
+    <ScreenWrapper keyboardAvoiding>
       <Content>
         <Layout title={title}>
           <FormInput
@@ -143,16 +144,17 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
           />
         </Layout>
       </Content>
-      <CustomFooter>
-        <Button
-          color='primary'
-          onPress={onContinue}
-          disabled={!verified || processing}
-          loading={processing}>
-          Continue
-        </Button>
-      </CustomFooter>
-    </Screen>
+      <BottomActionBar
+        hideBorder
+        actions={[
+          {
+            label: 'Continue',
+            onPress: handleContinuePress,
+            disabled: !verified || processing,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 

@@ -13,9 +13,8 @@ import {
 } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
-import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
@@ -81,13 +80,6 @@ export const PaymentRequestScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Payment Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
     })
   }, [navigation, handleClose])
 
@@ -114,64 +106,61 @@ export const PaymentRequestScreen: React.FunctionComponent<
     })
 
   return (
-    <>
-      <StatusBar barStyle='light-content' />
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingBottom: insets.bottom,
-            paddingRight: insets.right,
-            paddingLeft: insets.left,
-          },
-        ]}>
-        {maybeAggregateWalletBannerBalance ? (
-          <PaymentRequestScreenContainer
-            {...params}
-            key={paymentRequestId}
-            integerCryptoAmount={integerCryptoAmount}
-            aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
-            onRequestClose={handleClose}
-            detailsOpen={detailsOpen}
-            requestHeaderProps={requestHeaderProps}
-          />
-        ) : (
-          <React.Fragment>
-            <ScrollView
-              style={styles.container}
-              contentContainerStyle={styles.containerContent}>
-              <PaymentRequestScreenContentBody
-                details={params.details}
-                detailsOpen={detailsOpen}
-                requestHeaderProps={requestHeaderProps}
-                requestPaymentValueProps={{
-                  aggregateWalletBannerBalance:
-                    maybeAggregateWalletBannerBalance,
-                  integerCryptoAmount,
-                  chainMetadata: maybeChainMetadata || undefined,
-                }}
-                // HACK: We cannot determine the transfer fee of an
-                //       unknown resource.
-                requestPaymentFeeProps={null}
-                walletSelectorButtonProps={
-                  maybeUnknownAssetWalletSelectorButtonProps
-                }
-              />
-            </ScrollView>
-            <BottomActionBar
-              alertType='error'
-              alertContent='The requested asset has not been found!'
-              actions={[
-                {
-                  label: 'Close',
-                  onPress: handleClose,
-                },
-              ]}
+    <View
+      // TODO: Use <ScreenWrapper>
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      {maybeAggregateWalletBannerBalance ? (
+        <PaymentRequestScreenContainer
+          {...params}
+          key={paymentRequestId}
+          integerCryptoAmount={integerCryptoAmount}
+          aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
+          onRequestClose={handleClose}
+          detailsOpen={detailsOpen}
+          requestHeaderProps={requestHeaderProps}
+        />
+      ) : (
+        <React.Fragment>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.containerContent}>
+            <PaymentRequestScreenContentBody
+              details={params.details}
+              detailsOpen={detailsOpen}
+              requestHeaderProps={requestHeaderProps}
+              requestPaymentValueProps={{
+                aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+                integerCryptoAmount,
+                chainMetadata: maybeChainMetadata || undefined,
+              }}
+              // HACK: We cannot determine the transfer fee of an
+              //       unknown resource.
+              requestPaymentFeeProps={null}
+              walletSelectorButtonProps={
+                maybeUnknownAssetWalletSelectorButtonProps
+              }
             />
-          </React.Fragment>
-        )}
-      </View>
-    </>
+          </ScrollView>
+          <BottomActionBar
+            alertType='error'
+            alertContent='The requested asset has not been found!'
+            actions={[
+              {
+                label: 'Close',
+                onPress: handleClose,
+              },
+            ]}
+          />
+        </React.Fragment>
+      )}
+    </View>
   )
 }
 

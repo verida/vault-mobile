@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  StatusBar,
   StyleSheet,
   View,
   ViewStyle,
@@ -126,7 +125,6 @@ const Screen = (props: ScreenProps) => {
               )}
             </>
           )}>
-          <StatusBar barStyle='dark-content' translucent />
           <View
             style={[
               styles.container,

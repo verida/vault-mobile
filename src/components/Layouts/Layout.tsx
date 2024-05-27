@@ -20,6 +20,9 @@ export interface LayoutProps extends ViewProps {
   title?: string
 }
 
+/**
+ * @deprecated use <ScreenWrapper> instead
+ */
 const Layout = (props: LayoutProps) => {
   const { withKeyboardAvoidingView, withScrollView } = props
 
