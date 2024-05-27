@@ -159,7 +159,6 @@ export type MainStackParams = {
   VeridaOneInvitationSuccess: undefined
   UnlockVeridaOne: UnlockVeridaOneScreenParams
 
-  ConnectionRequest: ConnectionRequestScreenParams
   PolygonIdConnectionRequest: ConnectionRequestScreenParams
   WalletConnectConnectionRequest: ConnectionRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
