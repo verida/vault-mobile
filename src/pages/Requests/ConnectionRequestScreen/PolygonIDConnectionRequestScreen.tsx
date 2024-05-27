@@ -1,32 +1,42 @@
 import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Feather from 'react-native-vector-icons/Feather'
 
-import { RequestDetailProperty } from '~/components'
+import {
+  Avatar,
+  BottomActionBar,
+  RequestDetailProperty,
+  RequestDetails,
+  RequestMessage,
+  StatusInfo,
+  Typography,
+} from '~/components'
 import { usePolygonId } from '~/features/polygonid'
 import { reduceProtocols } from '~/features/protocols'
-import { MainStackParams } from '~/navigation/types'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
-import { ConnectionRequestScreenParams } from './ConnectionRequestScreen'
-import { ConnectionRequestScreenContent } from './ConnectionRequestScreen.Content'
+type ConnectionRequestScreenProps =
+  MainStackScreenProps<'PolygonIdConnectionRequest'>
 
-interface WalletConnectConnectionRequestScreenProps {
-  params: ConnectionRequestScreenParams
-  data: AuthorizationRequestMessage
-}
-
-export const PolygonIDConnectionRequestScreen: React.FunctionComponent<
-  WalletConnectConnectionRequestScreenProps
-> = ({ params, data }) => {
-  const { details } = params
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+export const PolygonIdConnectionRequestScreen: React.FunctionComponent<
+  ConnectionRequestScreenProps
+> = (props) => {
+  const { navigation, route } = props
+  const { name, logo, details } = route.params
+  const data = route.params.data as AuthorizationRequestMessage
 
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState(false)
   const [erroMessage, setErrorMessage] = useState<string | undefined>()
   const [success, setSuccess] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
+  const styles = useThemeAwareStyle(createStyles)
+  const insets = useSafeAreaInsets()
 
   const polygonIdNotReady =
     details.protocols.includes('polygonid') &&
@@ -53,9 +63,7 @@ export const PolygonIDConnectionRequestScreen: React.FunctionComponent<
 
     // Doesn't need a try/catch as handled in the function itself
     const { result, error: requestError } =
-      await polygonIdManager.processConnectionRequest(
-        data as AuthorizationRequestMessage
-      )
+      await polygonIdManager.processConnectionRequest(data)
     if (result) {
       setSuccess(true)
     } else {
@@ -65,6 +73,16 @@ export const PolygonIDConnectionRequestScreen: React.FunctionComponent<
     setProcessing(false)
     // TODO: Handle the case where the user closes the screen before the request is processed
   }, [polygonIdManager, data])
+
+  const handleToggleDetails = useCallback(() => {
+    setDetailsOpen((prevValue) => !prevValue)
+  }, [])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Connection Request',
+    })
+  }, [navigation, handleClose])
 
   const protocols = reduceProtocols(details.protocols, 16)
 
@@ -92,26 +110,164 @@ export const PolygonIDConnectionRequestScreen: React.FunctionComponent<
     return properties
   }, [details.requesterId, details.timestamp, protocols])
 
-  useEffect(() => {
-    setErrorMessage(
-      polygonIdNotReady
-        ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
-        : undefined
-    )
-  }, [polygonIdNotReady])
-
   return (
-    <ConnectionRequestScreenContent
-      handleConnect={handleConnect}
-      handleReject={handleClose}
-      params={params}
-      error={error}
-      processing={processing}
-      success={success}
-      processButtonDisabled={processButtonDisabled}
-      detailProperties={detailProperties}
-      handleAlertProcess={handleGoToPolygonIdStatus}
-      errorMessage={erroMessage}
-    />
+    <View
+      // TODO: Use <ScreenWrapper>
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.containerContent}>
+        {!processing && !error && !success ? (
+          <>
+            <Avatar source={logo} fallbackType='person' style={styles.logo} />
+            {details.url ? (
+              <Typography variant='bodySemiBold' style={styles.url}>
+                {details.url}
+              </Typography>
+            ) : null}
+            <Typography
+              variant='h2'
+              style={styles.connectMessage}>{`Connect to ${name}`}</Typography>
+            {details.message ? (
+              <RequestMessage style={styles.messageContainer}>
+                {details.message}
+              </RequestMessage>
+            ) : null}
+
+            <TouchableOpacity
+              onPress={handleToggleDetails}
+              style={styles.detailsButton}>
+              <Typography
+                variant='bodySemiBold'
+                style={styles.detailsButtonLabel}>
+                Request details
+              </Typography>
+              <Feather
+                name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                size={16}
+                style={styles.detailsButtonLabelIcon}
+              />
+            </TouchableOpacity>
+            {detailsOpen ? (
+              <RequestDetails
+                properties={detailProperties}
+                style={styles.detailsContainer}
+              />
+            ) : null}
+          </>
+        ) : (
+          <StatusInfo
+            style={styles.statusContainer}
+            statusType={
+              processing ? 'processsing' : success ? 'success' : 'error'
+            }
+            title={
+              processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
+            }
+            subtitle={
+              processing
+                ? 'Please wait a moment, we are securely setting up the connection.'
+                : success
+                  ? `You are successfully connected to ${name}.`
+                  : erroMessage || 'Something went wrong. Try again later.'
+            }
+          />
+        )}
+      </ScrollView>
+      <BottomActionBar
+        alertType='error'
+        alertContent={
+          polygonIdNotReady
+            ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
+            : undefined
+        }
+        alertOnPress={handleGoToPolygonIdStatus}
+        actions={
+          processing || error || success
+            ? [
+                {
+                  label: 'Close',
+                  onPress: handleClose,
+                  disabled: processing,
+                },
+              ]
+            : [
+                {
+                  label: 'Decline',
+                  onPress: handleClose,
+                  color: 'grey',
+                },
+                {
+                  label: 'Connect',
+                  onPress: handleConnect,
+                  disabled: processButtonDisabled,
+                },
+              ]
+        }
+      />
+    </View>
   )
 }
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    wrapper: {
+      flex: 1,
+      backgroundColor: theme.color.background,
+    },
+    container: {
+      flex: 1,
+    },
+    containerContent: {
+      paddingTop: theme.spacing.xxxxl,
+      paddingBottom: theme.spacing.m,
+      paddingHorizontal: theme.spacing.m,
+      alignItems: 'center',
+    },
+    logo: {
+      height: 72,
+      aspectRatio: 1 / 1,
+      borderRadius: theme.roundness.full,
+    },
+    url: {
+      marginTop: theme.spacing.s,
+      color: theme.color.textLightGrey,
+    },
+    connectMessage: {
+      marginTop: theme.spacing.sm,
+    },
+    messageContainer: {
+      marginTop: theme.spacing.m,
+      width: '100%',
+    },
+    detailsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.m,
+      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.sm,
+      borderWidth: 1,
+      borderRadius: theme.roundness.full,
+      borderColor: theme.color.lightGrey,
+    },
+    detailsButtonLabel: {
+      color: theme.color.textLightGrey,
+    },
+    detailsButtonLabelIcon: {
+      marginLeft: theme.spacing.xs,
+      color: theme.color.textLightGrey,
+    },
+    detailsContainer: {
+      marginTop: theme.spacing.sm,
+    },
+    statusContainer: {
+      marginTop: theme.spacing.xxl,
+    },
+  })

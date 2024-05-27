@@ -1,1 +1,3 @@
-export * from './ConnectionRequestScreen'
+export * from './WalletConnectConnectionRequestScreen'
+export * from './PolygonIdConnectionRequestScreen'
+export * from './types'

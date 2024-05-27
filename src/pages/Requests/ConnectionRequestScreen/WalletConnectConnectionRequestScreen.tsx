@@ -1,39 +1,58 @@
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { AccountId } from 'caip'
 import {
+  Avatar,
+  BottomActionBar,
+  RequestDetailProperty,
+  RequestDetails,
+  RequestMessage,
+  StatusInfo,
+  Typography,
+  useMaybeWalletSelectorButtonProps,
+  WalletSelectorButton,
+} from 'components'
+import {
   getAggregateWalletBannerBalanceResult,
   getCryptoWalletAccountId,
+  LegacyCryptoWallet,
+  selectCryptoWallet,
   useAggregateWalletBannerBalances,
+  useSelectedCryptoWalletId,
   useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
 } from 'features/cryptoWallet'
+import { reduceProtocols } from 'features/protocols'
 import { Logger } from 'features/telemetry'
 import {
   getWalletConnectProposalRequiredCaipChainIds,
   useWalletConnectProposalRequiredCaipChainIds,
 } from 'features/walletConnect/hooks'
 import { createWalletConnectSessionApprovalConfiguration } from 'features/walletConnect/utils'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Alert } from 'react-native'
-
+import { useThemeAwareStyle } from 'hooks'
+import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  RequestDetailProperty,
-  useMaybeWalletSelectorButtonProps,
-} from '~/components'
-import { reduceProtocols } from '~/features/protocols'
+  Alert,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import PagerView from 'react-native-pager-view'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Feather from 'react-native-vector-icons/Feather'
 
-import { MainStackParams } from 'navigation/types'
+import { CryptoWalletList } from '~/components/CryptoWallet'
+import { useAppDispatch } from '~/reduxStore/types'
 
-import {
-  ConnectionRequestScreenParams,
-  Web3WalletData,
-} from './ConnectionRequestScreen'
-import { ConnectionRequestScreenContent } from './ConnectionRequestScreen.Content'
+import { MainStackScreenProps } from 'navigation/types'
+import { Theme } from 'styles/types'
+
+import { Web3WalletData } from './types'
 
 const logger = Logger.create('WalletConnect')
 
@@ -49,22 +68,39 @@ const maybeThrowMissingDependenciesError = (
     )
 }
 
-interface WalletConnectConnectionRequestScreenProps {
-  params: ConnectionRequestScreenParams
-  data: Web3WalletData
+type ConnectionRequestScreenProps =
+  MainStackScreenProps<'WalletConnectConnectionRequest'>
+
+enum PageType {
+  ConnectionRequest,
+  SelectWallet,
+  ConnectionRequestResult,
 }
 
 export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
-  WalletConnectConnectionRequestScreenProps
-> = ({ params, data }) => {
-  const { proposal, web3wallet } = data
-  const { details } = params
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  ConnectionRequestScreenProps
+> = (props) => {
+  console.log('****', props)
+  const { navigation, route } = props
+  const { name, logo, details, data } = route.params
+  const { proposal, web3wallet } = data as Web3WalletData
+  const dispatch = useAppDispatch()
+  const styles = useThemeAwareStyle(createStyles)
 
+  const selectedCryptoWalletId = useSelectedCryptoWalletId()
   const [processing, setProcessing] = useState(false)
-  const [error] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState<PageType>(
+    PageType.ConnectionRequest
+  )
   const [erroMessage] = useState<string | undefined>()
   const [success, setSuccess] = useState(false)
+  const [previousWalletId, setPreviousWalletId] = useState<string | null>(
+    selectedCryptoWalletId
+  )
+
+  const pagerRef = useRef<PagerView>(null)
+  const insets = useSafeAreaInsets()
 
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
@@ -201,7 +237,29 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
     }
   }, [selectedWallet, proposal, web3wallet, selectedMinifiedBlockchainAccounts])
 
-  const handleGoToPolygonIdStatus = () => {}
+  const handleToggleDetails = () => {
+    setDetailsOpen((prevValue) => !prevValue)
+  }
+
+  const handleWalletSelection = async (item: LegacyCryptoWallet) => {
+    dispatch(await selectCryptoWallet(item.id))
+  }
+
+  const handleConfirmWalletSelect = () => {
+    pagerRef.current?.setPage(PageType.ConnectionRequest)
+  }
+
+  const handleWalletSelectorButton = () => {
+    setPreviousWalletId(selectedCryptoWalletId)
+    pagerRef.current?.setPage(PageType.SelectWallet)
+  }
+
+  const handleRejectWalletSelect = useCallback(async () => {
+    if (previousWalletId) {
+      dispatch(await selectCryptoWallet(previousWalletId))
+    }
+    pagerRef.current?.setPage(PageType.ConnectionRequest)
+  }, [dispatch, previousWalletId])
 
   const [maybeAggregateWalletBannerBalance] =
     getAggregateWalletBannerBalanceResult(
@@ -219,21 +277,223 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
     setSelectedWallet(wallets?.length === 1 ? wallets[0] : undefined)
   }, [wallets])
 
+  useEffect(() => {
+    if (currentPage === PageType.SelectWallet) {
+      navigation.setOptions({
+        title: 'Select a Wallet',
+        headerRight: () => (
+          <ButtonNativeBase transparent onPress={handleRejectWalletSelect}>
+            <IconNativeBase name='close' style={{ color: '#000' }} />
+          </ButtonNativeBase>
+        ),
+      })
+    } else if (currentPage === PageType.ConnectionRequest) {
+      navigation.setOptions({
+        title: 'Connection Request',
+        headerRight: () => (
+          <ButtonNativeBase transparent onPress={handleClose}>
+            <IconNativeBase name='close' style={{ color: '#000' }} />
+          </ButtonNativeBase>
+        ),
+      })
+    }
+  }, [navigation, handleRejectWalletSelect, handleClose, currentPage])
+
   return (
     <>
-      <ConnectionRequestScreenContent
-        params={params}
-        error={error}
-        errorMessage={erroMessage}
-        processing={processing}
-        success={success}
-        processButtonDisabled={false}
-        detailProperties={detailProperties}
-        maybeWalletSelectorButtonProps={maybeWalletSelectorButtonProps}
-        handleAlertProcess={handleGoToPolygonIdStatus}
-        handleConnect={handleConnect}
-        handleReject={handleClose}
-      />
+      <StatusBar barStyle='light-content' />
+      <PagerView
+        initialPage={currentPage}
+        style={styles.pagerView}
+        ref={pagerRef}
+        onPageSelected={(e) => {
+          setCurrentPage(e.nativeEvent.position)
+        }}>
+        <View
+          key={`ConnectionRequest`}
+          style={[
+            styles.wrapper,
+            {
+              paddingBottom: insets.bottom,
+              paddingRight: insets.right,
+              paddingLeft: insets.left,
+            },
+          ]}>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.containerContent}>
+            <Avatar source={logo} fallbackType='person' style={styles.logo} />
+            {details.url ? (
+              <Typography variant='bodySemiBold' style={styles.url}>
+                {details.url}
+              </Typography>
+            ) : null}
+            <Typography
+              variant='h2'
+              style={styles.connectMessage}>{`Connect to ${name}`}</Typography>
+            {details.message ? (
+              <RequestMessage style={styles.messageContainer}>
+                {details.message}
+              </RequestMessage>
+            ) : null}
+
+            <TouchableOpacity
+              onPress={handleToggleDetails}
+              style={styles.detailsButton}>
+              <Typography
+                variant='bodySemiBold'
+                style={styles.detailsButtonLabel}>
+                Request details
+              </Typography>
+              <Feather
+                name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                size={16}
+                style={styles.detailsButtonLabelIcon}
+              />
+            </TouchableOpacity>
+
+            {detailsOpen ? (
+              <RequestDetails
+                properties={detailProperties}
+                style={styles.detailsContainer}
+              />
+            ) : null}
+            {maybeWalletSelectorButtonProps && (
+              <TouchableOpacity
+                onPress={handleWalletSelectorButton}
+                style={styles.walletSelectorButton}>
+                <WalletSelectorButton {...maybeWalletSelectorButtonProps} />
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+          <BottomActionBar
+            alertType='error'
+            actions={[
+              {
+                label: 'Decline',
+                onPress: handleClose,
+                color: 'grey',
+              },
+              {
+                label: 'Connect',
+                onPress: handleConnect,
+              },
+            ]}
+          />
+        </View>
+        <View key={`SelectWallet`}>
+          <CryptoWalletList
+            style={styles.walletListContainer}
+            onPressItem={handleWalletSelection}
+          />
+          <BottomActionBar
+            actions={[
+              {
+                label: 'Confirm Selection',
+                onPress: handleConfirmWalletSelect,
+                disabled: false,
+              },
+            ]}
+          />
+        </View>
+        <View key={`ConnectionRequestResult`}>
+          <View style={styles.container}>
+            <StatusInfo
+              style={styles.statusContainer}
+              statusType={
+                processing ? 'processsing' : success ? 'success' : 'error'
+              }
+              title={
+                processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
+              }
+              subtitle={
+                processing
+                  ? 'Please wait a moment, we are securely setting up the connection.'
+                  : success
+                    ? `You are successfully connected to ${name}.`
+                    : erroMessage || 'Something went wrong. Try again later.'
+              }
+            />
+          </View>
+          <BottomActionBar
+            alertType='error'
+            actions={[
+              {
+                label: 'Done',
+                onPress: handleClose,
+                disabled: processing,
+              },
+            ]}
+          />
+        </View>
+      </PagerView>
     </>
   )
 }
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    pagerView: {
+      flex: 1,
+    },
+    wrapper: {
+      flex: 1,
+      backgroundColor: theme.color.background,
+    },
+    container: {
+      flex: 1,
+    },
+    containerContent: {
+      paddingTop: theme.spacing.xxxxl,
+      paddingBottom: theme.spacing.m,
+      paddingHorizontal: theme.spacing.m,
+      alignItems: 'center',
+    },
+    logo: {
+      height: 72,
+      aspectRatio: 1 / 1,
+      borderRadius: theme.roundness.full,
+    },
+    url: {
+      marginTop: theme.spacing.s,
+      color: theme.color.textLightGrey,
+    },
+    connectMessage: {
+      marginTop: theme.spacing.sm,
+    },
+    messageContainer: {
+      marginTop: theme.spacing.m,
+      width: '100%',
+    },
+    detailsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.m,
+      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.sm,
+      borderWidth: 1,
+      borderRadius: theme.roundness.full,
+      borderColor: theme.color.lightGrey,
+    },
+    detailsButtonLabel: {
+      color: theme.color.textLightGrey,
+    },
+    detailsButtonLabelIcon: {
+      marginLeft: theme.spacing.xs,
+      color: theme.color.textLightGrey,
+    },
+    detailsContainer: {
+      marginTop: theme.spacing.sm,
+      width: '100%',
+    },
+    statusContainer: {
+      marginTop: theme.spacing.xxl,
+    },
+    walletListContainer: {
+      width: '100%',
+    },
+    walletSelectorButton: {
+      marginTop: theme.spacing.sm,
+      width: '100%',
+    },
+  })

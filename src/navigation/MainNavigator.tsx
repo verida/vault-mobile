@@ -44,10 +44,11 @@ import {
 } from 'pages/Profiles'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
-  ConnectionRequestScreen,
   IncomingDataRequestScreen,
   PaymentRequestScreen,
+  PolygonIdConnectionRequestScreen,
   ProofRequestScreen,
+  WalletConnectConnectionRequestScreen,
 } from 'pages/Requests'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
@@ -240,8 +241,12 @@ export const MainNavigator: React.FunctionComponent = () => {
               // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
             }}>
             <Stack.Screen
-              name='ConnectionRequest'
-              component={ConnectionRequestScreen}
+              name='WalletConnectConnectionRequest'
+              component={WalletConnectConnectionRequestScreen}
+            />
+            <Stack.Screen
+              name='PolygonIdConnectionRequest'
+              component={PolygonIdConnectionRequestScreen}
             />
             <Stack.Screen
               name='IncomingDataRequest'

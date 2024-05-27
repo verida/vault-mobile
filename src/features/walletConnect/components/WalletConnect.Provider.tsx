@@ -249,7 +249,10 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
           // console.log('******Message request received*****', screenParams)
 
-          return navigation.navigate('ConnectionRequest', screenParams)
+          return navigation.navigate(
+            'WalletConnectConnectionRequest',
+            screenParams
+          )
           // Check if there are caip typed.
           // return showModal(
           //   <WalletConnectModalConnectDapp

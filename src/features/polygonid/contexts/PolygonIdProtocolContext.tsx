@@ -88,9 +88,9 @@ export const PolygonIdProtocolProvider: React.FunctionComponent = (props) => {
               data: requestData,
             }
             if (replaceNavigationScreen) {
-              navigation.replace('ConnectionRequest', screenParams)
+              navigation.replace('PolygonIdConnectionRequest', screenParams)
             } else {
-              navigation.navigate('ConnectionRequest', screenParams)
+              navigation.navigate('PolygonIdConnectionRequest', screenParams)
             }
           }
           return
