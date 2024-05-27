@@ -127,6 +127,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           onPress: () => navigation.navigate('BlockchainNetworks'),
         },
         {
+          label: 'Crypto Wallets',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('ManageWallets'),
+        },
+        {
           label: 'DApp Connections',
           action: 'arrow',
           optional: true,

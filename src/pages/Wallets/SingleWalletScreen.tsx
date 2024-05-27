@@ -19,6 +19,7 @@ export type SingleWalletScreenParams = {
 
 type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
+// TODO: Allow this component to be used for watched wallet as well
 export const SingleWalletScreen: React.FC<SingleWalletScreenProps> = (
   props
 ) => {
