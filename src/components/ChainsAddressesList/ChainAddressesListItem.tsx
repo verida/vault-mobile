@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
+import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useMemo } from 'react'
 import { StyleSheet, TouchableHighlight, View } from 'react-native'
 
@@ -13,20 +14,20 @@ import { Theme } from '~/styles/types'
 
 export type ChainAddressesListItemProps = {
   item: LegacyCryptoWalletAccount
-  onPressPrivateKey: (privateKey: string) => void
 }
 
 export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
   props
 ) => {
-  const { item, onPressPrivateKey } = props
+  const { item } = props
 
   const { showActionSheetWithOptions } = useActionSheet()
+  const navigation = useNavigation()
 
   const options = useMemo(() => {
-    const optionItems = ['Copy address']
+    const optionItems = ['Copy public address']
     if (item.privateKey) {
-      optionItems.push('Show Private Key')
+      optionItems.push('Show private key')
     }
     optionItems.push('Cancel')
     return optionItems
@@ -48,16 +49,20 @@ export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
           return
         }
         if (item.privateKey && buttonIndex === 1) {
-          onPressPrivateKey(item.privateKey)
+          navigation.navigate('DisplayPrivateInfo', {
+            source: 'cryptoWallet',
+            type: 'privateKey',
+            sourceId: item.address,
+          })
           return
         }
       }
     )
   }, [
+    navigation,
     options,
     item.address,
     item.privateKey,
-    onPressPrivateKey,
     showActionSheetWithOptions,
     theme.color.black,
   ])

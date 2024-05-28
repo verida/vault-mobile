@@ -35,6 +35,7 @@ type LibIconName =
   | 'calculator'
   | 'wallet'
   | 'clipboard' // TODO: replace the clipboard by copy?
+  | 'paste'
   | 'inbox'
   | 'info-circle'
   | 'question-circle'
@@ -71,6 +72,8 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'checkbox-unchecked'
+  | 'checkbox-checked'
   | 'send'
   | 'receive'
   | 'delete'
@@ -106,7 +109,17 @@ export const Icon = (props: {
     case 'copy':
       return <CopyIcon {...svgProps} />
     case 'clipboard':
-      return <Ionicon name='copy-outline' {...iconProps} />
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='copy-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'paste':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='clipboard-outline' {...iconProps} />
+        </IconWrapper>
+      )
     case 'edit':
       return <EditIcon {...svgProps} />
     case 'goto':
@@ -350,6 +363,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-unchecked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='square-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-checked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='checkbox' {...iconProps} />
         </IconWrapper>
       )
     case 'send':

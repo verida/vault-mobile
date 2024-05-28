@@ -5,13 +5,12 @@ import { SceneMap, TabView } from 'react-native-tab-view'
 
 import { SegmentData, SegmentsControl } from '~/components/SegmentControl'
 import { WalletNavigationHeader } from '~/components/WalletSelectorNavigation/WalletNavigationHeader'
-import WalletSelectorModal from '~/components/WalletSelectorNavigation/WalletSelectorModal'
 import {
   useCryptoWalletsStatus,
   useSelectedCryptoWallet,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
-import { TabsScreenProps } from '~/navigation/types'
+import { TabsScreenProps } from '~/navigation'
 import { TokenDashboard } from '~/pages/Tokens/TokenDashboard'
 import { Theme } from '~/styles/types'
 
@@ -51,29 +50,24 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
 
   const { processsing: cryptoWalletProcessing } = useCryptoWalletsStatus()
   const selectedCryptoWallet = useSelectedCryptoWallet()
-  const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const layout = useWindowDimensions()
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const onCloseModal = () => {
-    setModalVisible(!modalVisible)
-  }
-
-  const openWalletModal = useCallback(() => {
-    setModalVisible((prevModalVisible) => !prevModalVisible)
-  }, [])
+  const handleWalletHeaderPress = useCallback(() => {
+    navigation.navigate('SwitchSelectedCryptoWallet')
+  }, [navigation])
 
   const walletSelect = useMemo(
     () => (
       <WalletNavigationHeader
         isWalletLoading={cryptoWalletProcessing && !selectedCryptoWallet}
         selectedWallet={selectedCryptoWallet}
-        onPress={openWalletModal}
+        onPress={handleWalletHeaderPress}
       />
     ),
-    [cryptoWalletProcessing, openWalletModal, selectedCryptoWallet]
+    [cryptoWalletProcessing, handleWalletHeaderPress, selectedCryptoWallet]
   )
 
   useEffect(() => {
@@ -99,10 +93,6 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
         renderTabBar={() => null}
         onIndexChange={setActiveTabIndex}
         initialLayout={{ width: layout.width }}
-      />
-      <WalletSelectorModal
-        modalVisible={modalVisible}
-        onCloseModal={onCloseModal}
       />
     </Container>
   )

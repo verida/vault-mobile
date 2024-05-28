@@ -11,6 +11,9 @@ type Props = {
   onPress?: (phrase: string) => void
 }
 
+/**
+ * @deprecated try to use the screen 'DisplayPrivateInfo' instead
+ */
 export default (props: Props) => {
   const { visible, toggleConfirmModal, phrase } = props
   return (

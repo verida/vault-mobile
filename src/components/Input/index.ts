@@ -1,4 +1,5 @@
 export * from './AnimatedCheckbox'
+export * from './Checkbox'
 export * from './CollapsibleContent'
 export * from './CollapsibleRadioButtonGroup'
 export * from './FormInput'

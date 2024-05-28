@@ -1,21 +1,20 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 
-import { Icon, Typography } from '~/components'
+import { Icon } from '~/components'
+import { Typography } from '~/components/Typography'
+import { HIT_SLOP_10_10 } from '~/constants'
 import { useTheme } from '~/contexts'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
-export type RadioButtonProps = {
+export type CheckboxProps = {
   checked?: boolean
-  label: string
   onToggle: () => void
 } & ViewProps
 
-export const RadioButton: React.FunctionComponent<RadioButtonProps> = (
-  props
-) => {
-  const { checked, label, onToggle, ...viewProps } = props
+export const Checkbox: React.FC<CheckboxProps> = (props) => {
+  const { checked, children, onToggle, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -27,38 +26,32 @@ export const RadioButton: React.FunctionComponent<RadioButtonProps> = (
         activeOpacity={1}
         onPress={onToggle}
         disabled={!onToggle}
-        hitSlop={{ top: 5, right: 10, bottom: 5, left: 10 }}>
-        <Typography variant='bodySemiBold' style={styles.label}>
-          {label}
-        </Typography>
+        hitSlop={HIT_SLOP_10_10}>
         {checked ? (
-          <Icon
-            name='radio-button-checked'
-            size={24}
-            color={theme.color.success}
-          />
+          <Icon name='checkbox-checked' size={24} color={theme.color.success} />
         ) : (
           <Icon
-            name='radio-button-unchecked'
+            name='checkbox-unchecked'
             size={24}
             color={theme.color.lightGrey}
           />
+        )}
+        {typeof children === 'string' ? (
+          <Typography variant='body'>{children}</Typography>
+        ) : (
+          children
         )}
       </TouchableOpacity>
     </View>
   )
 }
 
-const createStyles = (_theme: Theme) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       width: '100%',
-      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    label: {
-      textTransform: 'capitalize',
+      gap: theme.spacing.s,
     },
   })

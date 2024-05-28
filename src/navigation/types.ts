@@ -58,9 +58,9 @@ import {
 } from '~/pages/Profiles'
 import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
 import {
+  DisplayPrivateInfoScreenParams,
   SeedPhraseGeneratedScreenParams,
   SeedPhraseScreenParams,
-  SeedPhraseViewScreenParams,
   VerifyPhraseScreenParams,
 } from '~/pages/RecoveryPhrase'
 import {
@@ -85,8 +85,13 @@ import {
   WalletConnectActiveSessionsScreenParams,
 } from '~/pages/WalletConnect'
 import {
+  AddWatchedCryptoWalletScreenParams,
+  CreateCryptoWalletScreenParams,
+  EditCryptoWalletScreenParams,
+  ImportCryptoWalletScreenParams,
   ManageWalletsScreenParams,
   SingleWalletScreenParams,
+  SwitchSelectedCryptoWalletScreenParams,
 } from '~/pages/Wallets'
 
 export type RootStackParams = {
@@ -139,6 +144,11 @@ export type MainStackParams = {
   UnlockVeridaOne: UnlockVeridaOneScreenParams
   VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
+  SwitchSelectedCryptoWallet: SwitchSelectedCryptoWalletScreenParams
+  CreateCryptoWallet: CreateCryptoWalletScreenParams
+  ImportCryptoWallet: ImportCryptoWalletScreenParams
+  AddWatchedCryptoWallet: AddWatchedCryptoWalletScreenParams
+  EditCryptoWallet: EditCryptoWalletScreenParams
   SingleCurrency: SingleCurrencyScreenParams
   SendToken: SendTokenScreenParams
   TokenRecipient: TokenRecipientScreenParams
@@ -161,10 +171,10 @@ export type MainStackParams = {
   RemoveIdentity: RemoveIdentityScreenParams
   MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
   MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
+  DisplayPrivateInfo: DisplayPrivateInfoScreenParams
   SeedPhrase: SeedPhraseScreenParams
   SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
   VerifyPhrase: VerifyPhraseScreenParams
-  SeedPhraseView: SeedPhraseViewScreenParams
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
   BlockchainNetworks: BlockchainNetworksScreenParams

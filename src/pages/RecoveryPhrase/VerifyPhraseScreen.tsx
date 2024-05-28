@@ -11,7 +11,7 @@ import {
   selectSeedPhraseTemplate,
 } from '~/features/seedphrases'
 import { setShowSeedPhraseReminder } from '~/features/settings'
-import { MainStackScreenProps } from '~/navigation/types'
+import { MainStackScreenProps, useScreenCaptureProtection } from '~/navigation'
 import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
 
 export type VerifyPhraseScreenParams = {
@@ -33,6 +33,8 @@ export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
       title: 'Record your Seed Phrase',
     })
   }, [navigation])
+
+  useScreenCaptureProtection()
 
   const dispatch = useAppDispatch()
   const selected = useAppSelector(selectSeedPhraseTemplate)
