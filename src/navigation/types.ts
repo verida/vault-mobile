@@ -64,10 +64,11 @@ import {
   VerifyPhraseScreenParams,
 } from '~/pages/RecoveryPhrase'
 import {
-  ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
   PaymentRequestScreenParams,
+  PolygonIdConnectionRequestScreenParams,
   ProofRequestScreenParams,
+  WalletConnectConnectionRequestScreenParams,
 } from '~/pages/Requests'
 import { SettingsScreenParams } from '~/pages/Settings'
 import {
@@ -172,8 +173,8 @@ export type MainStackParams = {
   WalletConnectActiveSessions: WalletConnectActiveSessionsScreenParams
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsScreenParams
   SingleConnection: SingleConnectionScreenParams
-  PolygonIdConnectionRequest: ConnectionRequestScreenParams
-  WalletConnectConnectionRequest: ConnectionRequestScreenParams
+  PolygonIdConnectionRequest: PolygonIdConnectionRequestScreenParams
+  WalletConnectConnectionRequest: WalletConnectConnectionRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams

@@ -8,6 +8,7 @@ import {
   RequestDetailProperty,
   RequestDetails,
   RequestMessage,
+  ScreenWrapper,
   StatusInfo,
   Typography,
   useMaybeWalletSelectorButtonProps,
@@ -32,12 +33,10 @@ import {
 } from 'features/walletConnect/hooks'
 import { createWalletConnectSessionApprovalConfiguration } from 'features/walletConnect/utils'
 import { useThemeAwareStyle } from 'hooks'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert,
   ScrollView,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -47,12 +46,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
 
 import { CryptoWalletList } from '~/components/CryptoWallet'
+import { Protocol } from '~/features/protocols'
 import { useAppDispatch } from '~/reduxStore/types'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
-
-import { Web3WalletData } from './types'
 
 const logger = Logger.create('WalletConnect')
 
@@ -66,6 +64,26 @@ const maybeThrowMissingDependenciesError = (
         proposal
       )}, Wallet?: ${Boolean(web3wallet)}).`
     )
+}
+
+type Web3WalletData = {
+  web3wallet: IWeb3Wallet
+  proposal: Web3WalletTypes.EventArguments['session_proposal']
+}
+
+export interface WalletConnectConnectionRequestScreenParams {
+  name: string // TODO: Make it optional and provide a consistent way to representing an unknown requester
+  logo?: string
+  details: {
+    timestamp?: string
+    requesterId: string
+    message?: string
+    url?: string
+    protocols: Protocol[]
+  }
+  data: Web3WalletData
+  // TODO: Make it multiple types for the different protocols
+  // TODO: Add expiry when needed
 }
 
 type ConnectionRequestScreenProps =
@@ -82,7 +100,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
 > = (props) => {
   const { navigation, route } = props
   const { name, logo, details, data } = route.params
-  const { proposal, web3wallet } = data as Web3WalletData
+  const { proposal, web3wallet } = data
   const dispatch = useAppDispatch()
   const styles = useThemeAwareStyle(createStyles)
 
@@ -288,20 +306,10 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
     if (currentPage === PageType.SelectWallet) {
       navigation.setOptions({
         title: 'Select a Wallet',
-        headerRight: () => (
-          <ButtonNativeBase transparent onPress={handleRejectWalletSelect}>
-            <IconNativeBase name='close' style={{ color: '#000' }} />
-          </ButtonNativeBase>
-        ),
       })
     } else if (currentPage === PageType.ConnectionRequest) {
       navigation.setOptions({
         title: 'Connection Request',
-        headerRight: () => (
-          <ButtonNativeBase transparent onPress={handleClose}>
-            <IconNativeBase name='close' style={{ color: '#000' }} />
-          </ButtonNativeBase>
-        ),
       })
     }
   }, [navigation, handleRejectWalletSelect, handleClose, currentPage])
@@ -313,8 +321,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
   }, [success, processing, error, pagerRef])
 
   return (
-    <>
-      <StatusBar barStyle='light-content' />
+    <ScreenWrapper>
       <PagerView
         initialPage={currentPage}
         style={styles.pagerView}
@@ -440,7 +447,7 @@ export const WalletConnectConnectionRequestScreen: React.FunctionComponent<
           />
         </View>
       </PagerView>
-    </>
+    </ScreenWrapper>
   )
 }
 
