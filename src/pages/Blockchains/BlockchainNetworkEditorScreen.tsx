@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { BottomActionBar, ScreenWrapper } from 'components'
+import { BottomActionBar, Icon, ScreenWrapper } from 'components'
 import {
   useChainMetadataDetails,
   useChainMetadatasCustom,
@@ -7,15 +7,13 @@ import {
 import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
-import * as React from 'react'
-import { Alert, StyleSheet } from 'react-native'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { Alert, StyleSheet, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
-import TrashBinIcon from 'assets/trash_bin_icon.svg'
-import {
-  HeaderSideButton,
-} from 'components/Navigation/NavigationHeader'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { HIT_SLOP_10_10 } from '~/constants'
+import { useTheme } from '~/contexts'
+
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -55,21 +53,25 @@ export const BlockchainNetworkEditorScreen: React.FC<
   // TODO: prevent the user from modifying reserved chains
 
   // TODO: which namespace should this be? initial or current?
-  const maybeChainIdToDelete = React.useMemo(
+  const maybeChainIdToDelete = useMemo(
     () =>
       maybeInitialNamespace && maybeInitialReference
         ? new ChainId({
-          reference: maybeInitialReference,
-          namespace: maybeInitialNamespace,
-        })
+            reference: maybeInitialReference,
+            namespace: maybeInitialNamespace,
+          })
         : null,
     [maybeInitialNamespace, maybeInitialReference]
   )
 
-  const onPressDeleteNetwork = React.useCallback(async () => {
-    if (!isEditable) throw attemptedToModifyDisabledNetworkError()
+  const handlePressDeleteNetwork = useCallback(async () => {
+    if (!isEditable) {
+      throw attemptedToModifyDisabledNetworkError()
+    }
 
-    if (!maybeChainIdToDelete) return
+    if (!maybeChainIdToDelete) {
+      return
+    }
 
     const shouldDelete = await new Promise<boolean>((resolve) =>
       Alert.alert(
@@ -91,20 +93,14 @@ export const BlockchainNetworkEditorScreen: React.FC<
       )
     )
 
-    if (!shouldDelete) return
+    if (!shouldDelete) {
+      return
+    }
 
     await removeCustomNetworks([maybeChainIdToDelete])
 
     return navigation.goBack()
   }, [isEditable, maybeChainIdToDelete, removeCustomNetworks, navigation])
-
-  const headerSideButton: HeaderSideButton = React.useMemo(
-    () => ({
-      icon: <TrashBinIcon />,
-      action: onPressDeleteNetwork,
-    }),
-    [onPressDeleteNetwork]
-  )
 
   const deleteControlsEnabled = Boolean(isEditable && maybeChainIdToDelete)
 
@@ -119,7 +115,7 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
   const { isReservedChainId } = useChainMetadataDetails()
 
-  const onPressSave = React.useCallback(async () => {
+  const onPressSave = useCallback(async () => {
     try {
       if (!isEditable) throw attemptedToModifyDisabledNetworkError()
 
@@ -162,15 +158,34 @@ export const BlockchainNetworkEditorScreen: React.FC<
     addCustomNetworks,
   ])
 
+  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
+
+  useEffect(() => {
+    navigation.setOptions({
+      title,
+      headerRight: deleteControlsEnabled
+        ? () => (
+            <TouchableOpacity
+              onPress={handlePressDeleteNetwork}
+              hitSlop={HIT_SLOP_10_10}
+              style={styles.headerDeleteNetworkButton}>
+              <Icon name='delete' size={24} color={theme.color.primary} />
+            </TouchableOpacity>
+          )
+        : undefined,
+    })
+  }, [
+    navigation,
+    title,
+    deleteControlsEnabled,
+    handlePressDeleteNetwork,
+    styles.headerDeleteNetworkButton,
+    theme.color.primary,
+  ])
 
   return (
     <ScreenWrapper keyboardAvoiding>
-      <NavigationHeader
-        title={title}
-        renderNetInfo={false}
-        right={deleteControlsEnabled ? headerSideButton : undefined}
-      />
       <ScrollView style={styles.flex} contentContainerStyle={styles.content}>
         <ChainsMetadataForm
           {...chainMetadataFormFields}
@@ -189,12 +204,12 @@ export const BlockchainNetworkEditorScreen: React.FC<
         actions={
           isEditable
             ? [
-              {
-                label: 'Save',
-                onPress: onPressSave,
-                disabled: hasErrors,
-              },
-            ]
+                {
+                  label: 'Save',
+                  onPress: onPressSave,
+                  disabled: hasErrors,
+                },
+              ]
             : []
         }
       />
@@ -204,6 +219,9 @@ export const BlockchainNetworkEditorScreen: React.FC<
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    headerDeleteNetworkButton: {
+      marginRight: theme.spacing.m,
+    },
     flex: { flex: 1 },
     content: {
       padding: theme.spacing.m,

@@ -1,44 +1,48 @@
 import EncryptionUtils from '@verida/encryption-utils'
 import { EnvironmentType } from '@verida/types'
-import { Alert as AlertBanner } from 'components'
 import didJWT from 'did-jwt'
-import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { isNetworkCompatibleForConnect } from 'features/veridaConnect'
-import { useWalletConnectContext } from 'features/walletConnect'
 import { capitalize } from 'lodash'
 import moment from 'moment'
-import { Container, Content } from 'native-base'
+import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, StyleSheet, View } from 'react-native'
-import Icon from 'react-native-vector-icons/AntDesign'
 
-import AccountManager from 'api/AccountManager'
-import CloseIcon from 'assets/icons/close_icon.svg'
-import AppLogo from 'components/AppLogo'
-import CountDownText from 'components/CountDownText'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import { useAppSelector } from 'reduxStore/types'
-
-import MobileSvg from '../../assets/mobile.svg'
-import Button from '../../components/Button'
+import AccountManager from '~/api/AccountManager'
+import MobileSvg from '~/assets/mobile.svg'
+import { Alert as AlertBanner } from '~/components'
+import AppLogo from '~/components/AppLogo'
+import Button from '~/components/Button'
+import CountDownText from '~/components/CountDownText'
+import CustomFooter from '~/components/Layouts/CustomFooter'
+import LoadingView from '~/components/LoadingView'
+import Text from '~/components/Text'
 import {
   BLACK_COLOR_OPACITY,
   ORANGE_COLOR,
   PRIMARY_COLOR,
   SUCCESS_COLOR,
   WARNING_COLOR,
-} from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { isNetworkCompatibleForConnect } from '~/features/veridaConnect'
+import { useWalletConnectContext } from '~/features/walletConnect'
+import { useAppSelector } from '~/reduxStore/types'
 
 const logger = Logger.create('Pages/Login/LoginRequest')
 
 global.EncryptionUtils = EncryptionUtils
 
-export default (props) => {
+export const LoginRequestScreen = (props) => {
+  const { navigation } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Login Request',
+    })
+  }, [navigation])
+
   const [status, setStatus] = useState('loading')
   const [info, setInfo] = useState({})
   const [expiry, setExpiry] = useState(null)
@@ -323,13 +327,6 @@ export default (props) => {
 
   return (
     <Container>
-      <NavigationHeader
-        title='Login Request'
-        left={{
-          icon: <CloseIcon />,
-          action: () => props.navigation.goBack(),
-        }}
-      />
       <Content contentContainerStyle={style.contentContainer}>
         {status === 'loading' && <LoadingView />}
         {status !== 'loading' ? (
@@ -422,6 +419,7 @@ export default (props) => {
                             { color: errorMessage.color, marginBottom: 2 },
                           ]}>
                           <Icon
+                            type='AntDesign'
                             name={errorMessage.iconName}
                             style={[style.text, { color: errorMessage.color }]}
                           />

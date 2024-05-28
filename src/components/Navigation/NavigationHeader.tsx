@@ -27,6 +27,9 @@ export type HeaderProps = {
   renderNetInfo?: boolean
 }
 
+/**
+ * @deprecated use the custom header set in the navigators directly
+ */
 function NavigationHeader({
   left = { icon: 'back' },
   title,

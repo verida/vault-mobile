@@ -1,7 +1,6 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import {
@@ -99,13 +98,6 @@ export const ProofRequestScreen: React.FunctionComponent<
   useEffect(() => {
     navigation.setOptions({
       title: 'Proof Request',
-      // TODO: Get rid of the following when properly handling a common header in the navigator
-      headerRight: () => (
-        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-        <ButtonNativeBase transparent onPress={handleClose}>
-          <IconNativeBase name='close' style={{ color: '#000' }} />
-        </ButtonNativeBase>
-      ),
     })
   }, [navigation, handleClose])
 
@@ -135,153 +127,151 @@ export const ProofRequestScreen: React.FunctionComponent<
   }, [details.requesterId, details.url, protocols])
 
   return (
-    <>
-      <StatusBar barStyle='light-content' />
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingBottom: insets.bottom,
-            paddingRight: insets.right,
-            paddingLeft: insets.left,
-          },
-        ]}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.containerContent}>
-          {!processing && !error && !success ? (
-            <>
-              <RequestHeader
-                senderName={name}
-                avatar={logo}
-                timestamp={details.timestamp}
-                isDetailsOpen={detailsOpen}
-                onToggleDetails={handleToggleDetails}
+    <View
+      // TODO: Use <ScreenWrapper>
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.containerContent}>
+        {!processing && !error && !success ? (
+          <>
+            <RequestHeader
+              senderName={name}
+              avatar={logo}
+              timestamp={details.timestamp}
+              isDetailsOpen={detailsOpen}
+              onToggleDetails={handleToggleDetails}
+            />
+            {detailsOpen ? (
+              <RequestDetails
+                properties={detailProperties}
+                style={styles.detailsContainer}
               />
-              {detailsOpen ? (
-                <RequestDetails
-                  properties={detailProperties}
-                  style={styles.detailsContainer}
-                />
-              ) : null}
-              {details.message ? (
-                <RequestMessage style={styles.messageContainer}>
-                  {details.message}
-                </RequestMessage>
-              ) : null}
-              <View style={styles.proofContainer}>
-                <Typography variant='h5SemiBold' style={styles.proofMessage}>
-                  The following proof is requested
-                </Typography>
-                {data.body?.scope?.map((item) => (
-                  <View style={styles.proofItemContainer} key={item.id}>
-                    <Typography variant='h4'>
-                      {item.query.type || 'Credential'}
+            ) : null}
+            {details.message ? (
+              <RequestMessage style={styles.messageContainer}>
+                {details.message}
+              </RequestMessage>
+            ) : null}
+            <View style={styles.proofContainer}>
+              <Typography variant='h5SemiBold' style={styles.proofMessage}>
+                The following proof is requested
+              </Typography>
+              {data.body?.scope?.map((item) => (
+                <View style={styles.proofItemContainer} key={item.id}>
+                  <Typography variant='h4'>
+                    {item.query.type || 'Credential'}
+                  </Typography>
+                  <View style={styles.proofItemPropertySpacing}>
+                    <Typography
+                      variant='bodySemiBold'
+                      style={styles.proofItemPropertyLabel}>
+                      Requirements
                     </Typography>
-                    <View style={styles.proofItemPropertySpacing}>
-                      <Typography
-                        variant='bodySemiBold'
-                        style={styles.proofItemPropertyLabel}>
-                        Requirements
-                      </Typography>
-                      <Typography
-                        variant='bodySemiBold'
-                        style={styles.proofItemPropertyValue}>
-                        {getUserFriendlyProofRequestRequirements(
-                          item.query
-                        ).map((requirement) => (
+                    <Typography
+                      variant='bodySemiBold'
+                      style={styles.proofItemPropertyValue}>
+                      {getUserFriendlyProofRequestRequirements(item.query).map(
+                        (requirement) => (
                           <Typography key={requirement}>
                             {requirement}
                           </Typography>
-                        ))}
-                      </Typography>
-                    </View>
-                    <View style={styles.proofItemPropertySpacing}>
-                      <Typography
-                        variant='bodySemiBold'
-                        style={styles.proofItemPropertyLabel}>
-                        Allowed issuers
-                      </Typography>
-                      <Typography
-                        variant='bodySemiBold'
-                        style={styles.proofItemPropertyValue}>
-                        {getUserFriendlyAllowedIssuers(
-                          item.query.allowedIssuers as string[]
-                        ).map((issuer) => (
-                          <Typography key={issuer}>{issuer}</Typography>
-                        ))}
-                      </Typography>
-                    </View>
+                        )
+                      )}
+                    </Typography>
                   </View>
-                ))}
-                {/* TODO: Handle if there is no proof */}
-              </View>
-              <View style={styles.infoMessageContainer}>
-                <Typography style={styles.infoMessage}>
-                  {/* TODO: Check whether the selective disclosure feature disclose value in clear. If so, identify if the request has selective disclosure and adapt the messages for the user */}
-                  No private data will be sent. A zero knowledge proof will be
-                  generated by {protocols}
-                </Typography>
-              </View>
-            </>
-          ) : (
-            <StatusInfo
-              style={styles.statusContainer}
-              statusType={
-                processing ? 'processsing' : success ? 'success' : 'error'
-              }
-              title={
-                processing
-                  ? 'Generating proof...'
-                  : success
-                    ? 'Success!'
-                    : 'Error!'
-              }
-              subtitle={
-                // TODO: Find better messages
-                processing
-                  ? 'Please wait a moment, we are generating a zero knowledge proof to share. No private data will be sent.'
-                  : success
-                    ? `Your proof has been generated and sent successfully.`
-                    : erroMessage || 'Something went wrong. Try again later.'
-              }
-            />
-          )}
-        </ScrollView>
+                  <View style={styles.proofItemPropertySpacing}>
+                    <Typography
+                      variant='bodySemiBold'
+                      style={styles.proofItemPropertyLabel}>
+                      Allowed issuers
+                    </Typography>
+                    <Typography
+                      variant='bodySemiBold'
+                      style={styles.proofItemPropertyValue}>
+                      {getUserFriendlyAllowedIssuers(
+                        item.query.allowedIssuers as string[]
+                      ).map((issuer) => (
+                        <Typography key={issuer}>{issuer}</Typography>
+                      ))}
+                    </Typography>
+                  </View>
+                </View>
+              ))}
+              {/* TODO: Handle if there is no proof */}
+            </View>
+            <View style={styles.infoMessageContainer}>
+              <Typography style={styles.infoMessage}>
+                {/* TODO: Check whether the selective disclosure feature disclose value in clear. If so, identify if the request has selective disclosure and adapt the messages for the user */}
+                No private data will be sent. A zero knowledge proof will be
+                generated by {protocols}
+              </Typography>
+            </View>
+          </>
+        ) : (
+          <StatusInfo
+            style={styles.statusContainer}
+            statusType={
+              processing ? 'processsing' : success ? 'success' : 'error'
+            }
+            title={
+              processing
+                ? 'Generating proof...'
+                : success
+                  ? 'Success!'
+                  : 'Error!'
+            }
+            subtitle={
+              // TODO: Find better messages
+              processing
+                ? 'Please wait a moment, we are generating a zero knowledge proof to share. No private data will be sent.'
+                : success
+                  ? `Your proof has been generated and sent successfully.`
+                  : erroMessage || 'Something went wrong. Try again later.'
+            }
+          />
+        )}
+      </ScrollView>
 
-        <BottomActionBar
-          alertType='error'
-          alertContent={
-            polygonIdNotReady
-              ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
-              : undefined
-          }
-          alertOnPress={handleGoToPolygonIdStatus}
-          actions={
-            processing || error || success
-              ? [
-                  {
-                    label: 'Close',
-                    onPress: handleClose,
-                    disabled: processing,
-                  },
-                ]
-              : [
-                  {
-                    label: 'Decline',
-                    onPress: handleClose,
-                    color: 'grey',
-                  },
-                  {
-                    label: 'Send Proof',
-                    onPress: handleSendProof,
-                    disabled: processButtonDisabled,
-                  },
-                ]
-          }
-        />
-      </View>
-    </>
+      <BottomActionBar
+        alertType='error'
+        alertContent={
+          polygonIdNotReady
+            ? 'The Polygon ID feature is not ready. Check its status in the Settings and try again.'
+            : undefined
+        }
+        alertOnPress={handleGoToPolygonIdStatus}
+        actions={
+          processing || error || success
+            ? [
+                {
+                  label: 'Close',
+                  onPress: handleClose,
+                  disabled: processing,
+                },
+              ]
+            : [
+                {
+                  label: 'Decline',
+                  onPress: handleClose,
+                  variant: 'secondary',
+                },
+                {
+                  label: 'Send Proof',
+                  onPress: handleSendProof,
+                  disabled: processButtonDisabled,
+                },
+              ]
+        }
+      />
+    </View>
   )
 }
 

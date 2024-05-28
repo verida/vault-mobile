@@ -1,9 +1,5 @@
-import Clipboard from '@react-native-clipboard/clipboard'
-import { RouteProp, useRoute } from '@react-navigation/native'
-import { useTheme } from 'contexts/ThemeContext'
-import { NFTMetadata } from 'features/assets'
-import { useSelectedCryptoWallet } from 'features/cryptoWallet'
-import React, { FC, ReactNode } from 'react'
+import Clipboard from '@react-native-community/clipboard'
+import React, { FC, ReactNode, useEffect } from 'react'
 import {
   Alert,
   Dimensions,
@@ -15,21 +11,21 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { NftItem } from 'components/Assets/NftItem'
-import { Icon } from 'components/Icon'
-import LoadingIndicator from 'components/LoadingIndicator'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Spacer } from 'components/Spacer'
-import { Headline } from 'components/Typography/Headline'
-import { Label } from 'components/Typography/Label'
-import { SubHeadline } from 'components/Typography/SubHeadline'
-import { Text } from 'components/Typography/Text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackParams } from 'navigation/types'
-import { Theme } from 'styles/types'
-
-type NFTDetailRouteProp = RouteProp<MainStackParams, 'NFTDetail'>
+import { ScreenWrapper } from '~/components'
+import { NftItem } from '~/components/Assets/NftItem'
+import { Icon } from '~/components/Icon'
+import LoadingIndicator from '~/components/LoadingIndicator'
+import { Spacer } from '~/components/Spacer'
+import { Headline } from '~/components/Typography/Headline'
+import { Label } from '~/components/Typography/Label'
+import { SubHeadline } from '~/components/Typography/SubHeadline'
+import { Text } from '~/components/Typography/Text'
+import { useTheme } from '~/contexts/ThemeContext'
+import { NFT, NFTMetadata } from '~/features/assets'
+import { useSelectedCryptoWallet } from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 const Row: FC<
   {
@@ -118,14 +114,22 @@ const Property = ({
   )
 }
 
-const NFTDetail = () => {
+export type NFTDetailScreenParams = { nft: NFT }
+
+type NFTDetailScreenProps = MainStackScreenProps<'NFTDetail'>
+
+export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { nft } = params
+
   //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const route = useRoute<NFTDetailRouteProp>()
   const selectedCryptoWallet = useSelectedCryptoWallet()
 
-  const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
   }
@@ -162,18 +166,16 @@ const NFTDetail = () => {
   //  )
   //}
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: name,
+    })
+  }, [navigation, name])
+
   if (!nft) return <LoadingIndicator />
 
   return (
-    <Screen>
-      <NavigationHeader
-        title={name}
-        // right={{
-        //   icon: <MoreIcon fill={theme.color.icon} />,
-        //   action: handleMoreActions,
-        // }}
-        bottomBorder
-      />
+    <ScreenWrapper safeAreaEdges={['left', 'right']}>
       <ScrollView
         contentContainerStyle={{
           paddingBottom: theme.spacing.xl,
@@ -269,7 +271,7 @@ const NFTDetail = () => {
           Add to Verida One
         </Button>
       </Footer> */}
-    </Screen>
+    </ScreenWrapper>
   )
 }
 
@@ -315,5 +317,3 @@ const createStyles = (theme: Theme) =>
       paddingTop: theme.spacing.sm,
     },
   })
-
-export default NFTDetail

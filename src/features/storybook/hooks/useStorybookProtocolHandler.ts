@@ -1,12 +1,12 @@
+import { useNavigation } from '@react-navigation/native'
 import { nanoid } from '@reduxjs/toolkit'
 import { ProtocolHandler } from 'features/protocols'
 import * as React from 'react'
 import { InteractionManager } from 'react-native'
 
-import { useMainNavigation } from 'navigation/hooks'
-
 export function useStorybookProtocolHandler(): ProtocolHandler {
-  const navigation = useMainNavigation()
+  const navigation = useNavigation()
+
   return React.useMemo<ProtocolHandler>(
     () => ({
       handleDeepLink: (url: string) => {

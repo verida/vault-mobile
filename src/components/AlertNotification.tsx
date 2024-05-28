@@ -30,6 +30,10 @@ export type AlertNotificationProps = Omit<ViewProps, 'children'> & {
   type: 'success' | 'failure'
   timeOutInSeconds: number
 }
+
+/**
+ * @deprecated
+ */
 const AlertNotification = (props: AlertNotificationProps) => {
   const {
     isOpened,

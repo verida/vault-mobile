@@ -6,6 +6,9 @@ import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
 import Text from './Text'
 
+/**
+ * @deprecated use the other custom `<Button>` component instead
+ */
 export default function Button(props) {
   const style = props.style || {}
   let textStyle = props.textStyle || {}

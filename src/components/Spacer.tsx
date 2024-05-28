@@ -13,6 +13,9 @@ export type SpacerProps = Pick<
     horizontal?: keyof Theme['spacing']
   }
 
+/**
+ * @deprecated use proper styling with margins and paddings
+ */
 export function Spacer(props: SpacerProps) {
   const { vertical, horizontal, pointerEvents = 'none', ...style } = props
   const { theme } = useTheme()

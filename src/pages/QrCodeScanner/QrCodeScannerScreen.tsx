@@ -1,4 +1,4 @@
-import { useClipboard } from '@react-native-clipboard/clipboard'
+import { useClipboard } from '@react-native-community/clipboard'
 import { config } from 'config'
 import {
   canBeHandledByDeeplink,
@@ -7,7 +7,7 @@ import {
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Platform, StatusBar, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
@@ -29,6 +29,12 @@ export const QrCodeScannerScreen: React.FunctionComponent<
   QrCodeScannerScreenProps
 > = (props) => {
   const { navigation, route } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    })
+  }, [navigation])
 
   const [processing, setProcessing] = useState(false)
   const [isFlashOn, setIsFlashOn] = useState(false)
@@ -104,11 +110,11 @@ export const QrCodeScannerScreen: React.FunctionComponent<
   const [maybeClipboardContent] =
     config.dev.devMode && config.dev.enableClipboardInQrCodeScanner
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
-      useClipboard()
+        useClipboard()
       : []
 
-  React.useEffect(() => {
-    ; (async () => {
+  useEffect(() => {
+    ;(async () => {
       if (!maybeClipboardContent) return
 
       return debouncedProcessQrCodeMessage(maybeClipboardContent)
@@ -116,42 +122,48 @@ export const QrCodeScannerScreen: React.FunctionComponent<
   }, [maybeClipboardContent, debouncedProcessQrCodeMessage])
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle='light-content' />
-      <RNCamera
-        style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        flashMode={
-          isFlashOn
-            ? RNCamera.Constants.FlashMode.torch
-            : RNCamera.Constants.FlashMode.off
-        }
-        captureAudio={false}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        onBarCodeRead={Platform.OS === 'ios' ? handleQrCodeRead : undefined}
-        onGoogleVisionBarcodesDetected={({ barcodes }) => {
-          if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
-            return
+    <>
+      <StatusBar
+        barStyle='light-content' // It's a full screen with no header, the overlay is translucent dark so need light status bar content
+        backgroundColor='transparent'
+        translucent
+      />
+      <View style={styles.container}>
+        <RNCamera
+          style={styles.camera}
+          type={RNCamera.Constants.Type.back}
+          flashMode={
+            isFlashOn
+              ? RNCamera.Constants.FlashMode.torch
+              : RNCamera.Constants.FlashMode.off
           }
-          debouncedProcessQrCodeMessage(barcodes[0].data)
-        }}
-        googleVisionBarcodeType={
-          RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
-        }
-      />
-      <QrCodeScannerOverlay
-        processing={processing}
-        isFlashOn={isFlashOn}
-        onToggleFlash={handleToggleFlash}
-        onClose={handleClose}
-        firstTime={route.params.firstTime}
-      />
-    </View>
+          captureAudio={false}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'We need your permission to use your camera',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          onBarCodeRead={Platform.OS === 'ios' ? handleQrCodeRead : undefined}
+          onGoogleVisionBarcodesDetected={({ barcodes }) => {
+            if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
+              return
+            }
+            debouncedProcessQrCodeMessage(barcodes[0].data)
+          }}
+          googleVisionBarcodeType={
+            RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
+          }
+        />
+        <QrCodeScannerOverlay
+          processing={processing}
+          isFlashOn={isFlashOn}
+          onToggleFlash={handleToggleFlash}
+          onClose={handleClose}
+          firstTime={route.params.firstTime}
+        />
+      </View>
+    </>
   )
 }
 

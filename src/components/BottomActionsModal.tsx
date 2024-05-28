@@ -31,6 +31,9 @@ export interface BottomActionsModalProps extends ModalProps {
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen')
 
+/**
+ * @deprecated To delete
+ */
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
   const {
     title,

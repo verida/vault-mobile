@@ -1,14 +1,22 @@
 import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as LocalAuthentication from 'expo-local-authentication'
-import { selectIsBioAuthenticated, setBioAuthStatus } from 'features/auth'
 import React, { FC, useEffect, useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { useAuth } from 'hooks/useAuth'
+import WalletLogo from '~/assets/logos/app/verida_wallet_logo_colored_white.svg'
+import { useTheme } from '~/contexts'
+import { selectIsBioAuthenticated, setBioAuthStatus } from '~/features/auth'
+import { useAuth } from '~/hooks/useAuth'
 
-import Logo from '../../assets/logo.svg'
 import { CheckPin } from './CheckPin'
 import { CreatePin } from './CreatePin'
 
@@ -48,26 +56,86 @@ export const Authenticate: FC = ({ children }) => {
     init()
   }, [bioAuthenticated, authenticated, dispatch])
 
+  const insets = useSafeAreaInsets()
+  const { theme } = useTheme()
+
   // Has no account or not yet did Bio authenticate
-  if (!authenticated || bioAuthenticated) return <>{children}</>
+  if (!authenticated || bioAuthenticated) {
+    return <>{children}</>
+  }
 
   // Needs to create a Pin code
-  if (showCreatePin) return <CreatePin />
+  if (showCreatePin) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          backgroundColor: theme.color.background,
+        }}>
+        <StatusBar
+          // It's a full screen with no header and a light background
+          barStyle='dark-content'
+          backgroundColor='transparent'
+          translucent
+        />
+        <CreatePin />
+      </View>
+    )
+  }
 
   // Show Pin Authentication
-  if (pinAuth && !bioAuthenticated)
-    return <CheckPin finishProcess={() => dispatch(setBioAuthStatus(true))} />
+  if (pinAuth && !bioAuthenticated) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          backgroundColor: theme.color.background,
+        }}>
+        <StatusBar
+          // It's a full screen with no header and a light background
+          barStyle='dark-content'
+          backgroundColor='transparent'
+          translucent
+        />
+        <CheckPin finishProcess={() => dispatch(setBioAuthStatus(true))} />
+      </View>
+    )
+  }
 
   return (
-    <LinearGradient
-      colors={['#0E1572', '#1467CB', '#1995CB']}
-      style={styles.container}>
-      <Text>Please, wait for authentication complete!</Text>
-      <View style={styles.content}>
-        <Logo />
-        <ActivityIndicator size='large' color='#fff' />
-      </View>
-    </LinearGradient>
+    <>
+      <StatusBar
+        // It's a full screen with no header and a dark background
+        barStyle='light-content'
+        backgroundColor='transparent'
+        translucent
+      />
+      <LinearGradient
+        colors={['#0E1572', '#1467CB', '#1995CB']}
+        style={[
+          styles.container,
+          {
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+            paddingLeft: insets.left,
+            paddingRight: insets.right,
+          },
+        ]}>
+        <Text>Please, authenticate with your biometrics or PIN code</Text>
+        <View style={styles.content}>
+          <WalletLogo width={156} height={52} />
+          <ActivityIndicator size='large' color='#fff' />
+        </View>
+      </LinearGradient>
+    </>
   )
 }
 

@@ -8,6 +8,9 @@ const CRYPTO_NUMBER_FORMAT = new Intl.NumberFormat(DEFAULT_LOCALE, {
   maximumFractionDigits: 6,
 })
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericCryptoInternal = React.memo(function NumericCryptoInternal({
   floatingCryptoAmount,
   symbol,

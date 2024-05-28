@@ -11,6 +11,9 @@ import { DetailedValuation } from '~/features/cryptoWallet'
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 import { NumericFiat } from './Numeric.Fiat'
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericCryptoMaxTransactionFee = React.memo(
   function NumericCryptoMaxTransactionFee({
     chainMetadata,

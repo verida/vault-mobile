@@ -1,24 +1,14 @@
-import React, { useState } from 'react'
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Image, Linking, ScrollView, StyleSheet, View } from 'react-native'
 
-import Button from 'components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Spacer } from 'components/Spacer'
-import TCCheckbox from 'components/TCCheckbox'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
-import { DISABLED_COLOR, LIGHTGREY_COLOR, TEXT_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { BottomActionBar, ScreenWrapper, Typography } from '~/components'
+import { Checkbox } from '~/components/Input'
+import { Spacer } from '~/components/Spacer'
+import { Headline } from '~/components/Typography/Headline'
+import { Text } from '~/components/Typography/Text'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type AddIdentityScreenParams = {
   /* If there is no other identity */
@@ -34,17 +24,45 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
   } = props
   const styles = useThemeAwareStyle(creatStyles)
 
-  const [agreedTC, setAgreedTC] = useState(false)
-  function toggleAgreedTC() {
-    setAgreedTC((prevState) => !prevState)
-  }
+  const [isTermsConditionsChecked, setIsTermsConditionsChecked] =
+    useState(false)
+
+  const handleToggleTCCheckbox = useCallback(() => {
+    setIsTermsConditionsChecked((prevState) => !prevState)
+  }, [])
+
+  const handleTermsConditionLinkPress = useCallback(async () => {
+    const url = 'https://www.verida.io/vault/terms-and-conditions'
+    const canOpen = await Linking.canOpenURL(url)
+    if (canOpen) {
+      Linking.openURL(url)
+    }
+  }, [])
+
+  const handleCreateIdentityButtonPress = useCallback(() => {
+    navigation.replace('CreateIdentity', {
+      firstIdentity: params.firstIdentity,
+    })
+  }, [navigation, params])
+
+  const handleImportIdentityButtonPress = useCallback(() => {
+    navigation.replace('ImportIdentity', {
+      firstIdentity: params.firstIdentity,
+    })
+  }, [navigation, params])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Identity',
+    })
+  }, [navigation])
 
   return (
-    <Screen withSafeAreaView>
-      <NavigationHeader title='Identity' />
+    <ScreenWrapper>
       <ScrollView
+        alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.landing, { alignItems: 'center' }]}>
+        contentContainerStyle={styles.container}>
         <View
           style={{
             width: '100%',
@@ -69,119 +87,57 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
           identity.
         </Text>
         <Spacer flex={1} />
-        <TCCheckbox
-          checked={agreedTC}
-          style={styles.termAndCondition}
-          onToggle={toggleAgreedTC}
-        />
-        <Spacer vertical='m' />
-        <Button
-          disabled={!agreedTC}
-          style={styles.actionButton}
-          onPress={() => {
-            navigation.replace('CreateIdentity', {
-              firstIdentity: params.firstIdentity,
-            })
-          }}>
-          Create Identity
-        </Button>
-        {/* TODO: Create proper reussable buttons of the diffferent variants */}
-        <TouchableOpacity
-          hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
-          disabled={!agreedTC}
-          style={[
-            styles.actionButton,
-            styles.importButton,
-            agreedTC ? {} : styles.importButtonDisabled,
-          ]}
-          onPress={() => {
-            navigation.replace('ImportIdentity', {
-              firstIdentity: params.firstIdentity,
-            })
-          }}>
-          <Text
-            style={[
-              styles.importButtonLabel,
-              agreedTC ? {} : styles.importButtonLabelDisabled,
-            ]}>
-            Import Identity
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.termsConditionsButton}>
+          <Checkbox
+            checked={isTermsConditionsChecked}
+            onToggle={handleToggleTCCheckbox}
+          />
+          <Typography variant='h5'>I accept the</Typography>
+          <Typography
+            variant='h5'
+            onPress={handleTermsConditionLinkPress}
+            style={styles.termsConditionsLink}>
+            terms and conditions
+          </Typography>
+        </View>
       </ScrollView>
-    </Screen>
+      <BottomActionBar
+        hideBorder
+        actionsOrientation='column'
+        actions={[
+          {
+            label: 'Create Identity',
+            onPress: handleCreateIdentityButtonPress,
+            disabled: !isTermsConditionsChecked,
+          },
+          {
+            label: 'Import Identity',
+            variant: 'secondary',
+            onPress: handleImportIdentityButtonPress,
+            disabled: !isTermsConditionsChecked,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const creatStyles = (theme: Theme) => {
   return StyleSheet.create({
-    main: {
-      flex: 1,
-      backgroundColor: theme.color.primary50,
-    },
-    actionButton: {
-      width: '100%',
-      alignSelf: 'center',
-    },
-    importButton: {
-      alignItems: 'center',
-      borderRadius: 4,
-      padding: theme.spacing.sm,
-      borderWidth: 1,
-      borderColor: LIGHTGREY_COLOR,
-    },
-    importButtonDisabled: {
-      opacity: 0.5,
-      borderColor: DISABLED_COLOR,
-    },
-    importButtonLabel: {
-      fontFamily: NUNITO_SANS_BOLD,
-      fontSize: 16,
-      lineHeight: 24,
-      color: TEXT_COLOR,
-    },
-    importButtonLabelDisabled: {
-      color: DISABLED_COLOR,
-    },
-    backButton: {
-      position: 'absolute',
-      left: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-    },
-    nextButton: {
-      position: 'absolute',
-      right: theme.spacing.m,
-      paddingHorizontal: theme.spacing.l,
-    },
-    retryButton: {
-      position: 'absolute',
-      right: 0,
-      paddingHorizontal: theme.spacing.l,
-      backgroundColor: theme.color.error,
-      borderColor: theme.color.error,
-      textcolor: theme.color.onError,
-    },
-    landing: {
-      flexGrow: 1,
+    container: {
       paddingTop: theme.spacing.l,
       paddingHorizontal: theme.spacing.l,
-      paddingVertical: theme.spacing.m,
-    },
-    title: {
-      color: theme.color.onBackground,
-    },
-    subTitle: {
-      color: theme.color.textLightGrey,
-    },
-    termAndCondition: {
-      marginTop: theme.spacing.xxxl,
-      color: theme.color.onBackground,
-    },
-    scrollViewContainer: {
-      paddingBottom: theme.spacing.xxl,
-    },
-    center: {
+      flexGrow: 1,
       alignItems: 'center',
-      justifyContent: 'center',
+    },
+    termsConditionsButton: {
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
+      alignSelf: 'flex-start',
+    },
+    termsConditionsLink: {
+      color: theme.color.primary,
+      textDecorationLine: 'underline',
     },
   })
 }

@@ -5,8 +5,7 @@ import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS } from '../constants/text'
 
 /**
- * @Deprecated
- * Use the one in ./Typography instead
+ * @deprecated Use <Typography> instead
  */
 const Text: React.FC<TextProps> = (props) => {
   const { style, children, ...rest } = props

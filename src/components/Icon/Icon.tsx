@@ -30,10 +30,12 @@ type CustomIconName =
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
+  | 'back'
   | 'business'
   | 'calculator'
   | 'wallet'
   | 'clipboard' // TODO: replace the clipboard by copy?
+  | 'paste'
   | 'inbox'
   | 'info-circle'
   | 'question-circle'
@@ -70,8 +72,12 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'checkbox-unchecked'
+  | 'checkbox-checked'
   | 'send'
   | 'receive'
+  | 'delete'
+  | 'import'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -103,7 +109,17 @@ export const Icon = (props: {
     case 'copy':
       return <CopyIcon {...svgProps} />
     case 'clipboard':
-      return <Ionicon name='copy-outline' {...iconProps} />
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='copy-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'paste':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='clipboard-outline' {...iconProps} />
+        </IconWrapper>
+      )
     case 'edit':
       return <EditIcon {...svgProps} />
     case 'goto':
@@ -114,6 +130,12 @@ export const Icon = (props: {
       return <WarningIcon {...svgProps} />
     case 'tick':
       return <TickIcon {...svgProps} />
+    case 'back':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='arrowleft' {...iconProps} />
+        </IconWrapper>
+      )
     case 'business':
       return (
         <IconWrapper size={size}>
@@ -273,7 +295,7 @@ export const Icon = (props: {
     case 'add':
       return (
         <IconWrapper size={size}>
-          <Ionicon name='add' {...iconProps} />
+          <MaterialIcon name='add' {...iconProps} />
         </IconWrapper>
       )
     case 'settings':
@@ -343,6 +365,18 @@ export const Icon = (props: {
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
         </IconWrapper>
       )
+    case 'checkbox-unchecked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='square-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-checked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='checkbox' {...iconProps} />
+        </IconWrapper>
+      )
     case 'send':
       return (
         <IconWrapper size={size}>
@@ -353,6 +387,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialIcon name='vertical-align-bottom' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'delete':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='delete' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'import':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
         </IconWrapper>
       )
   }
