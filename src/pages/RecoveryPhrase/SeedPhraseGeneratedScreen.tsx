@@ -13,7 +13,7 @@ import { Text } from '~/components/Typography/Text'
 import WordCard from '~/components/Words/WordCard'
 import { useTheme } from '~/contexts/ThemeContext'
 import { useThemeAwareStyle } from '~/hooks'
-import { MainStackScreenProps } from '~/navigation/types'
+import { MainStackScreenProps, useScreenCaptureProtection } from '~/navigation'
 import { Theme } from '~/styles/types'
 
 export type SeedPhraseGeneratedScreenParams = undefined
@@ -31,6 +31,8 @@ export const SeedPhraseGeneratedScreen: React.FC<
       title: 'Record your Seed Phrase',
     })
   }, [navigation])
+
+  useScreenCaptureProtection()
 
   const { theme } = useTheme()
   const [words, setWords] = useState('Generating seed phrase ...')

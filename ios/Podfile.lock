@@ -37,6 +37,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - ExpoSecureStore (12.8.1):
     - ExpoModulesCore
+  - EXScreenCapture (5.3.0):
+    - ExpoModulesCore
   - EXSplashScreen (0.22.0):
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
@@ -737,6 +739,7 @@ DEPENDENCIES:
   - ExpoLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
+  - EXScreenCapture (from `../node_modules/expo-screen-capture/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -908,6 +911,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
+  EXScreenCapture:
+    :path: "../node_modules/expo-screen-capture/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   FBLazyVector:
@@ -1079,6 +1084,7 @@ SPEC CHECKSUMS:
   ExpoLocalAuthentication: c55ffb179683efed04cb144fc80ccf26891f0cb4
   ExpoModulesCore: cf14fc49a3d5df3ed3cf2a38fc758d073bfd1c13
   ExpoSecureStore: c84ae37d1c36f38524d289c67c3a2e3fc56f1108
+  EXScreenCapture: 81002ba5fb40a367fba9047d223068abb558594d
   EXSplashScreen: 5ed09ea490155ef603d007d9f194c9e04a4b7980
   FBLazyVector: 5fbbff1d7734827299274638deb8ba3024f6c597
   FBReactNativeSpec: 638095fe8a01506634d77b260ef8a322019ac671

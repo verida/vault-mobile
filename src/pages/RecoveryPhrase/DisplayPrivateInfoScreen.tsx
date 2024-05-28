@@ -18,7 +18,7 @@ import { useTheme } from '~/contexts'
 import { useCryptoWallets } from '~/features/cryptoWallet'
 import { Logger } from '~/features/telemetry'
 import { useThemeAwareStyle } from '~/hooks'
-import { MainStackScreenProps } from '~/navigation'
+import { MainStackScreenProps, useScreenCaptureProtection } from '~/navigation'
 import { Theme } from '~/styles/types'
 
 const logger = Logger.create('DisplayPrivateInfoScreen')
@@ -55,6 +55,8 @@ export const DisplayPrivateInfoScreen: React.FC<
     route: { params },
   } = props
   const { type, source, sourceId, noAuthCheck = false } = params
+
+  useScreenCaptureProtection()
 
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Warning)
