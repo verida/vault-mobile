@@ -8,7 +8,6 @@ import {
   useCurrentIdentity,
 } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
-import { selectNewMessagesCount } from 'features/inbox'
 import {
   PROFILE_EMPTY_NAME_VALUE,
   selectPublicProfilesLoadingState,
@@ -25,12 +24,13 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
+
 import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
-const MAX_INBOX_COUNT = 10
 
 export type HomeScreenHeaderProps = BottomTabHeaderProps
 
@@ -59,12 +59,8 @@ export const HomeScreenHeader: React.FunctionComponent<
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
   const { open: openIdentityDrawer } = useIdentityDrawer()
-
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
+  const { unreadMessagesCount, displayedInboxCount } =
+    useInboxUnreadMessageCount()
 
   const handleInboxPress = useCallback(() => {
     navigation.navigate('Inbox')
