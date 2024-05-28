@@ -3,6 +3,8 @@ import {
   AggregateWalletBannerBalance,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
+  useCryptoWalletsStatus,
+  useSelectedCryptoWallet,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -17,6 +19,8 @@ export const TokenDashboard: React.FC = () => {
   const navigation = useMainNavigation()
   const styles = useThemeAwareStyle(createStyles)
 
+  const { processsing } = useCryptoWalletsStatus()
+  const selectedWallet = useSelectedCryptoWallet()
   const cachedAggregateWalletBannerBalances =
     useAggregateWalletBannerBalancesWithResultCaching()
 
@@ -36,7 +40,11 @@ export const TokenDashboard: React.FC = () => {
     <ErrorBoundary>
       <View style={styles.contentContainer}>
         <View style={styles.walletValueBannerWrapper}>
-          <CryptoWalletValueBanner value={walletValue} unit={currency} />
+          <CryptoWalletValueBanner
+            value={walletValue}
+            unit={currency}
+            isLoading={processsing && !selectedWallet}
+          />
         </View>
         <TokensList
           aggregateWalletBannerBalances={aggregateWalletBannerBalances}
@@ -52,6 +60,7 @@ export const TokenDashboard: React.FC = () => {
           onPullToRefresh={pullToRefresh}
           refreshing={loading}
           error={error}
+          isCryptoWalletLoading={processsing && !selectedWallet}
         />
       </View>
     </ErrorBoundary>

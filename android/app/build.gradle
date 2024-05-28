@@ -122,8 +122,8 @@ android {
         applicationId 'io.verida.vault'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 68
-        versionName "1.4.0"
+        versionCode 70
+        versionName "1.4.2"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
     signingConfigs {
