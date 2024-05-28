@@ -94,34 +94,34 @@ export const AddVeridaOneCustomLinkScreen: React.FC<
         right={
           isEditMode()
             ? {
-                icon: <TrashBinIcon />,
-                action: () => {
-                  Alert.alert(
-                    'Are you sure you want to delete this link?',
-                    undefined,
-                    [
-                      {
-                        text: 'Cancel',
-                        style: 'cancel',
+              icon: <TrashBinIcon />,
+              action: () => {
+                Alert.alert(
+                  'Are you sure you want to delete this link?',
+                  undefined,
+                  [
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Delete',
+                      style: 'destructive',
+                      onPress: () => {
+                        emitter.emit('SAVE_GENERIC_PROPERTY', {
+                          screenName,
+                          title,
+                          value: originalValue,
+                          mode: PublicProfileEditMode.DeleteCustomURL,
+                          originalValue,
+                        })
+                        navigation.goBack()
                       },
-                      {
-                        text: 'Delete',
-                        style: 'destructive',
-                        onPress: () => {
-                          emitter.emit('SAVE_GENERIC_PROPERTY', {
-                            screenName,
-                            title,
-                            value: originalValue,
-                            mode: PublicProfileEditMode.DeleteCustomURL,
-                            originalValue,
-                          })
-                          navigation.goBack()
-                        },
-                      },
-                    ]
-                  )
-                },
-              }
+                    },
+                  ]
+                )
+              },
+            }
             : undefined
         }
       />

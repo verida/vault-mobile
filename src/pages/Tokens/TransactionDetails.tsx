@@ -41,8 +41,8 @@ const TransactionDetails = () => {
   const accounts = selectedCryptoWallet?.accounts || []
   const account = resourceChainId
     ? accounts.find(
-        (accountItem) => accountItem.namespace === resourceChainId.namespace
-      )
+      (accountItem) => accountItem.namespace === resourceChainId.namespace
+    )
     : undefined
 
   const address = account?.address || null

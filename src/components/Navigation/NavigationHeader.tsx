@@ -47,12 +47,12 @@ function NavigationHeader({
         style={
           bottomBorder
             ? Platform.select({
-                ios: {
-                  borderBottomWidth: 1,
-                  borderBottomColor: SEPARATOR_EXTRA_LIGHT,
-                },
-                android: { elevation: 1 },
-              })
+              ios: {
+                borderBottomWidth: 1,
+                borderBottomColor: SEPARATOR_EXTRA_LIGHT,
+              },
+              android: { elevation: 1 },
+            })
             : {}
         }>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>

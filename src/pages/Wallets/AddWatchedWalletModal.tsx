@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
+import { CopyToClipboardButton } from '~/components'
 import Button from '~/components/Button'
 import Label from '~/components/Label'
 import Layout from '~/components/Layouts/Layout'

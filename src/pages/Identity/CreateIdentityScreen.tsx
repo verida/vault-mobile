@@ -176,7 +176,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       if (
         error instanceof Error &&
         error.message ===
-          'Unable to force creation of storage context for this DID'
+        'Unable to force creation of storage context for this DID'
       ) {
         setCreateAccountErrorMessage(
           'Blockchain is temporarily unavailable, please try again later.'
@@ -286,9 +286,9 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
           left={
             pageData[currentPage].hasBack || showRetry
               ? {
-                  icon: <LeftArrowIcon />,
-                  action: () => onBack(),
-                }
+                icon: <LeftArrowIcon />,
+                action: () => onBack(),
+              }
               : ({} as any)
           }
         />

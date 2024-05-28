@@ -114,9 +114,9 @@ const SelectAsset = () => {
               isEmptyList
                 ? styles.listEmptyContainer
                 : {
-                    paddingBottom: theme.spacing.xxl,
-                    paddingTop: theme.spacing.m,
-                  }
+                  paddingBottom: theme.spacing.xxl,
+                  paddingTop: theme.spacing.m,
+                }
             }
             keyExtractor={(item, index) =>
               `${index}-${item.chain_id}-${item.token_id}-${item.owner_address}`

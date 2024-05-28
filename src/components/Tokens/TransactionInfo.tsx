@@ -129,24 +129,24 @@ export default ({
         {Boolean(
           typeof maybeExplorerUrl === 'string' && maybeExplorerUrl.length
         ) && (
-          <TouchableOpacity style={styles.viewOnExplorerWrapper}>
-            <Text
-              onPress={() => {
-                typeof maybeExplorerUrl === 'string' &&
-                  Linking.openURL(maybeExplorerUrl)
-              }}>
-              View on explorer
-            </Text>
-            <Icon
-              name='enter-outline'
-              style={{
-                color: 'rgba(66, 59, 206, 1)',
-                fontSize: 21,
-                marginLeft: 2,
-              }}
-            />
-          </TouchableOpacity>
-        )}
+            <TouchableOpacity style={styles.viewOnExplorerWrapper}>
+              <Text
+                onPress={() => {
+                  typeof maybeExplorerUrl === 'string' &&
+                    Linking.openURL(maybeExplorerUrl)
+                }}>
+                View on explorer
+              </Text>
+              <Icon
+                name='enter-outline'
+                style={{
+                  color: 'rgba(66, 59, 206, 1)',
+                  fontSize: 21,
+                  marginLeft: 2,
+                }}
+              />
+            </TouchableOpacity>
+          )}
       </View>
     </View>
   )
