@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ScrollView,

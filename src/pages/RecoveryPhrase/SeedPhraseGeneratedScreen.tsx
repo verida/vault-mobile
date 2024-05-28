@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { shuffle } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'

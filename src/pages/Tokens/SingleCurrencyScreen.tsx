@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-root-toast'
