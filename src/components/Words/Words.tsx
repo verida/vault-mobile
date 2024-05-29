@@ -9,7 +9,7 @@ interface Props {
   template: number[]
   onSelect: (index: number) => void
   id: string
-  containerStyle: ViewStyle
+  containerStyle?: ViewStyle
 }
 
 export default (props: Props) => {
