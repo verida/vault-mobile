@@ -11,7 +11,6 @@ import {
   useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
-import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
@@ -19,6 +18,7 @@ import { useDebouncedCallback } from 'use-debounce'
 
 import { useAuth } from 'hooks/useAuth'
 import { MainStackParams } from 'navigation/types'
+import { WalletConnectConnectionRequestScreenParams } from 'pages/Requests'
 
 import {
   isWalletConnectConnection,
@@ -38,7 +38,6 @@ import {
   CreatePairingCallback,
   WalletConnectContextValue,
 } from '../types'
-import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
 
 const logger = Logger.create('WalletConnect')
 
@@ -62,7 +61,6 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const { authenticated } = useAuth()
-  const { showModal } = useModal()
 
   const selectedMinifiedBlockchainAccounts =
     useSelectedMinifiedBlockchainAccounts()
@@ -228,20 +226,34 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
             })
           }
 
-          // Check if there are caip typed.
-          return showModal(
-            <WalletConnectModalConnectDapp
-              setActiveSessions={setActiveSessions}
-              proposal={proposal}
-              web3wallet={web3wallet}
-            />
+          const metadata = proposal?.params?.proposer?.metadata
+
+          const screenParams: WalletConnectConnectionRequestScreenParams = {
+            name: metadata?.name || 'Unknown',
+            logo: metadata?.icons?.[0],
+            details: {
+              protocols: ['walletconnect'],
+              timestamp: new Date().toISOString(),
+              url: metadata?.url,
+              requesterId: metadata?.description || 'Unknown',
+              message: metadata?.description,
+            },
+            data: {
+              web3wallet,
+              proposal,
+            },
+          }
+
+          return navigation.navigate(
+            'WalletConnectConnectionRequest',
+            screenParams
           )
         },
         [
           authenticated,
           getMaybeUnsupportedProposalError,
           shouldTerminateProposal,
-          showModal,
+          navigation,
         ]
       ),
       onSessionDelete: React.useCallback(

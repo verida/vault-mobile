@@ -1,7 +1,6 @@
-import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
+import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
 import {
@@ -10,18 +9,17 @@ import {
   RequestDetailProperty,
   RequestDetails,
   RequestMessage,
+  ScreenWrapper,
   StatusInfo,
   Typography,
 } from '~/components'
 import { usePolygonId } from '~/features/polygonid'
-import type { Protocol } from '~/features/protocols'
-import { reduceProtocols } from '~/features/protocols'
+import { Protocol, reduceProtocols } from '~/features/protocols'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
 
-// Make sure the params are generic enough to be used for all types of requests (Verida Connect, WalletConnect, Polygon ID, etc.)
-export interface ConnectionRequestScreenParams {
+export interface PolygonIdConnectionRequestScreenParams {
   name: string // TODO: Make it optional and provide a consistent way to representing an unknown requester
   logo?: string
   details: {
@@ -36,9 +34,10 @@ export interface ConnectionRequestScreenParams {
   // TODO: Add expiry when needed
 }
 
-type ConnectionRequestScreenProps = MainStackScreenProps<'ConnectionRequest'>
+type ConnectionRequestScreenProps =
+  MainStackScreenProps<'PolygonIdConnectionRequest'>
 
-export const ConnectionRequestScreen: React.FunctionComponent<
+export const PolygonIdConnectionRequestScreen: React.FunctionComponent<
   ConnectionRequestScreenProps
 > = (props) => {
   const { navigation, route } = props
@@ -51,7 +50,6 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   const [detailsOpen, setDetailsOpen] = useState(false)
   const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
   const styles = useThemeAwareStyle(createStyles)
-  const insets = useSafeAreaInsets()
 
   const polygonIdNotReady =
     details.protocols.includes('polygonid') &&
@@ -126,16 +124,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   }, [details.requesterId, details.timestamp, protocols])
 
   return (
-    <View
-      // TODO: Use <ScreenWrapper>
-      style={[
-        styles.wrapper,
-        {
-          paddingBottom: insets.bottom,
-          paddingRight: insets.right,
-          paddingLeft: insets.left,
-        },
-      ]}>
+    <ScreenWrapper>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.containerContent}>
@@ -227,7 +216,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<
               ]
         }
       />
-    </View>
+    </ScreenWrapper>
   )
 }
 

@@ -10,8 +10,8 @@ import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
 import type {
-  ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
+  PolygonIdConnectionRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
 
@@ -75,7 +75,7 @@ export const PolygonIdProtocolProvider: React.FunctionComponent = (props) => {
             }
           } else {
             // We have a generic connection request
-            const screenParams: ConnectionRequestScreenParams = {
+            const screenParams: PolygonIdConnectionRequestScreenParams = {
               name: entityMetadata.name || 'Unknown',
               logo: entityMetadata.icon,
               details: {
@@ -88,9 +88,9 @@ export const PolygonIdProtocolProvider: React.FunctionComponent = (props) => {
               data: requestData,
             }
             if (replaceNavigationScreen) {
-              navigation.replace('ConnectionRequest', screenParams)
+              navigation.replace('PolygonIdConnectionRequest', screenParams)
             } else {
-              navigation.navigate('ConnectionRequest', screenParams)
+              navigation.navigate('PolygonIdConnectionRequest', screenParams)
             }
           }
           return

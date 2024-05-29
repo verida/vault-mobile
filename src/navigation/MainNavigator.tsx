@@ -50,10 +50,11 @@ import {
   VerifyPhraseScreen,
 } from '~/pages/RecoveryPhrase'
 import {
-  ConnectionRequestScreen,
   IncomingDataRequestScreen,
   PaymentRequestScreen,
+  PolygonIdConnectionRequestScreen,
   ProofRequestScreen,
+  WalletConnectConnectionRequestScreen,
 } from '~/pages/Requests'
 import { SettingsScreen } from '~/pages/Settings'
 import {
@@ -267,8 +268,12 @@ export const MainNavigator: React.FC = () => {
               component={ShareIdentityScreen}
             />
             <Stack.Screen
-              name='ConnectionRequest'
-              component={ConnectionRequestScreen}
+              name='WalletConnectConnectionRequest'
+              component={WalletConnectConnectionRequestScreen}
+            />
+            <Stack.Screen
+              name='PolygonIdConnectionRequest'
+              component={PolygonIdConnectionRequestScreen}
             />
             <Stack.Screen
               name='IncomingDataRequest'
