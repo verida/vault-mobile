@@ -1,11 +1,20 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native'
 
 import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '~/constants/color'
 
-export default ({ words, template, onSelect, id, containerStyle = {} }) => {
-  let displayWords = []
+interface Props {
+  words: string[]
+  template: number[]
+  onSelect: (index: number) => void
+  id: string
+  containerStyle: ViewStyle
+}
+
+export default (props: Props) => {
+  const { words, template, onSelect, id, containerStyle = {} } = props
+  let displayWords: number[] = []
   words.forEach((word, index) => {
     if (id === 'selected' && template.indexOf(index) !== -1) {
       displayWords = template

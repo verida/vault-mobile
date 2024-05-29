@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native'
 import Text from '~/components/Text'
 import { LIGHTGREY_COLOR } from '~/constants/color'
 
-export default ({ words }) => (
+export default ({ words }: { words: string }) => (
   <Text style={style.words} selectable>
     {words}
   </Text>
