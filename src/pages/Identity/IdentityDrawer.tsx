@@ -16,7 +16,7 @@ import {
 import { useTheme } from '~/contexts'
 import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
 import { useIdentityDrawer } from '~/features/identityDrawer'
-import { selectNewMessagesCount } from '~/features/inbox'
+import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
 import {
   PROFILE_EMPTY_NAME_VALUE,
   selectSelectedPublicProfile,
@@ -29,8 +29,6 @@ export type IdentityDrawerProps = {
   children: React.ReactNode
 }
 
-const MAX_INBOX_COUNT = 10
-
 export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   props
 ) => {
@@ -40,18 +38,14 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const { isOpen, open, close } = useIdentityDrawer()
+  const { unreadMessagesCount, displayedInboxCount } =
+    useInboxUnreadMessageCount()
   const navigation = useNavigation()
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
   const isNameEmpty = !name
   const displayedName = name || PROFILE_EMPTY_NAME_VALUE
-
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
