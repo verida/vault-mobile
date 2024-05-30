@@ -1,14 +1,13 @@
-import {
-  AggregateWalletBannerBalance,
-  AggregateWalletBannerBalances,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
 import { Typography } from '~/components'
-
-import { Theme } from 'styles/types'
+import {
+  AggregateWalletBannerBalance,
+  AggregateWalletBannerBalances,
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import { TokensListItem } from './TokensList.Item'
 

@@ -1,8 +1,8 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, TextProps, TextStyle } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type TypographyVariant =
   | 'h1'

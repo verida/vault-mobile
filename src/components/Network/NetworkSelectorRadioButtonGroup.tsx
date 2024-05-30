@@ -1,12 +1,12 @@
 import { EnvironmentType } from '@verida/types'
-import { getSupportedVeridaNetworks } from 'features/verida'
 import React, { useCallback } from 'react'
 
 import {
   CollapsibleRadioButtonGroup,
   CollapsibleRadioButtonGroupProps,
   RadioButtonItem,
-} from 'components/Input'
+} from '~/components/Input'
+import { getSupportedVeridaNetworks } from '~/features/verida'
 
 export type NetworkSelectorRadioButtonGroupProps = Omit<
   CollapsibleRadioButtonGroupProps,

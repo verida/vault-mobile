@@ -4,11 +4,11 @@ import {
   IVerifyResult,
   VerifiableCredential,
 } from '@veramo/core'
-import { Logger } from 'features/telemetry'
-import { extractIssuer, useVeramo } from 'features/veramo'
 import { useCallback } from 'react'
 
 import { usePolygonId } from '~/features/polygonid'
+import { Logger } from '~/features/telemetry'
+import { extractIssuer, useVeramo } from '~/features/veramo'
 
 import { VerificationResult } from '../types'
 

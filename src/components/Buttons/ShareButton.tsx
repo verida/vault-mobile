@@ -1,5 +1,3 @@
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import {
   Share,
@@ -10,7 +8,9 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-import { Theme } from 'styles/types'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('ShareButton')
 

@@ -1,8 +1,9 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+
 import {
   CryptoWalletAccount,
   CryptoWalletAccounts,
-} from 'features/cryptoWallet'
+} from '~/features/cryptoWallet'
 
 import { ActiveSession, ActiveSessions } from '../types'
 import { getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession } from './getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession'

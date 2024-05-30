@@ -1,9 +1,10 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AccountId, ChainId } from 'caip'
+
 import {
   CryptoWalletAccount,
   CryptoWalletAccounts,
-} from 'features/cryptoWallet'
+} from '~/features/cryptoWallet'
 
 import { ActiveSession } from '../types'
 

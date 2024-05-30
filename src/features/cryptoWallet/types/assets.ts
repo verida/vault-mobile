@@ -1,7 +1,7 @@
 import BigDecimal from 'bignumber.js'
 import { AssetType, AssetTypeParams, ChainIdParams } from 'caip'
 
-import { Option } from 'components/Select'
+import { Option } from '~/components/Select'
 
 export type BasicTokenData = WithMaybeIcon<{
   name: string

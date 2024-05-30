@@ -1,4 +1,4 @@
-import { Logger } from 'features/telemetry'
+import { Logger } from '~/features/telemetry'
 
 import {
   InboxDatabaseSyncRequest,

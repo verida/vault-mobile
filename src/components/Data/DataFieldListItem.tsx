@@ -1,7 +1,8 @@
-import { DataField } from 'features/data'
 import { Body, Card, CardItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
+
+import { DataField } from '~/features/data'
 
 export type DataFieldListItemProps = {
   field: DataField

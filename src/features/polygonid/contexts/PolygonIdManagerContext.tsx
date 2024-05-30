@@ -1,10 +1,9 @@
 import { Context } from '@verida/client-rn'
-import { config } from 'config'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import AccountManager from '~/api/AccountManager'
+import { config } from '~/config'
 import { Logger } from '~/features/telemetry'
-
-import AccountManager from 'api/AccountManager'
 
 import { PolygonIdManager } from '../classes'
 import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'

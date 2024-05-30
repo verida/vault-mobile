@@ -1,22 +1,22 @@
 import { useNavigation } from '@react-navigation/native'
 import { extractIssuer } from '@veramo/utils'
-import { getDidMetadata } from 'features/did'
-import { Logger } from 'features/telemetry'
-import { isValidVeridaDid } from 'features/verida'
-import {
-  isCredentialsDatabase,
-  VeridaVerifiableCredentialRecord,
-} from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, ImageSourcePropType, StyleSheet } from 'react-native'
 
-import { DefaultAvatar, getPublicProfile } from 'api/utils'
-import Folder from 'api/VaultCommon/managers/data/folder'
+import { DefaultAvatar, getPublicProfile } from '~/api/utils'
+import Folder from '~/api/VaultCommon/managers/data/folder'
 // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
-import VeridaSvg from 'assets/icons/verida.svg'
+import VeridaSvg from '~/assets/icons/verida.svg'
+import { getDidMetadata } from '~/features/did'
+import { Logger } from '~/features/telemetry'
+import { isValidVeridaDid } from '~/features/verida'
+import {
+  isCredentialsDatabase,
+  VeridaVerifiableCredentialRecord,
+} from '~/features/verifiableCredential'
 
 const logger = Logger.create('Components/Data/DataGridListItem')
 

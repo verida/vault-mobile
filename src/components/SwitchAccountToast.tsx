@@ -1,12 +1,12 @@
-import { selectSwitchAccountToast } from 'features/identities'
 import React from 'react'
 import { Dimensions, StyleSheet, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
 
-import { Avatar } from 'components/Images'
-import Text from 'components/Text'
-import { GREY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { Avatar } from '~/components/Images'
+import Text from '~/components/Text'
+import { GREY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { selectSwitchAccountToast } from '~/features/identities'
 
 const { width: DEVICE_WIDTH } = Dimensions.get('window')
 const MARGIN_HORIZONTAL = 16

@@ -2,8 +2,8 @@ import Color from 'color'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 type Props = {
   currentStep: number

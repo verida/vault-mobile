@@ -2,7 +2,7 @@ import PINCode, { IProps as PinCodeProps } from '@haskkor/react-native-pincode'
 import React from 'react'
 import { BackHandler } from 'react-native'
 
-import { BLACK_ORIGIN_COLOR } from '../../constants/color'
+import { BLACK_ORIGIN_COLOR } from '~/constants/color'
 
 interface Props extends Partial<PinCodeProps> {
   title?: string

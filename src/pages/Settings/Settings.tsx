@@ -1,18 +1,18 @@
-import { ScreenWrapper } from 'components'
-import { useTheme } from 'contexts'
-import { useCurrentIdentity } from 'features/identities'
-import { canMigrateToMainnet } from 'features/identities/utils/migration'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import PropertyList from 'components/PropertyList'
-import Text from 'components/Text'
-import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { ScreenWrapper } from '~/components'
+import PropertyList from '~/components/PropertyList'
+import Text from '~/components/Text'
+import { APP_NAME, APP_VERSION_FORMATTED } from '~/constants/application'
+import { useTheme } from '~/contexts'
+import { useCurrentIdentity } from '~/features/identities'
+import { canMigrateToMainnet } from '~/features/identities/utils/migration'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 type SettingsItem = {
   // TODO: Get it from the props of the component

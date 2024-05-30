@@ -1,5 +1,3 @@
-import { useTheme } from 'contexts'
-import { Logger } from 'features/telemetry'
 import React, { FC, ReactNode } from 'react'
 import {
   ErrorBoundary as ReactErrorBoundary,
@@ -7,6 +5,9 @@ import {
   FallbackProps,
 } from 'react-error-boundary'
 import { View } from 'react-native'
+
+import { useTheme } from '~/contexts'
+import { Logger } from '~/features/telemetry'
 
 import Button from './Button'
 import { Caption } from './Typography/Caption'

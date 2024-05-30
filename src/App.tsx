@@ -1,19 +1,8 @@
 import 'react-native-url-polyfill/auto'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { BlockchainProvider } from 'features/blockchain'
-import { ConfigProvider } from 'features/config'
-import {
-  CryptoWalletBalanceProvider,
-  CryptoWalletProvider,
-} from 'features/cryptoWallet'
-import { IdentityDrawerProvider } from 'features/identityDrawer'
-import { requestNotificationPermission } from 'features/notifications'
-import { Logger, Sentry } from 'features/telemetry'
-import { WalletConnectProvider } from 'features/walletConnect'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
@@ -26,18 +15,28 @@ import {
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
-import { persistor, store } from 'reduxStore'
-import { initApplication } from 'utils'
 
-import { MetaServerChecks } from 'components/MetaServerChecks'
-import SwitchAccountToast from 'components/SwitchAccountToast'
-import { AuthProvider } from 'hooks/useAuth'
-import { NavigationProvider } from 'navigation/NavigationProvider'
-import { RootNavigator } from 'navigation/RootNavigator'
-import { Authenticate } from 'pages/Authentication/Authenticate'
-import { defaultTheme } from 'styles/theme'
-
-import { ModalProvider } from './contexts/ModalContext'
+import { MetaServerChecks } from '~/components/MetaServerChecks'
+import SwitchAccountToast from '~/components/SwitchAccountToast'
+import { ModalProvider } from '~/contexts/ModalContext'
+import { ThemeProvider } from '~/contexts/ThemeContext'
+import { BlockchainProvider } from '~/features/blockchain'
+import { ConfigProvider } from '~/features/config'
+import {
+  CryptoWalletBalanceProvider,
+  CryptoWalletProvider,
+} from '~/features/cryptoWallet'
+import { IdentityDrawerProvider } from '~/features/identityDrawer'
+import { requestNotificationPermission } from '~/features/notifications'
+import { Logger, Sentry } from '~/features/telemetry'
+import { WalletConnectProvider } from '~/features/walletConnect'
+import { AuthProvider } from '~/hooks/useAuth'
+import { NavigationProvider } from '~/navigation/NavigationProvider'
+import { RootNavigator } from '~/navigation/RootNavigator'
+import { Authenticate } from '~/pages/Authentication/Authenticate'
+import { persistor, store } from '~/reduxStore'
+import { defaultTheme } from '~/styles/theme'
+import { initApplication } from '~/utils'
 
 initApplication()
 

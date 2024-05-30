@@ -5,15 +5,15 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
-import { MainStackParams } from 'navigation/types'
+import { Logger } from '~/features/telemetry'
+import { MainStackParams } from '~/navigation/types'
 import type {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
   ProofRequestScreenParams,
-} from 'pages/Requests'
+} from '~/pages/Requests'
 
 import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
 

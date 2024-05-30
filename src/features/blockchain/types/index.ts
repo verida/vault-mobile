@@ -1,7 +1,8 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AssetId } from 'caip'
-import { ChainMetadata } from 'features/caip'
 import { z } from 'zod'
+
+import { ChainMetadata } from '~/features/caip'
 
 import { BLOCKCHAIN_NAMESPACES } from '../constants'
 

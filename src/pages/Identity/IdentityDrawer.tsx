@@ -1,30 +1,29 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
-import {
-  DrawerIdentityList,
-  DrawerShortcutButton,
-  Icon,
-  IdentityAvatar,
-  Typography,
-} from 'components'
-import { useTheme } from 'contexts'
-import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
-import { useIdentityDrawer } from 'features/identityDrawer'
-import {
-  PROFILE_EMPTY_NAME_VALUE,
-  selectSelectedPublicProfile,
-} from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
+import {
+  DrawerIdentityList,
+  DrawerShortcutButton,
+  Icon,
+  IdentityAvatar,
+  Typography,
+} from '~/components'
+import { useTheme } from '~/contexts'
+import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
+import { useIdentityDrawer } from '~/features/identityDrawer'
 import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
-
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import {
+  PROFILE_EMPTY_NAME_VALUE,
+  selectSelectedPublicProfile,
+} from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 export type IdentityDrawerProps = {
   children: React.ReactNode

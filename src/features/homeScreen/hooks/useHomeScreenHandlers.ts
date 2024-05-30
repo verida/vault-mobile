@@ -1,12 +1,12 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
-import { useDeeplink } from 'features/deepLinks'
-import { isPolygonIdMessage } from 'features/polygonid'
-import { Logger } from 'features/telemetry'
 import { useCallback, useEffect } from 'react'
 import { Linking } from 'react-native'
 
-import { fetchInboxCount } from 'api/utils'
+import { fetchInboxCount } from '~/api/utils'
+import { isCryptoRequestDeepLink } from '~/features/cryptoWallet'
+import { useDeeplink } from '~/features/deepLinks'
+import { isPolygonIdMessage } from '~/features/polygonid'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('HomeScreen')
 

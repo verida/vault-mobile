@@ -1,6 +1,7 @@
 import { CircuitId } from '@0xpolygonid/js-sdk'
-import { Logger } from 'features/telemetry'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import { Logger } from '~/features/telemetry'
 
 import { CircuitStatus, UpdateStateCallback } from '../types'
 import {

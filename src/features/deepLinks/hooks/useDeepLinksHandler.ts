@@ -1,8 +1,9 @@
 import messaging from '@react-native-firebase/messaging'
-import { useProtocols } from 'features/protocols'
-import { Logger } from 'features/telemetry'
 import { useEffect } from 'react'
 import { Linking } from 'react-native'
+
+import { useProtocols } from '~/features/protocols'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('DeepLinks')
 

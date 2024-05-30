@@ -1,4 +1,4 @@
-import { MainStackParams, TabsScreenParams } from 'navigation/types'
+import { MainStackParams, TabsScreenParams } from '~/navigation/types'
 
 export type HomeScreenGettingStartedItem = {
   key: string

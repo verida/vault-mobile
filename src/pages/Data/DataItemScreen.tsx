@@ -1,16 +1,15 @@
-import { DataItem } from 'features/data'
-import { Logger } from 'features/telemetry'
-import { isCredentialsDatabase } from 'features/verifiableCredential'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
+import Folder from '~/api/VaultCommon/managers/data/folder'
 import { ScreenWrapper } from '~/components'
-
-import Folder from 'api/VaultCommon/managers/data/folder'
-import { CredentialDataItem, DataFieldList } from 'components/Data'
-import LoadingView from 'components/LoadingView'
-import { MainStackScreenProps } from 'navigation/types'
+import { CredentialDataItem, DataFieldList } from '~/components/Data'
+import LoadingView from '~/components/LoadingView'
+import { DataItem } from '~/features/data'
+import { Logger } from '~/features/telemetry'
+import { isCredentialsDatabase } from '~/features/verifiableCredential'
+import { MainStackScreenProps } from '~/navigation/types'
 
 const logger = Logger.create('Pages/Data/DataItemScreen')
 

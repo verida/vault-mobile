@@ -1,6 +1,7 @@
-import { useProtocolHandlers } from 'features/protocols/hooks'
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
+
+import { useProtocolHandlers } from '~/features/protocols/hooks'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('ProtocolsContext')
 

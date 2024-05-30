@@ -1,7 +1,4 @@
 import { DIDClient } from '@verida/did-client'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
   FC,
@@ -12,7 +9,10 @@ import React, {
   useState,
 } from 'react'
 
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
 
 import { useEmitter } from './useEmitter'
 

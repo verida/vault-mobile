@@ -7,10 +7,10 @@ import {
   View,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { iconStyle, text } from 'styles'
 
-import Text from 'components/Text'
-import { BLACK_COLOR_OPACITY } from 'constants/color'
+import Text from '~/components/Text'
+import { BLACK_COLOR_OPACITY } from '~/constants/color'
+import { iconStyle, text } from '~/styles'
 
 import { useActiveWalletConnectSession } from '../hooks'
 

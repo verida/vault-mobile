@@ -8,9 +8,8 @@ import {
   View,
 } from 'react-native'
 
-import { MainStackScreenProps } from 'navigation/types'
-
-import { BLACK_ORIGIN_COLOR } from '../../constants/color'
+import { BLACK_ORIGIN_COLOR } from '~/constants/color'
+import { MainStackScreenProps } from '~/navigation/types'
 
 export type ChangePinScreenParams = undefined
 

@@ -6,10 +6,10 @@ import {
   TextStyle,
 } from 'react-native'
 
-import Text from 'components/Text'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import Text from '~/components/Text'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 type LabelProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>

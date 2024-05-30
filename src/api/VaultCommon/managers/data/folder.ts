@@ -1,5 +1,6 @@
-import { DataField } from 'features/data'
 import _ from 'lodash'
+
+import { DataField } from '~/features/data'
 
 import VaultCommon from '../../vault'
 

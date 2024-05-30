@@ -1,11 +1,11 @@
-import { CurrencyFormat, useTokenCalculator } from 'features/token'
 import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
-import SwapIcon from 'assets/swap_icon.svg'
-import { NumericCryptoFiatConversion } from 'components/Span'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import SwapIcon from '~/assets/swap_icon.svg'
+import { NumericCryptoFiatConversion } from '~/components/Span'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { CurrencyFormat, useTokenCalculator } from '~/features/token'
 
 const TokenCalculator = React.memo(function TokenCalculator({
   autoFocus: maybeAutoFocus = false,

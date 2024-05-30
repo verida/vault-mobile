@@ -7,8 +7,8 @@ import {
   View,
 } from 'react-native'
 
-import { BLACK_COLOR, WHITE_COLOR } from '../../constants/color'
-import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import { BLACK_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 export default ({ navigationState, onIndexChange }) => {
   const { routes, index } = navigationState

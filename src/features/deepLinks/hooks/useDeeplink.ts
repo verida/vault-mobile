@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
-import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
 import parse from 'url-parse'
 
-import { MainStackParams } from 'navigation/types'
+import { Logger } from '~/features/telemetry'
+import { MainStackParams } from '~/navigation/types'
 
 const logger = Logger.create('DeepLinks')
 

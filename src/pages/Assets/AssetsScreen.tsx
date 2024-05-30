@@ -1,4 +1,3 @@
-import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { StyleSheet, useWindowDimensions, View } from 'react-native'
@@ -10,6 +9,7 @@ import {
   useCryptoWalletsStatus,
   useSelectedCryptoWallet,
 } from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
 import { TabsScreenProps } from '~/navigation'
 import { TokenDashboard } from '~/pages/Tokens/TokenDashboard'
 import { Theme } from '~/styles/types'

@@ -1,13 +1,13 @@
-import { BottomActionBar, ScreenWrapper, Typography } from 'components'
-import { config } from 'config'
-import { canMigrateToMainnet, useCurrentIdentity } from 'features/identities'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
-import IdentityMigrationIcon from 'assets/icons/identity_migration_icon.svg'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import IdentityMigrationIcon from '~/assets/icons/identity_migration_icon.svg'
+import { BottomActionBar, ScreenWrapper, Typography } from '~/components'
+import { config } from '~/config'
+import { canMigrateToMainnet, useCurrentIdentity } from '~/features/identities'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type MigrateIdentityConfirmationScreenParams = undefined
 

@@ -1,9 +1,9 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import type { Eip155RpcMethod } from 'features/blockchain/eip155'
-import type { NearRpcMethod } from 'features/blockchain/near'
 
+import type { Eip155RpcMethod } from '~/features/blockchain/eip155'
+import type { NearRpcMethod } from '~/features/blockchain/near'
 import { SupportedBlockchainNamespace } from '~/features/blockchain/types/enums'
 
 export type ActiveSessions = Awaited<

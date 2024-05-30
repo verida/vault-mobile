@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import { LIGHTGREY_COLOR, VERIDA_COLOR, WHITE_COLOR } from 'constants/color'
+import { LIGHTGREY_COLOR, VERIDA_COLOR, WHITE_COLOR } from '~/constants/color'
 
 const empty = (): Pick<Option, 'label' | 'value'> => ({
   label: '',

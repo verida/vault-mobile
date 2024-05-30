@@ -1,4 +1,4 @@
-import { config as appConfig } from 'config'
+import { config as appConfig } from '~/config'
 
 // TODO: Infer the type from a zod schema
 export type ForcedUpgradeType = {

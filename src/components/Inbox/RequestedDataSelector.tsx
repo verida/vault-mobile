@@ -1,9 +1,9 @@
 import React from 'react'
 import { Linking, StyleSheet, View, ViewProps } from 'react-native'
 
-import Button from 'components/Button'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import Button from '~/components/Button'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 export type RequestedDataSelectorProps = Omit<ViewProps, 'children'> & {
   name: string

@@ -1,13 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from 'contexts/ThemeContext'
-// import { NFT, NFTCollection, NFTMetadata } from 'features/assets'
-import { NFT, useGetNFTsQuery } from 'features/assets'
-import {
-  getCryptoWalletAccountIds,
-  useSelectedCryptoWallet,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-// import { getNFTImageUri } from 'helpers/nft'
+// import { getNFTImageUri } from '~/helpers/nft'
 import React, { useCallback } from 'react'
 import {
   ListRenderItem,
@@ -17,19 +9,26 @@ import {
   View,
 } from 'react-native'
 
-import { getBlockchainNetworks } from '~/features/blockchain'
-import { useAppSelector } from '~/reduxStore/types'
-
 // import FastImage from 'react-native-fast-image'
-import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
-import { NftItem } from 'components/Assets/NftItem'
-import Container from 'components/Container'
-import GridView from 'components/Grids/GridView'
-import LoadingIndicator from 'components/LoadingIndicator'
-// import { Tag } from 'components/Tag'
-import { Title } from 'components/Typography/Title'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import NFTPlaceholder from '~/assets/stubs/nft_placeholder.svg'
+import { NftItem } from '~/components/Assets/NftItem'
+import Container from '~/components/Container'
+import GridView from '~/components/Grids/GridView'
+import LoadingIndicator from '~/components/LoadingIndicator'
+// import { Tag } from '~/components/Tag'
+import { Title } from '~/components/Typography/Title'
+import { useTheme } from '~/contexts/ThemeContext'
+// import { NFT, NFTCollection, NFTMetadata } from '~/features/assets'
+import { NFT, useGetNFTsQuery } from '~/features/assets'
+import { getBlockchainNetworks } from '~/features/blockchain'
+import {
+  getCryptoWalletAccountIds,
+  useSelectedCryptoWallet,
+} from '~/features/cryptoWallet'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
@@ -80,7 +79,7 @@ const Collectibles = () => {
   //           <View style={styles.column}>
   //             <FastImage
   //               style={styles.image}
-  //               defaultSource={require('assets/picture.png')}
+  //               defaultSource={require('~/assets/picture.png')}
   //               source={{
   //                 uri,
   //                 priority: FastImage.priority.high,
