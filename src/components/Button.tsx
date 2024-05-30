@@ -99,7 +99,7 @@ const Button: React.FC<ButtonProps> = (props) => {
         buttonContent
       ) : (
         <LottieView
-          source={require('assets/animations/loading-small-light.json')}
+          source={require('~/assets/animations/loading-small-light.json')}
           loop={true}
           autoPlay={true}
         />

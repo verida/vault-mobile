@@ -1,8 +1,9 @@
+import { z } from 'zod'
+
 import {
   VeridaBaseRecordSchema,
   VeridaBaseUnsavedRecordSchema,
-} from 'features/verida/schemas'
-import { z } from 'zod'
+} from '~/features/verida/schemas'
 
 import { VeridaMessageType } from '../constants'
 

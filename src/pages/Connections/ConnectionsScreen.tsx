@@ -8,10 +8,10 @@ import {
   View,
 } from 'react-native'
 
-import DataConnectorsManager from 'api/DataConnectorsManager'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { TabsScreenProps } from 'navigation/types'
+import DataConnectorsManager from '~/api/DataConnectorsManager'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { TabsScreenProps } from '~/navigation/types'
 
 function buildConnections(allConnectors: any) {
   // TODO: Better typing

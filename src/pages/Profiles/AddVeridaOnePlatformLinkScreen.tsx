@@ -1,13 +1,5 @@
 import { StackActions } from '@react-navigation/native'
 import Color from 'color'
-import { useTheme } from 'contexts'
-import { Logger } from 'features/telemetry'
-import {
-  VeridaOnePlatformLink,
-  VeridaOnePlatformLinkCategory,
-  VeridaOnePlatformMetadata,
-} from 'features/veridaOne'
-import { emitter } from 'helpers/emitter'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Alert,
@@ -20,18 +12,25 @@ import {
 import PagerView from 'react-native-pager-view'
 
 import { Icon, ScreenWrapper } from '~/components'
-import { HIT_SLOP_10_10 } from '~/constants'
-
-import Button from 'components/Button'
+import Button from '~/components/Button'
 import {
   EnterPlatformLinkView,
   EnterPlatformLinkViewRefProps,
-} from 'components/PublicProfile'
-import { Text } from 'components/Typography/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+} from '~/components/PublicProfile'
+import { Text } from '~/components/Typography/Text'
+import { HIT_SLOP_10_10 } from '~/constants'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useTheme } from '~/contexts'
+import { Logger } from '~/features/telemetry'
+import {
+  VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
+  VeridaOnePlatformMetadata,
+} from '~/features/veridaOne'
+import { emitter } from '~/helpers/emitter'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Pages/Profiles/AddPlatformLink')
 

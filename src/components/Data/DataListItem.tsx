@@ -2,7 +2,7 @@ import { Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
+import RightArrowSvg from '~/assets/icons/data/right-arrow.svg'
 
 export type DataListItemProps = {
   item: any

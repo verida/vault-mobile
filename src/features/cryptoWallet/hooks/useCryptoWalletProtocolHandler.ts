@@ -1,9 +1,10 @@
+import { useCallback } from 'react'
+
 import {
   isCryptoRequestDeepLink,
   isCryptoRequestQrCode,
-} from 'features/cryptoWallet/utils'
-import { ProtocolHandler } from 'features/protocols'
-import { useCallback } from 'react'
+} from '~/features/cryptoWallet/utils'
+import { ProtocolHandler } from '~/features/protocols'
 
 import { useCryptoWallet } from './useCryptoWallet'
 

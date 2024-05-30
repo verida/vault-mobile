@@ -1,12 +1,12 @@
-import { useTheme } from 'contexts'
 import React, { FC } from 'react'
 import { FallbackProps } from 'react-error-boundary'
 import { View } from 'react-native'
 
-import Button from 'components/Button'
-import { Spacer } from 'components/Spacer'
-import { Caption } from 'components/Typography/Caption'
-import { Label } from 'components/Typography/Label'
+import Button from '~/components/Button'
+import { Spacer } from '~/components/Spacer'
+import { Caption } from '~/components/Typography/Caption'
+import { Label } from '~/components/Typography/Label'
+import { useTheme } from '~/contexts'
 
 export const ErrorFallbackCard: FC<FallbackProps> = ({
   error,

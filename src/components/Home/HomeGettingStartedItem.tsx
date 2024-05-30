@@ -1,11 +1,11 @@
 import { useNavigation } from '@react-navigation/native'
-import { Icon } from 'components'
-import { HomeScreenGettingStartedItem } from 'features/homeScreen'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { Icon } from '~/components'
+import { HomeScreenGettingStartedItem } from '~/features/homeScreen'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type HomeGettingStartedItemProps = {
   item: HomeScreenGettingStartedItem

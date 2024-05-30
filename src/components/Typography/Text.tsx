@@ -1,8 +1,8 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { StyleProp, Text as NativeText, TextStyle } from 'react-native'
 
-import { NUNITO_SANS } from 'constants/text'
+import { NUNITO_SANS } from '~/constants/text'
+import { useTheme } from '~/contexts/ThemeContext'
 
 type TextProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>

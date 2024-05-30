@@ -1,8 +1,8 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { View, ViewProps, ViewStyle } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { useTheme } from '~/contexts/ThemeContext'
+import { Theme } from '~/styles/types'
 
 export type SpacerProps = Pick<
   ViewStyle,

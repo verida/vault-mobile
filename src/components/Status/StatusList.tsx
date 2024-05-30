@@ -1,11 +1,11 @@
-import { ProgressBar } from 'components'
-import { useTheme } from 'contexts'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { AnimatedCheckbox } from 'components/Input'
-import { Theme } from 'styles/types'
+import { ProgressBar } from '~/components'
+import { AnimatedCheckbox } from '~/components/Input'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type StatusListItem = {
   status: 'idle' | 'success' | 'error' | 'processing'

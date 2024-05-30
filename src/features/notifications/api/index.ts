@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { Logger } from 'features/telemetry'
 
-import AccountManager from 'api/AccountManager'
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
+import AccountManager from '~/api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('Motifications')
 

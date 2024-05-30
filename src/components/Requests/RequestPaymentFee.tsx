@@ -1,19 +1,19 @@
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { ChainMetadata } from 'features/caip'
-import { DetailedValuation } from 'features/cryptoWallet'
+import React, { useMemo } from 'react'
+import { StyleSheet, View, ViewProps } from 'react-native'
+
+import { NumberCrypto, NumberFiat } from '~/components/Numbers'
+import { Typography } from '~/components/Typography'
+import { ChainMetadata } from '~/features/caip'
+import { DetailedValuation } from '~/features/cryptoWallet'
 import {
   convertFromCryptoIntegerToMaybeDecimalFiat,
   convertPredictedTransactionFeeToString,
-} from 'features/token'
-import { useThemeAwareStyle } from 'hooks'
-import React, { useMemo } from 'react'
-import { StyleSheet, View, ViewProps } from 'react-native'
-import { getSignificantDecimalsFromPrice } from 'utils'
-
-import { NumberCrypto, NumberFiat } from 'components/Numbers'
-import { Typography } from 'components/Typography'
-import { Theme } from 'styles/types'
+} from '~/features/token'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
+import { getSignificantDecimalsFromPrice } from '~/utils'
 
 export type RequestPaymentFeeProps = {
   readonly chainMetadata: ChainMetadata

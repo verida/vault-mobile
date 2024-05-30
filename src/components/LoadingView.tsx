@@ -11,8 +11,8 @@ function LoadingView(props: LoadingViewProps) {
 
   const source =
     type === 'big'
-      ? require('assets/animations/loading.json')
-      : require('assets/animations/loading-small-dark.json')
+      ? require('~/assets/animations/loading.json')
+      : require('~/assets/animations/loading-small-dark.json')
   const lottieViewStyle =
     type === 'big' ? styles.loadingView : styles.loadingViewSmall
   return (

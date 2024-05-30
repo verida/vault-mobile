@@ -1,10 +1,9 @@
+import Folder from '~/api/VaultCommon/managers/data/folder'
 import {
   CREDENTIALS_DATABASE_NAME,
   CredentialValidityStatus,
   VerificationResult,
-} from 'features/verifiableCredential'
-
-import Folder from 'api/VaultCommon/managers/data/folder'
+} from '~/features/verifiableCredential'
 
 export function getCredentialValidityStatus(
   verificationResult?: VerificationResult

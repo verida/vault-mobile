@@ -1,4 +1,4 @@
-import { PublicProfile } from 'features/profiles'
+import { PublicProfile } from '~/features/profiles'
 
 export type Account = {
   did: string

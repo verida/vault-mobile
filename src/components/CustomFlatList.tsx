@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native'
 
-import LoadingView from 'components/LoadingView'
+import LoadingView from '~/components/LoadingView'
 
 import Text from './Text'
 

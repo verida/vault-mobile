@@ -5,20 +5,23 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import {
-  minifiedBlockchainAccountsToDropdownOptions,
-  useSelectedMinifiedBlockchainAccounts,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { useAuth } from 'hooks/useAuth'
-import { MainStackParams } from 'navigation/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import {
+  minifiedBlockchainAccountsToDropdownOptions,
+  useSelectedMinifiedBlockchainAccounts,
+} from '~/features/cryptoWallet'
+import { Logger } from '~/features/telemetry'
+import { useModal } from '~/hooks'
+import { useAuth } from '~/hooks/useAuth'
+import { MainStackParams } from '~/navigation/types'
 
 import {
   isWalletConnectConnection,

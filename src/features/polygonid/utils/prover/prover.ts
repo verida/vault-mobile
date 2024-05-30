@@ -1,8 +1,9 @@
 import { byteDecoder } from '@0xpolygonid/js-sdk'
 import { ZKProof } from '@iden3/js-jwz'
 import { groth16Prove } from '@iden3/react-native-rapidsnark'
-import { Logger } from 'features/telemetry'
 import { fromByteArray } from 'react-native-quick-base64'
+
+import { Logger } from '~/features/telemetry'
 
 import { CalculateWitnessFunction } from '../../types'
 

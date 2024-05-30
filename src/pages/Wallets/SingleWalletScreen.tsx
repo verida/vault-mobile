@@ -1,17 +1,16 @@
-import { useCryptoWallets } from 'features/cryptoWallet'
 import React, { useCallback, useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import ExportSeedphraseSvg from '~/assets/export_seedphrase.svg'
 import { Icon, ScreenWrapper } from '~/components'
+import { ChainAddressesList } from '~/components/ChainsAddressesList'
+import Text from '~/components/Text'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import { useTheme } from '~/contexts'
+import { useCryptoWallets } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
-
-import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import { ChainAddressesList } from 'components/ChainsAddressesList'
-import Text from 'components/Text'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackScreenProps } from 'navigation/types'
 
 export type SingleWalletScreenParams = {
   walletId: string

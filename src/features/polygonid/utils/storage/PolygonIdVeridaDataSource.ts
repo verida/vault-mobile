@@ -1,6 +1,7 @@
 import { IDataSource } from '@0xpolygonid/js-sdk'
 import { IDatabase } from '@verida/types'
-import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
+
+import { VeridaRecord, VeridaUnsavedRecord } from '~/features/verida'
 
 type PolygonIdVeridaUnsavedRecord<Type> = VeridaUnsavedRecord<{ data: Type }>
 type PolygonIdVeridaRecord<Type> = VeridaRecord<{ data: Type }>

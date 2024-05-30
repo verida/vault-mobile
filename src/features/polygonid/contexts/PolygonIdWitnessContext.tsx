@@ -1,9 +1,10 @@
-import { config } from 'config'
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo, useRef } from 'react'
 import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
 import WebView, { WebViewMessageEvent } from 'react-native-webview'
+
+import { config } from '~/config'
+import { Logger } from '~/features/telemetry'
 
 import { WitnessIncomingEvent, WitnessOutgoingEvent } from '../constants'
 import {

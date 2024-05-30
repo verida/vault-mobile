@@ -1,21 +1,20 @@
 import { ChainId } from 'caip'
-import { BottomActionBar, Icon, ScreenWrapper } from 'components'
-import {
-  useChainMetadataDetails,
-  useChainMetadatasCustom,
-} from 'features/blockchain'
-import { ChainMetadata } from 'features/caip'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { Alert, StyleSheet, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
+import { BottomActionBar, Icon, ScreenWrapper } from '~/components'
 import { HIT_SLOP_10_10 } from '~/constants'
 import { useTheme } from '~/contexts'
-
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import {
+  useChainMetadataDetails,
+  useChainMetadatasCustom,
+} from '~/features/blockchain'
+import { ChainMetadata } from '~/features/caip'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'

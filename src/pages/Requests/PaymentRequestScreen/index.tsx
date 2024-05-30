@@ -1,25 +1,25 @@
 import { nanoid } from '@reduxjs/toolkit'
+import React, { useCallback, useEffect } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
+
 import {
   BottomActionBar,
   RequestHeaderProps,
   useMaybeWalletSelectorButtonProps,
-} from 'components'
+} from '~/components'
 import {
   CryptoWalletRequest,
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import { Protocol } from 'features/protocols'
-import { useThemeAwareStyle } from 'hooks'
-import React, { useCallback, useEffect } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useImmediateLayoutAnimation } from 'use-layout-animation'
-
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { Protocol } from '~/features/protocols'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 import { PaymentRequestScreenContainer } from './PaymentRequestScreen.Container'
 import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.Body'

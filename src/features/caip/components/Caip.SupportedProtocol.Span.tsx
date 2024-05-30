@@ -1,6 +1,7 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/caip'
 import * as React from 'react'
+
+import { ChainMetadatas } from '~/features/caip'
 
 import { getSupportedCaipProtocolFriendlyName } from '../utils'
 

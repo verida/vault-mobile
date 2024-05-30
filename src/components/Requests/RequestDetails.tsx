@@ -1,8 +1,8 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
 import { Typography } from '~/components'
+import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
 export type RequestDetailProperty = {

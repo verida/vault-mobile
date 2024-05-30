@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import type { CaptureContext } from '@sentry/types'
-import { config } from 'config'
-import { LogLevel, Sentry } from 'features/telemetry'
+
+import { config } from '~/config'
+import { LogLevel, Sentry } from '~/features/telemetry'
 
 const levelOrder: LogLevel[] = ['error', 'warn', 'info', 'debug']
 

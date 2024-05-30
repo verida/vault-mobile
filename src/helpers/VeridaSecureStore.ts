@@ -1,8 +1,9 @@
 import { Buffer } from '@craftzdog/react-native-buffer'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SystemSecureStore from 'expo-secure-store'
-import { Logger } from 'features/telemetry'
 import Crypto from 'react-native-quick-crypto'
+
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('VeridaSecureStore')
 

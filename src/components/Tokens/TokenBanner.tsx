@@ -1,21 +1,21 @@
 import BigDecimal from 'bignumber.js'
-import { useTheme } from 'contexts'
+import React from 'react'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
+
+import { Icon } from '~/components/Icon'
+import { Logo } from '~/components/Images'
+import { NumberCrypto, NumberFiat, NumberPercent } from '~/components/Numbers'
+import { Typography } from '~/components/Typography'
+import { useTheme } from '~/contexts'
 import {
   Currency,
   DetailedValuation,
   fixedPointCryptoAsBigDecimal,
   LegacyCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
-import { getSignificantDecimalsFromPrice } from 'utils'
-
-import { Icon } from 'components/Icon'
-import { Logo } from 'components/Images'
-import { NumberCrypto, NumberFiat, NumberPercent } from 'components/Numbers'
-import { Typography } from 'components/Typography'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
+import { getSignificantDecimalsFromPrice } from '~/utils'
 
 export type TokenBannerProps = {
   readonly selectedWallet: LegacyCryptoWallet | null

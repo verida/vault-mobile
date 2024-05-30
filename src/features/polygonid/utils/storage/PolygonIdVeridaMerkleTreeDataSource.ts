@@ -1,5 +1,6 @@
 import { IDatabase } from '@verida/types'
-import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
+
+import { VeridaRecord, VeridaUnsavedRecord } from '~/features/verida'
 
 type PolygonIdVeridaMerkleTreeUnsavedRecord = VeridaUnsavedRecord<{
   data: string

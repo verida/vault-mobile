@@ -1,15 +1,16 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { useChainMetadatasCustom } from 'features/blockchain'
+import * as React from 'react'
+import { Alert } from 'react-native'
+
+import { useChainMetadatasCustom } from '~/features/blockchain'
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,
   ChainsList,
   fetchChainsList,
-} from 'features/blockchain/eip155'
-import { ChainMetadatas } from 'features/caip'
-import { useModal } from 'hooks'
-import * as React from 'react'
-import { Alert } from 'react-native'
+} from '~/features/blockchain/eip155'
+import { ChainMetadatas } from '~/features/caip'
+import { useModal } from '~/hooks'
 
 import { WalletConnectTransactionRequestModalAdapter } from '../components'
 import {

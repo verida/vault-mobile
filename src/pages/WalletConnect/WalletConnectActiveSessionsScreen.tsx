@@ -1,16 +1,16 @@
-import {
-  useWalletConnectContext,
-  WalletConnectSessionItem,
-} from 'features/walletConnect'
 import * as React from 'react'
 import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { LayoutStyle, text } from 'styles'
 
-import Layout from 'components/Layouts/Layout'
-import { Spacer } from 'components/Spacer'
-import Text from 'components/Text'
-import { MainStackScreenProps } from 'navigation/types'
+import Layout from '~/components/Layouts/Layout'
+import { Spacer } from '~/components/Spacer'
+import Text from '~/components/Text'
+import {
+  useWalletConnectContext,
+  WalletConnectSessionItem,
+} from '~/features/walletConnect'
+import { MainStackScreenProps } from '~/navigation/types'
+import { LayoutStyle, text } from '~/styles'
 
 export type WalletConnectActiveSessionsScreenParams = undefined
 

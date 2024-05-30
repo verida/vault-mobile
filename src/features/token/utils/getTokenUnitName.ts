@@ -2,7 +2,7 @@ import {
   SelectSingleTokenData,
   SupportedTokenObject,
   WithMaybeTokenType,
-} from 'features/cryptoWallet'
+} from '~/features/cryptoWallet'
 
 export function getTokenUnitName(
   // TODO: There is some overlap between SelectSingleTokenData and SupportedTokenObject which is currently difficult to infer.

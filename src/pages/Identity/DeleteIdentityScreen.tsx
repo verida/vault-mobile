@@ -1,16 +1,16 @@
-import { BottomActionBar, ScreenWrapper } from 'components'
-import { selectSelectedAccount, useIdentities } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import LoadingView from 'components/LoadingView'
-import Text from 'components/Text'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import LoadingView from '~/components/LoadingView'
+import Text from '~/components/Text'
+import { selectSelectedAccount, useIdentities } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('DeleteIdentityScreen')
 
