@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
 import React, { useCallback } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -16,6 +16,7 @@ import {
 import { useTheme } from '~/contexts'
 import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
 import { useIdentityDrawer } from '~/features/identityDrawer'
+import { selectNewMessagesCount } from '~/features/inbox'
 import {
   PROFILE_EMPTY_NAME_VALUE,
   selectSelectedPublicProfile,
@@ -27,6 +28,8 @@ import { Theme } from '~/styles/types'
 export type IdentityDrawerProps = {
   children: React.ReactNode
 }
+
+const MAX_INBOX_COUNT = 10
 
 export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   props
@@ -40,9 +43,15 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const navigation = useNavigation()
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
+  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
   const isNameEmpty = !name
   const displayedName = name || PROFILE_EMPTY_NAME_VALUE
+
+  const displayedInboxCount =
+    unreadMessagesCount >= MAX_INBOX_COUNT
+      ? `${MAX_INBOX_COUNT - 1}+`
+      : unreadMessagesCount
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
@@ -67,6 +76,11 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
 
   const handleSettingsPress = useCallback(() => {
     navigation.navigate('Settings')
+    close()
+  }, [navigation, close])
+
+  const handleInboxPress = useCallback(() => {
+    navigation.navigate('Inbox')
     close()
   }, [navigation, close])
 
@@ -118,6 +132,27 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                 </Typography>
               </View>
               <View style={styles.shortcutsContainer}>
+                <DrawerShortcutButton
+                  label='Inbox'
+                  icon={
+                    <View>
+                      <Icon
+                        name='inbox'
+                        size={24}
+                        color={theme.color.iconDefault}
+                      />
+                      {unreadMessagesCount ? (
+                        <View style={styles.badge}>
+                          <Text style={styles.badgeText} numberOfLines={1}>
+                            {displayedInboxCount}
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  }
+                  onPress={handleInboxPress}
+                  style={styles.shortcutButton}
+                />
                 <DrawerShortcutButton
                   label='Share Identity'
                   icon={
@@ -257,5 +292,26 @@ const createStyles = (theme: Theme) =>
       borderTopWidth: 1,
       borderBottomColor: theme.color.lightGrey,
       borderBottomWidth: 1,
+    },
+    badge: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 4,
+      position: 'absolute',
+      right: -7,
+      top: -9,
+      height: 20,
+      minWidth: 20,
+      backgroundColor: theme.color.orange,
+      borderRadius: theme.roundness.full,
+      overflow: 'hidden',
+      borderColor: theme.color.background,
+      borderWidth: 2,
+    },
+    badgeText: {
+      fontFamily: theme.fontFamily.semibold,
+      fontSize: 10,
+      lineHeight: 12,
+      color: theme.color.onError,
     },
   })

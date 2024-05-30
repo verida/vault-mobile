@@ -1,20 +1,16 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import React, { useCallback } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 
-import { Icon, IdentityAvatar } from '~/components'
+import { IdentityAvatar } from '~/components'
 import { HIT_SLOP_10_10 } from '~/constants/buttons'
-import { useTheme } from '~/contexts'
 import { useIdentityDrawer } from '~/features/identityDrawer'
-import { selectNewMessagesCount } from '~/features/inbox'
 import { selectSelectedPublicProfile } from '~/features/profiles'
 import { useThemeAwareStyle } from '~/hooks'
 import { useAppSelector } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
 import { BaseScreenHeader } from './BaseScreenHeader'
-
-const MAX_INBOX_COUNT = 10
 
 export type TabScreenHeaderProps = BottomTabHeaderProps
 
@@ -26,21 +22,10 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
   const { headerLeft: customLeft, headerRight: customRight } = options
 
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
 
   const { avatar } = useAppSelector(selectSelectedPublicProfile)
 
   const { open: openIdentityDrawer } = useIdentityDrawer()
-
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
-
-  const handleInboxPress = useCallback(() => {
-    navigation.navigate('Inbox')
-  }, [navigation])
 
   const headerLeft: typeof options.headerLeft = useCallback(
     () => (
@@ -54,35 +39,6 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
     [avatar?.uri, styles.avatarButton, styles.avatar, openIdentityDrawer]
   )
 
-  const headerRight: typeof options.headerRight = useCallback(
-    () => (
-      <TouchableOpacity
-        onPress={handleInboxPress}
-        hitSlop={HIT_SLOP_10_10}
-        style={styles.inboxButton}>
-        {/* TODO: Factorise an Inbox icon button with its badge for unread messages */}
-        <Icon name='inbox' size={theme.iconSize.m} />
-        {/* TODO: Factorise a Badge component */}
-        {unreadMessagesCount ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText} numberOfLines={1}>
-              {displayedInboxCount}
-            </Text>
-          </View>
-        ) : null}
-      </TouchableOpacity>
-    ),
-    [
-      displayedInboxCount,
-      handleInboxPress,
-      styles.inboxButton,
-      styles.badge,
-      styles.badgeText,
-      theme.iconSize.m,
-      unreadMessagesCount,
-    ]
-  )
-
   return (
     <BaseScreenHeader
       {...otherProps}
@@ -90,7 +46,7 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
       options={{
         ...options,
         headerLeft: customLeft || headerLeft,
-        headerRight: customRight || headerRight,
+        headerRight: customRight,
       }}
     />
   )
