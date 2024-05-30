@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TextStyle } from 'react-native'
 
 import {
   BLACK_COLOR,
@@ -6,9 +6,9 @@ import {
   ORANGE_COLOR,
   PRIMARY_COLOR,
   WHITE_COLOR,
-} from '../constants/color'
+} from '~/constants/color'
 
-const sharedProps = {
+const sharedProps: TextStyle = {
   fontFamily: 'NunitoSansBold',
   fontWeight: '500',
   fontSize: 16,

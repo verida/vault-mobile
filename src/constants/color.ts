@@ -40,9 +40,10 @@ export const GREY_120 = 'rgba(118, 118, 128, 0.12)'
 
 export const DEFAULT_ICON_COLOR = '#808695'
 
-export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
+export const BLACK_COLOR_OPACITY = (opacity: number) =>
+  `rgba(4, 17, 51, ${opacity})`
 
-export const WHITE_COLOR_OPACITY = (opacity) =>
+export const WHITE_COLOR_OPACITY = (opacity: number) =>
   `rgba(255, 255, 255, ${opacity})`
 
 export const BACKGROUND_RADIAN_COLORS = ['#0E1572', '#1467CB', '#1995CB']

@@ -1,10 +1,9 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native'
 
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
-
-const input_font = {
+const input_font: ViewStyle | TextStyle = {
   fontFamily: NUNITO_SANS_SEMIBOLD,
   fontWeight: '600',
   fontSize: 14,
@@ -12,7 +11,7 @@ const input_font = {
   textAlign: 'left',
 }
 
-const input = {
+const input: ViewStyle = {
   ...input_font,
 
   borderWidth: 1,

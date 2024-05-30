@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet } from 'react-native'
 
-import { SNOW_COLOR } from '../constants/color'
+import { SNOW_COLOR } from '~/constants/color'
 
 export const LAYOUT_BASE = {
   backgroundColor: SNOW_COLOR,

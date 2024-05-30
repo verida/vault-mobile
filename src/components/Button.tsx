@@ -1,22 +1,46 @@
 import LottieView from 'lottie-react-native'
-import React from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import React, { type PropsWithChildren } from 'react'
+import {
+  GestureResponderEvent,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native'
 
-import ButtonStyles from '../styles/button'
-import TextStyles from '../styles/text'
+import ButtonStyles from '~/styles/button'
+import TextStyles from '~/styles/text'
+
 import Text from './Text'
 
 /**
  * @deprecated use the other custom `<Button>` component instead
  */
-export default function Button(props) {
-  const style = props.style || {}
+export interface ButtonProps extends PropsWithChildren<unknown> {
+  icon?: React.ReactNode
+  color: keyof typeof ButtonStyles
+  disabled?: boolean
+  loading?: boolean
+  style?: ViewStyle
+  textStyle?: ViewStyle
+  onPress: ((event: GestureResponderEvent) => void) | undefined
+}
+
+const Button: React.FC<ButtonProps> = (props) => {
+  const {
+    style = {},
+    color,
+    icon,
+    children,
+    disabled,
+    loading,
+    onPress,
+  } = props
+
   let textStyle = props.textStyle || {}
   let hasButtonBackground = true
-  const type =
-    (props.color && ButtonStyles[props.color]) || ButtonStyles.primary
+  const type = (color && ButtonStyles[color]) || ButtonStyles.primary
   const textColor = (() => {
-    switch (props.color) {
+    switch (color) {
       case 'secondary':
       case 'transparent-border':
       case 'grey':
@@ -42,18 +66,15 @@ export default function Button(props) {
   })()
 
   const buttonContent = (
-    <View
-      style={
-        props.color !== 'transparent-link' ? { alignItems: 'center' } : {}
-      }>
+    <View style={color !== 'transparent-link' ? { alignItems: 'center' } : {}}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {props.icon && <View style={{ marginRight: 5 }}>{props.icon}</View>}
-        {typeof props.children === 'string' ? (
+        {icon && <View style={{ marginRight: 5 }}>{icon}</View>}
+        {typeof children === 'string' ? (
           <Text style={{ ...TextStyles[textColor], ...textStyle }}>
-            {props.children}
+            {children}
           </Text>
         ) : (
-          props.children
+          children
         )}
       </View>
     </View>
@@ -65,18 +86,16 @@ export default function Button(props) {
         hasButtonBackground ? ButtonStyles.button : ButtonStyles.buttonText,
         type,
         style,
-        props.disabled &&
-          !props.color?.includes('transparent') &&
-          ButtonStyles.disabled,
+        disabled && !color?.includes('transparent') && ButtonStyles.disabled,
       ]}
       hitSlop={
-        hasButtonBackground && !props.color?.includes('transparent')
+        hasButtonBackground && !color?.includes('transparent')
           ? {}
           : { top: 10, left: 10, right: 10, bottom: 10 }
       }
-      onPress={props.loading ? null : props.onPress}
-      disabled={props.disabled}>
-      {!props.loading ? (
+      onPress={loading ? undefined : onPress}
+      disabled={disabled}>
+      {!loading ? (
         buttonContent
       ) : (
         <LottieView
@@ -88,3 +107,5 @@ export default function Button(props) {
     </TouchableOpacity>
   )
 }
+
+export default Button

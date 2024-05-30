@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { BLACK_COLOR_OPACITY } from '../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../constants/text'
+import { BLACK_COLOR_OPACITY } from '~/constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+
 import Label from './Label'
 import Text from './Text'
 
@@ -29,7 +30,7 @@ const info = [
   },
 ]
 
-export default () => {
+const CredentialDetails = () => {
   const details = info.map((item) => (
     <View key={item.title}>
       <Label style={style.label}>{item.title}:</Label>
@@ -44,6 +45,8 @@ export default () => {
     </View>
   )
 }
+
+export default CredentialDetails
 
 const style = StyleSheet.create({
   container: {

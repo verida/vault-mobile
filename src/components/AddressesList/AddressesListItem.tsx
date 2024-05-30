@@ -2,10 +2,15 @@ import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-import AddressSvg from '../../assets/icons/address.svg'
-import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
+import AddressSvg from '~/assets/icons/address.svg'
+import RightArrowSvg from '~/assets/icons/data/right-arrow.svg'
 
-export default ({ item }) => {
+export type AddressesListItemProps = {
+  item: Record<string, any>
+}
+
+export const AddressesListItem: React.FC<AddressesListItemProps> = (props) => {
+  const { item } = props
   return (
     <ListItem button onPress={item.onPress} style={styles.item}>
       <Left style={styles.itemWrapper}>

@@ -2,9 +2,9 @@ import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import { DefaultAvatar, getPublicProfile } from '../api/utils'
-import DataSnapshot from '../assets/inbox/snapshot.svg'
-import DataSynchronization from '../assets/inbox/synchronization.svg'
+import { DefaultAvatar, getPublicProfile } from '~/api/utils'
+import DataSnapshot from '~/assets/inbox/snapshot.svg'
+import DataSynchronization from '~/assets/inbox/synchronization.svg'
 
 export const TYPES = [
   {
@@ -48,12 +48,12 @@ export const TYPES = [
   },
 ]
 
-export const findTypeById = (id) =>
+export const findTypeById = (id: string) =>
   TYPES.find((type) => type.id === id) ||
   TYPES.find((type) => type.id === 'unknown')
 
 // @todo: Add to vault common
-export const buildItem = async (inboxItem) => {
+export const buildItem = async (inboxItem: Record<string, any>) => {
   const item = {
     id: inboxItem._id,
     avatar: DefaultAvatar,
@@ -62,9 +62,12 @@ export const buildItem = async (inboxItem) => {
     type: inboxItem.type,
     read: inboxItem.read,
     item: inboxItem,
+    from: '',
+    isProfileLoading: false,
+    fetchMe: () => {},
   }
 
-  let profile = await getPublicProfile(
+  const profile = await getPublicProfile(
     inboxItem.sentBy.did,
     inboxItem.sentBy.context,
     true
@@ -78,7 +81,7 @@ export const buildItem = async (inboxItem) => {
     item.avatar = avatar
   }
 
-  item.isProfileLoading = profile.isLoading
+  item.isProfileLoading = profile.isLoading || false
   item.fetchMe = async () => await buildItem(inboxItem)
 
   return item

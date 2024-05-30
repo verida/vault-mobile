@@ -2,7 +2,14 @@ import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-export default ({ item }) => {
+export type ActivitiesListItemProps = {
+  item: Record<string, any>
+}
+
+export const ActivitiesListItem: React.FC<ActivitiesListItemProps> = (
+  props
+) => {
+  const { item } = props
   return (
     <Card style={style.cardItem}>
       <CardItem button onPress={item.onPress} style={{ borderRadius: 4 }}>

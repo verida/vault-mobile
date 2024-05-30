@@ -1,11 +1,23 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  GestureResponderEvent,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import Toast from 'react-native-root-toast'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
-import AddressesListItem from './AddressesListItem'
+import { AddressesListItem } from './AddressesListItem'
 
-export default ({ list, editButtonAction }) => {
+export type AddressesListProps = {
+  list: Record<string, any>[]
+  editButtonAction: ((event: GestureResponderEvent) => void) | undefined
+}
+
+export const AddressesList: React.FC<AddressesListProps> = (props) => {
+  const { list, editButtonAction } = props
   return (
     <SwipeListView
       data={list}

@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
 import { StyleSheet, TextInput } from 'react-native'
 
-import { BLACK_COLOR_OPACITY } from '../constants/color'
+import { BLACK_COLOR_OPACITY } from '~/constants/color'
 
-export default () => {
-  const [keyword, setKeyword] = useState(null)
+const Search = () => {
+  const [keyword, setKeyword] = useState<string>('')
 
   return (
     <TextInput
       style={style.search}
       value={keyword}
       placeholder='Search'
-      onChangeText={setKeyword}
+      onChangeText={(text: string) => setKeyword(text)}
     />
   )
 }
+
+export default Search
 
 const style = StyleSheet.create({
   search: {

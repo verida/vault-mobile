@@ -1,23 +1,27 @@
 import { useNavigation } from '@react-navigation/native'
-import { useEmitter } from 'hooks'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
-
+import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
+import Text from '~/components/Text'
 import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
-} from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { findTypeById } from '../../helpers/inbox'
-import Text from '../Text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { findTypeById } from '~/helpers/inbox'
+import { useEmitter } from '~/hooks'
 
 /**
  * TODO: refactor + this component should be named sth likes InboxItem
  */
-export default ({ options: data }) => {
+export type CardProps = {
+  options: Record<string, any>
+}
+
+const Card: React.FC<CardProps> = (props) => {
+  const { options: data } = props
   const navigation = useNavigation()
   const inboxType = findTypeById(data.type)
   const [inboxItem, setInboxItem] = React.useState(data)
@@ -35,7 +39,7 @@ export default ({ options: data }) => {
 
   return (
     <TouchableOpacity
-      style={[style.card, !inboxItem.read ? style.unread : '']}
+      style={[style.card, !inboxItem.read ? style.unread : {}]}
       onPress={onPress}>
       <ShimmerPlaceholder
         visible={!inboxItem.isProfileLoading}
@@ -62,13 +66,17 @@ export default ({ options: data }) => {
           )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>
-          <Text style={{ ...style.text, marginTop: 4 }}>{inboxType.title}</Text>
-          {inboxType.svg && inboxType.svg()}
+          <Text style={{ ...style.text, marginTop: 4 }}>
+            {inboxType?.title}
+          </Text>
+          {inboxType?.svg && inboxType.svg()}
         </View>
       </View>
     </TouchableOpacity>
   )
 }
+
+export default Card
 
 const style = StyleSheet.create({
   card: {

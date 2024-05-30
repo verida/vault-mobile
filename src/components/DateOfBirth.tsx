@@ -6,9 +6,14 @@ import {
   BLACK_COLOR_OPACITY,
   PRIMARY_COLOR,
   WHITE_COLOR,
-} from '../constants/color'
+} from '~/constants/color'
 
-export default ({ selected }) => {
+export interface DateOfBirthProps {
+  selected: string | Date
+}
+
+const DateOfBirth: React.FC<DateOfBirthProps> = (props) => {
+  const { selected } = props
   const [value, setValue] = useState(selected)
 
   return (
@@ -21,7 +26,6 @@ export default ({ selected }) => {
       showIcon={false}
       confirmBtnText='Save Changes'
       cancelBtnText='Cancel'
-      useNativeDriver={true}
       customStyles={style}
       onDateChange={(date) => {
         setValue(date)
@@ -29,6 +33,8 @@ export default ({ selected }) => {
     />
   )
 }
+
+export default DateOfBirth
 
 const text = {
   color: BLACK_COLOR_OPACITY(0.6),

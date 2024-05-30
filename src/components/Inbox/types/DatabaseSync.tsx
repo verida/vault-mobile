@@ -1,15 +1,18 @@
-import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
+import { Logger } from '~/features/telemetry'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
 
 const logger = Logger.create('Components/Inbox/types/DatabaseSync')
 
-export default ({ item, inboxItem, type, navigation }) => {
+export interface DatabaseSyncProps {}
+
+const DatabaseSync: React.FC<DatabaseSyncProps> = (props) => {
+  const { item, inboxItem, type, navigation } = props
   const [currentAction, setCurrentAction] = useState(null)
   const onResultClick = async (result) => {
     try {
@@ -42,3 +45,4 @@ export default ({ item, inboxItem, type, navigation }) => {
     </Content>
   )
 }
+export default DatabaseSync
