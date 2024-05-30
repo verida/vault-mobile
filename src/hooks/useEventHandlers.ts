@@ -1,16 +1,16 @@
 import NetInfo from '@react-native-community/netinfo'
-import { selectSelectedAccount } from 'features/identities'
-import { pushNewMessageNotification } from 'features/notifications'
-import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { useThrottledCallback } from 'use-debounce'
 
-import AccountManager from 'api/AccountManager'
-import DataConnectorsManager from 'api/DataConnectorsManager'
-import { fetchInboxCount } from 'api/utils'
+import AccountManager from '~/api/AccountManager'
+import DataConnectorsManager from '~/api/DataConnectorsManager'
+import { fetchInboxCount } from '~/api/utils'
+import { selectSelectedAccount } from '~/features/identities'
+import { pushNewMessageNotification } from '~/features/notifications'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('EventHandler')
 

@@ -1,11 +1,11 @@
-import { Icon, IconName } from 'components'
-import { useTheme } from 'contexts'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 import FastImage, { Source } from 'react-native-fast-image'
 
-import { Theme } from 'styles/types'
+import { Icon, IconName } from '~/components'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type AvatarFallbackType =
   | 'person'

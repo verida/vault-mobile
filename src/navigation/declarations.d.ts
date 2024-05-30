@@ -3,7 +3,7 @@ import {
   AuthStackParams,
   TabsScreenParams,
   MainStackParams,
-} from 'navigation/types'
+} from '~/navigation/types'
 
 declare global {
   namespace ReactNavigation {

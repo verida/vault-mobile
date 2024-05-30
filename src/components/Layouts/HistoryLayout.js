@@ -1,7 +1,7 @@
 import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 
-import History from '../History'
+import History from '~/components/History'
 
 export default (props) => (
   <View style={style.scene}>

@@ -1,6 +1,7 @@
 import { AbstractPrivateKeyStore } from '@0xpolygonid/js-sdk'
 import { IDatabase } from '@verida/types'
-import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
+
+import { VeridaRecord, VeridaUnsavedRecord } from '~/features/verida'
 
 type PolygonIdVeridaUnsavedRecord = VeridaUnsavedRecord<{ value: string }>
 type PolygonIdVeridaRecord = VeridaRecord<{ value: string }>

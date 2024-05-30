@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Folder from 'api/VaultCommon/managers/data/folder'
+import Folder from '~/api/VaultCommon/managers/data/folder'
 
 import { DataGridListItem } from './DataGridListItem'
 

@@ -1,10 +1,10 @@
-import { Logger } from 'features/telemetry'
-import { VeridaReceivedMessage } from 'features/verida'
 import { get } from 'lodash'
 import PushNotification from 'react-native-push-notification'
 
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
-import { VERIDA_COLOR } from 'constants/color'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
+import { VERIDA_COLOR } from '~/constants/color'
+import { Logger } from '~/features/telemetry'
+import { VeridaReceivedMessage } from '~/features/verida'
 
 import {
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,

@@ -1,6 +1,7 @@
 import { CircuitId, ICircuitStorage, IZKProver } from '@0xpolygonid/js-sdk'
 import { ZKProof } from '@iden3/js-jwz'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 import { CalculateWitnessFunction } from '../../types'
 import { prove } from './prover'

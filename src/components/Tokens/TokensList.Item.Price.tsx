@@ -1,10 +1,10 @@
-import { DetailedValuation, Interval } from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { NumberFiat, NumberPercent } from 'components/Numbers'
-import { Theme } from 'styles/types'
+import { NumberFiat, NumberPercent } from '~/components/Numbers'
+import { DetailedValuation, Interval } from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 type TokensListItemPriceProps = {
   readonly valuation: DetailedValuation

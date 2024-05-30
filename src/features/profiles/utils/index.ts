@@ -1,9 +1,12 @@
 import { Client } from '@verida/client-rn'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { getDidClientConfigForNetwork, isValidVeridaDid } from 'features/verida'
 
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import {
+  getDidClientConfigForNetwork,
+  isValidVeridaDid,
+} from '~/features/verida'
 
 import { PublicProfile } from '../types'
 

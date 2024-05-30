@@ -1,12 +1,12 @@
 import { compareVersions } from 'compare-versions'
-import { useConfig } from 'features/config'
 import React, { useEffect } from 'react'
 
-import AccountManager from 'api/AccountManager'
-import { APP_VERSION } from 'constants/application'
-import { useAuth } from 'hooks/useAuth'
-import { useEmitter } from 'hooks/useEmitter'
-import { useModal } from 'hooks/useModal'
+import AccountManager from '~/api/AccountManager'
+import { APP_VERSION } from '~/constants/application'
+import { useConfig } from '~/features/config'
+import { useAuth } from '~/hooks/useAuth'
+import { useEmitter } from '~/hooks/useEmitter'
+import { useModal } from '~/hooks/useModal'
 
 import { DIDNonExistentModal } from './DIDNonExistentModal'
 import { ForcedCreateNewAccountModal } from './ForcedCreateNewAccountModal'

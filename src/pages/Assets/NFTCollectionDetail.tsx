@@ -51,7 +51,7 @@ export const NFTCollectionDetailScreen: React.FC<
             <View style={styles.column}>
               <FastImage
                 style={styles.image}
-                defaultSource={require('assets/picture.png')}
+                defaultSource={require('~/assets/picture.png')}
                 source={{
                   uri,
                   priority: FastImage.priority.normal,

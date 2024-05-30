@@ -1,4 +1,4 @@
-import { dataFolders } from 'features/data'
+import { dataFolders } from '~/features/data'
 
 import VaultCommon from '../vault'
 import Folder from './data/folder'

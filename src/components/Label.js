@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text } from 'react-native'
 
-import { BLACK_COLOR_OPACITY } from '../constants/color'
-import { NUNITO_SANS_SEMIBOLD } from '../constants/text'
+import { BLACK_COLOR_OPACITY } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 /**
  * @deprecated use <Typography> instead

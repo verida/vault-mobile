@@ -2,8 +2,9 @@ import LottieView from 'lottie-react-native'
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native'
 
-import ButtonStyles from '../styles/button'
-import TextStyles from '../styles/text'
+import ButtonStyles from '~/styles/button'
+import TextStyles from '~/styles/text'
+
 import Text from './Text'
 
 /**
@@ -80,7 +81,7 @@ export default function Button(props) {
         buttonContent
       ) : (
         <LottieView
-          source={require('assets/animations/loading-small-light.json')}
+          source={require('~/assets/animations/loading-small-light.json')}
           loop={true}
           autoPlay={true}
         />

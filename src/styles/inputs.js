@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native'
 
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 const input_font = {
   fontFamily: NUNITO_SANS_SEMIBOLD,

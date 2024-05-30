@@ -1,14 +1,3 @@
-import {
-  selectAccounts,
-  useCurrentIdentity,
-  useIdentities,
-} from 'features/identities'
-import {
-  fetchAllPublicProfilesData,
-  PublicProfile,
-  selectPublicProfiles,
-} from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import {
   FlatList,
@@ -19,8 +8,19 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import {
+  selectAccounts,
+  useCurrentIdentity,
+  useIdentities,
+} from '~/features/identities'
+import {
+  fetchAllPublicProfilesData,
+  PublicProfile,
+  selectPublicProfiles,
+} from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 import { DrawerIdentityListItem } from './DrawerIdentityListItem'
 

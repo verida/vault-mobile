@@ -1,7 +1,8 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { NearRpcMethod } from 'features/blockchain/near'
 import { transactions as Transactions } from 'near-api-js/lib'
 import * as React from 'react'
+
+import { NearRpcMethod } from '~/features/blockchain/near'
 
 const formatTransaction = (transaction: Uint8Array) => {
   const tx = Transactions.Transaction.decode(Buffer.from(transaction))

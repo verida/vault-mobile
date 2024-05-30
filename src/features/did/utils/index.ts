@@ -1,9 +1,9 @@
 import { IDatastore } from '@verida/types'
-import { DID_METADATA_V010_SCHEMA_URL } from 'features/did/constants'
-import { DidMetadata, DidMetadataRecord } from 'features/did/types'
-import { Logger } from 'features/telemetry'
 
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
+import { DID_METADATA_V010_SCHEMA_URL } from '~/features/did/constants'
+import { DidMetadata, DidMetadataRecord } from '~/features/did/types'
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('DID Metadata')
 

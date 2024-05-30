@@ -1,22 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { config } from 'config'
-import { assetsApi } from 'features/assets'
-import { authSlice } from 'features/auth'
-import {
-  BLOCKCHAIN_SLICE_NAME,
-  blockchainApi,
-  blockchainSlice,
-} from 'features/blockchain'
-import {
-  cryptoWalletApi,
-  cryptoWalletLegacyApi,
-  cryptoWalletSlice,
-} from 'features/cryptoWallet'
-import { identitiesSlice } from 'features/identities'
-import { inboxSlice } from 'features/inbox'
-import { profilesSlice } from 'features/profiles'
-import { seedphrasesSlice } from 'features/seedphrases'
-import { settingsSlice } from 'features/settings'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
@@ -32,7 +14,25 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import { config } from '~/config'
+import { assetsApi } from '~/features/assets'
+import { authSlice } from '~/features/auth'
+import {
+  BLOCKCHAIN_SLICE_NAME,
+  blockchainApi,
+  blockchainSlice,
+} from '~/features/blockchain'
+import {
+  cryptoWalletApi,
+  cryptoWalletLegacyApi,
+  cryptoWalletSlice,
+} from '~/features/cryptoWallet'
+import { identitiesSlice } from '~/features/identities'
+import { inboxSlice } from '~/features/inbox'
+import { profilesSlice } from '~/features/profiles'
 import { promoBannersApi } from '~/features/promoBanners'
+import { seedphrasesSlice } from '~/features/seedphrases'
+import { settingsSlice } from '~/features/settings'
 
 import {
   REDUX_PERSIST_CURRENT_VERSION,

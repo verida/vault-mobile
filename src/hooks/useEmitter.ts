@@ -1,5 +1,6 @@
-import { emitter, EmitterTypes } from 'helpers/emitter'
 import { DependencyList, useEffect } from 'react'
+
+import { emitter, EmitterTypes } from '~/helpers/emitter'
 
 export function useEmitter<K extends keyof EmitterTypes>(
   key: K | undefined,

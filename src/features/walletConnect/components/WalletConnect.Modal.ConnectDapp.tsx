@@ -2,16 +2,6 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { AccountId } from 'caip'
-import { Spacer } from 'components'
-import {
-  getCryptoWalletAccountId,
-  useSelectedMinifiedBlockchainAccounts,
-  useVeridaWalletAccountDropdownOptions,
-  VeridaWalletAccountOption,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-import { ActiveSessions } from 'features/walletConnect'
-import { useModal } from 'hooks'
 import * as React from 'react'
 import {
   ActivityIndicator,
@@ -22,15 +12,25 @@ import {
   Text,
   View,
 } from 'react-native'
-import { iconStyle } from 'styles'
 
+import { Spacer } from '~/components'
 // TODO: fix imports
-import BottomActionsModal from 'components/BottomActionsModal'
+import BottomActionsModal from '~/components/BottomActionsModal'
 // TODO: fix imports
-import Button from 'components/Button'
+import Button from '~/components/Button'
 // TODO: fix imports
-import DropDownPicker from 'components/Select'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import DropDownPicker from '~/components/Select'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import {
+  getCryptoWalletAccountId,
+  useSelectedMinifiedBlockchainAccounts,
+  useVeridaWalletAccountDropdownOptions,
+  VeridaWalletAccountOption,
+} from '~/features/cryptoWallet'
+import { Logger } from '~/features/telemetry'
+import { ActiveSessions } from '~/features/walletConnect'
+import { useModal } from '~/hooks'
+import { iconStyle } from '~/styles'
 
 import { WALLETCONNECT_LABEL } from '../constants'
 import {

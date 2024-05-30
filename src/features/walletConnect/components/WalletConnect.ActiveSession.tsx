@@ -1,15 +1,19 @@
 import { AccountId, ChainId } from 'caip'
-import { Spacer } from 'components'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { CaipSupportedProtocolSpan } from 'features/caip'
+import * as React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+
+import { Spacer } from '~/components'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { CaipSupportedProtocolSpan } from '~/features/caip'
 import {
   WalletConnectButtonDisconnectSession,
   WalletConnectSessionInfoCard,
   WalletConnectSessionNamespaces,
-} from 'features/walletConnect'
-import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { text } from 'styles'
+} from '~/features/walletConnect'
+import { text } from '~/styles'
 
 import {
   useActiveWalletConnectSession,

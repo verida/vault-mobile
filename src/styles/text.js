@@ -6,7 +6,7 @@ import {
   ORANGE_COLOR,
   PRIMARY_COLOR,
   WHITE_COLOR,
-} from '../constants/color'
+} from '~/constants/color'
 
 const sharedProps = {
   fontFamily: 'NunitoSansBold',

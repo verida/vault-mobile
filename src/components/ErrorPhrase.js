@@ -1,6 +1,7 @@
 import React from 'react'
 
-import ModifierStyles from '../styles/modifier'
+import ModifierStyles from '~/styles/modifier'
+
 import Label from './Label'
 
 export default ({ shown, style = {} }) => (

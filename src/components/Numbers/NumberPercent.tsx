@@ -1,5 +1,6 @@
 import React from 'react'
-import { DEFAULT_PERCENTAGE_FORMAT_OPTIONS } from 'utils'
+
+import { DEFAULT_PERCENTAGE_FORMAT_OPTIONS } from '~/utils'
 
 import { Number, NumberProps } from './Number'
 

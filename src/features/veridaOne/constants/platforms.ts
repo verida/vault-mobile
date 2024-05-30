@@ -1,12 +1,12 @@
 import { VeridaOnePlatformMetadata, VeridaOnePlatforms } from '../types'
 
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
-const InstagramIcon = require('assets/social_icons/instagram.png')
-// const DiscordIcon = require('assets/social_icons/discord.png')
-const LinkedInIcon = require('assets/social_icons/linkedin.png')
-const TelegramIcon = require('assets/social_icons/telegram.png')
-const GithubIcon = require('assets/social_icons/github.png')
+const FacebookIcon = require('~/assets/social_icons/facebook.png')
+const TwitterIcon = require('~/assets/social_icons/twitter.png')
+const InstagramIcon = require('~/assets/social_icons/instagram.png')
+// const DiscordIcon = require('~/assets/social_icons/discord.png')
+const LinkedInIcon = require('~/assets/social_icons/linkedin.png')
+const TelegramIcon = require('~/assets/social_icons/telegram.png')
+const GithubIcon = require('~/assets/social_icons/github.png')
 
 // TODO: For the moment, only specific to Verida One, make it more generic if needed elsewhere in the app
 // Supported platforms on Verida One

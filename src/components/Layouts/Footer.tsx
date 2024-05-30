@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 /**
  * @deprecated use combination of <ScreenWrapper> and <BottomActionBar> instead

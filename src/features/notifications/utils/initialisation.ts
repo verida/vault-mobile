@@ -1,10 +1,10 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import messaging from '@react-native-firebase/messaging'
-import { Logger } from 'features/telemetry'
 import { PermissionsAndroid, Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 
-import { navigate } from 'navigation/RootNavigator'
+import { Logger } from '~/features/telemetry'
+import { navigate } from '~/navigation/RootNavigator'
 
 import {
   MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,

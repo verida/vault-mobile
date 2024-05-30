@@ -2,7 +2,7 @@ import { Content } from 'native-base'
 import React from 'react'
 import { ViewProps } from 'react-native'
 
-import { WHITE_COLOR } from 'constants/color'
+import { WHITE_COLOR } from '~/constants/color'
 
 /**
  * @deprecated use <ScreenWrapper> instead

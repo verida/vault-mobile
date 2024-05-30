@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import {
   Alert,
@@ -9,12 +8,13 @@ import {
   ViewProps,
 } from 'react-native'
 
-import FilterIcon from 'assets/icons/filter.svg'
-import InlineSearchIcon from 'assets/icons/inline_search.svg'
-import SortIcon from 'assets/icons/sort.svg'
-import TextInput from 'components/Input/TextInput'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import FilterIcon from '~/assets/icons/filter.svg'
+import InlineSearchIcon from '~/assets/icons/inline_search.svg'
+import SortIcon from '~/assets/icons/sort.svg'
+import TextInput from '~/components/Input/TextInput'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 interface SearchBarProps extends ViewProps {
   inputProps: TextInputProps

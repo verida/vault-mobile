@@ -1,3 +1,7 @@
+import * as React from 'react'
+import { StyleSheet } from 'react-native'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
+
 import {
   RequestDetails,
   RequestHeader,
@@ -9,14 +13,10 @@ import {
   RequestPaymentValueProps,
   WalletSelectorButton,
   WalletSelectorButtonProps,
-} from 'components'
-import { reduceProtocols } from 'features/protocols'
-import { useThemeAwareStyle } from 'hooks'
-import * as React from 'react'
-import { StyleSheet } from 'react-native'
-import { useImmediateLayoutAnimation } from 'use-layout-animation'
-
-import { Theme } from 'styles/types'
+} from '~/components'
+import { reduceProtocols } from '~/features/protocols'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import { PaymentRequestScreenParams } from '.'
 

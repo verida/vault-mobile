@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, TextInput } from 'react-native'
 
-import { BLACK_COLOR_OPACITY } from '../constants/color'
+import { BLACK_COLOR_OPACITY } from '~/constants/color'
 
 export default () => {
   const [keyword, setKeyword] = useState(null)

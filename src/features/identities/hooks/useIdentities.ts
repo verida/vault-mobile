@@ -1,13 +1,13 @@
 import { Client } from '@verida/client-rn'
-import { logout as logoutAction } from 'features/auth'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers'
 import { useCallback } from 'react'
 import { Alert } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import { useAuth } from 'hooks/useAuth'
-import { useAppDispatch } from 'reduxStore/types'
+import AccountManager from '~/api/AccountManager'
+import { logout as logoutAction } from '~/features/auth'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers'
+import { useAuth } from '~/hooks/useAuth'
+import { useAppDispatch } from '~/reduxStore/types'
 
 import { useCurrentIdentity } from './useCurrentIdentity'
 

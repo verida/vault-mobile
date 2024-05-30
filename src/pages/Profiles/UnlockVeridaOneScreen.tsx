@@ -229,12 +229,12 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
               }}>
               <Image
                 resizeMode='cover'
-                source={require('assets/blur_circle_big.png')}
+                source={require('~/assets/blur_circle_big.png')}
                 style={{ position: 'absolute' }}
               />
               <Image
                 resizeMode='cover'
-                source={require('assets/username_placehoder.png')}
+                source={require('~/assets/username_placehoder.png')}
                 style={{ position: 'absolute', width: 177, height: 189 }}
               />
             </View>

@@ -1,16 +1,16 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { HomeScreenHeader, Icon, IconName, TabScreenHeader } from 'components'
-import { useTheme } from 'contexts'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { TabsScreenParams } from 'navigation/types'
-import { AssetsScreen } from 'pages/Assets'
+import { HomeScreenHeader, Icon, IconName, TabScreenHeader } from '~/components'
+import { useTheme } from '~/contexts'
+import { TabsScreenParams } from '~/navigation/types'
+import { AssetsScreen } from '~/pages/Assets'
 // import { ConnectionsScreen } from 'pages/Connections' // TODO: uncomment when ready
-import { DataScreen } from 'pages/Data'
-import { HomeScreen } from 'pages/Home'
-import { IdentityDrawer } from 'pages/Identity'
-import { PublicProfileScreen } from 'pages/Profiles'
+import { DataScreen } from '~/pages/Data'
+import { HomeScreen } from '~/pages/Home'
+import { IdentityDrawer } from '~/pages/Identity'
+import { PublicProfileScreen } from '~/pages/Profiles'
 
 const tabIcons: Record<
   keyof TabsScreenParams,

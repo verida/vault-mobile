@@ -1,14 +1,14 @@
-import { setNewMessagesCount } from 'features/inbox'
-import { getProfilesCache } from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { isValidVeridaDid } from 'features/verida'
-import { emitter } from 'helpers'
 import { throttle } from 'lodash'
 import { ImageSourcePropType } from 'react-native'
-import { store } from 'reduxStore'
 
-import AccountManager from 'api/AccountManager'
-import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
+import AccountManager from '~/api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from '~/constants/application'
+import { setNewMessagesCount } from '~/features/inbox'
+import { getProfilesCache } from '~/features/profiles'
+import { Logger } from '~/features/telemetry'
+import { isValidVeridaDid } from '~/features/verida'
+import { emitter } from '~/helpers'
+import { store } from '~/reduxStore'
 
 const logger = Logger.create('Utils')
 
