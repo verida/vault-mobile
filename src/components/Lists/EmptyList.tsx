@@ -5,7 +5,12 @@ import Success from '~/assets/success.svg'
 import Text from '~/components/Text'
 import { WHITE_COLOR } from '~/constants/color'
 
-export default ({ type, approved }) => (
+export interface EmptyListProps {
+  type: string
+  approved?: boolean
+}
+
+const EmptyList: React.FC<EmptyListProps> = ({ type, approved }) => (
   <View style={style.container}>
     <Text style={style.text}>You have no {type} requests</Text>
     {approved && (
@@ -16,6 +21,8 @@ export default ({ type, approved }) => (
     )}
   </View>
 )
+
+export default EmptyList
 
 const style = StyleSheet.create({
   container: {

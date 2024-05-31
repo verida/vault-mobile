@@ -5,7 +5,11 @@ import FileSvg from '~/assets/inbox/file.svg'
 import Text from '~/components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default ({ options }) => {
+export interface AttachmentProps {
+  options: Record<string, any>
+}
+
+const Attachment: React.FC<AttachmentProps> = ({ options }) => {
   return (
     <View style={style.container}>
       <FileSvg />
@@ -16,6 +20,8 @@ export default ({ options }) => {
     </View>
   )
 }
+
+export default Attachment
 
 const style = StyleSheet.create({
   container: {

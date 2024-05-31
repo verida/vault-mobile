@@ -1,6 +1,8 @@
 import React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
+import { InboxEntry } from '~/api/VaultCommon/interfaces/inbox/Inbox'
+import { DataAction } from '~/api/VaultCommon/managers/inbox/DataAction'
 import Button from '~/components/Button'
 import Layout from '~/components/Layouts/Layout'
 import Text from '~/components/Text'
@@ -9,14 +11,23 @@ import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 import Description from './Description'
 
-export default ({
-  type,
-  item,
-  inboxItem,
-  onResultClick,
-  children,
-  currentAction = null,
-}) => {
+export interface RequestDetailsLayoutProps {
+  type: Record<string, any>
+  item: Record<string, any>
+  inboxItem: InboxEntry
+  onResultClick: (action: keyof DataAction) => void
+  currentAction?: string | null
+}
+
+const RequestDetailsLayout: React.FC<RequestDetailsLayoutProps> = (props) => {
+  const {
+    type,
+    item,
+    inboxItem,
+    onResultClick,
+    children,
+    currentAction = null,
+  } = props
   const description = {
     name: item.item.message,
     createdAt: item.createdAt,
@@ -62,6 +73,8 @@ export default ({
     </Layout>
   )
 }
+
+export default RequestDetailsLayout
 
 const style = StyleSheet.create({
   layout: {

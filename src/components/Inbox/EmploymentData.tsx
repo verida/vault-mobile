@@ -5,7 +5,13 @@ import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY } from '~/constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default ({ label, value }) => {
+export interface EmploymentDataProps {
+  label: string
+  value: string
+}
+
+const EmploymentData: React.FC<EmploymentDataProps> = (props) => {
+  const { label, value } = props
   return (
     <View style={{ flex: 0.5 }}>
       <Text style={style.label}>{label}</Text>
@@ -13,6 +19,8 @@ export default ({ label, value }) => {
     </View>
   )
 }
+
+export default EmploymentData
 
 const style = StyleSheet.create({
   label: {

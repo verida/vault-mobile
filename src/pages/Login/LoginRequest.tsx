@@ -1,5 +1,7 @@
+import { useNavigation } from '@react-navigation/native'
+import StorageEngineVerida from '@verida/client-rn/dist/src/context/engines/verida/database/engine'
 import EncryptionUtils from '@verida/encryption-utils'
-import { EnvironmentType } from '@verida/types'
+import { AuthContext, AuthTypeConfig, EnvironmentType } from '@verida/types'
 import didJWT from 'did-jwt'
 import { capitalize } from 'lodash'
 import moment from 'moment'
@@ -27,15 +29,26 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
 import { Logger } from '~/features/telemetry'
 import { isNetworkCompatibleForConnect } from '~/features/veridaConnect'
-import { useWalletConnectContext } from '~/features/walletConnect'
+import { useWalletConnectProtocolHandler } from '~/features/walletConnect'
+import { MainStackScreenProps } from '~/navigation'
 import { useAppSelector } from '~/reduxStore/types'
 
 const logger = Logger.create('Pages/Login/LoginRequest')
 
-global.EncryptionUtils = EncryptionUtils
+export type LoginRequestScreenParams = {
+  _k: string
+  _r: string
+}
 
-export const LoginRequestScreen = (props) => {
-  const { navigation } = props
+type LoginRequestScreenProps = MainStackScreenProps<'LoginRequest'>
+
+export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
+  props
+) => {
+  const {
+    route: { params },
+  } = props
+  const navigation = useNavigation()
 
   useEffect(() => {
     navigation.setOptions({
@@ -43,12 +56,14 @@ export const LoginRequestScreen = (props) => {
     })
   }, [navigation])
 
-  const [status, setStatus] = useState('loading')
-  const [info, setInfo] = useState({})
-  const [expiry, setExpiry] = useState(null)
+  const [status, setStatus] = useState<string>('loading')
+  const [info, setInfo] = useState<Record<string, any>>({})
+  const [expiry, setExpiry] = useState<number>(0)
   const [expired, setExpired] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [ws, setWebsocket] = useState(null)
+  const [errorMessage, setErrorMessage] = useState<Record<string, any> | null>(
+    null
+  )
+  const [ws, setWebsocket] = useState<WebSocket | null>(null)
 
   const currentIdentity = useAppSelector(selectSelectedAccount)
   const currentIdentityNetwork = currentIdentity?.did
@@ -64,17 +79,18 @@ export const LoginRequestScreen = (props) => {
         ? 'compatible'
         : 'incompatible'
 
-  const { onRequestConnect } = useWalletConnectContext()
+  const { handleDeepLink } = useWalletConnectProtocolHandler()
 
   useEffect(() => {
     const init = async () => {
-      const { _k, _r } = props.route.params
+      const { _k, _r }: { _k: string | undefined; _r: string | undefined } =
+        params
       const key = _k
       const didJwt = _r
       const decoded = didJWT.decodeJWT(didJwt)
       const payload = decoded.payload
       const _expiry = payload.exp
-      setExpiry(_expiry * 1000)
+      setExpiry((_expiry || 0) * 1000)
 
       const socketUri = payload.data.authUri
       const sessionId = payload.data.session
@@ -149,7 +165,7 @@ export const LoginRequestScreen = (props) => {
             break
 
           case 'auth-vault-response':
-            props.navigation.navigate('Home')
+            navigation.navigate('Home')
             break
         }
       }
@@ -170,7 +186,7 @@ export const LoginRequestScreen = (props) => {
     }
 
     init()
-  }, [props.route.params, props.navigation])
+  }, [params, navigation])
 
   // @todo use key to encrypt response to server
 
@@ -183,7 +199,7 @@ export const LoginRequestScreen = (props) => {
     reloadExpired()
   }, [reloadExpired])
 
-  const saveLoginRequest = async (approved, deviceId) => {
+  const saveLoginRequest = async (approved: boolean, deviceId?: string) => {
     const vault = AccountManager.getInstance().context
     // save into login database
     const loginRequest = {
@@ -197,14 +213,14 @@ export const LoginRequestScreen = (props) => {
       approved,
     }
 
-    const loginRequestDatastore = await vault.openDatastore(
+    const loginRequestDatastore = await vault?.openDatastore(
       'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
     )
-    const saveSuccess = await loginRequestDatastore.save(loginRequest)
+    const saveSuccess = await loginRequestDatastore?.save(loginRequest, {})
     if (!saveSuccess) {
       Alert.alert('Warning', 'Failed to save request to history')
     }
-    props.navigation.navigate('Home')
+    navigation.navigate('Home')
   }
 
   const deny = async () => {
@@ -213,7 +229,7 @@ export const LoginRequestScreen = (props) => {
         setStatus('denying')
         await saveLoginRequest(false)
       }
-      props.navigation.navigate('Home')
+      navigation.navigate('Home')
     } catch (error) {
       logger.error(error)
       setStatus('loaded')
@@ -225,33 +241,39 @@ export const LoginRequestScreen = (props) => {
    */
   const approve = async () => {
     try {
+      if (!currentIdentityNetwork) {
+        return
+      }
+
       setStatus('approving')
 
-      const vault = await AccountManager.getInstance().getVeridaContext()
-      const client = vault.getClient()
-      const account = await vault.getAccount()
-      const keyring = await account.keyring(info.request.context)
-      const signature = keyring.getSeed()
-      const did = await account.did()
+      const vault = await AccountManager.getInstance().getVeridaContext(
+        currentIdentityNetwork
+      )
+      const client = vault?.getClient()
+      const account = await vault?.getAccount()
+      const keyring = await account?.keyring(info.request.context)
+      const signature = keyring?.getSeed()
+      const did = await account?.did()
       const contextName = info.request.context
       const deviceId = info.params.userAgent
         ? info.params.userAgent
         : `${contextName} (${info.request.loginDomain})`
 
-      const context = await client.openContext(contextName, true)
-      const contextConfig = await context.getContextConfig()
+      const context = await client?.openContext(contextName, true)
+      const contextConfig = await context?.getContextConfig()
 
       // Get a context auth object and force create so we get a new refresh token
-      const dbEngine = await context.getDatabaseEngine(did, true)
-      const endpoints = await dbEngine.getEndpoints()
+      const dbEngine = await context?.getDatabaseEngine(did!, true)
+      const endpoints = (dbEngine as StorageEngineVerida).getEndpoints()
 
-      const contextAuths = {}
-      for (let endpointUri in endpoints) {
-        const contextAuth = await context.getAuthContext({
+      const contextAuths: Record<string, AuthContext | undefined> = {}
+      for (const endpointUri in endpoints) {
+        const contextAuth = await context?.getAuthContext({
           force: true,
           endpointUri: endpointUri,
           deviceId,
-        })
+        } as AuthTypeConfig)
 
         contextAuths[endpointUri] = contextAuth
       }
@@ -272,7 +294,7 @@ export const LoginRequestScreen = (props) => {
 
       // Send encrypted response to WSS, which will forward
       // onto the web browser
-      ws.send(
+      ws?.send(
         JSON.stringify({
           type: 'responseJwt',
           sessionId: info.payload.data.session,
@@ -288,8 +310,7 @@ export const LoginRequestScreen = (props) => {
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
-      if (info.walletConnect?.uri)
-        await onRequestConnect(info.walletConnect.uri)
+      if (info.walletConnect?.uri) await handleDeepLink(info.walletConnect.uri)
 
       await saveLoginRequest(true, deviceId)
     } catch (error) {
@@ -305,7 +326,7 @@ export const LoginRequestScreen = (props) => {
   const timeToExpire = moment(expiry).format('DD MMM, YYYY [at] h:mm a')
   const secondsUntilExpire = Math.max(
     0,
-    Math.floor((expiry - Date.now()) / 1000)
+    Math.floor(((expiry || 0) - Date.now()) / 1000)
   )
 
   async function onPressLoginDomain() {
@@ -387,7 +408,7 @@ export const LoginRequestScreen = (props) => {
                     style={style.countDownText}
                     onFinish={onCountdownFinished}
                   />{' '}
-                  seconds ({expiry / 1000})
+                  seconds ({(expiry || 0) / 1000})
                 </Text>
               )}
             </View>
@@ -402,7 +423,7 @@ export const LoginRequestScreen = (props) => {
               <View style={style.alertBannerContainer}>
                 <AlertBanner type='warning'>
                   {`The application doesn't specify a network, compatibility issue may occur with your ${capitalize(
-                    currentIdentityNetwork
+                    currentIdentityNetwork as string
                   )} Identity`}
                 </AlertBanner>
               </View>

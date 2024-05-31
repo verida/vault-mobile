@@ -247,6 +247,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/react-test-renderer": "^18.0.0",
     "@types/redux-batched-subscribe": "^0.1.4",
+    "@types/underscore": "^1.11.15",
     "@types/url-parse": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",

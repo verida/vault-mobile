@@ -32,7 +32,7 @@ import UsernameManager from '~/api/UsernameManager'
 import { AvatarUploader } from '~/components'
 import Button from '~/components/Button'
 import LoadingView from '~/components/LoadingView'
-import PropertyList from '~/components/PropertyList'
+import { PropertyList } from '~/components/PropertyList'
 import {
   CustomLinkItem,
   FeaturedAssetItem,

@@ -6,7 +6,12 @@ import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY } from '~/constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default ({ details }) => {
+export interface DescriptionProps {
+  details: Record<string, any>
+}
+
+const Description: React.FC<DescriptionProps> = (props) => {
+  const { details } = props
   return (
     <View style={style.card}>
       <Image source={details.logo || DefaultAvatar} style={style.logo} />
@@ -17,6 +22,8 @@ export default ({ details }) => {
     </View>
   )
 }
+
+export default Description
 
 const style = StyleSheet.create({
   card: {

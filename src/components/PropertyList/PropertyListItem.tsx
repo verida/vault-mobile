@@ -1,7 +1,15 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
+import {
+  StyleProp,
+  StyleSheet,
+  Switch,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native'
 import Snackbar from 'react-native-snackbar'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -9,7 +17,15 @@ import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '~/constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default ({ styles, item }) => {
+export interface PropertyListItemProps {
+  styles: Record<string, StyleProp<ViewStyle & TextStyle>>
+  item: Record<string, any>
+}
+
+export const PropertyListItem: React.FC<PropertyListItemProps> = ({
+  styles,
+  item,
+}) => {
   const [option, setOption] = useState(false)
   const navigation = useNavigation()
 

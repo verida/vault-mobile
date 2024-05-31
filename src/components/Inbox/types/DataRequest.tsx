@@ -1,3 +1,4 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
@@ -6,21 +7,35 @@ import { Alert, Image, StyleSheet, View } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
 import { DefaultAvatar } from '~/api/utils'
+import { InboxEntry } from '~/api/VaultCommon/interfaces/inbox/Inbox'
+import { DataAction } from '~/api/VaultCommon/managers/inbox/DataAction'
 import Button from '~/components/Button'
 import { RequestedDataSelector } from '~/components/Inbox/RequestedDataSelector'
 import CustomFooter from '~/components/Layouts/CustomFooter'
 import Text from '~/components/Text'
 import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from '~/constants/color'
 import { Logger } from '~/features/telemetry'
+import { MainStackParams } from '~/navigation'
 
 const logger = Logger.create('Components/Inbox/types/DatabaseSync')
 
-export default (props) => {
-  const { item, navigation } = props
-  const [currentAction, setCurrentAction] = useState(null)
-  const [selectedItems, setSelectedItem] = useState([])
+export interface DataRequestProps {
+  item: {
+    logo: any
+    title: string
+    item: InboxEntry & {
+      sentAt: Date | string
+    }
+  }
+  navigation: NativeStackNavigationProp<MainStackParams>
+}
 
-  const handleAction = async (result) => {
+const DataRequest: React.FC<DataRequestProps> = (props) => {
+  const { item, navigation } = props
+  const [currentAction, setCurrentAction] = useState<string | null>(null)
+  const [selectedItems, setSelectedItem] = useState<any[]>([])
+
+  const handleAction = async (result: keyof DataAction) => {
     try {
       if (result === 'accept') {
         setCurrentAction('accept')
@@ -28,7 +43,7 @@ export default (props) => {
         setCurrentAction('decline')
       }
       const vault = AccountManager.getInstance().vault
-      await vault.inbox.handleAction(item.item, result, selectedItems)
+      await vault?.inbox.handleAction(item.item, result, selectedItems)
       setCurrentAction(null)
       navigation.goBack()
     } catch (error) {
@@ -38,7 +53,7 @@ export default (props) => {
     }
   }
 
-  async function onConfirmSelectedItems(items) {
+  async function onConfirmSelectedItems(items: any[]) {
     setSelectedItem(items)
   }
 
@@ -49,7 +64,7 @@ export default (props) => {
 
   const shareEnabled = (userSelect && !isEmpty(selectedItems)) || !userSelect
 
-  function onItemPress(url) {
+  function onItemPress(url: string) {
     navigation.navigate('ShareableData', {
       schemaUrl: url,
       onConfirm: onConfirmSelectedItems,
@@ -121,6 +136,8 @@ export default (props) => {
     </>
   )
 }
+
+export default DataRequest
 
 const styles = StyleSheet.create({
   container: {

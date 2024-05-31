@@ -7,7 +7,17 @@ import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 import Filters from './Filters'
 
-export default ({ item }) => (
+interface RecordProps {
+  item: {
+    id: string
+    title: string
+    amount: number
+    filters: any
+    insertedAt: string
+  }
+}
+
+const Record: React.FC<RecordProps> = ({ item }) => (
   <View style={style.card}>
     <View style={style.header}>
       <Text style={style.title}>{item.title}</Text>
@@ -21,6 +31,8 @@ export default ({ item }) => (
     )}
   </View>
 )
+
+export default Record
 
 const style = StyleSheet.create({
   card: {

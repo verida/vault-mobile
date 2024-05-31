@@ -2,6 +2,8 @@ import LottieView from 'lottie-react-native'
 import React, { type PropsWithChildren } from 'react'
 import {
   GestureResponderEvent,
+  StyleProp,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -17,11 +19,11 @@ import Text from './Text'
  */
 export interface ButtonProps extends PropsWithChildren<unknown> {
   icon?: React.ReactNode
-  color: keyof typeof ButtonStyles
+  color?: keyof typeof ButtonStyles
   disabled?: boolean
   loading?: boolean
-  style?: ViewStyle
-  textStyle?: ViewStyle
+  style?: StyleProp<ViewStyle | TextStyle>
+  textStyle?: ViewStyle | TextStyle
   onPress: ((event: GestureResponderEvent) => void) | undefined
 }
 

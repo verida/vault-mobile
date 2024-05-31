@@ -14,8 +14,11 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 // On press disabled for now
 //const onPress = (props) => Actions[LOGIN_REQUEST](props);
 //<TouchableOpacity style={style.card} onPress={() => onPress({ verified: false })}>
+export interface HistoryProps {
+  data: Record<string, any>
+}
 
-export default ({ data }) => {
+export const History: React.FC<HistoryProps> = ({ data }) => {
   const expiry = data.expiry
   const now = Math.floor(Date.now() / 1000)
   const ageSeconds = expiry - now
@@ -28,7 +31,7 @@ export default ({ data }) => {
           <Text style={style.title}>{data.context}</Text>
           <Text style={style.text}>{age.humanize()} ago</Text>
         </View>
-        <View style={style.time}>
+        <View>
           <Text style={[style.text, style.time]}>
             {Moment(data.insertedAt).format('MMM DD')}
           </Text>

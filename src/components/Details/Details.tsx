@@ -5,7 +5,12 @@ import Text from '~/components/Text'
 import { BLACK_COLOR_OPACITY } from '~/constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default (props) => (
+export interface DetailsProps {
+  title: string
+  text: string
+}
+
+export const Details: React.FC<DetailsProps> = (props) => (
   <View style={style.container}>
     <Text style={style.title}>{props.title}</Text>
     <Text style={style.text}>{props.text}</Text>

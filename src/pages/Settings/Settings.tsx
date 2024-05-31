@@ -4,7 +4,7 @@ import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ScreenWrapper } from '~/components'
-import PropertyList from '~/components/PropertyList'
+import { PropertyList } from '~/components/PropertyList'
 import Text from '~/components/Text'
 import { APP_NAME, APP_VERSION_FORMATTED } from '~/constants/application'
 import { useTheme } from '~/contexts'

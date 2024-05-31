@@ -10,7 +10,18 @@ import {
 import { BLACK_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-export default ({ navigationState, onIndexChange }) => {
+export interface LoginTabsProps {
+  navigationState: {
+    routes: Record<string, any>[]
+    index: number
+  }
+  onIndexChange: (index: number) => void
+}
+
+const LoginTabs: React.FC<LoginTabsProps> = ({
+  navigationState,
+  onIndexChange,
+}) => {
   const { routes, index } = navigationState
   return (
     <View style={style.tabBar}>
@@ -25,6 +36,8 @@ export default ({ navigationState, onIndexChange }) => {
     </View>
   )
 }
+
+export default LoginTabs
 
 const style = StyleSheet.create({
   tabBar: {

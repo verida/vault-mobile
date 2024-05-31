@@ -3,20 +3,22 @@ import React, { useEffect, useState } from 'react'
 import AccountManager from '~/api/AccountManager'
 import LoadingView from '~/components/LoadingView'
 
-import Details from './Details'
+import { Details } from './Details'
 
-export default () => {
-  const [info, setInfo] = useState({})
+export const DetailsBox = () => {
+  const [info, setInfo] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const init = async () => {
       try {
         const accountManager = AccountManager.getInstance()
-        const name = await accountManager.vault.profiles.public.get('name')
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const name = await accountManager?.vault?.profiles?.public.get('name')
 
         setInfo({
-          did: accountManager.selectedAccount.did,
+          did: accountManager.getSelectedAccount()?.did,
           name: name,
         })
         setLoading(false)
@@ -39,3 +41,5 @@ export default () => {
     </>
   )
 }
+
+export default DetailsBox
