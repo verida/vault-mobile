@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Icon, IdentityAvatar } from '~/components'
+import { Icon, IdentityAvatar, InboxIcon } from '~/components'
 import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
 import { useTheme } from '~/contexts'
 import {
@@ -19,7 +19,6 @@ import {
   useCurrentIdentity,
 } from '~/features/identities'
 import { useIdentityDrawer } from '~/features/identityDrawer'
-import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
 import {
   PROFILE_EMPTY_NAME_VALUE,
   selectPublicProfilesLoadingState,
@@ -58,8 +57,6 @@ export const HomeScreenHeader: React.FunctionComponent<
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
   const { open: openIdentityDrawer } = useIdentityDrawer()
-  const { unreadMessagesCount, displayedInboxCount } =
-    useInboxUnreadMessageCount()
 
   const handleInboxPress = useCallback(() => {
     navigation.navigate('Inbox')
@@ -128,16 +125,7 @@ export const HomeScreenHeader: React.FunctionComponent<
             onPress={handleInboxPress}
             hitSlop={HIT_SLOP}
             style={styles.firstActionIcon}>
-            {/* TODO: Factorise an Inbox icon button with its badge for unread messages */}
-            <Icon name='inbox' size={theme.iconSize.m} />
-            {/* TODO: Factorise a Badge component */}
-            {unreadMessagesCount ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText} numberOfLines={1}>
-                  {displayedInboxCount}
-                </Text>
-              </View>
-            ) : null}
+            <InboxIcon />
           </TouchableOpacity>
         </View>
       </View>
