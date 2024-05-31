@@ -7,7 +7,7 @@ import { Details } from './Details'
 
 export const DetailsBox = () => {
   const [info, setInfo] = useState<Record<string, any>>({})
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const init = async () => {

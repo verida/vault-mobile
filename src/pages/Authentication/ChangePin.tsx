@@ -24,9 +24,9 @@ export const ChangePinScreen: React.FC<ChangePinScreenProps> = (props) => {
     })
   }, [navigation])
 
-  const [loading, setLoading] = useState(true)
-  const [pinCodeStatus, setPinCodeStatus] = useState(true)
-  const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [pinCodeStatus, setPinCodeStatus] = useState<boolean>(true)
+  const [isPinCorrect, setPinCorrectStatus] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

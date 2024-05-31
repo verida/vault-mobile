@@ -59,7 +59,7 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
   const [status, setStatus] = useState<string>('loading')
   const [info, setInfo] = useState<Record<string, any>>({})
   const [expiry, setExpiry] = useState<number>(0)
-  const [expired, setExpired] = useState(false)
+  const [expired, setExpired] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<Record<string, any> | null>(
     null
   )

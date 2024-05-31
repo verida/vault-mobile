@@ -10,7 +10,7 @@ export interface CountDownTextProps extends TextProps {
 
 function CountDownText(props: CountDownTextProps) {
   const { seconds, onFinish, ...rest } = props
-  const [remainingTime, setRemainingTime] = useState(seconds)
+  const [remainingTime, setRemainingTime] = useState<number>(seconds)
 
   useEffect(() => {
     const interval = setInterval(() => {

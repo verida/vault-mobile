@@ -3,7 +3,7 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native'
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '~/constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
-const input_font: ViewStyle | TextStyle = {
+const input_font: TextStyle = {
   fontFamily: NUNITO_SANS_SEMIBOLD,
   fontWeight: '600',
   fontSize: 14,

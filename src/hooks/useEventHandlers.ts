@@ -17,7 +17,7 @@ const logger = Logger.create('EventHandler')
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)
   const appState = useRef(AppState.currentState)
-  const [ready, setReady] = useState(false)
+  const [ready, setReady] = useState<boolean>(false)
   const dispatch = useDispatch()
   const isConnectingRef = useRef(false)
   const latestNotificationRef = useRef<any>(null)

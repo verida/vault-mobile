@@ -1,5 +1,5 @@
 import { Logger } from 'ethers/lib/utils'
-import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
@@ -13,7 +13,7 @@ import LoadingView from '~/components/LoadingView'
 import { buildItem, findTypeById } from '~/helpers/inbox'
 import { MainStackScreenProps } from '~/navigation/types'
 
-const inboxItemComponents: Record<string, ReactNode> = {
+const inboxItemComponents = {
   'inbox/type/dataSend': TypeDataSend,
   'inbox/type/dataRequest': TypeDataRequest,
   'inbox/type/datastoreSync': TypeDatastoreSync,
@@ -86,7 +86,7 @@ export const InboxItemScreen: React.FC<InboxItemScreenProps> = (props) => {
       ) : inboxItem ? (
         React.createElement(
           inboxItemComponents[
-            inboxItem.type as string
+            inboxItem.type as keyof typeof inboxItemComponents
           ] as FunctionComponent<any>,
           {
             item,

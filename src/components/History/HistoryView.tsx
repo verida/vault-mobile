@@ -17,7 +17,7 @@ export interface HistoryViewProps {
 
 export const HistoryView: React.FC<HistoryViewProps> = ({ route }) => {
   const [history, setHistory] = useState<React.JSX.Element | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const init = async () => {

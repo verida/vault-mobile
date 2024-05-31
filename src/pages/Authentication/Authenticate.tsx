@@ -22,10 +22,10 @@ import { CreatePin } from './CreatePin'
 
 export const Authenticate: FC = ({ children }) => {
   const dispatch = useDispatch()
-  const [pinAuth, setPinAuth] = useState(false)
+  const [pinAuth, setPinAuth] = useState<boolean>(false)
   const bioAuthenticated = useSelector(selectIsBioAuthenticated)
   const { authenticated } = useAuth()
-  const [showCreatePin, setShowCreatePin] = useState(false)
+  const [showCreatePin, setShowCreatePin] = useState<boolean>(false)
 
   useEffect(() => {
     async function setShouldAuthByPIN() {

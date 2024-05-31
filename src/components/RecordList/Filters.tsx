@@ -10,7 +10,7 @@ interface FiltersProps {
 }
 
 const Filters: React.FC<FiltersProps> = ({ filters }) => {
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState<boolean>(false)
   const [primary, secondary] = _.partition(
     filters,
     (_item: any, i: number) => i < 2

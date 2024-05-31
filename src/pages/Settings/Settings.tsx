@@ -40,7 +40,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
 
-  const [walletAppVersion, setWalletAppVersion] = useState(
+  const [walletAppVersion, setWalletAppVersion] = useState<string>(
     `${APP_NAME} ${APP_VERSION_FORMATTED}`
   )
 

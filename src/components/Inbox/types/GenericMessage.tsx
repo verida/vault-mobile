@@ -39,7 +39,7 @@ const defaultSender: Sender = {
 function GenericMessage(props: GenericMessageProps) {
   const { inboxItem, navigation } = props
   const [sender, setSender] = useState<Sender>(defaultSender)
-  const [submitting, setSubmitting] = useState(false)
+  const [submitting, setSubmitting] = useState<boolean>(false)
 
   const fetchSenderData = React.useCallback(async () => {
     try {

@@ -54,7 +54,7 @@ export const BlockchainNetworksScreen: React.FC<
 
   const layout = useWindowDimensions()
   const [searchText, setSearchText] = useState<string>('')
-  const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0)
 
   const styles = useThemeAwareStyle(createStyles)
 

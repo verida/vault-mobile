@@ -44,8 +44,8 @@ export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
     [dispatch]
   )
 
-  const [error, showError] = useState(false)
-  const [verified, setVerified] = useState(false)
+  const [error, showError] = useState<boolean>(false)
+  const [verified, setVerified] = useState<boolean>(false)
 
   useEffect(() => {
     showError(false)

@@ -14,7 +14,7 @@ export interface DateOfBirthProps {
 
 const DateOfBirth: React.FC<DateOfBirthProps> = (props) => {
   const { selected } = props
-  const [value, setValue] = useState(selected)
+  const [value, setValue] = useState<string | Date>(selected)
 
   return (
     <DatePicker

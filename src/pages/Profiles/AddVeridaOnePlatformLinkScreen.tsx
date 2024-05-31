@@ -65,7 +65,9 @@ export const AddVeridaOnePlatformLinkScreen: React.FunctionComponent<
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
+  const [currentPage, setCurrentPage] = useState<PageType>(
+    PageType.ListSocialNetworks
+  )
   const pagerRef = useRef<PagerView>(null)
   const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
   const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)

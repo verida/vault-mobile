@@ -50,7 +50,9 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
   const { bottom } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [currentPage, setCurrentPage] = useState(PageType.UnlockVeridaOne)
+  const [currentPage, setCurrentPage] = useState<PageType>(
+    PageType.UnlockVeridaOne
+  )
   const pagerRef = useRef<PagerView>(null)
   const inputUsernameViewRef = useRef<InputUsernameViewRefProps>(null)
   const claimUsernameViewRef = useRef<ClaimUsernameViewRefProps>(null)

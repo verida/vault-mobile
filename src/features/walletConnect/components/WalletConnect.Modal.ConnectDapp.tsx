@@ -65,7 +65,7 @@ export const WalletConnectModalConnectDapp = React.memo(
       React.SetStateAction<ActiveSessions>
     >
   }): JSX.Element {
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState<boolean>(false)
     const { dismissModal } = useModal()
 
     const onReject = React.useCallback(async () => {

@@ -24,7 +24,7 @@ const Card: React.FC<CardProps> = (props) => {
   const { options: data } = props
   const navigation = useNavigation()
   const inboxType = findTypeById(data.type)
-  const [inboxItem, setInboxItem] = React.useState(data)
+  const [inboxItem, setInboxItem] = React.useState<Record<string, any>>(data)
 
   const onPress = () =>
     navigation.navigate('InboxItem', { inboxItemId: inboxItem.id })

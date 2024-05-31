@@ -23,7 +23,7 @@
       "~/*": ["src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts", "src/features/polygonid/utils/prover/witness.temp.js"],
+  "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -24,7 +24,7 @@ export const CreateCryptoWalletScreen: React.FC<
     })
   }, [navigation])
 
-  const [label, setLabel] = useState('')
+  const [label, setLabel] = useState<string>('')
 
   const dispatch = useAppDispatch()
 

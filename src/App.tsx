@@ -49,7 +49,7 @@ initApplication()
 const logger = Logger.create('App')
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const loadFonts = async () => {

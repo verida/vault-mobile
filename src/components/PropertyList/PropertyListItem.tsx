@@ -26,7 +26,7 @@ export const PropertyListItem: React.FC<PropertyListItemProps> = ({
   styles,
   item,
 }) => {
-  const [option, setOption] = useState(false)
+  const [option, setOption] = useState<boolean>(false)
   const navigation = useNavigation()
 
   return (
