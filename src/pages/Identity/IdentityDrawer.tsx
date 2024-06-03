@@ -1,36 +1,33 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
-import {
-  DrawerIdentityList,
-  DrawerShortcutButton,
-  Icon,
-  IdentityAvatar,
-  Typography,
-} from 'components'
-import { useTheme } from 'contexts'
-import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
-import { useIdentityDrawer } from 'features/identityDrawer'
-import {
-  PROFILE_EMPTY_NAME_VALUE,
-  selectSelectedPublicProfile,
-} from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-import { selectNewMessagesCount } from '~/features/inbox'
-
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import {
+  DrawerIdentityList,
+  DrawerShortcutButton,
+  Icon,
+  IdentityAvatar,
+  Typography,
+} from '~/components'
+import { useTheme } from '~/contexts'
+import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
+import { useIdentityDrawer } from '~/features/identityDrawer'
+import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
+import {
+  PROFILE_EMPTY_NAME_VALUE,
+  selectSelectedPublicProfile,
+} from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 export type IdentityDrawerProps = {
   children: React.ReactNode
 }
-
-const MAX_INBOX_COUNT = 10
 
 export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   props
@@ -41,18 +38,14 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const { isOpen, open, close } = useIdentityDrawer()
+  const { unreadMessagesCount, displayedInboxCount } =
+    useInboxUnreadMessageCount()
   const navigation = useNavigation()
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
   const isNameEmpty = !name
   const displayedName = name || PROFILE_EMPTY_NAME_VALUE
-
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)

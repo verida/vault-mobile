@@ -2,9 +2,10 @@ import { AuthClientTypes } from '@walletconnect/auth-client'
 import { Core } from '@walletconnect/core'
 import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { config } from 'config'
-import { veridaWalletMetadata } from 'features/walletConnect'
 import * as React from 'react'
+
+import { config } from '~/config'
+import { veridaWalletMetadata } from '~/features/walletConnect'
 
 // TODO: This should be IStateful.
 type State = Readonly<

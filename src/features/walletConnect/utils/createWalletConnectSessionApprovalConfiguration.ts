@@ -1,7 +1,8 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { Web3Wallet } from '@walletconnect/web3wallet/dist/types/client'
 import { AccountId } from 'caip'
-import { Namespaces } from 'features/walletConnect'
+
+import { Namespaces } from '~/features/walletConnect'
 
 // Given a selection of AccountIds that have been chosen by the user (i.e. in
 // the WalletConnectModalConnectDapp), check to see that an entry exists in the

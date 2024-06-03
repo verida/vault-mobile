@@ -5,9 +5,9 @@ import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '../../constants/color'
-import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import Text from '../Text'
+import Text from '~/components/Text'
+import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 export default ({ styles, item }) => {
   const [option, setOption] = useState(false)

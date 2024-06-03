@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React, { Ref, useRef } from 'react'
 import {
   StyleSheet,
@@ -6,9 +5,10 @@ import {
   TextInputProps,
 } from 'react-native'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import inputs from 'styles/inputs'
-import { Theme } from 'styles/types'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import inputs from '~/styles/inputs'
+import { Theme } from '~/styles/types'
 
 type InputProps = TextInputProps
 

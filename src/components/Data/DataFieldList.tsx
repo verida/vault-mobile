@@ -1,6 +1,7 @@
-import { DataField } from 'features/data'
 import { List } from 'native-base'
 import React from 'react'
+
+import { DataField } from '~/features/data'
 
 import { DataFieldListItem } from './DataFieldListItem'
 

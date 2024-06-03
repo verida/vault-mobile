@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { text } from 'styles'
+
+import { text } from '~/styles'
 
 import { useActiveWalletConnectSessionChains } from '../hooks'
 import { WalletConnectSessionChainCard } from './WalletConnect.Session.ChainCard'

@@ -1,13 +1,14 @@
 import { ChainId } from 'caip'
 import { BigNumber, ethers } from 'ethers'
+import * as React from 'react'
+
 import {
   calculateTransactionFeeEip155,
   getMaybeChainMetadatas,
   SupportedBlockchainNamespace,
   useChainMetadatas,
-} from 'features/blockchain'
-import { getRpcUrlOrThrow, isSupportedCaipNamespace } from 'features/caip'
-import * as React from 'react'
+} from '~/features/blockchain'
+import { getRpcUrlOrThrow, isSupportedCaipNamespace } from '~/features/caip'
 
 import { GAS_TO_TRANSFER_NATIVE_CURRENCY } from '../constants'
 

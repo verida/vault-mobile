@@ -1,10 +1,10 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { FlatList, FlatListProps, StyleSheet } from 'react-native'
 
-import { Spacer } from 'components/Spacer'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { Spacer } from '~/components/Spacer'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 interface GridProps<ItemT> extends FlatListProps<ItemT> {
   numberOfColumns: number

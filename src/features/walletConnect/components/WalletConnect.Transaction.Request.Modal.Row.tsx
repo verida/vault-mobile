@@ -2,7 +2,7 @@ import * as React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 import JSONTree, { JSONTreeProps } from 'react-native-json-tree'
 
-import { BLACK_COLOR, NUNITO_SANS_SEMIBOLD } from '../../../constants'
+import { BLACK_COLOR, NUNITO_SANS_SEMIBOLD } from '~/constants'
 
 const defaultNormalize = (obj: Record<string, unknown>) =>
   JSON.parse(JSON.stringify(obj))

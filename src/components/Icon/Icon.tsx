@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore as it comes from our own declaration extension
@@ -10,13 +9,14 @@ import Ionicon from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
-import EditIcon from 'assets/edit_icon.svg'
-import CopyIcon from 'assets/icons/copy.svg'
-import GoToIcon from 'assets/icons/goto_icon.svg'
-import ShareIcon from 'assets/icons/share_icon.svg'
-import TickIcon from 'assets/icons/tick_icon.svg'
-import WarningIcon from 'assets/icons/warning_icon.svg'
-import EthereumIcon from 'assets/wallets/Ethereum.svg'
+import EditIcon from '~/assets/edit_icon.svg'
+import CopyIcon from '~/assets/icons/copy.svg'
+import GoToIcon from '~/assets/icons/goto_icon.svg'
+import ShareIcon from '~/assets/icons/share_icon.svg'
+import TickIcon from '~/assets/icons/tick_icon.svg'
+import WarningIcon from '~/assets/icons/warning_icon.svg'
+import EthereumIcon from '~/assets/wallets/Ethereum.svg'
+import { useTheme } from '~/contexts/ThemeContext'
 
 // TODO: Check with the designers on whether to use custom icons or from a library and if so, pick a single library rather than the mix of different icons styles with currently have.
 
@@ -78,6 +78,7 @@ type LibIconName =
   | 'receive'
   | 'delete'
   | 'import'
+  | 'enter'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -399,6 +400,12 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'enter':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='enter-outline' {...iconProps} />
         </IconWrapper>
       )
   }

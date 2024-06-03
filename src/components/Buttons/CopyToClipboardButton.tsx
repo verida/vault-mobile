@@ -1,12 +1,12 @@
 import Clipboard from '@react-native-clipboard/clipboard'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import Snackbar from 'react-native-snackbar' // TODO: Harmonise the snackbar following Figma design
 import Icon from 'react-native-vector-icons/Ionicons'
 
-import { Theme } from 'styles/types'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('CopyToClipboardButton')
 

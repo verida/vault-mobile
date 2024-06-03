@@ -6,10 +6,10 @@ import {
   TextStyle,
 } from 'react-native'
 
-import Text from 'components/Text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import text from 'styles/text'
-import { Theme } from 'styles/types'
+import Text from '~/components/Text'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import text from '~/styles/text'
+import { Theme } from '~/styles/types'
 
 type CaptionProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>

@@ -74,7 +74,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
               width: '100%',
               marginTop: -80,
             }}
-            source={require('assets/identity-card.png')}
+            source={require('~/assets/identity-card.png')}
             resizeMode='cover'
           />
         </View>

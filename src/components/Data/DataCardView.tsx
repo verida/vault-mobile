@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { DataFolderDefinition, dataFolders } from 'features/data'
-import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
+import Folder from '~/api/VaultCommon/managers/data/folder'
+import { DataFolderDefinition, dataFolders } from '~/features/data'
+import { Logger } from '~/features/telemetry'
 import { MainStackParams } from '~/navigation/types'
-
-import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataCardList } from './DataCardList'
 

@@ -1,14 +1,14 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { IdentityAvatar } from 'components'
-import { useIdentityDrawer } from 'features/identityDrawer'
-import { selectSelectedPublicProfile } from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 
-import { HIT_SLOP_10_10 } from 'constants/buttons'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import { IdentityAvatar } from '~/components'
+import { HIT_SLOP_10_10 } from '~/constants/buttons'
+import { useIdentityDrawer } from '~/features/identityDrawer'
+import { selectSelectedPublicProfile } from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 import { BaseScreenHeader } from './BaseScreenHeader'
 

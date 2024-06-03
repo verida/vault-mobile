@@ -1,19 +1,21 @@
 import Clipboard from '@react-native-clipboard/clipboard'
+import React from 'react'
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+
+// import Icon from 'react-native-svg'
+import CompleteSVG from '~/assets/complete.svg'
+import Text from '~/components/Text'
+import { DEFAULT_LOCALE } from '~/constants/locale'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import {
   AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import React from 'react'
-import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+} from '~/features/cryptoWallet'
 
-import CompleteSVG from 'assets/complete.svg'
-import Text from 'components/Text'
-import { DEFAULT_LOCALE } from 'constants/locale'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { Icon } from '../Icon'
 
 export type TransactionInfoProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
@@ -118,10 +120,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.id)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' color={'rgba(66, 59, 206, 1)'} size={22} />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>
@@ -129,24 +128,17 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
         {Boolean(
           typeof maybeExplorerUrl === 'string' && maybeExplorerUrl.length
         ) && (
-            <TouchableOpacity style={styles.viewOnExplorerWrapper}>
-              <Text
-                onPress={() => {
-                  typeof maybeExplorerUrl === 'string' &&
-                    Linking.openURL(maybeExplorerUrl)
-                }}>
-                View on explorer
-              </Text>
-              <Icon
-                name='enter-outline'
-                style={{
-                  color: 'rgba(66, 59, 206, 1)',
-                  fontSize: 21,
-                  marginLeft: 2,
-                }}
-              />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.viewOnExplorerWrapper}>
+            <Text
+              onPress={() => {
+                typeof maybeExplorerUrl === 'string' &&
+                  Linking.openURL(maybeExplorerUrl)
+              }}>
+              View on explorer
+            </Text>
+            <Icon name='enter' color={'rgba(66, 59, 206, 1)'} size={22} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )

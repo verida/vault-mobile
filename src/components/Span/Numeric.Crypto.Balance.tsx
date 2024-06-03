@@ -1,9 +1,10 @@
+import * as React from 'react'
+import { Text } from 'react-native'
+
 import {
   AggregateWalletBannerBalance,
   fixedPointCryptoAsBigDecimal,
-} from 'features/cryptoWallet'
-import * as React from 'react'
-import { Text } from 'react-native'
+} from '~/features/cryptoWallet'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 

@@ -1,5 +1,6 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
+
+import { ChainMetadatas, getRpcUrlOrThrow } from '~/features/caip'
 
 import { extractWalletConnectChainIdOrThrow } from './extractWalletConnectChainIdOrThrow'
 

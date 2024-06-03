@@ -37,10 +37,10 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { proving, ProvingMethod, ProvingMethodAlg } from '@iden3/js-jwz'
 import { Context } from '@verida/client-rn'
-import { Logger } from 'features/telemetry'
-import { VeridaRecord } from 'features/verida'
 
 import { config as appConfig } from '~/config'
+import { Logger } from '~/features/telemetry'
+import { VeridaRecord } from '~/features/verida'
 
 import {
   POLYGON_ID_CREDENTIALS_DATABASE_NAME,

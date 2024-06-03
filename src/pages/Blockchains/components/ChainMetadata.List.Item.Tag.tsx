@@ -1,11 +1,11 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
-import { ChainMetadata, isSupportedCaipNamespace } from 'features/caip'
-import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { Theme } from 'styles/types'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
+import { ChainMetadata, isSupportedCaipNamespace } from '~/features/caip'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 const TAG_CHILDREN: { readonly [key in SupportedBlockchainNamespace]: string } =
   {

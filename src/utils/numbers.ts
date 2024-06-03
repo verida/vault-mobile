@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE } from 'constants/locale'
+import { DEFAULT_LOCALE } from '~/constants/locale'
 
 export const DEFAULT_NUMBER_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
   style: 'decimal',

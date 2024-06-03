@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text as RNText, TextProps } from 'react-native'
 
-import { BLACK_COLOR } from '../constants/color'
-import { NUNITO_SANS } from '../constants/text'
+import { BLACK_COLOR } from '~/constants/color'
+import { NUNITO_SANS } from '~/constants/text'
 
 /**
  * @deprecated Use <Typography> instead

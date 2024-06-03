@@ -1,10 +1,11 @@
-import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import AccountManager from '../../api/AccountManager'
-import EmptyList from '../Lists/EmptyList'
-import Text from '../Text'
+import AccountManager from '~/api/AccountManager'
+import EmptyList from '~/components/Lists/EmptyList'
+import Text from '~/components/Text'
+import { Logger } from '~/features/telemetry'
+
 import History from './History'
 
 const logger = Logger.create('Components/History')

@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import FileSvg from '../../assets/inbox/file.svg'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import Text from '../Text'
+import FileSvg from '~/assets/inbox/file.svg'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 export default ({ options }) => {
   return (

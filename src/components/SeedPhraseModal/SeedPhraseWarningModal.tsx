@@ -1,18 +1,17 @@
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import CloseIcon from 'assets/icons/close_icon.svg'
-import Button from 'components/Button'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-
-import AlertIconSvg from '../../assets/alert_icon.svg'
-import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
-import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
-import PrivateKeySvg from '../../assets/private_key_illustration.svg'
-import SeedPhraseSvg from '../../assets/seed_phrase_illustration.svg'
-import { NUNITO_SANS_BOLD } from '../../constants/text'
+import AlertIconSvg from '~/assets/alert_icon.svg'
+import CheckboxCheckedSvg from '~/assets/checkbox_checked.svg'
+import CheckboxSvg from '~/assets/checkbox_unchecked.svg'
+import PrivateKeySvg from '~/assets/private_key_illustration.svg'
+import SeedPhraseSvg from '~/assets/seed_phrase_illustration.svg'
+import Button from '~/components/Button'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import CloseIcon from '~assets/icons/close_icon.svg'
 
 const modalContent = {
   seed_phrase: {

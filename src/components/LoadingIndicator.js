@@ -1,7 +1,7 @@
 import React from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
-import { PRIMARY_COLOR } from 'constants/color'
+import { PRIMARY_COLOR } from '~/constants/color'
 
 export default () => {
   return (

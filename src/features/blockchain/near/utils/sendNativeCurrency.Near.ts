@@ -1,12 +1,12 @@
 import { BN } from 'bn.js'
 import { ChainId } from 'caip'
-import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
 import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 
 import {
   ConfirmTransactionCallbackResult,
   CryptoWalletAccount,
 } from '~/features/cryptoWallet'
+import { getMaybeNearAccountForPrivateKey } from '~/features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
 
 import {
   BlockchainRequestHandlerCallback,

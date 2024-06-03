@@ -1,5 +1,6 @@
 import EventEmitter from 'events'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('Emitter')
 

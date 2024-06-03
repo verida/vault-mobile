@@ -1,11 +1,4 @@
 import { useClipboard } from '@react-native-clipboard/clipboard'
-import { config } from 'config'
-import {
-  canBeHandledByDeeplink,
-  isSupportedDomain,
-  useDeeplink,
-} from 'features/deepLinks'
-import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Platform, StatusBar, StyleSheet, View } from 'react-native'
@@ -13,8 +6,15 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { MainStackScreenProps } from 'navigation/types'
-import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
+import { config } from '~/config'
+import {
+  canBeHandledByDeeplink,
+  isSupportedDomain,
+  useDeeplink,
+} from '~/features/deepLinks'
+import { useProtocols } from '~/features/protocols'
+import { MainStackScreenProps } from '~/navigation/types'
+import { QrCodeScannerOverlay } from '~/pages/QrCodeScanner/QrCodeScannerOverlay'
 
 const WAIT_TIME = 3000
 

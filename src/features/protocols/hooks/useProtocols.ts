@@ -1,5 +1,6 @@
-import { ProtocolsContext } from 'features/protocols/contexts'
 import { useContext } from 'react'
+
+import { ProtocolsContext } from '~/features/protocols/contexts'
 
 export function useProtocols() {
   const contextValue = useContext(ProtocolsContext)

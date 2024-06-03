@@ -1,16 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import { MaintenanceMode } from 'features/config'
 import React from 'react'
 import { Linking, ScrollView, StyleSheet, View } from 'react-native'
 
-import Texture from 'assets/landing-bg.svg'
-import Logo from 'assets/logo.svg'
-import Text from 'components/Text'
-import { WHITE_COLOR } from 'constants/color'
-import { CONFUSED_FACE } from 'constants/strings'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import Button from '../../components/Button'
+import Texture from '~/assets/landing-bg.svg'
+import Logo from '~/assets/logo.svg'
+import Button from '~/components/Button'
+import Text from '~/components/Text'
+import { WHITE_COLOR } from '~/constants/color'
+import { CONFUSED_FACE } from '~/constants/strings'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import { MaintenanceMode } from '~/features/config'
 
 interface Props {
   maintenanceMode: MaintenanceMode

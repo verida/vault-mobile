@@ -1,11 +1,11 @@
-import { dataFolders } from 'features/data'
-import { Logger } from 'features/telemetry'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 
-import { DataList } from 'components/Data'
-import LoadingView from 'components/LoadingView'
-import { TabsScreenProps } from 'navigation/types'
+import { DataList } from '~/components/Data'
+import LoadingView from '~/components/LoadingView'
+import { dataFolders } from '~/features/data'
+import { Logger } from '~/features/telemetry'
+import { TabsScreenProps } from '~/navigation/types'
 
 const logger = Logger.create('Pages/Data/DataTabScreen')
 

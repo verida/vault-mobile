@@ -1,10 +1,10 @@
-import { getHomeGettingStartedItems } from 'features/homeScreen'
-import { useCurrentIdentity } from 'features/identities'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View, ViewProps } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { getHomeGettingStartedItems } from '~/features/homeScreen'
+import { useCurrentIdentity } from '~/features/identities'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import { HomeGettingStartedItem } from './HomeGettingStartedItem'
 

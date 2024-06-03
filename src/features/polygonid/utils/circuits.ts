@@ -1,5 +1,6 @@
 import { CircuitData, CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 import {
   CircuitComponentPaths,

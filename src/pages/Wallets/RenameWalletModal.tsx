@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
+import Button from '~/components/Button'
+import { Icon } from '~/components/Icon'
+import Label from '~/components/Label'
+import Layout from '~/components/Layouts/Layout'
+import NavigationHeader from '~/components/Navigation/NavigationHeader'
 import { UpdateCryptoWalletData } from '~/features/cryptoWallet'
-
-import CloseIcon from 'assets/icons/close_icon.svg'
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import InputStyles from 'styles/inputs'
+import InputStyles from '~/styles/inputs'
 
 type Props = {
   visible: boolean
@@ -34,7 +33,7 @@ export default (props: Props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <CloseIcon />,
+          icon: <Icon name='close' color='#000' />,
           action: () => hideModal(),
         }}
         title='Rename wallet'

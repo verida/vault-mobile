@@ -1,6 +1,7 @@
-import { useTheme } from 'contexts'
 import React, { ComponentProps } from 'react'
 import * as Progress from 'react-native-progress'
+
+import { useTheme } from '~/contexts'
 
 export type ProgressBarProps = ComponentProps<typeof Progress.Bar>
 
