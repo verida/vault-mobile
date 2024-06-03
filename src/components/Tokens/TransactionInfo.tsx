@@ -2,7 +2,6 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-// import Icon from 'react-native-svg'
 import CompleteSVG from '~/assets/complete.svg'
 import Text from '~/components/Text'
 import { DEFAULT_LOCALE } from '~/constants/locale'
@@ -73,11 +72,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.address)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                size={22}
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' size={22} color='rgba(66, 59, 206, 1)' />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>

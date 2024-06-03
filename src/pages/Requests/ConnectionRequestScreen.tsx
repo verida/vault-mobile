@@ -1,5 +1,11 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
@@ -102,7 +108,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   const protocols = reduceProtocols(details.protocols, 16)
 
   const detailProperties: RequestDetailProperty[] = useMemo(() => {
-    const properties = []
+    const properties: { label: string; value: ReactNode }[] = []
 
     properties.push({
       label: 'Requested on',

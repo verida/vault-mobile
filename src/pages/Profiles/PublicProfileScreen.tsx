@@ -860,7 +860,8 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
 
   useEffect(() => {
     function buildConnections(allConnectors: any) {
-      const finalConnectors = []
+      // TODO: fix type
+      const finalConnectors: any[] = []
       for (const connectorName in allConnectors) {
         finalConnectors.push(allConnectors[connectorName].render())
       }

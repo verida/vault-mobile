@@ -43,7 +43,7 @@ export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
 
     const dataElements = keys.map((key) => {
       const [keyName] = key.split('_').reverse()
-      let data = null
+      let data: any
       if (keyName === 'circuitId') {
         data = polygonIdCircuitStorage.getString(key)
       } else {

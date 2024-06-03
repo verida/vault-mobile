@@ -57,13 +57,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     : false
   const migrateIdentityItem: SettingsItem[] = displayMigrateToMainnet
     ? [
-      {
-        label: 'Migrate Identity to Mainnet',
-        action: 'arrow',
-        optional: true,
-        onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
-      },
-    ]
+        {
+          label: 'Migrate Identity to Mainnet',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
+        },
+      ]
     : []
 
   const settingsItems: SettingsCategory[] = [
