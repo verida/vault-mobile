@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import {
+  CopyToClipboardButton,
   DrawerIdentityList,
   DrawerShortcutButton,
   Icon,
@@ -117,13 +118,20 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   ellipsizeMode='tail'>
                   {displayedName}
                 </Typography>
-                <Typography
-                  variant='label'
-                  style={styles.did}
-                  numberOfLines={2}
-                  ellipsizeMode='middle'>
-                  {identity?.did}
-                </Typography>
+                <View style={styles.didWrapper}>
+                  <Typography
+                    variant='label'
+                    style={styles.did}
+                    numberOfLines={2}
+                    ellipsizeMode='middle'>
+                    {identity?.did}
+                  </Typography>
+
+                  <CopyToClipboardButton
+                    content={identity?.did || ''}
+                    size={16}
+                  />
+                </View>
               </View>
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
@@ -248,8 +256,7 @@ const createStyles = (theme: Theme) =>
       fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
-      marginTop: theme.spacing.s,
-      paddingHorizontal: theme.spacing.l,
+      paddingHorizontal: theme.spacing.m,
       textAlign: 'center',
       color: theme.color.textLightGrey,
     },
@@ -307,5 +314,15 @@ const createStyles = (theme: Theme) =>
       fontSize: 10,
       lineHeight: 12,
       color: theme.color.onError,
+    },
+    copyButtonText: {
+      color: theme.color.black600,
+    },
+    didWrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.sm,
+      marginTop: theme.spacing.s,
     },
   })

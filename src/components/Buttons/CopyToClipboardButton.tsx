@@ -13,13 +13,14 @@ const logger = Logger.create('CopyToClipboardButton')
 export type CopyToClipboardButtonProps = {
   content: string
   disabled?: boolean
+  size?: number
 } & ViewProps
 
 // TODO: Factorise the base of this component into a IconButton
 export const CopyToClipboardButton: React.FunctionComponent<
   CopyToClipboardButtonProps
 > = (props) => {
-  const { content, disabled, ...viewProps } = props
+  const { content, disabled, size = 24, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -43,7 +44,7 @@ export const CopyToClipboardButton: React.FunctionComponent<
           disabled={disabled}
           hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
           style={styles.button}>
-          <Icon name='copy-outline' size={24} />
+          <Icon name='copy-outline' size={size} />
         </TouchableOpacity>
       </View>
     </View>
