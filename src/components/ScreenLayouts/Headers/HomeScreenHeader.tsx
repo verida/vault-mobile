@@ -125,7 +125,7 @@ export const HomeScreenHeader: React.FunctionComponent<
             onPress={handleInboxPress}
             hitSlop={HIT_SLOP}
             style={styles.firstActionIcon}>
-            <InboxIcon />
+            <InboxIcon size={theme.iconSize.m} />
           </TouchableOpacity>
         </View>
       </View>

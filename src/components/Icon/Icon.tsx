@@ -81,11 +81,13 @@ type LibIconName =
 
 export type IconName = CustomIconName | LibIconName
 
-export const Icon = (props: {
+export type CustomIconProps = {
   name: IconName
   size?: DimensionValue | undefined
   color?: string
-}) => {
+}
+
+export const Icon: React.FC<CustomIconProps> = (props) => {
   const { theme } = useTheme()
   const { name, size = '100%', color = theme.color.iconDefault } = props
 

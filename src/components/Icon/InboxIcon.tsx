@@ -1,24 +1,26 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
-import { useTheme } from '~/contexts'
 import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
-import { Icon } from './Icon'
+import { CustomIconProps, Icon } from './Icon'
 
-export const InboxIcon = () => {
+export type InboxIconProps = Omit<ViewProps, 'children'> &
+  Pick<CustomIconProps, 'size' | 'color'> & { hideBadge?: boolean }
+
+export const InboxIcon: React.FC<InboxIconProps> = (props) => {
   const { unreadMessagesCount, displayedInboxCount } =
     useInboxUnreadMessageCount()
 
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
+  const { size, color, hideBadge = false } = props
 
   return (
     <View>
-      <Icon name='inbox' size={theme.iconSize.m} />
-      {unreadMessagesCount ? (
+      <Icon name='inbox' size={size} color={color} />
+      {!hideBadge && !!unreadMessagesCount ? (
         <View style={styles.badge}>
           <Text style={styles.badgeText} numberOfLines={1}>
             {displayedInboxCount}

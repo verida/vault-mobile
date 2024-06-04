@@ -126,7 +126,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
                   label='Inbox'
-                  icon={<InboxIcon />}
+                  icon={<InboxIcon size={theme.iconSize.m} />}
                   onPress={handleInboxPress}
                   style={styles.shortcutButton}
                 />
