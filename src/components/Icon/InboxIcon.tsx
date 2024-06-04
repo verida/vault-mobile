@@ -5,20 +5,20 @@ import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
 import { useThemeAwareStyle } from '~/hooks'
 import { Theme } from '~/styles/types'
 
-import { CustomIconProps, Icon } from './Icon'
+import { Icon, IconProps } from './Icon'
 
 export type InboxIconProps = Omit<ViewProps, 'children'> &
-  Pick<CustomIconProps, 'size' | 'color'> & { hideBadge?: boolean }
+  Pick<IconProps, 'size' | 'color'> & { hideBadge?: boolean }
 
 export const InboxIcon: React.FC<InboxIconProps> = (props) => {
   const { unreadMessagesCount, displayedInboxCount } =
     useInboxUnreadMessageCount()
 
   const styles = useThemeAwareStyle(createStyles)
-  const { size, color, hideBadge = false } = props
+  const { size, color, hideBadge = false, ...viewProps } = props
 
   return (
-    <View>
+    <View {...viewProps}>
       <Icon name='inbox' size={size} color={color} />
       {!hideBadge && !!unreadMessagesCount ? (
         <View style={styles.badge}>
