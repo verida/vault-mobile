@@ -6,11 +6,10 @@ import LoadingIndicator from '~/components/LoadingIndicator'
 import { TransactionInfo } from '~/components/Tokens'
 import {
   AggregateWalletBannerBalance,
-  getWalletAddressForChainId,
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useSelectedMinifiedBlockchainAccounts,
+  useSelectedCryptoWallet,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
@@ -39,11 +38,17 @@ export const TransactionDetailsScreen: React.FC<
   const { id, aggregateWalletBannerBalance } = params
 
   const { resource } = aggregateWalletBannerBalance
+  const resourceChainId = useChainIdForResourceParams({ resource })
 
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
-  const chainId = useChainIdForResourceParams({ resource })
-
-  const address = getWalletAddressForChainId(chainId, selectedMinifiedAccounts)
+  // TODO: Factorise this as it's also implemented in TransactionDetails.tsx and SingleCurrency.tsx
+  const selectedCryptoWallet = useSelectedCryptoWallet()
+  const accounts = selectedCryptoWallet?.accounts || []
+  const account = resourceChainId
+    ? accounts.find(
+        (accountItem) => accountItem.namespace === resourceChainId.namespace
+      )
+    : undefined
+  const address = account?.address || null
 
   const maybeAsset = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance,
