@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
 import React, { useCallback } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -11,12 +11,12 @@ import {
   DrawerShortcutButton,
   Icon,
   IdentityAvatar,
+  InboxIcon,
   Typography,
 } from '~/components'
 import { useTheme } from '~/contexts'
 import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
 import { useIdentityDrawer } from '~/features/identityDrawer'
-import { useInboxUnreadMessageCount } from '~/features/inbox/hooks'
 import {
   PROFILE_EMPTY_NAME_VALUE,
   selectSelectedPublicProfile,
@@ -38,8 +38,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const { isOpen, open, close } = useIdentityDrawer()
-  const { unreadMessagesCount, displayedInboxCount } =
-    useInboxUnreadMessageCount()
   const navigation = useNavigation()
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
@@ -128,22 +126,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
                   label='Inbox'
-                  icon={
-                    <View>
-                      <Icon
-                        name='inbox'
-                        size={24}
-                        color={theme.color.iconDefault}
-                      />
-                      {unreadMessagesCount ? (
-                        <View style={styles.badge}>
-                          <Text style={styles.badgeText} numberOfLines={1}>
-                            {displayedInboxCount}
-                          </Text>
-                        </View>
-                      ) : null}
-                    </View>
-                  }
+                  icon={<InboxIcon size={theme.iconSize.m} />}
                   onPress={handleInboxPress}
                   style={styles.shortcutButton}
                 />
