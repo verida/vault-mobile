@@ -35,7 +35,7 @@ type ErrorDetailsProps = {
 
 function ErrorDetails(props: ErrorDetailsProps) {
   const { content } = props
-  const [isShowing, setIsShowing] = useState(false)
+  const [isShowing, setIsShowing] = useState<boolean>(false)
 
   return (
     <View style={styles.errorDetailsContainer}>

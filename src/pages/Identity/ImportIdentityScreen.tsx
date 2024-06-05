@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { EnvironmentType } from '@verida/types'
 import { utils } from 'ethers'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
@@ -54,11 +55,11 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const [phrase, setPhrase] = useState('')
-  const [verified, setVerified] = useState(false)
-  const [error, showError] = useState(false)
-  const [processing, setProcessing] = useState(false)
-  const [network, setNetwork] = useState(defaultNetwork)
+  const [phrase, setPhrase] = useState<string>('')
+  const [verified, setVerified] = useState<boolean>(false)
+  const [error, showError] = useState<boolean>(false)
+  const [processing, setProcessing] = useState<boolean>(false)
+  const [network, setNetwork] = useState<EnvironmentType>(defaultNetwork)
 
   useEffect(() => {
     const verify = () => {

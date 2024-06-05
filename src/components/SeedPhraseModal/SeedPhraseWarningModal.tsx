@@ -77,7 +77,7 @@ type Props = {
 
 export default (props: Props) => {
   const { visible, hideModal, type, onPressButton } = props
-  const [checkbox, setCheckboxState] = useState(false)
+  const [checkbox, setCheckboxState] = useState<boolean>(false)
 
   return (
     <Modal

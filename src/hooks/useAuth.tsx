@@ -37,8 +37,8 @@ const AuthContext = createContext<AuthContextState>({
 })
 
 export const AuthProvider: FC = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  const [authenticated, setAuthenticated] = useState<boolean>(false)
+  const [loaded, setLoaded] = useState<boolean>(false)
 
   const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()

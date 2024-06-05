@@ -45,11 +45,13 @@ export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
     })
   }, [navigation, connectionInfo])
 
-  const [syncStatus, setSyncStatus] = useState('')
-  const [nextSync, setNextSync] = useState('')
-  const [lastSync, setLastSync] = useState('')
-  const [syncError, setSyncError] = useState('')
-  const [showSuccess, setShowSuccess] = useState(!!provider && !!accessToken)
+  const [syncStatus, setSyncStatus] = useState<string>('')
+  const [nextSync, setNextSync] = useState<string>('')
+  const [lastSync, setLastSync] = useState<string>('')
+  const [syncError, setSyncError] = useState<string>('')
+  const [showSuccess, setShowSuccess] = useState<boolean>(
+    !!provider && !!accessToken
+  )
 
   useEffect(() => {
     const setState = (connection: any) => {

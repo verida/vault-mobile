@@ -66,7 +66,7 @@ export const CredentialDataItem: React.FunctionComponent<
     },
   ]
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [issuer, setIssuer] = useState({
     did: extractedIssuer,
     name: 'Unknown',

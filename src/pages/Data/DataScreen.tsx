@@ -23,7 +23,7 @@ export const DataScreen: React.FunctionComponent<DataScreenProps> = (props) => {
   }, [navigation])
 
   const [items, setItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

@@ -44,11 +44,11 @@ export const ConnectionRequestScreen: React.FunctionComponent<
   const { navigation, route } = props
   const { name, logo, details, data } = route.params
 
-  const [processing, setProcessing] = useState(false)
-  const [error, setError] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
   const [erroMessage, setErrorMessage] = useState<string | undefined>()
-  const [success, setSuccess] = useState(false)
-  const [detailsOpen, setDetailsOpen] = useState(false)
+  const [success, setSuccess] = useState<boolean>(false)
+  const [detailsOpen, setDetailsOpen] = useState<boolean>(false)
   const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
   const styles = useThemeAwareStyle(createStyles)
   const insets = useSafeAreaInsets()

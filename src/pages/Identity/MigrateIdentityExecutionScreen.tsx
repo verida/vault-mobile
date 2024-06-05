@@ -67,7 +67,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
 > = (props) => {
   const { navigation } = props
 
-  const [switchingIdentity, setSwitchingIdentity] = useState(false)
+  const [switchingIdentity, setSwitchingIdentity] = useState<boolean>(false)
   const [status, setStatus] = useState<MigrationStatus>('processing')
 
   const { removeIdentity, switchIdentity } = useIdentities()

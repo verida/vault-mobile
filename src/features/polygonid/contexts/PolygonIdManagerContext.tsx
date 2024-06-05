@@ -69,8 +69,9 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const account = accountManager.getSelectedAccount()
   const veridaVaultContext = accountManager.context as Context | undefined
 
-  const [isManagerInitialising, setIsManagerInitialising] = useState(false)
-  const [isManagerInError, setIsManagerInError] = useState(false)
+  const [isManagerInitialising, setIsManagerInitialising] =
+    useState<boolean>(false)
+  const [isManagerInError, setIsManagerInError] = useState<boolean>(false)
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 

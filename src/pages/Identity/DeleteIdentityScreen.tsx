@@ -27,7 +27,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
   useEffect(() => {
     navigation.setOptions({
       title: 'Delete your Identity',
@@ -40,7 +40,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 
   const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
 
-  const [canDelete] = useState(!!selectedAccount?.did)
+  const [canDelete] = useState<boolean>(!!selectedAccount?.did)
 
   const { destroyIdentity } = useIdentities()
 

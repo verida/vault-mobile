@@ -36,8 +36,8 @@ export const QrCodeScannerScreen: React.FunctionComponent<
     })
   }, [navigation])
 
-  const [processing, setProcessing] = useState(false)
-  const [isFlashOn, setIsFlashOn] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
+  const [isFlashOn, setIsFlashOn] = useState<boolean>(false)
   const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink()
 

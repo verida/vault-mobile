@@ -32,14 +32,15 @@ export const ClaimUsernameView = React.forwardRef(
     const { bottom } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
-    const [inputUsername, setInputUsername] = useState('')
+    const [inputUsername, setInputUsername] = useState<string>('')
 
-    const [processing, setProcessing] = useState(false)
-    const [, setClaimingUsername] = useState(false)
-    const [showRetry, setShowRetry] = useState(false)
-    const [isDoneCreateUsername, setDoneCreateUsername] = useState(false)
+    const [processing, setProcessing] = useState<boolean>(false)
+    const [, setClaimingUsername] = useState<boolean>(false)
+    const [showRetry, setShowRetry] = useState<boolean>(false)
+    const [isDoneCreateUsername, setDoneCreateUsername] =
+      useState<boolean>(false)
     const [createUsernameErrorMessage, setCreateUsernameErrorMessage] =
-      useState('Please retry')
+      useState<string>('Please retry')
 
     useImperativeHandle(receivedRef, () => ({
       claimUsername: (username: string) => {

@@ -19,7 +19,7 @@ type Props = {
 export default (props: Props) => {
   const { visible, hideModal, data, onPressRename } = props
 
-  const [label, setLabel] = useState(data.label)
+  const [label, setLabel] = useState<string>(data.label)
 
   const onPressSave = () => {
     onPressRename(data.id, { label })
