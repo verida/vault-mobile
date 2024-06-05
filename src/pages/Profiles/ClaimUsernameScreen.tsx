@@ -32,7 +32,7 @@ export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
     })
   }, [navigation])
 
-  const [currentPage] = useState(PageType.InputUsername)
+  const [currentPage] = useState<PageType>(PageType.InputUsername)
 
   const pagerRef = useRef<PagerView>(null)
   const inputUsernameViewRef = useRef<InputUsernameViewRefProps>(null)

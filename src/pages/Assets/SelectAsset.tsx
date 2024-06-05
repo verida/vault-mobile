@@ -45,7 +45,7 @@ export const SelectAssetScreen: React.FC<SelectAssetScreenProps> = (props) => {
   const { data, isLoading, refetch } = useGetNFTsQuery(searchableAddresses)
 
   // pull to refresh data
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = React.useState<boolean>(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
     refetch().finally(() => {

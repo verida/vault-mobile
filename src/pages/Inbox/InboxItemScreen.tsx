@@ -1,5 +1,5 @@
 import { Logger } from 'ethers/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
@@ -87,7 +87,7 @@ export const InboxItemScreen: React.FC<InboxItemScreenProps> = (props) => {
         React.createElement(
           inboxItemComponents[
             inboxItem.type as keyof typeof inboxItemComponents
-          ],
+          ] as FunctionComponent<any>,
           {
             item,
             type: inboxType,

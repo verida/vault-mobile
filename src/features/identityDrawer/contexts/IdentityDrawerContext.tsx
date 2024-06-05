@@ -14,7 +14,7 @@ export const IdentityDrawerProvider: React.FunctionComponent<{
   children: React.ReactNode
 }> = (props) => {
   const { children } = props
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState<boolean>(false)
 
   const open = useCallback(() => setIsOpen(true), [])
   const close = useCallback(() => setIsOpen(false), [])

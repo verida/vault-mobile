@@ -18,7 +18,7 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<Record<string, unknown>[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

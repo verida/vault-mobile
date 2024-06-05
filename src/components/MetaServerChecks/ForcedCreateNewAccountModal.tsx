@@ -35,7 +35,7 @@ export const ForcedCreateNewAccountModal = ({
 }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   const dispatch = useDispatch()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const selectedAccount = useAppSelector(selectSelectedAccount)
 
   const onForcedCreateAccountPress = async () => {

@@ -59,10 +59,10 @@ export const DisplayPrivateInfoScreen: React.FC<
   useScreenCaptureProtection()
 
   const pagerRef = useRef<PagerView>(null)
-  const [currentPage, setCurrentPage] = useState(PageType.Warning)
+  const [currentPage, setCurrentPage] = useState<PageType>(PageType.Warning)
   const [isWarningCheckboxChecked, setIsWarningCheckboxChecked] =
-    useState(false)
-  const [privateInfo, setPrivateInfo] = useState('')
+    useState<boolean>(false)
+  const [privateInfo, setPrivateInfo] = useState<string>('')
 
   useEffect(() => {
     pagerRef.current?.setPage(currentPage)

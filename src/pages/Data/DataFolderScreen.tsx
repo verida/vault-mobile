@@ -24,7 +24,7 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
   const { folderName } = route.params
 
   const [folder, setFolder] = useState<Folder>()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

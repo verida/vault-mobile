@@ -60,8 +60,8 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
   const selectedAccount = useAppSelector(selectSelectedAccount)
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
 
-  const [disabled, setDisabled] = useState(false)
-  const [edited, setEdited] = useState(option.value)
+  const [disabled, setDisabled] = useState<boolean>(false)
+  const [edited, setEdited] = useState<string>(option.value)
   const [inputError, setInputError] = useState<{
     inputMaxLength?: number
     isExceededMaxLength?: boolean

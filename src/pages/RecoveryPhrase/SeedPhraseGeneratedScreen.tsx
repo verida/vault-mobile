@@ -35,8 +35,8 @@ export const SeedPhraseGeneratedScreen: React.FC<
   useScreenCaptureProtection()
 
   const { theme } = useTheme()
-  const [words, setWords] = useState('Generating seed phrase ...')
-  const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
+  const [words, setWords] = useState<string>('Generating seed phrase ...')
+  const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

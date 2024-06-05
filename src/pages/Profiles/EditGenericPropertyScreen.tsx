@@ -76,7 +76,7 @@ export const EditGenericPropertyScreen: React.FC<
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState<boolean>(false)
   const [edited, setEdited] = useState<string | ValueObject>(
     option.value as any
   )

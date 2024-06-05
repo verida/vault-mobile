@@ -25,7 +25,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
   const styles = useThemeAwareStyle(creatStyles)
 
   const [isTermsConditionsChecked, setIsTermsConditionsChecked] =
-    useState(false)
+    useState<boolean>(false)
 
   const handleToggleTCCheckbox = useCallback(() => {
     setIsTermsConditionsChecked((prevState) => !prevState)

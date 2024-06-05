@@ -27,7 +27,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
   useEffect(() => {
     navigation.setOptions({
       title: 'Log out',
@@ -40,7 +40,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 
   const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
 
-  const [canRemove] = useState(!!selectedAccount?.did)
+  const [canRemove] = useState<boolean>(!!selectedAccount?.did)
 
   const { removeIdentity } = useIdentities()
 
