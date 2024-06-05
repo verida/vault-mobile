@@ -1,11 +1,5 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -110,7 +104,7 @@ export const ProofRequestScreen: React.FunctionComponent<
   const protocols = reduceProtocols(details.protocols, 16)
 
   const detailProperties: RequestDetailProperty[] = useMemo(() => {
-    const properties: { label: string; value: ReactNode }[] = []
+    const properties = []
 
     properties.push({
       label: 'From',
