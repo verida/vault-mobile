@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import Snackbar from 'react-native-snackbar' // TODO: Harmonise the snackbar following Figma design

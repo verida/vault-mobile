@@ -43,7 +43,10 @@ import {
   InboxScreenParams,
   ShareableDataScreenParams,
 } from '~/pages/Inbox'
-import { LoginHistoryScreenParams } from '~/pages/Login'
+import {
+  LoginHistoryScreenParams,
+  LoginRequestScreenParams,
+} from '~/pages/Login'
 import { OnboardingScreenParams } from '~/pages/Onboarding'
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
@@ -133,7 +136,7 @@ export type MainStackParams = {
   InboxItem: InboxItemScreenParams
   ShareableData: ShareableDataScreenParams
   LoginHistory: LoginHistoryScreenParams
-  LoginRequest: undefined
+  LoginRequest: LoginRequestScreenParams
   PublicProfile: PublicProfileScreenParams
   EditProfile: EditProfileScreenParams
   ClaimUsername: ClaimUsernameScreenParams

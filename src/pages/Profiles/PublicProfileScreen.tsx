@@ -32,7 +32,7 @@ import UsernameManager from '~/api/UsernameManager'
 import { AvatarUploader } from '~/components'
 import Button from '~/components/Button'
 import LoadingView from '~/components/LoadingView'
-import PropertyList from '~/components/PropertyList'
+import { PropertyList } from '~/components/PropertyList'
 import {
   CustomLinkItem,
   FeaturedAssetItem,
@@ -152,8 +152,8 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   const { theme } = useTheme()
 
   const { showActionSheetWithOptions } = useActionSheet()
-  const [loading, setLoading] = useState(false)
-  const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
+  const [loading, setLoading] = useState<boolean>(false)
+  const [quickFetching, setQuickFetching] = useState<boolean>(false) // Manage a lighter loading indicator for a better UX
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useCryptoWallets()
 
@@ -183,11 +183,11 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
     VeridaOneFeaturedAsset[]
   >([])
 
-  const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
+  const [enabledVeridaOne, setEnabledVeridaOne] = useState<boolean>(false)
 
   // pull to refresh data
-  const [refreshing, setRefreshing] = React.useState(false)
-  const onRefresh = React.useCallback(() => {
+  const [refreshing, setRefreshing] = useState<boolean>(false)
+  const onRefresh = useCallback(() => {
     setRefreshing(true)
     Promise.all([
       fetchPublicProfile(),
@@ -860,7 +860,8 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
 
   useEffect(() => {
     function buildConnections(allConnectors: any) {
-      const finalConnectors = []
+      // TODO: fix type
+      const finalConnectors: any[] = []
       for (const connectorName in allConnectors) {
         finalConnectors.push(allConnectors[connectorName].render())
       }

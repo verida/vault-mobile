@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
@@ -54,9 +54,9 @@ export const ImportCryptoWalletScreen: React.FC<
     })
   }, [navigation])
 
-  const [label, setLabel] = useState('')
-  const [mnemonic, setMnemonic] = useState('')
-  const [privateKey, setPrivateKey] = useState('')
+  const [label, setLabel] = useState<string>('')
+  const [mnemonic, setMnemonic] = useState<string>('')
+  const [privateKey, setPrivateKey] = useState<string>('')
   const [walletType, setWalletType] = useState<WalletType>(defaultWalletType)
   const [importType, setImportType] = useState<'mnemonic' | 'privateKey'>(
     'mnemonic'

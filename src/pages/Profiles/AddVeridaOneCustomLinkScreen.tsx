@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -65,8 +65,10 @@ export const AddVeridaOneCustomLinkScreen: React.FC<
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
-  const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
-  const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
+  const [labelInput, setLabelInput] = useState<string>(
+    originalValue?.label ?? ''
+  )
+  const [urlInput, setUrlInput] = useState<string>(originalValue?.url ?? '')
 
   const saveValue = useCallback(async () => {
     try {

@@ -4,7 +4,7 @@ import React from 'react'
 import { DimensionValue, SvgProps, View } from 'react-native'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
-import { IconProps } from 'react-native-vector-icons/Icon'
+import { IconProps as VectorIconProps } from 'react-native-vector-icons/Icon'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
@@ -78,18 +78,21 @@ type LibIconName =
   | 'receive'
   | 'delete'
   | 'import'
+  | 'enter'
 
 export type IconName = CustomIconName | LibIconName
 
-export const Icon = (props: {
+export type IconProps = {
   name: IconName
   size?: DimensionValue | undefined
   color?: string
-}) => {
+}
+
+export const Icon: React.FC<IconProps> = (props) => {
   const { theme } = useTheme()
   const { name, size = '100%', color = theme.color.iconDefault } = props
 
-  const iconProps: Partial<IconProps> = {
+  const iconProps: Partial<VectorIconProps> = {
     style: {
       fontSize: 90,
       color,
@@ -399,6 +402,12 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'enter':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='enter-outline' {...iconProps} />
         </IconWrapper>
       )
   }

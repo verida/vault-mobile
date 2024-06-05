@@ -50,7 +50,7 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
 
   const { processsing: cryptoWalletProcessing } = useCryptoWalletsStatus()
   const selectedCryptoWallet = useSelectedCryptoWallet()
-  const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0)
   const layout = useWindowDimensions()
 
   const styles = useThemeAwareStyle(createStyles)

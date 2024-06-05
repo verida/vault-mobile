@@ -1,6 +1,6 @@
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
-import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
+import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 
@@ -8,6 +8,8 @@ import LeftArrowIcon from '~/assets/left_arrow_icon.svg'
 import Text from '~/components/Text'
 import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT } from '~/constants/color'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
+
+import { Icon } from '../Icon'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -70,7 +72,7 @@ function NavigationHeader({
               case 'close':
                 return navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
-                    <Icon name='close' style={{ color: '#000' }} />
+                    <Icon name='close' />
                   </Button>
                 ) : null
               case 'skip':

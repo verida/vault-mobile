@@ -54,7 +54,7 @@ const Collectibles = () => {
   const isEmptyList = !data || data.length === 0
 
   // pull to refresh data
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = React.useState<boolean>(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
     refetch().finally(() => {

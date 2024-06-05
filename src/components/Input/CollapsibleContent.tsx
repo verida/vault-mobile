@@ -22,7 +22,9 @@ export const CollapsibleContent: React.FunctionComponent<
 > = (props) => {
   const { title, expandedByDefault, value, children, ...viewProps } = props
 
-  const [isExpanded, setIsExpanded] = useState(expandedByDefault)
+  const [isExpanded, setIsExpanded] = useState<boolean>(
+    expandedByDefault ?? false
+  )
   const styles = useThemeAwareStyle(createStyles)
 
   const handleToggleCollapse = useCallback(() => {

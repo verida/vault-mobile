@@ -1,0 +1,13 @@
+diff --git a/node_modules/@react-native/typescript-config/tsconfig.json b/node_modules/@react-native/typescript-config/tsconfig.json
+index 3bb1451..92ca9b6 100644
+--- a/node_modules/@react-native/typescript-config/tsconfig.json
++++ b/node_modules/@react-native/typescript-config/tsconfig.json
+@@ -26,7 +26,7 @@
+       "isolatedModules": true,
+       "strict": true,
+       "moduleResolution": "bundler",
+-      "customConditions": ["react-native"],
++      // "customConditions": ["react-native"],
+       "allowImportingTsExtensions": true,
+       "allowArbitraryExtensions": true,
+       "resolveJsonModule": true,

@@ -54,17 +54,17 @@ const acaciaTestnetInfo = {
 // TODO: Transform this component as a screen defined in the navigator, then handle how it's triggered inside the navigator.
 // Will be easier when only one navigator will be used.
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false)
+  const [showSeedPhraseModal, setShowSeedPhraseModal] = useState<boolean>(false)
   const { refresh: retry } = useAuth()
   const currentDID =
     AccountManager.getInstance().getSelectedAccount()?.did ?? ''
 
-  const [pinCodeStatus, setPinCodeStatus] = useState(true)
-  const [seedPhraseData, setSeedPhraseData] = useState('')
-  const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const [pinCodeStatus, setPinCodeStatus] = useState<boolean>(true)
+  const [seedPhraseData, setSeedPhraseData] = useState<string>('')
+  const [isPinCorrect, setPinCorrectStatus] = useState<boolean>(false)
 
   const { removeIdentity } = useIdentities()
 

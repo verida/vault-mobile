@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 
@@ -34,8 +34,8 @@ export const EnterPlatformLinkView = React.forwardRef(
     receivedRef: React.ForwardedRef<EnterPlatformLinkViewRefProps>
   ) => {
     const styles = useThemeAwareStyle(createStyles)
-    const [isValid, setIsValid] = useState(false)
-    const [inputText, setInputText] = useState(platformLink.baseURL)
+    const [isValid, setIsValid] = useState<boolean>(false)
+    const [inputText, setInputText] = useState<string>(platformLink.baseURL)
 
     const urlInputRef = useRef<TextInput>(null)
     useImperativeHandle(receivedRef, () => ({

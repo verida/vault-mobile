@@ -15,7 +15,7 @@ import { TabsScreenProps } from '~/navigation/types'
 
 function buildConnections(allConnectors: any) {
   // TODO: Better typing
-  const finalConnectors = []
+  const finalConnectors: any[] = []
   for (const connectorName in allConnectors) {
     finalConnectors.push(allConnectors[connectorName].render())
   }

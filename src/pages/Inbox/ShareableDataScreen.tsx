@@ -44,8 +44,8 @@ export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
   }, [navigation])
 
   const [data, setData] = useState<ShareableDataItemType[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchText, setSearchText] = useState('')
+  const [loading, setLoading] = useState<boolean>(true)
+  const [searchText, setSearchText] = useState<string>('')
   const [selectedItems, setSelectedItems] = useState<ShareableDataItemType[]>(
     []
   )

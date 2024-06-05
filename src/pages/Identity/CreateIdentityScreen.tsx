@@ -1,5 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { EnvironmentType } from '@verida/types'
 import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -119,9 +120,9 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   const styles = useThemeAwareStyle(creatStyles)
 
   const pagerRef = useRef<PagerView>(null)
-  const [currentPage, setCurrentPage] = useState(PageType.Name)
+  const [currentPage, setCurrentPage] = useState<PageType>(PageType.Name)
 
-  const [network, setNetwork] = useState(defaultNetwork)
+  const [network, setNetwork] = useState<EnvironmentType>(defaultNetwork)
 
   const [profile, setProfile] = useState<{
     name: string
@@ -134,7 +135,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   })
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
-    useState(true)
+    useState<boolean>(true)
 
   const toggleCountryCheckbox = useCallback(() => {
     setShowCountryOnPublicProfile((prevState) => !prevState)
@@ -148,7 +149,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     useState(defaultIdentityCreationStepStatus)
 
   const [createIdentityErrorMessage, setCreateIdentityErrorMessage] =
-    useState('')
+    useState<string>('')
 
   const [confirmationState, setConfirmationState] = useState<{
     state?: Partial<Record<CreateIdentityStep, CreateIdentityStepStatus>> & {

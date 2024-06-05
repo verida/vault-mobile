@@ -33,7 +33,7 @@ type RequestedData = {
 
 function SchemasList(props: SchemasListProps) {
   const { schemas, onItemPress, userSelect } = props
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [dataList, setDataList] = useState<RequestedData[]>([])
 
   useEffect(() => {

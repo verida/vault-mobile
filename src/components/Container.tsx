@@ -54,7 +54,8 @@ const Container = (props: ContainerProps) => {
   const { theme } = useTheme()
 
   const fadeInAnimRef = useRef(new Animated.Value(1))
-  const [completeHideLoadingView, setCompleteHideLoadingView] = useState(true)
+  const [completeHideLoadingView, setCompleteHideLoadingView] =
+    useState<boolean>(true)
   useEffect(() => {
     if (!completeHideLoadingView && !showLoading) {
       setCompleteHideLoadingView(false)

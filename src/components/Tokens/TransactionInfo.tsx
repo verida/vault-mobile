@@ -1,5 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
-import { Icon } from 'native-base'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -14,6 +13,8 @@ import {
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
 } from '~/features/cryptoWallet'
+
+import { Icon } from '../Icon'
 
 export type TransactionInfoProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
@@ -71,10 +72,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.address)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' size={22} color='rgba(66, 59, 206, 1)' />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>
@@ -117,10 +115,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.id)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' color={'rgba(66, 59, 206, 1)'} size={22} />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>
@@ -136,14 +131,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
               }}>
               View on explorer
             </Text>
-            <Icon
-              name='enter-outline'
-              style={{
-                color: 'rgba(66, 59, 206, 1)',
-                fontSize: 21,
-                marginLeft: 2,
-              }}
-            />
+            <Icon name='enter' color={'rgba(66, 59, 206, 1)'} size={22} />
           </TouchableOpacity>
         )}
       </View>

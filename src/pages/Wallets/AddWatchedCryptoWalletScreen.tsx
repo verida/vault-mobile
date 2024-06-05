@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ScrollView,
@@ -48,9 +48,9 @@ export const AddWatchedCryptoWalletScreen: React.FunctionComponent<
     })
   }, [navigation])
 
-  const [label, setLabel] = useState('')
+  const [label, setLabel] = useState<string>('')
   const [walletType, setWalletType] = useState<WalletType>(defaultWalletType)
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState<string>('')
 
   const isAddButtonDisabled = useMemo(() => {
     return !label || !address || !walletType

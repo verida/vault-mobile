@@ -30,7 +30,7 @@ export const EditCryptoWalletScreen: React.FC<EditCryptoWalletScreenProps> = (
     })
   }, [navigation])
 
-  const [label, setLabel] = useState('')
+  const [label, setLabel] = useState<string>('')
 
   const cryptoWallets = useCryptoWallets()
 

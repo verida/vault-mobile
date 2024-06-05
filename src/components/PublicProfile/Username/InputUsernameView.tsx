@@ -37,15 +37,15 @@ export const InputUsernameView = React.forwardRef(
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
 
-    const [inputText, setInputText] = useState('')
+    const [inputText, setInputText] = useState<string>('')
     const usernameInputRef = useRef<TextInput | null>(null)
 
-    const [checkingUsername, setCheckingUsername] = useState(false)
-    const [availableUsername, setAvailableUsername] = useState(false)
+    const [checkingUsername, setCheckingUsername] = useState<boolean>(false)
+    const [availableUsername, setAvailableUsername] = useState<boolean>(false)
     const [usernameError, setUsernameError] = useState<string | undefined>(
       undefined
     )
-    const [checkboxEmpty, setCheckboxEmpty] = useState(true)
+    const [checkboxEmpty, setCheckboxEmpty] = useState<boolean>(true)
 
     useImperativeHandle(receivedRef, () => ({
       focusInput: () => {
