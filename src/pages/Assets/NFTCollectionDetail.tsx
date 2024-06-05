@@ -1,33 +1,42 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { NFT, NFTMetadata } from 'features/assets'
-import { Logger } from 'features/telemetry'
-import { getNFTImageUri } from 'helpers/nft'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import GridView from 'components/Grids/GridView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Tag } from 'components/Tag'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackParams } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { ScreenWrapper } from '~/components'
+import GridView from '~/components/Grids/GridView'
+import { Tag } from '~/components/Tag'
+import { NFT, NFTCollection, NFTMetadata } from '~/features/assets'
+import { Logger } from '~/features/telemetry'
+import { getNFTImageUri } from '~/helpers/nft'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
 const logger = Logger.create('Pages/NFTCollectionDetail')
 
-type NFTCollectionDetailRouteProp = RouteProp<
-  MainStackParams,
-  'NFTCollectionDetail'
->
+export type NFTCollectionDetailScreenParams = { collection: NFTCollection }
 
-const NFTCollectionDetail = () => {
+type NFTCollectionDetailScreenProps =
+  MainStackScreenProps<'NFTCollectionDetail'>
+
+export const NFTCollectionDetailScreen: React.FC<
+  NFTCollectionDetailScreenProps
+> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { collection } = params
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: collection.name,
+    })
+  }, [navigation, collection])
+
   const styles = useThemeAwareStyle(createStyles)
-  const route = useRoute<NFTCollectionDetailRouteProp>()
-  const navigation = useNavigation()
-  const collection = route.params.collection
 
   const renderCollection = useCallback<ListRenderItem<NFT>>(
     ({ item }) => {
@@ -42,7 +51,7 @@ const NFTCollectionDetail = () => {
             <View style={styles.column}>
               <FastImage
                 style={styles.image}
-                defaultSource={require('assets/picture.png')}
+                defaultSource={require('~/assets/picture.png')}
                 source={{
                   uri,
                   priority: FastImage.priority.normal,
@@ -70,8 +79,7 @@ const NFTCollectionDetail = () => {
   )
 
   return (
-    <Screen>
-      <NavigationHeader title={collection.name} bottomBorder />
+    <ScreenWrapper>
       <View style={styles.container}>
         <GridView
           numColumns={NUMBER_OF_COLUMNS}
@@ -80,7 +88,7 @@ const NFTCollectionDetail = () => {
           renderItem={renderCollection}
         />
       </View>
-    </Screen>
+    </ScreenWrapper>
   )
 }
 
@@ -116,5 +124,3 @@ const createStyles = (theme: Theme) =>
       color: theme.color.onPrimary,
     },
   })
-
-export default NFTCollectionDetail

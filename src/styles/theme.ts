@@ -1,4 +1,5 @@
 import Color from 'color'
+import { StatusBarStyle } from 'react-native'
 
 import {
   BACKGROUND_GREY_COLOR,
@@ -30,12 +31,12 @@ import {
   VERY_LIGHTGREY_COLOR,
   WARNING_LIGHT_COLOR,
   WHITE_COLOR,
-} from 'constants/color'
+} from '~/constants/color'
 import {
   NUNITO_SANS,
   NUNITO_SANS_BOLD,
   NUNITO_SANS_SEMIBOLD,
-} from 'constants/text'
+} from '~/constants/text'
 
 export const defaultTheme = {
   color: {
@@ -149,5 +150,8 @@ export const defaultTheme = {
     regular: NUNITO_SANS,
     semibold: NUNITO_SANS_SEMIBOLD,
     bold: NUNITO_SANS_BOLD,
+  },
+  statusBar: {
+    defaultStyle: 'dark-content' as StatusBarStyle,
   },
 }

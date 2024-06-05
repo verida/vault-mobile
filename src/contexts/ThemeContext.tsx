@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { defaultTheme } from 'styles/theme'
-import { Theme } from 'styles/types'
+import { defaultTheme } from '~/styles/theme'
+import { Theme } from '~/styles/types'
 
 interface ProvidedValue {
   theme: Theme

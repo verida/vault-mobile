@@ -1,15 +1,15 @@
 import React from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
-import CloseIcon from 'assets/icons/close_icon.svg'
+import CloseIcon from '~/assets/icons/close_icon.svg'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   SEPARATOR,
   WHITE_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 interface AppModalProps {
   title: string
@@ -26,6 +26,9 @@ const HIT_SLOP = {
   top: 50,
 }
 
+/**
+ * @deprecated there is no such modal design anymore. We should the screens from React navigation, potential with a modal type
+ */
 const AppModal = ({
   onClose,
   visible,

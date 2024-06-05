@@ -1,5 +1,6 @@
 import { IVerifyResult, VerifiableCredential } from '@veramo/core'
-import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
+
+import { VeridaRecord, VeridaUnsavedRecord } from '~/features/verida'
 
 export type CredentialValidityStatus =
   | 'unknown'

@@ -1,28 +1,28 @@
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
+import React, { useCallback, useEffect, useState } from 'react'
+import { InteractionManager, StyleSheet, View } from 'react-native'
+
 import {
   BottomActionBar,
   ScreenWrapper,
   StatusInfo,
   StatusList,
   StatusListItem,
-} from 'components'
-import { config } from 'config'
-import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
+} from '~/components'
+import LoadingView from '~/components/LoadingView'
+import { config } from '~/config'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
   useCurrentIdentity,
   useIdentities,
   useMigrateIdentity,
-} from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
-import React, { useCallback, useEffect, useState } from 'react'
-import { InteractionManager, StyleSheet, View } from 'react-native'
-import { formatNumberPercentage } from 'utils'
-
-import LoadingView from 'components/LoadingView'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+} from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
+import { formatNumberPercentage } from '~/utils'
 
 const logger = Logger.create('MigrateIdentityExecutionScreen')
 
@@ -67,7 +67,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
 > = (props) => {
   const { navigation } = props
 
-  const [switchingIdentity, setSwitchingIdentity] = useState(false)
+  const [switchingIdentity, setSwitchingIdentity] = useState<boolean>(false)
   const [status, setStatus] = useState<MigrationStatus>('processing')
 
   const { removeIdentity, switchIdentity } = useIdentities()
@@ -249,7 +249,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
                   {
                     label: 'Close',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Switch to new identity',
@@ -261,7 +261,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<
                   {
                     label: 'Close',
                     onPress: handleClose,
-                    color: 'grey',
+                    variant: 'secondary',
                   },
                   {
                     label: 'Retry',

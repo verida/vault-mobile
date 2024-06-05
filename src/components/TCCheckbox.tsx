@@ -15,7 +15,7 @@ import {
   SUCCESS_COLOR,
   VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
-} from 'constants/color'
+} from '~/constants/color'
 
 import { Text } from './Typography/Text'
 

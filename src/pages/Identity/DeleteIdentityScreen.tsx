@@ -1,16 +1,16 @@
-import { BottomActionBar, ScreenWrapper } from 'components'
-import { selectSelectedAccount, useIdentities } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import LoadingView from 'components/LoadingView'
-import Text from 'components/Text'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import LoadingView from '~/components/LoadingView'
+import Text from '~/components/Text'
+import { selectSelectedAccount, useIdentities } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('DeleteIdentityScreen')
 
@@ -27,12 +27,12 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
   useEffect(() => {
     navigation.setOptions({
       title: 'Delete your Identity',
       headerShown: !processing,
-      headerBackVisible: false, // TODO: Update when reworking headers
+      headerLeft: () => null,
     })
   }, [navigation, processing])
 
@@ -40,7 +40,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 
   const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
 
-  const [canDelete] = useState(!!selectedAccount?.did)
+  const [canDelete] = useState<boolean>(!!selectedAccount?.did)
 
   const { destroyIdentity } = useIdentities()
 
@@ -108,18 +108,18 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
       </ScrollView>
       <BottomActionBar
         alertType='error'
-        alertContent={`This operation is final!\nYour Identity and data cannot be recovered after.`}
+        alertContent={`This operation is final! Your Identity and data cannot be recovered after.`}
         actions={[
           {
             label: 'Cancel',
             onPress: handleCancel,
-            color: 'grey',
+            variant: 'secondary',
           },
           {
             label: 'Delete',
             onPress: handleDelete,
+            variant: 'danger',
             disabled: !canDelete,
-            color: 'danger',
           },
         ]}
       />

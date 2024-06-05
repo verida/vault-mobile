@@ -1,10 +1,10 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
 
-import QrScannerIcon from 'assets/icons/qr_scanner.svg'
-import { LIGHTGREY_COLOR, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import QrScannerIcon from '~/assets/icons/qr_scanner.svg'
+import { LIGHTGREY_COLOR, TEXT_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { useTheme } from '~/contexts/ThemeContext'
 
 type QrCodeScannerButtonProps = {
   onPress: () => void

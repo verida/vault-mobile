@@ -2,19 +2,19 @@ import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
 import { BlockchainAnchor, IContext, Network } from '@verida/types'
-import { config } from 'config'
-import {
-  fetchAllPublicProfilesData,
-  useCurrentProfile,
-} from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { getDidClientConfigForNetwork } from 'features/verida'
-import { getCountryCode } from 'helpers'
 import { merge } from 'lodash'
 import { useCallback } from 'react'
 
-import AccountManager from 'api/AccountManager'
-import { useAppDispatch } from 'reduxStore/types'
+import AccountManager from '~/api/AccountManager'
+import { config } from '~/config'
+import {
+  fetchAllPublicProfilesData,
+  useCurrentProfile,
+} from '~/features/profiles'
+import { Logger } from '~/features/telemetry'
+import { getDidClientConfigForNetwork } from '~/features/verida'
+import { getCountryCode } from '~/helpers'
+import { useAppDispatch } from '~/reduxStore/types'
 
 import {
   IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES,
@@ -170,12 +170,12 @@ export function useMigrateIdentity() {
         const contextNames = IDENTITY_MIGRATION_USE_PREDEFINED_CONTEXTS
           ? IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES
           : await Promise.all(
-            links
-              .filter((link) => !!link)
-              .map(async (link) => {
-                return currentClient!.getContextNameFromHash(link.id)
-              })
-          )
+              links
+                .filter((link) => !!link)
+                .map(async (link) => {
+                  return currentClient!.getContextNameFromHash(link.id)
+                })
+            )
 
         const cleanedContextNames = contextNames.filter(
           (contextName) => !!contextName

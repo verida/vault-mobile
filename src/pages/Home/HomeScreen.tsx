@@ -1,19 +1,19 @@
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+
 import {
   HomeCryptoWalletOverview,
   HomeGettingStarted,
   HomePromoBanners,
   RecoveryPhraseReminder,
   ScreenWrapper,
-} from 'components'
-import { useTheme } from 'contexts'
-import { useConfig } from 'features/config'
-import { useHomeScreenHandlers } from 'features/homeScreen'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-
-import { TabsScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+} from '~/components'
+import { useTheme } from '~/contexts'
+import { useConfig } from '~/features/config'
+import { useHomeScreenHandlers } from '~/features/homeScreen'
+import { useThemeAwareStyle } from '~/hooks'
+import { TabsScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 export type HomeScreenParams = undefined
 

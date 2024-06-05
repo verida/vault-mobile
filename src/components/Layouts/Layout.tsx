@@ -8,11 +8,10 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { ConditionalWrap } from 'components/ConditionalWrap'
-
-import { BLACK_COLOR } from '../../constants/color'
-import { NUNITO_SANS_BOLD } from '../../constants/text'
-import Text from '../Text'
+import { ConditionalWrap } from '~/components/ConditionalWrap'
+import Text from '~/components/Text'
+import { BLACK_COLOR } from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 export interface LayoutProps extends ViewProps {
   withKeyboardAvoidingView: boolean
@@ -20,6 +19,9 @@ export interface LayoutProps extends ViewProps {
   title?: string
 }
 
+/**
+ * @deprecated use <ScreenWrapper> instead
+ */
 const Layout = (props: LayoutProps) => {
   const { withKeyboardAvoidingView, withScrollView } = props
 

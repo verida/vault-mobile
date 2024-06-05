@@ -1,9 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useIdentities } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -16,23 +12,27 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import AccountManager from 'api/AccountManager'
-import Texture from 'assets/landing-bg.svg'
-import Logo from 'assets/logo.svg'
-import Button from 'components/Button'
-import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
-import { Spacer } from 'components/Spacer'
-import { Paragraph } from 'components/Typography/Paragraph'
-import { Text } from 'components/Typography/Text'
-import { Title } from 'components/Typography/Title'
+import AccountManager from '~/api/AccountManager'
+import Texture from '~/assets/landing-bg.svg'
+import Logo from '~/assets/logo.svg'
+import Button from '~/components/Button'
+import CopySeedPhraseModal from '~/components/SeedPhraseModal/CopySeedPhraseModal'
+import { Spacer } from '~/components/Spacer'
+import { Paragraph } from '~/components/Typography/Paragraph'
+import { Text } from '~/components/Typography/Text'
+import { Title } from '~/components/Typography/Title'
 import {
   BACKGROUND_RADIAN_COLORS,
   BLACK_ORIGIN_COLOR,
   LIGHTGREY_COLOR,
-} from 'constants/color'
-import { useAuth } from 'hooks/useAuth'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+} from '~/constants/color'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useIdentities } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
+import { useAuth } from '~/hooks/useAuth'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Component/DIDNonExistentModal')
 
@@ -51,18 +51,20 @@ const acaciaTestnetInfo = {
     'The Acacia Testnet has been shutdown, This identity is no longer operational. You can remove it from your wallet.\n\n',
 }
 
+// TODO: Transform this component as a screen defined in the navigator, then handle how it's triggered inside the navigator.
+// Will be easier when only one navigator will be used.
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false)
+  const [showSeedPhraseModal, setShowSeedPhraseModal] = useState<boolean>(false)
   const { refresh: retry } = useAuth()
   const currentDID =
     AccountManager.getInstance().getSelectedAccount()?.did ?? ''
 
-  const [pinCodeStatus, setPinCodeStatus] = useState(true)
-  const [seedPhraseData, setSeedPhraseData] = useState('')
-  const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const [pinCodeStatus, setPinCodeStatus] = useState<boolean>(true)
+  const [seedPhraseData, setSeedPhraseData] = useState<string>('')
+  const [isPinCorrect, setPinCorrectStatus] = useState<boolean>(false)
 
   const { removeIdentity } = useIdentities()
 
@@ -211,6 +213,7 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
         </View>
 
         <CopySeedPhraseModal
+          // TODO: Remove this modal and navigate to DisplayPrivateInfo when this component is integrated into the navigator
           visible={showSeedPhraseModal}
           phrase={seedPhraseData}
           toggleConfirmModal={() => setShowSeedPhraseModal(false)}

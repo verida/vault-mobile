@@ -1,28 +1,29 @@
 import { useNavigation } from '@react-navigation/native'
 import { Network } from '@verida/types'
-import {
-  DrawerIdentityList,
-  DrawerShortcutButton,
-  Icon,
-  IdentityAvatar,
-  Typography,
-} from 'components'
-import { useTheme } from 'contexts'
-import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
-import { useIdentityDrawer } from 'features/identityDrawer'
-import {
-  PROFILE_EMPTY_NAME_VALUE,
-  selectSelectedPublicProfile,
-} from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import {
+  DrawerIdentityList,
+  DrawerShortcutButton,
+  Icon,
+  IdentityAvatar,
+  InboxIcon,
+  Typography,
+} from '~/components'
+import { useTheme } from '~/contexts'
+import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
+import { useIdentityDrawer } from '~/features/identityDrawer'
+import {
+  PROFILE_EMPTY_NAME_VALUE,
+  selectSelectedPublicProfile,
+} from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 export type IdentityDrawerProps = {
   children: React.ReactNode
@@ -67,6 +68,11 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
 
   const handleSettingsPress = useCallback(() => {
     navigation.navigate('Settings')
+    close()
+  }, [navigation, close])
+
+  const handleInboxPress = useCallback(() => {
+    navigation.navigate('Inbox')
     close()
   }, [navigation, close])
 
@@ -118,6 +124,12 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                 </Typography>
               </View>
               <View style={styles.shortcutsContainer}>
+                <DrawerShortcutButton
+                  label='Inbox'
+                  icon={<InboxIcon size={theme.iconSize.m} />}
+                  onPress={handleInboxPress}
+                  style={styles.shortcutButton}
+                />
                 <DrawerShortcutButton
                   label='Share Identity'
                   icon={
@@ -257,5 +269,26 @@ const createStyles = (theme: Theme) =>
       borderTopWidth: 1,
       borderBottomColor: theme.color.lightGrey,
       borderBottomWidth: 1,
+    },
+    badge: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 4,
+      position: 'absolute',
+      right: -7,
+      top: -9,
+      height: 20,
+      minWidth: 20,
+      backgroundColor: theme.color.orange,
+      borderRadius: theme.roundness.full,
+      overflow: 'hidden',
+      borderColor: theme.color.background,
+      borderWidth: 2,
+    },
+    badgeText: {
+      fontFamily: theme.fontFamily.semibold,
+      fontSize: 10,
+      lineHeight: 12,
+      color: theme.color.onError,
     },
   })

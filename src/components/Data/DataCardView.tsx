@@ -1,10 +1,12 @@
-import { DataFolderDefinition, dataFolders } from 'features/data'
-import { Logger } from 'features/telemetry'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import Folder from 'api/VaultCommon/managers/data/folder'
-import { useMainNavigation } from 'navigation/hooks'
+import Folder from '~/api/VaultCommon/managers/data/folder'
+import { DataFolderDefinition, dataFolders } from '~/features/data'
+import { Logger } from '~/features/telemetry'
+import { MainStackParams } from '~/navigation/types'
 
 import { DataCardList } from './DataCardList'
 
@@ -20,7 +22,9 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<any[]>([])
-  const navigation = useMainNavigation()
+
+  // TODO: Find what's best to use here, the built-in useNavigation with a generic or a custom one
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   useEffect(() => {
     const init = () => {

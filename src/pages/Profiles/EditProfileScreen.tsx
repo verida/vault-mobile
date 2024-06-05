@@ -1,26 +1,23 @@
-import { selectSelectedAccount } from 'features/identities'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Keyboard, View } from 'react-native'
+
+import AccountManager from '~/api/AccountManager'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import { FormInput } from '~/components/Input/FormInput'
+import Label from '~/components/Label'
+import DropDownPicker from '~/components/Select'
+import { selectSelectedAccount } from '~/features/identities'
 import {
   PublicProfile,
   selectSelectedPublicProfile,
   setPublicProfileByDid,
-} from 'features/profiles'
-import { Logger } from 'features/telemetry'
-import { COUNTRIES, CountrySelectItem } from 'helpers/countries'
-import { emitter } from 'helpers/emitter'
-import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
-import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
-
-import AccountManager from 'api/AccountManager'
-import { FormInput } from 'components/Input/FormInput'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
-
-import Button from '../../components/Button'
-import Label from '../../components/Label'
-import DropDownPicker from '../../components/Select'
-import InputStyles from '../../styles/inputs'
+} from '~/features/profiles'
+import { Logger } from '~/features/telemetry'
+import { COUNTRIES, CountrySelectItem } from '~/helpers/countries'
+import { emitter } from '~/helpers/emitter'
+import { MainStackScreenProps } from '~/navigation'
+import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
+import InputStyles from '~/styles/inputs'
 
 const logger = Logger.create('Pages/Profiles/EditProfile')
 
@@ -53,12 +50,18 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
   } = props
   const { title, option } = params
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: title,
+    })
+  }, [navigation, title])
+
   const dispach = useAppDispatch()
   const selectedAccount = useAppSelector(selectSelectedAccount)
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
 
-  const [disabled, setDisabled] = useState(false)
-  const [edited, setEdited] = useState(option.value)
+  const [disabled, setDisabled] = useState<boolean>(false)
+  const [edited, setEdited] = useState<string>(option.value)
   const [inputError, setInputError] = useState<{
     inputMaxLength?: number
     isExceededMaxLength?: boolean
@@ -66,11 +69,12 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
     inputMaxLength: 0,
     isExceededMaxLength: false,
   })
-  const onChangeCountry = (countryItem: CountrySelectItem) => {
-    setEdited(countryItem.value)
-  }
 
-  const saveValue = async () => {
+  const handleCountryChange = useCallback((countryItem: CountrySelectItem) => {
+    setEdited(countryItem.value)
+  }, [])
+
+  const handleSaveButtonPress = useCallback(async () => {
     Keyboard.dismiss()
     try {
       const key = option.key
@@ -94,94 +98,100 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
     }
 
     navigation.goBack()
-  }
+  }, [
+    dispach,
+    edited,
+    navigation,
+    option.key,
+    publicProfileData,
+    selectedAccount,
+  ])
 
-  const handleInput = (text: string, maxLength: number) => {
-    setEdited(text)
-    const defaultValue = {
-      inputMaxLength: maxLength,
-      isExceededMaxLength: false,
-    }
-    if (text.length >= maxLength) {
-      setInputError({
-        ...defaultValue,
-        isExceededMaxLength: true,
-      })
-    } else {
-      setInputError({
-        ...inputError,
+  const handleInput = useCallback(
+    (text: string, maxLength: number) => {
+      setEdited(text)
+      const defaultValue = {
+        inputMaxLength: maxLength,
         isExceededMaxLength: false,
-      })
-    }
-  }
+      }
+      if (text.length >= maxLength) {
+        setInputError({
+          ...defaultValue,
+          isExceededMaxLength: true,
+        })
+      } else {
+        setInputError({
+          ...inputError,
+          isExceededMaxLength: false,
+        })
+      }
+    },
+    [inputError, setEdited]
+  )
 
   return (
-    <Container>
-      <NavigationHeader title={title} left={{ icon: 'close' }} />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}>
-        <Content
-          contentContainerStyle={{
-            flex: 1,
-            margin: 20,
-            justifyContent: 'space-between',
-          }}>
-          <View style={{ flex: 1, paddingTop: 16 }}>
-            {option.type === 'input' && (
-              <FormInput
-                placeholder={`Enter the ${option.label}`}
-                label={option.label}
-                value={edited}
-                autoFocus={true}
-                errorMessage={
-                  inputError.isExceededMaxLength
-                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
-                    : undefined
-                }
-                maxLength={MAX_INPUT_LENGTH}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_INPUT_LENGTH)
-                }}
-                autoCapitalize='none'
+    <ScreenWrapper isModal keyboardAvoiding>
+      <View
+        style={{
+          flex: 1,
+          margin: 20,
+          justifyContent: 'space-between',
+        }}>
+        <View style={{ flex: 1, paddingTop: 16 }}>
+          {option.type === 'input' && (
+            <FormInput
+              placeholder={`Enter the ${option.label}`}
+              label={option.label}
+              value={edited}
+              autoFocus={true}
+              errorMessage={
+                inputError.isExceededMaxLength
+                  ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                  : undefined
+              }
+              maxLength={MAX_INPUT_LENGTH}
+              onChangeText={(text) => {
+                handleInput(text, MAX_INPUT_LENGTH)
+              }}
+              autoCapitalize='none'
+            />
+          )}
+          {option.type === 'select' && (
+            <>
+              <Label style={{ marginTop: 0 }}>{option.label}</Label>
+              <DropDownPicker
+                searchable={true}
+                searchablePlaceholder='Search...'
+                placeholder=''
+                defaultValue={option.value}
+                items={COUNTRIES}
+                containerStyle={InputStyles.select}
+                onChangeItem={handleCountryChange}
               />
-            )}
-            {option.type === 'select' && (
-              <>
-                <Label style={{ marginTop: 0 }}>{option.label}</Label>
-                <DropDownPicker
-                  searchable={true}
-                  searchablePlaceholder='Search...'
-                  placeholder=''
-                  defaultValue={option.value}
-                  items={COUNTRIES}
-                  containerStyle={InputStyles.select}
-                  onChangeItem={onChangeCountry}
-                />
-              </>
-            )}
-            {option.type === 'textarea' && (
-              <FormInput
-                placeholder={`Enter the ${option.label}`}
-                label={option.label}
-                inputStyle={{ minHeight: 68 }}
-                value={edited}
-                errorMessage={
-                  inputError.isExceededMaxLength
-                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
-                    : undefined
-                }
-                multiline
-                numberOfLines={4}
-                maxLength={MAX_TEXTAREA_LENGTH}
-                editable
-                autoFocus={true}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_TEXTAREA_LENGTH)
-                }}
-              />
-            )}
-            {/* {option.type === 'phone' && (
+            </>
+          )}
+          {option.type === 'textarea' && (
+            <FormInput
+              placeholder={`Enter the ${option.label}`}
+              label={option.label}
+              inputStyle={{ minHeight: 68 }}
+              value={edited}
+              errorMessage={
+                inputError.isExceededMaxLength
+                  ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                  : undefined
+              }
+              multiline
+              numberOfLines={4}
+              maxLength={MAX_TEXTAREA_LENGTH}
+              editable
+              autoFocus={true}
+              onChangeText={(text) => {
+                handleInput(text, MAX_TEXTAREA_LENGTH)
+              }}
+            />
+          )}
+          {/* {option.type === 'phone' && (
             <IntlPhoneInput
               // ref={el => setPhoneInputRef(el)}
               containerStyle={{ ...InputStyles.input, paddingVertical: 4 }}
@@ -189,14 +199,17 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
               defaultCountry='SG'
             />
           )} */}
-          </View>
-          <Button
-            disabled={disabled || inputError.isExceededMaxLength}
-            onPress={saveValue}>
-            Save Changes
-          </Button>
-        </Content>
-      </KeyboardAvoidingView>
-    </Container>
+        </View>
+      </View>
+      <BottomActionBar
+        actions={[
+          {
+            label: 'Save Changes',
+            onPress: handleSaveButtonPress,
+            disabled: disabled || inputError.isExceededMaxLength,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }

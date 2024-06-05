@@ -1,20 +1,23 @@
 import { CoreTypes } from '@walletconnect/types'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import { Eip155RpcMethod } from 'features/blockchain/eip155'
-import { getMaybeChainMetadataByCaipChainId } from 'features/caip'
-import { Logger } from 'features/telemetry'
-import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
-import BottomActionsModal from 'components/BottomActionsModal'
-import Button from 'components/Button'
-import { Spacer } from 'components/Spacer'
-import { BLACK_COLOR } from 'constants/color'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import BottomActionsModal from '~/components/BottomActionsModal'
+import Button from '~/components/Button'
+import { Spacer } from '~/components/Spacer'
+import { BLACK_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import { Eip155RpcMethod } from '~/features/blockchain/eip155'
+import { getMaybeChainMetadataByCaipChainId } from '~/features/caip'
+import { Logger } from '~/features/telemetry'
+import { useModal } from '~/hooks'
 
 import { useWalletConnectDataFormatting } from '../hooks'
 import { WalletConnectSessionInfoCard } from './WalletConnect.Session.InfoCard'

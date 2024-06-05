@@ -1,18 +1,18 @@
 import BigDecimal from 'bignumber.js'
-import { Logo, Typography } from 'components'
-import { ChainMetadata } from 'features/caip'
-import {
-  AggregateWalletBannerBalance,
-  fixedPointCryptoAsBigDecimal,
-} from 'features/cryptoWallet'
-import { convertFromCryptoIntegerToMaybeDecimalFiat } from 'features/token'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { NumberCrypto, NumberFiat } from 'components/Numbers'
-import { CONFUSED_FACE } from 'constants/strings'
-import { Theme } from 'styles/types'
+import { Logo, Typography } from '~/components'
+import { NumberCrypto, NumberFiat } from '~/components/Numbers'
+import { CONFUSED_FACE } from '~/constants/strings'
+import { ChainMetadata } from '~/features/caip'
+import {
+  AggregateWalletBannerBalance,
+  fixedPointCryptoAsBigDecimal,
+} from '~/features/cryptoWallet'
+import { convertFromCryptoIntegerToMaybeDecimalFiat } from '~/features/token'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type RequestPaymentValueProps = {
   readonly integerCryptoAmount: `${number}`

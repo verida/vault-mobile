@@ -1,14 +1,14 @@
 import { Network } from '@verida/types'
-import { useTheme } from 'contexts'
-import { getAddressFromDID, getNetworkFromDID } from 'features/identities'
-import { PROFILE_EMPTY_NAME_VALUE, PublicProfile } from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
 
-import { IdentityAvatar } from 'components/Images'
-import { Checkmark } from 'components/Indicators'
-import { Theme } from 'styles/types'
+import { IdentityAvatar } from '~/components/Images'
+import { Checkmark } from '~/components/Indicators'
+import { useTheme } from '~/contexts'
+import { getAddressFromDID, getNetworkFromDID } from '~/features/identities'
+import { PROFILE_EMPTY_NAME_VALUE, PublicProfile } from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type DrawerIdentityListItemProps = {
   did: string

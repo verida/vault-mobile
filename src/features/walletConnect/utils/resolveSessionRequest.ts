@@ -1,7 +1,8 @@
 import { formatJsonRpcResult } from '@json-rpc-tools/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('WalletConnect')
 

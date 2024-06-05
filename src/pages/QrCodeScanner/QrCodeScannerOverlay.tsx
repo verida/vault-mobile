@@ -12,9 +12,9 @@ import { Defs, Mask, Rect, Svg } from 'react-native-svg'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-import Text from 'components/Text'
-import { GREY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import Text from '~/components/Text'
+import { GREY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 export type QrCodeScannerOverlayProps = Omit<ViewProps, 'children'> & {
   processing: boolean

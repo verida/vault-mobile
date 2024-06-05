@@ -1,11 +1,12 @@
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
-import { config } from 'config'
 import EventEmitter from 'events'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
 import moment from 'moment'
 import { Linking } from 'react-native'
+
+import { config } from '~/config'
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
 
 import AccountManager from './AccountManager'
 
@@ -32,8 +33,8 @@ function getDataConnectorUrl(did: string) {
 // possible states for status: syncing, disabled, active
 
 // @todo: Pull this from the server
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
+const FacebookIcon = require('~/assets/social_icons/facebook.png')
+const TwitterIcon = require('~/assets/social_icons/twitter.png')
 
 const CONNECTIONS: any = {
   facebook: {

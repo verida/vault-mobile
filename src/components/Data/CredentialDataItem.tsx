@@ -1,15 +1,4 @@
 import { VerifiableCredential } from '@veramo/core'
-import { DataField, DataItem } from 'features/data'
-import { getDidMetadata } from 'features/did'
-import { Logger } from 'features/telemetry'
-import { extractIssuer } from 'features/veramo'
-import { isValidVeridaDid } from 'features/verida'
-import {
-  CredentialValidityStatus,
-  getCredentialValidityStatus,
-  useCredential,
-  VeridaVerifiableCredentialRecord,
-} from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 // TODO: Get rid of native-base
@@ -24,11 +13,22 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { DefaultAvatar, getPublicProfile } from 'api/utils'
-import { DataFieldList } from 'components/Data/DataFieldList'
-import Text from 'components/Text'
-import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+import { DefaultAvatar, getPublicProfile } from '~/api/utils'
+import { DataFieldList } from '~/components/Data/DataFieldList'
+import Text from '~/components/Text'
+import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from '~/constants/color'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from '~/constants/text'
+import { DataField, DataItem } from '~/features/data'
+import { getDidMetadata } from '~/features/did'
+import { Logger } from '~/features/telemetry'
+import { extractIssuer } from '~/features/veramo'
+import { isValidVeridaDid } from '~/features/verida'
+import {
+  CredentialValidityStatus,
+  getCredentialValidityStatus,
+  useCredential,
+  VeridaVerifiableCredentialRecord,
+} from '~/features/verifiableCredential'
 
 const logger = Logger.create('Components/Data/CredentialDataItem')
 
@@ -66,7 +66,7 @@ export const CredentialDataItem: React.FunctionComponent<
     },
   ]
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [issuer, setIssuer] = useState({
     did: extractedIssuer,
     name: 'Unknown',

@@ -1,8 +1,8 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { logout } from 'features/auth'
 
-import { RootState } from 'reduxStore/types'
+import { logout } from '~/features/auth'
+import { RootState } from '~/reduxStore/types'
 
 export interface InboxState {
   newMessagesCount: number

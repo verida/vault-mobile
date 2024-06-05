@@ -1,6 +1,6 @@
 import { LinkingOptions } from '@react-navigation/native'
 
-import { RootStackParams } from 'navigation/types'
+import { RootStackParams } from '~/navigation/types'
 
 /**
  * This is the configuration for the navigation linking.

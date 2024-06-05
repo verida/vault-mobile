@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
-import { config } from 'config'
 import * as React from 'react'
 
+import { config } from '~/config'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
@@ -9,7 +9,8 @@ import {
   ChainMetadatas,
   isSupportedCaipNamespace,
   UseChainMetadataState,
-} from '../../caip'
+} from '~/features/caip'
+
 import { useGetBlockchainNetworksQuery } from '../redux'
 import { BlockchainNetwork } from '../types'
 

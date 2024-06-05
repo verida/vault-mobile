@@ -2,16 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { ScreenWrapper } from '~/components'
 import {
   ClaimUsernameView,
   ClaimUsernameViewRefProps,
   InputUsernameView,
   InputUsernameViewRefProps,
-} from 'components/PublicProfile'
-import Screen from 'components/Screen'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
+} from '~/components/PublicProfile'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation'
 
 enum PageType {
   InputUsername,
@@ -23,10 +22,18 @@ export type ClaimUsernameScreenParams = undefined
 type ClaimUsernameScreenProps = MainStackScreenProps<'ClaimUsername'>
 
 export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
-  _props
+  props
 ) => {
-  const styles = useThemeAwareStyle(createStyles)
-  const [currentPage] = useState(PageType.InputUsername)
+  const { navigation } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Username',
+    })
+  }, [navigation])
+
+  const [currentPage] = useState<PageType>(PageType.InputUsername)
+
   const pagerRef = useRef<PagerView>(null)
   const inputUsernameViewRef = useRef<InputUsernameViewRefProps>(null)
   const claimUsernameViewRef = useRef<ClaimUsernameViewRefProps>(null)
@@ -35,10 +42,12 @@ export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
     inputUsernameViewRef.current?.focusInput()
   }, [])
 
+  const styles = useThemeAwareStyle(createStyles)
+
   return (
-    <Screen
-      navBar={<NavigationHeader title={'Username'} left={{ icon: 'close' }} />}>
+    <ScreenWrapper isModal keyboardAvoiding>
       <PagerView
+        // FIXME: bottom bar blink when the keyboard appears. Remove the footer button from within each Page and move it in a BottomActionBar at the same level as the PagerView.
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}
@@ -55,7 +64,7 @@ export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
         {/* ClaimUsername */}
         <ClaimUsernameView ref={claimUsernameViewRef} />
       </PagerView>
-    </Screen>
+    </ScreenWrapper>
   )
 }
 

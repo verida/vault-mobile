@@ -13,6 +13,5 @@ export default async (): Promise<Config> => ({
   ],
   moduleNameMapper: {
     '^~/(.*)$': ['<rootDir>/src/$1'],
-    '^features(.*)$': ['<rootDir>/src/features$1'],
   },
 })

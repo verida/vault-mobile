@@ -1,21 +1,20 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Logger } from 'features/telemetry'
-import { useEmitter } from 'hooks'
 import { get, isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, Image, Linking, StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
-import { DefaultAvatar, getPublicProfile } from 'api/utils'
-import MailSvg from 'assets/icons/mail.svg'
-import Button from 'components/Button'
-import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { MainStackParams } from 'navigation/types'
-
-import Text from '../../Text'
+import AccountManager from '~/api/AccountManager'
+import { DefaultAvatar, getPublicProfile } from '~/api/utils'
+import MailSvg from '~/assets/icons/mail.svg'
+import Button from '~/components/Button'
+import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
+import Text from '~/components/Text'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { Logger } from '~/features/telemetry'
+import { useEmitter } from '~/hooks'
+import { MainStackParams } from '~/navigation/types'
 
 const logger = Logger.create('Component/GenericMessage')
 
@@ -40,7 +39,7 @@ const defaultSender: Sender = {
 function GenericMessage(props: GenericMessageProps) {
   const { inboxItem, navigation } = props
   const [sender, setSender] = useState<Sender>(defaultSender)
-  const [submitting, setSubmitting] = useState(false)
+  const [submitting, setSubmitting] = useState<boolean>(false)
 
   const fetchSenderData = React.useCallback(async () => {
     try {

@@ -22,8 +22,9 @@ import {
   getUniversalResolverFor,
 } from '@veramo/did-resolver'
 import { getResolver as getVdaDidResolver } from '@verida/vda-did-resolver'
-import { Logger } from 'features/telemetry'
 import React, { createContext } from 'react'
+
+import { Logger } from '~/features/telemetry'
 
 const logger = Logger.create('Veramo')
 

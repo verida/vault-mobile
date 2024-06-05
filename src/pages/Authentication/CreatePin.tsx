@@ -1,11 +1,10 @@
 import PINCode from '@haskkor/react-native-pincode'
-import { setBioAuthStatus } from 'features/auth'
 import React from 'react'
 
-import { useAuth } from 'hooks/useAuth'
-import { useAppDispatch } from 'reduxStore/types'
-
-import { BLACK_ORIGIN_COLOR } from '../../constants/color'
+import { BLACK_ORIGIN_COLOR } from '~/constants/color'
+import { setBioAuthStatus } from '~/features/auth'
+import { useAuth } from '~/hooks/useAuth'
+import { useAppDispatch } from '~/reduxStore/types'
 
 export const CreatePin: React.FC = () => {
   const { refresh } = useAuth()

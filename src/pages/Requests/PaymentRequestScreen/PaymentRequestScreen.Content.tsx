@@ -1,23 +1,23 @@
+import { ethers } from 'ethers'
+import * as React from 'react'
+import { Linking, StyleSheet, View } from 'react-native'
+
 import {
   RequestHeaderProps,
   StatusInfo,
   useMaybeWalletSelectorButtonProps,
-} from 'components'
-import { ethers } from 'ethers'
+} from '~/components'
+import Button from '~/components/Button'
 import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
   useChainIdForResourceParams,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import { useTokenCalculator } from 'features/token'
-import { useThemeAwareStyle } from 'hooks'
-import * as React from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
-
-import Button from 'components/Button'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { useTokenCalculator } from '~/features/token'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 import type { PaymentRequestScreenParams } from './'
 import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.Body'

@@ -1,8 +1,9 @@
-import { CryptoWalletProvider } from 'features/cryptoWallet'
-import { PolygonIdProvider } from 'features/polygonid'
-import { ProtocolsProvider } from 'features/protocols'
-import { VeramoProvider } from 'features/veramo'
 import React from 'react'
+
+import { CryptoWalletProvider } from '~/features/cryptoWallet'
+import { PolygonIdProvider } from '~/features/polygonid'
+import { ProtocolsProvider } from '~/features/protocols'
+import { VeramoProvider } from '~/features/veramo'
 
 type BehindAuthContextProvidersProps = {
   children: React.ReactNode

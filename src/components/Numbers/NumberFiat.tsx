@@ -1,5 +1,6 @@
 import React from 'react'
-import { DEFAULT_NUMBER_FIAT_FORMAT_OPTIONS } from 'utils'
+
+import { DEFAULT_NUMBER_FIAT_FORMAT_OPTIONS } from '~/utils'
 
 import { Number, NumberProps } from './Number'
 

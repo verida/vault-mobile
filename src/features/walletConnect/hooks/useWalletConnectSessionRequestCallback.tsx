@@ -1,10 +1,10 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { ActiveSessions } from 'features/walletConnect'
-import { useModal } from 'hooks'
 import * as React from 'react'
 
-import { useAuth } from 'hooks/useAuth'
+import { ActiveSessions } from '~/features/walletConnect'
+import { useModal } from '~/hooks'
+import { useAuth } from '~/hooks/useAuth'
 
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
 import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'

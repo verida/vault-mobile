@@ -1,4 +1,4 @@
-import { useAppSelector } from 'reduxStore/types'
+import { useAppSelector } from '~/reduxStore/types'
 
 import { selectSelectedPublicProfile } from '../slice'
 

@@ -1,15 +1,10 @@
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 
-import { Theme } from 'styles/types'
+import { Icon, Typography } from '~/components'
+import { useTheme } from '~/contexts'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type RadioButtonProps = {
   checked?: boolean
@@ -23,6 +18,7 @@ export const RadioButton: React.FunctionComponent<RadioButtonProps> = (
   const { checked, label, onToggle, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
 
   return (
     <View {...viewProps}>
@@ -32,18 +28,28 @@ export const RadioButton: React.FunctionComponent<RadioButtonProps> = (
         onPress={onToggle}
         disabled={!onToggle}
         hitSlop={{ top: 5, right: 10, bottom: 5, left: 10 }}>
-        <Text style={styles.label}>{label}</Text>
+        <Typography variant='bodySemiBold' style={styles.label}>
+          {label}
+        </Typography>
         {checked ? (
-          <Icon name='circle-slice-8' size={24} style={styles.iconChecked} />
+          <Icon
+            name='radio-button-checked'
+            size={24}
+            color={theme.color.success}
+          />
         ) : (
-          <Icon name='circle-outline' size={24} style={styles.iconUnchecked} />
+          <Icon
+            name='radio-button-unchecked'
+            size={24}
+            color={theme.color.lightGrey}
+          />
         )}
       </TouchableOpacity>
     </View>
   )
 }
 
-const createStyles = (theme: Theme) =>
+const createStyles = (_theme: Theme) =>
   StyleSheet.create({
     container: {
       width: '100%',
@@ -53,15 +59,6 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'space-between',
     },
     label: {
-      fontFamily: theme.fontFamily.semibold,
-      fontSize: theme.fontSize.m,
-      lineHeight: 21,
       textTransform: 'capitalize',
-    },
-    iconChecked: {
-      color: theme.color.success,
-    },
-    iconUnchecked: {
-      color: theme.color.lightGrey,
     },
   })

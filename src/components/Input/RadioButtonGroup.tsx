@@ -1,9 +1,9 @@
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { RadioButton } from 'components/Input/RadioButton'
-import { Theme } from 'styles/types'
+import { RadioButton } from '~/components/Input/RadioButton'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type RadioButtonItem = {
   value: string

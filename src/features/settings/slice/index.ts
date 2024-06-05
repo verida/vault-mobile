@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
-import { RootState } from 'reduxStore/types'
+import { RootState } from '~/reduxStore/types'
 
 export interface SettingsState {
   showSeedPhraseReminder: boolean

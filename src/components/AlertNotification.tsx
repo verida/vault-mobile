@@ -8,15 +8,14 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import Text from 'components/Text'
+import Text from '~/components/Text'
 import {
   LIGHT_ORANGE_COLOR,
   LIGHT_SUCCESS_COLOR,
+  ORANGE_COLOR,
   SUCCESS_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-
-import { ORANGE_COLOR } from '../constants/color'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
@@ -30,6 +29,10 @@ export type AlertNotificationProps = Omit<ViewProps, 'children'> & {
   type: 'success' | 'failure'
   timeOutInSeconds: number
 }
+
+/**
+ * @deprecated
+ */
 const AlertNotification = (props: AlertNotificationProps) => {
   const {
     isOpened,

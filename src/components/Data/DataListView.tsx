@@ -1,8 +1,8 @@
-import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import Folder from 'api/VaultCommon/managers/data/folder'
+import Folder from '~/api/VaultCommon/managers/data/folder'
+import { Logger } from '~/features/telemetry'
 
 import { DataGridList } from './DataGridList'
 
@@ -18,7 +18,7 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<Record<string, unknown>[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {

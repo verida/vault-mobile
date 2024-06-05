@@ -1,7 +1,8 @@
 import { migrateContext as migrateVeridaContext } from '@verida/client-rn'
 import { EnvironmentType, IContext } from '@verida/types'
-import { config } from 'config'
-import { Logger } from 'features/telemetry'
+
+import { config } from '~/config'
+import { Logger } from '~/features/telemetry'
 
 import { UpdateContextMigrationProgressFunction } from '../types'
 import { getNetworkFromDID } from './network'

@@ -15,8 +15,8 @@ import {
   LIGHTGREY_COLOR,
   SEPARATOR,
   WHITE_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 import Text from './Text'
 
@@ -31,6 +31,9 @@ export interface BottomActionsModalProps extends ModalProps {
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen')
 
+/**
+ * @deprecated To delete
+ */
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
   const {
     title,

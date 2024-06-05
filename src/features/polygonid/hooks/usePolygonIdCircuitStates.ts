@@ -1,8 +1,9 @@
 import { CircuitId } from '@0xpolygonid/js-sdk'
-import { Logger } from 'features/telemetry'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { CircuitStatus, UpdateStateCallback } from '../types'
+import { Logger } from '~/features/telemetry'
+
+import { CircuitStates, CircuitStatus, UpdateStateCallback } from '../types'
 import {
   areCircuitsAvailable,
   areCircuitsDownloading,
@@ -19,7 +20,7 @@ export function usePolygonIdCircuitStates(
   circuitStorage: PolygonIdCircuitStorage,
   requiredCircuitIds: CircuitId[]
 ) {
-  const [circuitStates, setCircuitStates] = useState(
+  const [circuitStates, setCircuitStates] = useState<CircuitStates>(
     getInitialCircuitStates(requiredCircuitIds)
   )
 

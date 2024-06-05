@@ -1,27 +1,28 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
+import React from 'react'
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+
+import CompleteSVG from '~/assets/complete.svg'
+import Text from '~/components/Text'
+import { DEFAULT_LOCALE } from '~/constants/locale'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import {
   AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
-} from 'features/cryptoWallet'
-import { Icon } from 'native-base'
-import React from 'react'
-import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+} from '~/features/cryptoWallet'
 
-import CompleteSVG from 'assets/complete.svg'
-import Text from 'components/Text'
-import { DEFAULT_LOCALE } from 'constants/locale'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { Icon } from '../Icon'
 
-export default ({
-  transaction,
-  aggregateWalletBannerBalance,
-}: {
+export type TransactionInfoProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly transaction: DetailedTransaction
-}) => {
+}
+
+export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
+  const { transaction, aggregateWalletBannerBalance } = props
   const { resource, decimals, symbol } = aggregateWalletBannerBalance
 
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
@@ -71,10 +72,7 @@ export default ({
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.address)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' size={22} color='rgba(66, 59, 206, 1)' />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>
@@ -117,10 +115,7 @@ export default ({
             <TouchableOpacity
               onPress={() => Clipboard.setString(transaction.id)}
               style={styles.copyButton}>
-              <Icon
-                name='copy-outline'
-                style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-              />
+              <Icon name='clipboard' color={'rgba(66, 59, 206, 1)'} size={22} />
               <Text style={styles.copyText}>Copy</Text>
             </TouchableOpacity>
           </View>
@@ -136,14 +131,7 @@ export default ({
               }}>
               View on explorer
             </Text>
-            <Icon
-              name='enter-outline'
-              style={{
-                color: 'rgba(66, 59, 206, 1)',
-                fontSize: 21,
-                marginLeft: 2,
-              }}
-            />
+            <Icon name='enter' color={'rgba(66, 59, 206, 1)'} size={22} />
           </TouchableOpacity>
         )}
       </View>
@@ -154,8 +142,6 @@ export default ({
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.1)',
     flex: 1,
   },
   content: {

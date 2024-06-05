@@ -1,20 +1,5 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { Network } from '@verida/types'
-import { Icon, IdentityAvatar } from 'components'
-import { useTheme } from 'contexts'
-import {
-  getAddressFromDID,
-  getNetworkFromDID,
-  useCurrentIdentity,
-} from 'features/identities'
-import { useIdentityDrawer } from 'features/identityDrawer'
-import { selectNewMessagesCount } from 'features/inbox'
-import {
-  PROFILE_EMPTY_NAME_VALUE,
-  selectPublicProfilesLoadingState,
-  useCurrentProfile,
-} from 'features/profiles'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import {
   StatusBar,
@@ -25,12 +10,25 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import { Icon, IdentityAvatar, InboxIcon } from '~/components'
+import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
+import { useTheme } from '~/contexts'
+import {
+  getAddressFromDID,
+  getNetworkFromDID,
+  useCurrentIdentity,
+} from '~/features/identities'
+import { useIdentityDrawer } from '~/features/identityDrawer'
+import {
+  PROFILE_EMPTY_NAME_VALUE,
+  selectPublicProfilesLoadingState,
+  useCurrentProfile,
+} from '~/features/profiles'
+import { useThemeAwareStyle } from '~/hooks'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
-const MAX_INBOX_COUNT = 10
 
 export type HomeScreenHeaderProps = BottomTabHeaderProps
 
@@ -58,13 +56,7 @@ export const HomeScreenHeader: React.FunctionComponent<
     : Network.MYRTLE
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
-  const { toggle: toggleDrawer } = useIdentityDrawer()
-
-  const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
-  const displayedInboxCount =
-    unreadMessagesCount >= MAX_INBOX_COUNT
-      ? `${MAX_INBOX_COUNT - 1}+`
-      : unreadMessagesCount
+  const { open: openIdentityDrawer } = useIdentityDrawer()
 
   const handleInboxPress = useCallback(() => {
     navigation.navigate('Inbox')
@@ -79,9 +71,9 @@ export const HomeScreenHeader: React.FunctionComponent<
   return (
     <>
       <StatusBar
-        barStyle='dark-content'
+        barStyle={theme.statusBar.defaultStyle}
+        backgroundColor='transparent'
         translucent
-        backgroundColor={theme.color.background}
       />
       <View
         style={[
@@ -93,7 +85,7 @@ export const HomeScreenHeader: React.FunctionComponent<
           },
         ]}>
         <TouchableOpacity
-          onPress={toggleDrawer}
+          onPress={openIdentityDrawer}
           activeOpacity={0.4}
           hitSlop={HIT_SLOP}
           style={styles.identityContainer}>
@@ -133,16 +125,7 @@ export const HomeScreenHeader: React.FunctionComponent<
             onPress={handleInboxPress}
             hitSlop={HIT_SLOP}
             style={styles.firstActionIcon}>
-            {/* TODO: Factorise an Inbox icon button with its badge for unread messages */}
-            <Icon name='inbox' size={theme.iconSize.m} />
-            {/* TODO: Factorise a Badge component */}
-            {unreadMessagesCount ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText} numberOfLines={1}>
-                  {displayedInboxCount}
-                </Text>
-              </View>
-            ) : null}
+            <InboxIcon size={theme.iconSize.m} />
           </TouchableOpacity>
         </View>
       </View>

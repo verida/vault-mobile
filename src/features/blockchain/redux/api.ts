@@ -1,10 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ChainId } from 'caip'
-import { config } from 'config'
 import { REHYDRATE } from 'redux-persist'
 
-import { RootState } from 'reduxStore/types'
+import { config } from '~/config'
+import { RootState } from '~/reduxStore/types'
 
 import { BlockchainNetwork } from '../types'
 

@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
@@ -20,22 +20,7 @@
     "types": ["jest", "node"],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "*": ["src/*"],
-      "api/*": ["src/api/*"],
-      "assets/*": ["src/assets/*"],
-      "components/*": ["src/components/*"],
-      "config/*": ["src/config/*"],
-      "constants/*": ["src/constants/*"],
-      "features/*": ["src/features/*"],
-      "helpers/*": ["src/helpers/*"],
-      "pages/*": ["src/pages/*"],
-      "routes/*": ["src/routes/*"],
-      "reduxStore/*": ["src/reduxStore/*"],
-      "styles/*": ["src/styles/*"],
-      "hooks/*": ["src/hooks/*"],
-      "utils/*": ["src/utils/*"],
-      "react": ["./node_modules/@types/react"]
+      "~/*": ["src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts"],
