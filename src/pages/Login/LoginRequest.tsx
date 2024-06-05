@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import StorageEngineVerida from '@verida/client-rn/dist/src/context/engines/verida/database/engine'
 import EncryptionUtils from '@verida/encryption-utils'
 import { AuthContext, AuthTypeConfig, EnvironmentType } from '@verida/types'
@@ -47,8 +46,8 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
 ) => {
   const {
     route: { params },
+    navigation,
   } = props
-  const navigation = useNavigation()
 
   useEffect(() => {
     navigation.setOptions({
@@ -165,7 +164,7 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
             break
 
           case 'auth-vault-response':
-            navigation.navigate('Home')
+            navigation.navigate('Tabs', { screen: 'Home' })
             break
         }
       }
@@ -220,7 +219,7 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
     if (!saveSuccess) {
       Alert.alert('Warning', 'Failed to save request to history')
     }
-    navigation.navigate('Home')
+    navigation.navigate('Tabs', { screen: 'Home' })
   }
 
   const deny = async () => {
@@ -229,7 +228,7 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
         setStatus('denying')
         await saveLoginRequest(false)
       }
-      navigation.navigate('Home')
+      navigation.navigate('Tabs', { screen: 'Home' })
     } catch (error) {
       logger.error(error)
       setStatus('loaded')
@@ -337,7 +336,7 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
   }
 
   function tryAgainOnPress() {
-    props.navigation.navigate('ScanQrCode', {
+    navigation.navigate('ScanQrCode', {
       firstTime: false,
     })
   }
