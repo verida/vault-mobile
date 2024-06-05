@@ -14,9 +14,6 @@ import TextStyles from '~/styles/text'
 
 import Text from './Text'
 
-/**
- * @deprecated use the other custom `<Button>` component instead
- */
 export interface ButtonProps extends PropsWithChildren<unknown> {
   icon?: React.ReactNode
   color?: keyof typeof ButtonStyles
@@ -26,7 +23,9 @@ export interface ButtonProps extends PropsWithChildren<unknown> {
   textStyle?: ViewStyle | TextStyle
   onPress: ((event: GestureResponderEvent) => void) | undefined
 }
-
+/**
+ * @deprecated use the other custom `<Button>` component instead
+ */
 const Button: React.FC<ButtonProps> = (props) => {
   const {
     style = {},
