@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { BigNumber } from 'ethers'
 import { Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'

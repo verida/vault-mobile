@@ -116,7 +116,7 @@ export default class Folder {
       properties = json.allOf[json.allOf.length - 1].properties
     }
 
-    let viewAttributes = []
+    let viewAttributes: string[] = []
     if (layouts && layouts.view) {
       viewAttributes = layouts.view
     } else {

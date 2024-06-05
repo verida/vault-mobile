@@ -78,6 +78,7 @@ type LibIconName =
   | 'receive'
   | 'delete'
   | 'import'
+  | 'enter'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -401,6 +402,12 @@ export const Icon: React.FC<IconProps> = (props) => {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'enter':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='enter-outline' {...iconProps} />
         </IconWrapper>
       )
   }

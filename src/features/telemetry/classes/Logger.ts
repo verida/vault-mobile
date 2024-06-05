@@ -98,7 +98,7 @@ export class Logger {
       formattedMessage += `\n${error.stack}`
     }
 
-    const extra = []
+    const extra: Record<string, unknown>[] = []
     if (data) extra.push(data)
 
     console[level](formattedMessage, ...extra)

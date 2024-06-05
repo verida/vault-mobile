@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 
