@@ -432,6 +432,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
         </View>
         <View key='confirmation' style={styles.page}>
           <StatusBar
+            // There is no header with this page, so has to set the status bar accordingly, just in case it takes the status bar color from  previous screen (ie: OnboardingScreen)
             barStyle={theme.statusBar.defaultStyle}
             backgroundColor='transparent'
             translucent={true}
