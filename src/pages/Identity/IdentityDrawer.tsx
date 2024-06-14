@@ -136,7 +136,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   label='Inbox'
                   icon={<InboxIcon size={theme.iconSize.m} />}
                   onPress={handleInboxPress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='Share Identity'
@@ -148,7 +147,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleShareIdentityPress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='View Profile'
@@ -160,7 +158,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleViewProfilePress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='Settings'
@@ -172,7 +169,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleSettingsPress}
-                  style={styles.shortcutButton}
                 />
               </View>
             </View>
@@ -224,6 +220,7 @@ const createStyles = (theme: Theme) =>
       paddingBottom: theme.spacing.m,
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
+      gap: theme.spacing.s,
       alignItems: 'center',
     },
     avatar: {
@@ -231,23 +228,26 @@ const createStyles = (theme: Theme) =>
       aspectRatio: 1,
     },
     name: {
-      marginTop: theme.spacing.s,
       textAlign: 'center',
     },
     emptyName: {
       color: theme.color.textLightGrey,
       fontStyle: 'italic', // FIXME: Italic not applied
     },
+    didWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
     did: {
-      paddingHorizontal: theme.spacing.m,
+      flex: 1,
       textAlign: 'center',
       color: theme.color.textLightGrey,
     },
     shortcutsContainer: {
       padding: theme.spacing.m,
-    },
-    shortcutButton: {
-      marginBottom: theme.spacing.m,
+      gap: theme.spacing.m,
     },
     identitiesContainer: {
       flexShrink: 1,
@@ -297,15 +297,5 @@ const createStyles = (theme: Theme) =>
       fontSize: 10,
       lineHeight: 12,
       color: theme.color.onError,
-    },
-    copyButtonText: {
-      color: theme.color.black600,
-    },
-    didWrapper: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: theme.spacing.sm,
-      marginTop: theme.spacing.s,
     },
   })
