@@ -1,3 +1,16 @@
+# 1.5.0 (2024-xx-xx)
+
+## Enhancements
+
+- Harmonise the UI screens and headers throughout the application
+- Move the inbox button from the tab headers to the drawer
+- Add a "copy DID" button in the identity drawer
+- Prevent screenshot of screens with sensitive information (seed phrase, private key)
+
+## Bug Fixes
+
+- Fix transaction details screen failing to fetch information
+
 # 1.4.2 (2024-05-24)
 
 ## Bug fixes
