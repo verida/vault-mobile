@@ -32,7 +32,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
     navigation.setOptions({
       title: 'Log out',
       headerShown: !processing,
-      headerLeft: () => null,
+      // TODO: Block the navigation when processing
     })
   }, [navigation, processing])
 
