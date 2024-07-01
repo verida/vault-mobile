@@ -1,7 +1,9 @@
 import {
   addEventListener,
   fetch as fetchNetInfo,
+  refresh,
 } from '@react-native-community/netinfo'
+import { isEmpty } from 'lodash'
 import React, {
   createContext,
   useCallback,
@@ -49,17 +51,25 @@ export const InboxProvider: React.FC = ({ children }) => {
   const healthCheck = useDebouncedCallback(
     useCallback(async () => {
       if (loading) return
-      console.log('Heal Check')
+
+      console.log('Health Check')
 
       try {
         setLoading(true)
-        await AccountManager.getInstance().vault?.inbox.healthCheck()
+        const info =
+          await AccountManager.getInstance().vault?.inbox.healthCheck()
+
+        if (!isEmpty(info?.privateDb) && !isEmpty(info?.publicDb)) {
+          setConnected(true)
+          setRetryCount(0)
+        }
+
+        console.log('INFO', JSON.stringify(info, null, 2))
       } catch (error) {
         console.log('Error', retryCount, error)
-        if (retryCount > 3) {
+        if (retryCount > 10) {
           console.log('Need to restart')
           RNRestart.restart()
-          throw error
         }
 
         setTimeout(() => {
@@ -172,6 +182,7 @@ export const InboxProvider: React.FC = ({ children }) => {
           appState.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
+          await healthCheck()
           await initInboxMessaging()
           inbox.on('RESTART_INBOX', onFailedToConnect)
         } else if (
@@ -232,11 +243,11 @@ export const InboxProvider: React.FC = ({ children }) => {
         appState.current === 'active' &&
         nextAppState.match(/inactive|background/)
       ) {
-        fetchNetInfo().then((state) => {
-          console.log('Connection type', state.type)
-          console.log('Is connected?', state.isConnected)
-          setConnected(state.isConnected ?? false)
-        })
+        // fetchNetInfo().then((state) => {
+        //   console.log('Connection type', state.type)
+        //   console.log('Is connected?', state.isConnected)
+        //   setConnected(state.isConnected ?? false)
+        // })
       }
 
       appState.current = nextAppState
@@ -263,20 +274,27 @@ export const InboxProvider: React.FC = ({ children }) => {
     let tid: any
     console.log('Is Connected', connected)
     if (!connected) {
-      tid = setInterval(() => {
-        fetchNetInfo().then((state) => {
-          if (!state.isConnected) {
-            healthCheck()
-          } else {
-            setConnected(state.isConnected)
-          }
-        })
+      tid = setInterval(async () => {
+        const state = await fetchNetInfo()
+        console.log('Connection type', state.type)
+        console.log('Is connected?', state.isConnected)
+        setConnected(state.isConnected ?? false)
+        if (!state.isConnected) {
+          healthCheck()
+        } else {
+          setConnected(state.isConnected)
+        }
       }, 1000)
     } else {
       clearInterval(tid)
     }
 
+    const t2 = setTimeout(() => {
+      healthCheck()
+    }, 1000)
+
     return () => {
+      clearTimeout(t2)
       clearInterval(tid)
     }
   }, [connected, healthCheck])

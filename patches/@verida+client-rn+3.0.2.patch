@@ -146,10 +146,10 @@ index 7d09279..e28ceda 100644
  
      let filter = _.merge(
 diff --git a/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts b/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
-index 8eaaaa5..3d5eb38 100644
+index 8eaaaa5..4f49b88 100644
 --- a/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
 +++ b/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
-@@ -120,13 +120,30 @@ class VeridaInbox extends EventEmitter {
+@@ -120,13 +120,29 @@ class VeridaInbox extends EventEmitter {
      this._gc();
    }
  
@@ -177,12 +177,11 @@ index 8eaaaa5..3d5eb38 100644
 -  public async watch() {
 -    await this.init();
 +  public async watch(forcedInit = false) {
-+    console.log('HERE INBOX')
 +    await this.init(forcedInit);
      let inbox = this; // Setup watching for new inbox items in the public inbox
  
      const publicDb = await this.publicInbox.getDb();
-@@ -155,6 +172,7 @@ class VeridaInbox extends EventEmitter {
+@@ -155,6 +171,7 @@ class VeridaInbox extends EventEmitter {
          setTimeout(() => {
            console.log("Retrying to establish public inbox connection");
            inbox.watch();
@@ -190,7 +189,7 @@ index 8eaaaa5..3d5eb38 100644
          }, 1000);
        }); // Setup watching for any changes to the local private inbox (ie: marking an item as read)
  
-@@ -192,8 +210,8 @@ class VeridaInbox extends EventEmitter {
+@@ -192,8 +209,8 @@ class VeridaInbox extends EventEmitter {
     * @todo: (bug) This opens the datastore based on the database endpoint, needs to open the datastore
     * based on the messaging endpoint (when we support additional types)
     */
