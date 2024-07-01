@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { CryptoWalletProvider } from '~/features/cryptoWallet'
+import { InboxProvider } from '~/features/inbox'
 import { PolygonIdProvider } from '~/features/polygonid'
 import { ProtocolsProvider } from '~/features/protocols'
 import { VeramoProvider } from '~/features/veramo'
@@ -19,12 +20,14 @@ export const BehindAuthContextProviders: React.FunctionComponent<
 
   // TODO: Move other relavant context providers here
   return (
-    <CryptoWalletProvider>
-      <PolygonIdProvider>
-        <VeramoProvider>
-          <ProtocolsProvider>{children}</ProtocolsProvider>
-        </VeramoProvider>
-      </PolygonIdProvider>
-    </CryptoWalletProvider>
+    <InboxProvider>
+      <CryptoWalletProvider>
+        <PolygonIdProvider>
+          <VeramoProvider>
+            <ProtocolsProvider>{children}</ProtocolsProvider>
+          </VeramoProvider>
+        </PolygonIdProvider>
+      </CryptoWalletProvider>
+    </InboxProvider>
   )
 }

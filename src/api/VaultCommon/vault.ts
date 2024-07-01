@@ -17,6 +17,7 @@ export default class VaultCommon {
   constructor(client: any, vault: any) {
     this.client = client
     this.vault = vault
+
     this.inbox = new InboxManager(this)
     this.sync = new SyncManager(this)
     this.data = new DataManager(this)
@@ -28,5 +29,15 @@ export default class VaultCommon {
     this.profiles = {
       public: publicProfile,
     }
+  }
+
+  public async disconnect() {
+    this.vault.disconnect()
+    this.inbox = new InboxManager(this)
+  }
+
+  public async connect() {
+    this.vault.connect()
+    this.inbox = new InboxManager(this)
   }
 }

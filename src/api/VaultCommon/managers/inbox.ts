@@ -1,3 +1,5 @@
+import RNRestart from 'react-native-restart'
+
 import { Logger } from '~/features/telemetry'
 
 import { InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
@@ -164,6 +166,10 @@ export class InboxManager {
       publicDb: db2,
       publicDbCount: db2Count,
     }
+  }
+
+  public async healthCheck() {
+    return await this.info()
   }
 
   public async rebuild() {
