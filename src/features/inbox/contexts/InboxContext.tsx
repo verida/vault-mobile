@@ -63,11 +63,18 @@ export const InboxProvider: React.FC = ({ children }) => {
     500
   )
 
+  const maxRetryThreshold = 10
   const healthCheck = useDebouncedCallback(
     useCallback(async () => {
       if (loading) return
       try {
         setLoading(true)
+        // At the 3rd retry time, try to init Inbox DBs again
+        if (retryCount === 3) {
+          logger.info('Try to init the inbox again')
+          await AccountManager.getInstance().vault?.inbox.rebuild()
+        }
+
         const info =
           await AccountManager.getInstance().vault?.inbox.healthCheck()
 
@@ -75,11 +82,11 @@ export const InboxProvider: React.FC = ({ children }) => {
           setConnected(true)
           setRetryCount(0)
         }
-
-        console.log('INFO', JSON.stringify(info?.privateDb, null, 2))
       } catch (error) {
-        if (retryCount > 10) {
-          logger.info('Could not connect the Inbox, the app needs to restart')
+        if (retryCount > maxRetryThreshold) {
+          logger.info(
+            'Could not connect to the Inbox, the app needs to restart'
+          )
           RNRestart.restart()
           return
         }
@@ -138,31 +145,28 @@ export const InboxProvider: React.FC = ({ children }) => {
           nextAppState === 'active'
         ) {
           logger.info(`timeInBackground: ${Date.now() - timeInBackground}`)
-          // Restart in case the Wallet was put in the background for too long
-          // TODO: remove this once we have a reliable way to reconnect the inbox without restating the app
+          // Rebuild the inbox in case the Wallet was put in the background for too long(over 30 seconds and iOS destroys the active connections)
+          // TODO: remove this once we have a way to reconnect the inbox and all the active connections without restating the app
           if (Date.now() - timeInBackground > 30 * 60 * 60) {
-            RNRestart.restart()
-            return
-          } else {
-            setTimeInBackground(0)
+            logger.info('Try to init the inbox again')
+            await AccountManager.getInstance().vault?.inbox.rebuild()
           }
 
+          setTimeInBackground(0)
           healthCheck()
-          await initInboxMessaging()
-          inbox.on('RESTART_INBOX', onFailedToConnect)
+          initInboxMessaging()
+          inbox.on('INBOX_FAILED_TO_CONNECT', onFailedToConnect)
         } else if (
           appState.current === 'active' &&
           nextAppState.match(/inactive|background/)
         ) {
-          await disconnect()
-          inbox.removeListener('RESTART_INBOX', onFailedToConnect)
+          disconnect()
+          inbox.removeListener('INBOX_FAILED_TO_CONNECT', onFailedToConnect)
           setTimeInBackground(Date.now())
         }
 
-        await initInboxMessaging()
-
+        initInboxMessaging()
         DataConnectorsManager.triggerSync()
-
         appState.current = nextAppState
       }
 

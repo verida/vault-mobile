@@ -30,14 +30,4 @@ export default class VaultCommon {
       public: publicProfile,
     }
   }
-
-  public async disconnect() {
-    this.vault.disconnect()
-    this.inbox = new InboxManager(this)
-  }
-
-  public async connect() {
-    this.vault.connect()
-    this.inbox = new InboxManager(this)
-  }
 }

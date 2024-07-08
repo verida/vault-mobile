@@ -1,38 +1,3 @@
-diff --git a/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts b/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
-index cfa87b2..71bee4a 100644
---- a/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
-+++ b/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
-@@ -24,7 +24,7 @@ declare class Datastore implements IDatastore {
-      *
-      * The errors remain until they are replaced by any new errors.
-      */
--    errors: object;
-+    errors: Array<Error>;
-     /**
-      * Create a new Datastore.
-      *
-@@ -83,7 +83,7 @@ declare class Datastore implements IDatastore {
-      * console.log(results);
-      * @returns {object[]} An array of database records.
-      */
--    getMany(customFilter?: any, options?: any): Promise<object[]>;
-+    getMany<T extends object = object>(customFilter?: any, options?: any): Promise<T[]>;
-     /**
-      * Get a single database record that matches.
-      *
-diff --git a/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js b/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-index 312b088..9cea147 100644
---- a/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-+++ b/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-@@ -245,6 +245,8 @@ var VeridaInbox = /** @class */ (function (_super) {
-                             //console.log(err)
-                             // This often happens when changing networks, so don't log
-                             setTimeout(function () {
-+                                inbox.emit('RESTART_INBOX', {})
-+                                console.log('HERE RESTART_INBOX')
-                                 console.log("Retrying to establish public inbox connection");
-                                 inbox.watch();
-                             }, 1000);
 diff --git a/node_modules/@verida/client-rn/package.json b/node_modules/@verida/client-rn/package.json
 index b3d9e84..3f8b490 100644
 --- a/node_modules/@verida/client-rn/package.json
@@ -106,97 +71,15 @@ index b3d9e84..3f8b490 100644
 +  }
  }
 \ No newline at end of file
-diff --git a/node_modules/@verida/client-rn/src/client.ts b/node_modules/@verida/client-rn/src/client.ts
-index 6d5d257..86d3f34 100644
---- a/node_modules/@verida/client-rn/src/client.ts
-+++ b/node_modules/@verida/client-rn/src/client.ts
-@@ -53,7 +53,7 @@ class Client implements IClient {
-    *
-    * @param userConfig ClientConfig Configuration for establishing a connection to the Verida network
-    */
--  constructor(userConfig: ClientConfig) {
-+  constructor(userConfig: Partial<ClientConfig>) {
-     this.environment = userConfig.environment
-       ? <EnvironmentType> userConfig.environment
-       : DEFAULT_CONFIG.environment;
-diff --git a/node_modules/@verida/client-rn/src/context/datastore.ts b/node_modules/@verida/client-rn/src/context/datastore.ts
-index 7d09279..e28ceda 100644
---- a/node_modules/@verida/client-rn/src/context/datastore.ts
-+++ b/node_modules/@verida/client-rn/src/context/datastore.ts
-@@ -31,7 +31,7 @@ class Datastore implements IDatastore {
-    *
-    * The errors remain until they are replaced by any new errors.
-    */
--  public errors: object = {};
-+  public errors: Array<Error> = {};
- 
-   /**
-    * Create a new Datastore.
-@@ -116,10 +116,10 @@ class Datastore implements IDatastore {
-    * console.log(results);
-    * @returns {object[]} An array of database records.
-    */
--  public async getMany(
-+  public async getMany<T extends object = object>(
-     customFilter: any = {},
-     options: any = {}
--  ): Promise<object[]> {
-+  ): Promise<T[]> {
-     await this.init();
- 
-     let filter = _.merge(
 diff --git a/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts b/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
-index 8eaaaa5..4f49b88 100644
+index 8eaaaa5..d10702b 100644
 --- a/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
 +++ b/node_modules/@verida/client-rn/src/context/engines/verida/messaging/inbox.ts
-@@ -120,13 +120,29 @@ class VeridaInbox extends EventEmitter {
-     this._gc();
-   }
- 
-+  public async healthCheck() {
-+    await this.init();
-+
-+    this.publicInbox.info()
-+      .then(info => {
-+        console.log('Connected to PouchDB. Info:', info);
-+      })
-+      .catch(err => {
-+        console.error('Error connecting to PouchDB:', err);
-+        setTimeout(() => {
-+          console.log('Retry to connect the inbox')
-+          this.watch(true)
-+        }, 5000); // Retry connection after 5 seconds
-+      });
-+  }
-+
-   public async getItem(itemId: string, options: any) {
-     await this.init();
-     return this.publicInbox.get(itemId, options);
-   }
- 
--  public async watch() {
--    await this.init();
-+  public async watch(forcedInit = false) {
-+    await this.init(forcedInit);
-     let inbox = this; // Setup watching for new inbox items in the public inbox
- 
-     const publicDb = await this.publicInbox.getDb();
-@@ -155,6 +171,7 @@ class VeridaInbox extends EventEmitter {
+@@ -154,6 +154,7 @@ class VeridaInbox extends EventEmitter {
+         // This often happens when changing networks, so don't log
          setTimeout(() => {
            console.log("Retrying to establish public inbox connection");
++          inbox.emit('INBOX_FAILED_TO_CONNECT', {})
            inbox.watch();
-+          inbox.emit('RESTART_INBOX', {})
          }, 1000);
        }); // Setup watching for any changes to the local private inbox (ie: marking an item as read)
- 
-@@ -192,8 +209,8 @@ class VeridaInbox extends EventEmitter {
-    * @todo: (bug) This opens the datastore based on the database endpoint, needs to open the datastore
-    * based on the messaging endpoint (when we support additional types)
-    */
--  public async init() {
--    if (this.initComplete) {
-+  public async init(forcedInit = false) {
-+    if (this.initComplete && !forcedInit) {
-       return;
-     }
- 
