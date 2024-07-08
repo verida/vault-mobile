@@ -1,5 +1,4 @@
 export * from './useEmitter'
-export * from './useEventHandlers'
 export * from './useModal'
 export * from './usePrevious'
 export * from './useThemeAwareStyle'
