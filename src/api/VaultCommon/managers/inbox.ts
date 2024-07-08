@@ -1,5 +1,3 @@
-import RNRestart from 'react-native-restart'
-
 import { Logger } from '~/features/telemetry'
 
 import { InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
