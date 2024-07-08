@@ -20,23 +20,11 @@ index cfa87b2..71bee4a 100644
      /**
       * Get a single database record that matches.
       *
-diff --git a/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js b/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-index 312b088..776de4f 100644
---- a/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-+++ b/node_modules/@verida/client-rn/dist/src/context/engines/verida/messaging/inbox.js
-@@ -246,6 +246,7 @@ var VeridaInbox = /** @class */ (function (_super) {
-                             // This often happens when changing networks, so don't log
-                             setTimeout(function () {
-                                 console.log("Retrying to establish public inbox connection");
-+                                inbox.emit('INBOX_FAILED_TO_CONNECT', {})
-                                 inbox.watch();
-                             }, 1000);
-                         }); // Setup watching for any changes to the local private inbox (ie: marking an item as read)
 diff --git a/node_modules/@verida/client-rn/src/client.ts b/node_modules/@verida/client-rn/src/client.ts
-index 6d5d257..86d3f34 100644
+index 1cc2f71..2b027c9 100644
 --- a/node_modules/@verida/client-rn/src/client.ts
 +++ b/node_modules/@verida/client-rn/src/client.ts
-@@ -53,7 +53,7 @@ class Client implements IClient {
+@@ -50,7 +50,7 @@ class Client implements IClient {
     *
     * @param userConfig ClientConfig Configuration for establishing a connection to the Verida network
     */
