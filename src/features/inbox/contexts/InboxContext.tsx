@@ -14,7 +14,7 @@ import React, {
 import { AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 import { useDispatch, useSelector } from 'react-redux'
-import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
+import { useThrottledCallback } from 'use-debounce'
 
 import AccountManager from '~/api/AccountManager'
 import DataConnectorsManager from '~/api/DataConnectorsManager'
