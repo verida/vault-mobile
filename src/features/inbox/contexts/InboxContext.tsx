@@ -130,13 +130,10 @@ export const InboxProvider: React.FC = ({ children }) => {
 
     async function init() {
       DataConnectorsManager.triggerSync()
-
       initInboxMessaging()
-      async function onAppStateChanged(nextAppState: AppStateStatus) {
-        const onFailedToConnect = () => {
-          healthCheck()
-        }
 
+      // Handle app state change
+      async function onAppStateChanged(nextAppState: AppStateStatus) {
         const messaging =
           await AccountManager.getInstance().vault?.inbox.getMessaging()
         const inbox = await messaging.getInbox()
@@ -146,7 +143,6 @@ export const InboxProvider: React.FC = ({ children }) => {
         ) {
           logger.info(`timeInBackground: ${Date.now() - timeInBackground}`)
           // Rebuild the inbox in case the Wallet was put in the background for too long(over 30 seconds and iOS destroys the active connections)
-          // TODO: remove this once we have a way to reconnect the inbox and all the active connections without restating the app
           if (Date.now() - timeInBackground > 30 * 60 * 60) {
             logger.info('Try to init the inbox again')
             await AccountManager.getInstance().vault?.inbox.rebuild()
@@ -155,13 +151,14 @@ export const InboxProvider: React.FC = ({ children }) => {
           setTimeInBackground(0)
           healthCheck()
           initInboxMessaging()
-          inbox.on('INBOX_FAILED_TO_CONNECT', onFailedToConnect)
+          // Listen for the inbox event that failed to connect from the SDK, and active the health check
+          inbox.on('INBOX_FAILED_TO_CONNECT', healthCheck)
         } else if (
           appState.current === 'active' &&
           nextAppState.match(/inactive|background/)
         ) {
           disconnect()
-          inbox.removeListener('INBOX_FAILED_TO_CONNECT', onFailedToConnect)
+          inbox.removeListener('INBOX_FAILED_TO_CONNECT', healthCheck)
           setTimeInBackground(Date.now())
         }
 
@@ -186,8 +183,7 @@ export const InboxProvider: React.FC = ({ children }) => {
       return async () => {
         appStateSubscriber?.remove()
         unsubscribeNetInfo?.()
-
-        await disconnect()
+        disconnect()
       }
     }
 
@@ -202,7 +198,7 @@ export const InboxProvider: React.FC = ({ children }) => {
   }, [dispatch, healthCheck, onMessage, selectedAccount, timeInBackground])
 
   useEffect(() => {
-    // For now keep checking the internet connection and inbox heath
+    // For now keep checking the internet connection and inbox heath at the interval
     // TODO: find a better way
     const tid = setInterval(
       async () => {
@@ -211,7 +207,7 @@ export const InboxProvider: React.FC = ({ children }) => {
         setConnected(state.isConnected ?? false)
         healthCheck()
       },
-      connected ? 12000 : 1000
+      connected ? 12 * 1000 : 1000 // Faster the interval check when not connected
     )
 
     return () => {
