@@ -144,6 +144,14 @@ export const InboxProvider: React.FC = ({ children }) => {
           if (Date.now() - timeInBackground > 30 * 60 * 60) {
             logger.info('Try to init the inbox again')
             await AccountManager.getInstance().vault?.inbox.rebuild()
+            // Soft restart the inbox in case the Wallet was put in the background for too long  for sure(over 60 seconds)
+            // Rebuild usually does not work in this case on testing
+          } else if (Date.now() - timeInBackground > 60 * 60 * 60) {
+            logger.info(
+              'The app is in the background for too long, do a soft restart'
+            )
+            RNRestart.restart()
+            return
           }
 
           setTimeInBackground(0)
