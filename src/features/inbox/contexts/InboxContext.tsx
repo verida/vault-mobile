@@ -64,7 +64,7 @@ export const InboxProvider: React.FC = ({ children }) => {
   )
 
   const maxRetryThreshold = 10
-  const healthCheck = useDebouncedCallback(
+  const healthCheck = useThrottledCallback(
     useCallback(async () => {
       if (loading) return
       try {
@@ -91,9 +91,7 @@ export const InboxProvider: React.FC = ({ children }) => {
           return
         }
 
-        setTimeout(() => {
-          setRetryCount((cur) => cur + 1)
-        }, 1200)
+        setRetryCount((cur) => cur + 1)
       } finally {
         setLoading(false)
       }
@@ -207,7 +205,7 @@ export const InboxProvider: React.FC = ({ children }) => {
         setConnected(state.isConnected ?? false)
         healthCheck()
       },
-      connected ? 12 * 1000 : 1000 // Faster the interval check when not connected
+      connected ? 12 * 1000 : 2 * 1000 // Faster the interval check when not connected
     )
 
     return () => {
