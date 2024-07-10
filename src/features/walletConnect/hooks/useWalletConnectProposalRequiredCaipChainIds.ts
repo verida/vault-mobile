@@ -8,7 +8,9 @@ export const getWalletConnectProposalRequiredCaipChainIds = (
     | null
     | undefined
 ) => {
-  const maybeRequiredNamespaces = proposal?.params?.requiredNamespaces
+  // The original implementation was using requiredNamespaces but most dapps are using optionalNamespaces. Our WalletConnect was not working at all.
+  // TODO: Straighten up the implementation here, rename required to optional
+  const maybeRequiredNamespaces = proposal?.params?.optionalNamespaces
 
   if (!maybeRequiredNamespaces) return []
 

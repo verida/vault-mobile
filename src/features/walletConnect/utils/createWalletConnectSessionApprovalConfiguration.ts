@@ -58,11 +58,12 @@ export function createWalletConnectSessionApprovalConfiguration({
   readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
 }): Parameters<Web3Wallet['approveSession']>[0] {
   const { id, params } = proposal
-  const { requiredNamespaces, relays } = params
+  const { optionalNamespaces, relays } = params
 
   const relayProtocol = relays[0]?.protocol
 
-  const namespaces = Object.entries(requiredNamespaces).reduce<Namespaces>(
+  // TODO: Deal with multi-chain and both optional and required namespaces.
+  const namespaces = Object.entries(optionalNamespaces).reduce<Namespaces>(
     (res, [namespaceKey, { methods, events, chains }]) => {
       // First, find accounts which correspond to the namespace.
       const approvedAccountsForNamespace = approvedAccounts.filter(
