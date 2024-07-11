@@ -2,8 +2,14 @@ import { CoreTypes } from '@walletconnect/types'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 import * as React from 'react'
-import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
 import BottomActionsModal from '~/components/BottomActionsModal'
 import Button from '~/components/Button'
