@@ -20,8 +20,9 @@ const extractMaybeRpcForCurrentlyUnsupportedChainIdFromProposal = ({
 }: ChainIdParams & {
   readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
 }): string | undefined => {
+  // TODO: Straighten up the implementation here, rename required to optional
   const maybeRequiredNamespace =
-    proposal?.params?.requiredNamespaces?.[namespace]
+    proposal?.params?.optionalNamespaces?.[namespace]
 
   if (!maybeRequiredNamespace) return undefined
 

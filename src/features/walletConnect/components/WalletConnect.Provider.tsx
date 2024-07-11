@@ -113,7 +113,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         )
 
       const { length: numberOfRequiredNamespaces } = Object.keys(
-        proposal.params.requiredNamespaces
+        proposal.params.optionalNamespaces
       )
 
       // HACK: For the case of required namespaces, it is not possible to only
@@ -134,7 +134,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       // HACK: Relies on the fact we know there's only a single namespace.
       /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
       const [requiredNamespace] = Object.values(
-        proposal.params.requiredNamespaces
+        proposal.params.optionalNamespaces
       )
 
       const maybeRequiredNamespaceChains = requiredNamespace?.chains
