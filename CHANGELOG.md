@@ -1,4 +1,4 @@
-# 1.5.0 (2024-xx-xx)
+# 1.5.0 (2024-07-12)
 
 ## Enhancements
 
@@ -10,6 +10,7 @@
 ## Bug Fixes
 
 - Fix transaction details screen failing to fetch information
+- Fix WalletConnect connection to dapps
 
 # 1.4.2 (2024-05-24)
 
