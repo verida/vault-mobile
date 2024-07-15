@@ -1,9 +1,10 @@
-import { useCryptoWalletProtocolHandler } from 'features/cryptoWallet'
-import { usePolygonIdProtocolHandler } from 'features/polygonid'
-import type { ProtocolHandler } from 'features/protocols'
-import { useStorybookProtocolHandler } from 'features/storybook'
-import { useWalletConnectProtocolHandler } from 'features/walletConnect'
 import { useRef } from 'react'
+
+import { useCryptoWalletProtocolHandler } from '~/features/cryptoWallet'
+import { usePolygonIdProtocolHandler } from '~/features/polygonid'
+import type { ProtocolHandler } from '~/features/protocols'
+import { useStorybookProtocolHandler } from '~/features/storybook'
+import { useWalletConnectProtocolHandler } from '~/features/walletConnect'
 
 export function useProtocolHandlers() {
   const handlersRef = useRef<ProtocolHandler[]>([])

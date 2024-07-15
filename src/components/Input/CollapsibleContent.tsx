@@ -1,4 +1,3 @@
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useState } from 'react'
 import {
   StyleSheet,
@@ -9,7 +8,8 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-import { Theme } from 'styles/types'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type CollapsibleContentProps = {
   title: string
@@ -22,7 +22,9 @@ export const CollapsibleContent: React.FunctionComponent<
 > = (props) => {
   const { title, expandedByDefault, value, children, ...viewProps } = props
 
-  const [isExpanded, setIsExpanded] = useState(expandedByDefault)
+  const [isExpanded, setIsExpanded] = useState<boolean>(
+    expandedByDefault ?? false
+  )
   const styles = useThemeAwareStyle(createStyles)
 
   const handleToggleCollapse = useCallback(() => {

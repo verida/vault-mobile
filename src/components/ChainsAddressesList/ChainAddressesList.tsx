@@ -10,13 +10,12 @@ import { ChainAddressesListItem } from './ChainAddressesListItem'
 
 export type ChainAddressesListProps = {
   list: LegacyCryptoWalletAccount[]
-  onPressPrivateKey: (privateKey: string) => void
 }
 
 export const ChainAddressesList: React.FC<ChainAddressesListProps> = (
   props
 ) => {
-  const { list, onPressPrivateKey } = props
+  const { list } = props
 
   // HACK: Remove duplicates. Whould not be necessary when accounts are properly set
   const tempMap = new Map<string, LegacyCryptoWalletAccount>()
@@ -30,13 +29,10 @@ export const ChainAddressesList: React.FC<ChainAddressesListProps> = (
   const renderItem: ListRenderItem<LegacyCryptoWalletAccount> = useCallback(
     ({ item }) => (
       <View style={styles.item}>
-        <ChainAddressesListItem
-          item={item}
-          onPressPrivateKey={onPressPrivateKey}
-        />
+        <ChainAddressesListItem item={item} />
       </View>
     ),
-    [styles.item, onPressPrivateKey]
+    [styles.item]
   )
 
   const hasData = filteredList.length > 0

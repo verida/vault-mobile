@@ -1,15 +1,15 @@
-import { BottomActionBar, ScreenWrapper } from 'components'
-import { selectSelectedAccount, useIdentities } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
-import LoadingView from 'components/LoadingView'
-import Text from 'components/Text'
-import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
-import { Theme } from 'styles/types'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import LoadingView from '~/components/LoadingView'
+import Text from '~/components/Text'
+import { selectSelectedAccount, useIdentities } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { useAppSelector } from '~/reduxStore/types'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('RemoveIdentityScreen')
 
@@ -27,12 +27,12 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState<boolean>(false)
   useEffect(() => {
     navigation.setOptions({
       title: 'Log out',
       headerShown: !processing,
-      headerBackVisible: false, // TODO: Update when reworking headers
+      // TODO: Block the navigation when processing
     })
   }, [navigation, processing])
 
@@ -40,7 +40,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 
   const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
 
-  const [canRemove] = useState(!!selectedAccount?.did)
+  const [canRemove] = useState<boolean>(!!selectedAccount?.did)
 
   const { removeIdentity } = useIdentities()
 
@@ -108,13 +108,13 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
           {
             label: 'Cancel',
             onPress: handleCancel,
-            color: 'grey',
+            variant: 'secondary',
           },
           {
             label: 'Log out',
             onPress: handleLogout,
             disabled: !canRemove,
-            color: 'danger',
+            variant: 'danger',
           },
         ]}
       />

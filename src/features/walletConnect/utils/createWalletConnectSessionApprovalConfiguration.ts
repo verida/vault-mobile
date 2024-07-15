@@ -1,7 +1,8 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { Web3Wallet } from '@walletconnect/web3wallet/dist/types/client'
 import { AccountId } from 'caip'
-import { Namespaces } from 'features/walletConnect'
+
+import { Namespaces } from '~/features/walletConnect'
 
 // Given a selection of AccountIds that have been chosen by the user (i.e. in
 // the WalletConnectModalConnectDapp), check to see that an entry exists in the
@@ -58,11 +59,12 @@ export function createWalletConnectSessionApprovalConfiguration({
   readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
 }): Parameters<Web3Wallet['approveSession']>[0] {
   const { id, params } = proposal
-  const { requiredNamespaces, relays } = params
+  const { optionalNamespaces, relays } = params
 
   const relayProtocol = relays[0]?.protocol
 
-  const namespaces = Object.entries(requiredNamespaces).reduce<Namespaces>(
+  // TODO: Deal with multi-chain and both optional and required namespaces.
+  const namespaces = Object.entries(optionalNamespaces).reduce<Namespaces>(
     (res, [namespaceKey, { methods, events, chains }]) => {
       // First, find accounts which correspond to the namespace.
       const approvedAccountsForNamespace = approvedAccounts.filter(

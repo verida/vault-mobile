@@ -1,10 +1,10 @@
-import { canMigrateToMainnet } from 'features/identities'
 import React from 'react'
 
-import MigrateIdentityIcon from 'assets/icons/migrate_identity_icon.svg'
-import UpdateProfileIcon from 'assets/icons/update_profile_icon.svg'
-// import ConnectIcon from 'assets/icons/connect_icon.svg'
-import MainWalletIcon from 'assets/icons/wallet_icon_2.svg'
+import MigrateIdentityIcon from '~/assets/icons/migrate_identity_icon.svg'
+import UpdateProfileIcon from '~/assets/icons/update_profile_icon.svg'
+// import ConnectIcon from '~/assets/icons/connect_icon.svg'
+import MainWalletIcon from '~/assets/icons/wallet_icon_2.svg'
+import { canMigrateToMainnet } from '~/features/identities'
 
 import { HomeScreenGettingStartedItem } from '../types'
 

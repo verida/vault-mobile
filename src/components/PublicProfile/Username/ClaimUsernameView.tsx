@@ -1,23 +1,21 @@
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from 'contexts/ThemeContext'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
 import LottieView from 'lottie-react-native'
 import React, { useImperativeHandle, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import UsernameManager from 'api/UsernameManager'
-import BlurCircle from 'assets/blur_circle.svg'
-import FailureCross from 'assets/failure_cross.svg'
-import SuccessTick from 'assets/success_tick.svg'
-import Button from 'components/Button'
-import Container from 'components/Container'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
-import { Title } from 'components/Typography/Title'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import UsernameManager from '~/api/UsernameManager'
+import BlurCircle from '~/assets/blur_circle.svg'
+import FailureCross from '~/assets/failure_cross.svg'
+import SuccessTick from '~/assets/success_tick.svg'
+import { BottomActionBar } from '~/components/ScreenLayouts'
+import { Headline } from '~/components/Typography/Headline'
+import { Text } from '~/components/Typography/Text'
+import { Title } from '~/components/Typography/Title'
+import { useTheme } from '~/contexts/ThemeContext'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Components/ClaimUsernameView')
 
@@ -25,20 +23,21 @@ export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
 }
 
+// TODO: Rework the layout properly
 export const ClaimUsernameView = React.forwardRef(
   (_, receivedRef: React.ForwardedRef<ClaimUsernameViewRefProps>) => {
     const navigation = useNavigation()
-    const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
-    const [inputUsername, setInputUsername] = useState('')
+    const [inputUsername, setInputUsername] = useState<string>('')
 
-    const [processing, setProcessing] = useState(false)
-    const [, setClaimingUsername] = useState(false)
-    const [showRetry, setShowRetry] = useState(false)
-    const [isDoneCreateUsername, setDoneCreateUsername] = useState(false)
+    const [processing, setProcessing] = useState<boolean>(false)
+    const [, setClaimingUsername] = useState<boolean>(false)
+    const [showRetry, setShowRetry] = useState<boolean>(false)
+    const [isDoneCreateUsername, setDoneCreateUsername] =
+      useState<boolean>(false)
     const [createUsernameErrorMessage, setCreateUsernameErrorMessage] =
-      useState('Please retry')
+      useState<string>('Please retry')
 
     useImperativeHandle(receivedRef, () => ({
       claimUsername: (username: string) => {
@@ -67,18 +66,14 @@ export const ClaimUsernameView = React.forwardRef(
     }
 
     return (
-      <Container
-        key='ClaimUsername'
-        withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+      <View key='ClaimUsername' style={styles.container}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             paddingBottom: theme.spacing.xxl,
             paddingTop: theme.spacing.l,
             paddingHorizontal: theme.spacing.m,
-          }}
-          keyboardShouldPersistTaps='handled'>
+          }}>
           <View
             style={{
               width: 128,
@@ -89,11 +84,11 @@ export const ClaimUsernameView = React.forwardRef(
               marginTop: 56,
               marginBottom: theme.spacing.xl,
             }}>
-            {processing ? (
+            {processing ? ( // TODO: Replace with StatusInfo
               <>
                 <BlurCircle />
                 <LottieView
-                  source={require('assets/animations/dots-loader.json')}
+                  source={require('~/assets/animations/dots-loader.json')}
                   autoPlay
                   loop
                   style={styles.dotsLoader}
@@ -142,46 +137,39 @@ export const ClaimUsernameView = React.forwardRef(
             </Title>
           )}
         </ScrollView>
-
-        <View
-          style={[
-            styles.bottomNavContainer,
-            { marginBottom: bottom + theme.spacing.m },
-          ]}>
-          {showRetry ? (
-            <Button
-              style={styles.button}
-              onPress={() => handleClaimUsername(inputUsername)}>
-              Retry
-            </Button>
-          ) : isDoneCreateUsername ? (
-            <Button style={styles.button} onPress={() => navigation.goBack()}>
-              Done
-            </Button>
-          ) : null}
-        </View>
-      </Container>
+        <BottomActionBar
+          actions={
+            showRetry
+              ? [
+                  {
+                    label: 'Retry',
+                    onPress: () => handleClaimUsername(inputUsername),
+                  },
+                ]
+              : isDoneCreateUsername
+                ? [
+                    {
+                      label: 'Done',
+                      onPress: () => navigation.goBack(),
+                    },
+                  ]
+                : []
+          }
+        />
+      </View>
     )
   }
 )
 
-const createStyles = (theme: Theme) =>
+const createStyles = (_theme: Theme) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     dotsLoader: {
       width: 48,
       height: 48,
       position: 'absolute',
-    },
-    bottomNavContainer: {
-      width: '100%',
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing.m,
-    },
-    button: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
     },
     pagerView: {
       flex: 1,

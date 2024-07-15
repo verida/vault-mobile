@@ -1,12 +1,12 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
 import * as React from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 import { $enum } from 'ts-enum-util'
 
-import Label, { DEFAULT_LABEL_COLOR } from 'components/Label'
-import DropDownPicker, { Option } from 'components/Select'
-import { DECLINE_COLOR } from 'constants/color'
-import InputStyles from 'styles/inputs'
+import Label, { DEFAULT_LABEL_COLOR } from '~/components/Label'
+import DropDownPicker, { Option } from '~/components/Select'
+import { DECLINE_COLOR } from '~/constants/color'
+import { SupportedBlockchainNamespace } from '~/features/blockchain'
+import InputStyles from '~/styles/inputs'
 
 import { useCreateChainMetadataFormFields } from '../hooks'
 

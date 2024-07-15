@@ -1,18 +1,18 @@
 import { useNavigation } from '@react-navigation/native'
-import { Icon, Typography } from 'components'
-import { useTheme } from 'contexts'
+import React from 'react'
+import { Pressable, StyleSheet, View, ViewProps } from 'react-native'
+
+import { Icon, Typography } from '~/components'
+import { NumberFiat } from '~/components/Numbers'
+import { useTheme } from '~/contexts'
 import {
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useCryptoWalletsStatus,
   useSelectedCryptoWallet,
-} from 'features/cryptoWallet'
-import { useThemeAwareStyle } from 'hooks'
-import React from 'react'
-import { Pressable, StyleSheet, View, ViewProps } from 'react-native'
-
-import { NumberFiat } from 'components/Numbers'
-import { Theme } from 'styles/types'
+} from '~/features/cryptoWallet'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 type CryptoWalletOverviewProps = ViewProps
 

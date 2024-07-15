@@ -1,4 +1,4 @@
-import { Logger } from 'features/telemetry'
+import { Logger } from '~/features/telemetry'
 
 import { InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
 import VaultCommon from '../vault'

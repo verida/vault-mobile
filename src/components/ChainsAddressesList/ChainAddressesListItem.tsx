@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
+import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useMemo } from 'react'
 import { StyleSheet, TouchableHighlight, View } from 'react-native'
 
@@ -13,30 +14,34 @@ import { Theme } from '~/styles/types'
 
 export type ChainAddressesListItemProps = {
   item: LegacyCryptoWalletAccount
-  onPressPrivateKey: (privateKey: string) => void
 }
 
 export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
   props
 ) => {
-  const { item, onPressPrivateKey } = props
+  const { item } = props
 
   const { showActionSheetWithOptions } = useActionSheet()
+  const navigation = useNavigation()
 
   const options = useMemo(() => {
-    const optionItems = ['Copy address']
+    const optionItems = ['Copy public address']
     if (item.privateKey) {
-      optionItems.push('Show Private Key')
+      optionItems.push('Show private key')
     }
     optionItems.push('Cancel')
     return optionItems
   }, [item.privateKey])
 
+  const { theme } = useTheme()
+  const styles = useThemeAwareStyle(createStyles)
+
   const handlePress = useCallback(() => {
     showActionSheetWithOptions(
       {
-        options: options,
-        cancelButtonIndex: options.length,
+        options,
+        cancelButtonIndex: options.length - 1,
+        tintColor: theme.color.black,
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
@@ -44,21 +49,23 @@ export const ChainAddressesListItem: React.FC<ChainAddressesListItemProps> = (
           return
         }
         if (item.privateKey && buttonIndex === 1) {
-          onPressPrivateKey(item.privateKey)
+          navigation.navigate('DisplayPrivateInfo', {
+            source: 'cryptoWallet',
+            type: 'privateKey',
+            sourceId: item.address,
+          })
           return
         }
       }
     )
   }, [
+    navigation,
     options,
     item.address,
     item.privateKey,
-    onPressPrivateKey,
     showActionSheetWithOptions,
+    theme.color.black,
   ])
-
-  const { theme } = useTheme()
-  const styles = useThemeAwareStyle(createStyles)
 
   return (
     <TouchableHighlight onPress={handlePress} underlayColor={theme.color.snow}>

@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React, { ReactNode } from 'react'
 import {
   ActivityIndicator,
@@ -9,7 +8,8 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { Text } from 'components/Typography/Text'
+import { Text } from '~/components/Typography/Text'
+import { useTheme } from '~/contexts/ThemeContext'
 
 export type AnimatedCheckboxProps = {
   checked?: boolean

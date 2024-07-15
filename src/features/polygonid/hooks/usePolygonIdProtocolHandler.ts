@@ -1,5 +1,6 @@
-import type { ProtocolHandler } from 'features/protocols'
 import { useCallback } from 'react'
+
+import type { ProtocolHandler } from '~/features/protocols'
 
 import { isPolygonIdMessage } from '../utils'
 import { usePolygonId } from './usePolygonId'

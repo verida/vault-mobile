@@ -1,10 +1,10 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { logout } from 'features/auth'
-import { selectAccounts } from 'features/identities'
-import { Logger } from 'features/telemetry'
 
-import { createAppAsyncThunk, RootState } from 'reduxStore/types'
+import { logout } from '~/features/auth'
+import { selectAccounts } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { createAppAsyncThunk, RootState } from '~/reduxStore/types'
 
 import { PublicProfile } from '../types'
 import { getPublicProfile } from '../utils'

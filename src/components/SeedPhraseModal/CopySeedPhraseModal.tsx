@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import BottomActionsModal from 'components/BottomActionsModal'
-import Button from 'components/Button'
+import BottomActionsModal from '~/components/BottomActionsModal'
+import Button from '~/components/Button'
 
 type Props = {
   visible: boolean
@@ -11,6 +11,9 @@ type Props = {
   onPress?: (phrase: string) => void
 }
 
+/**
+ * @deprecated try to use the screen 'DisplayPrivateInfo' instead
+ */
 export default (props: Props) => {
   const { visible, toggleConfirmModal, phrase } = props
   return (

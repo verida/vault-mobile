@@ -1,10 +1,10 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
-import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import Button from 'components/Button'
+import Button from '~/components/Button'
+import { Logger } from '~/features/telemetry'
 
 import { useWalletConnectContext } from '../contexts'
 

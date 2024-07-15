@@ -1,4 +1,4 @@
-import { VeridaRecord } from 'features/verida'
+import { VeridaRecord } from '~/features/verida'
 
 export type DataField = {
   field: string

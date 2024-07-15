@@ -1,7 +1,7 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 
-import { Theme } from 'styles/types'
+import { useTheme } from '~/contexts/ThemeContext'
+import { Theme } from '~/styles/types'
 
 type Generator<T extends Record<string, unknown>> = (theme: Theme) => T
 

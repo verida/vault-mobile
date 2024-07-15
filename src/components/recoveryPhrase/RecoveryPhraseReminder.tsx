@@ -1,20 +1,20 @@
 import { useNavigation } from '@react-navigation/native'
-import { selectSelectedAccount } from 'features/identities'
-import {
-  selectShowSeedPhraseReminder,
-  setShowSeedPhraseReminder,
-} from 'features/settings'
-import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch, useSelector } from 'react-redux'
 
-import AccountManager from 'api/AccountManager'
-import Text from 'components/Text'
-import { ORANGE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { Theme } from 'styles/types'
+import AccountManager from '~/api/AccountManager'
+import Text from '~/components/Text'
+import { ORANGE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
+import { selectSelectedAccount } from '~/features/identities'
+import {
+  selectShowSeedPhraseReminder,
+  setShowSeedPhraseReminder,
+} from '~/features/settings'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type RecoveryPhraseReminderProps = Omit<ViewProps, 'children'>
 

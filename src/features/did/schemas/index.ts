@@ -1,5 +1,6 @@
-import { VeridaBaseRecordSchema } from 'features/verida'
 import { z } from 'zod'
+
+import { VeridaBaseRecordSchema } from '~/features/verida'
 
 export const DidMetadataSchema = z.object({
   name: z.string().optional(),

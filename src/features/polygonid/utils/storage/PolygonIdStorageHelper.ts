@@ -1,6 +1,7 @@
 import { Context } from '@verida/client-rn'
 import { DatabaseOpenConfig, DatastoreOpenConfig } from '@verida/types'
-import { Logger } from 'features/telemetry'
+
+import { Logger } from '~/features/telemetry'
 
 import { PolygonIdVeridaDataSource } from './PolygonIdVeridaDataSource'
 import { PolygonIdVeridaMerkleTreeDataSource } from './PolygonIdVeridaMerkleTreeDataSource'

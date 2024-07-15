@@ -1,5 +1,6 @@
-import { DataField } from 'features/data'
 import _ from 'lodash'
+
+import { DataField } from '~/features/data'
 
 import VaultCommon from '../../vault'
 
@@ -115,7 +116,7 @@ export default class Folder {
       properties = json.allOf[json.allOf.length - 1].properties
     }
 
-    let viewAttributes = []
+    let viewAttributes: string[] = []
     if (layouts && layouts.view) {
       viewAttributes = layouts.view
     } else {

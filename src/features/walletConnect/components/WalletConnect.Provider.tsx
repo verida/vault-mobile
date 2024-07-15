@@ -5,20 +5,23 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
-import {
-  minifiedBlockchainAccountsToDropdownOptions,
-  useSelectedMinifiedBlockchainAccounts,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { useAuth } from 'hooks/useAuth'
-import { MainStackParams } from 'navigation/types'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
+import {
+  minifiedBlockchainAccountsToDropdownOptions,
+  useSelectedMinifiedBlockchainAccounts,
+} from '~/features/cryptoWallet'
+import { Logger } from '~/features/telemetry'
+import { useModal } from '~/hooks'
+import { useAuth } from '~/hooks/useAuth'
+import { MainStackParams } from '~/navigation/types'
 
 import {
   isWalletConnectConnection,
@@ -110,7 +113,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         )
 
       const { length: numberOfRequiredNamespaces } = Object.keys(
-        proposal.params.requiredNamespaces
+        proposal.params.optionalNamespaces
       )
 
       // HACK: For the case of required namespaces, it is not possible to only
@@ -131,7 +134,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       // HACK: Relies on the fact we know there's only a single namespace.
       /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
       const [requiredNamespace] = Object.values(
-        proposal.params.requiredNamespaces
+        proposal.params.optionalNamespaces
       )
 
       const maybeRequiredNamespaceChains = requiredNamespace?.chains

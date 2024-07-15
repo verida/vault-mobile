@@ -1,7 +1,7 @@
 module.exports = function (api) {
   api.cache(true)
   return {
-    presets: ['babel-preset-expo'],
+    presets: ['module:metro-react-native-babel-preset'],
     plugins: [
       [
         'module-resolver',
@@ -10,18 +10,6 @@ module.exports = function (api) {
           extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
           alias: {
             '~': ['./src'],
-            api: ['./src/api'],
-            assets: ['./src/assets'],
-            components: ['./src/components'],
-            config: ['./src/config'],
-            constants: ['./src/constants'],
-            helpers: ['./src/helpers'],
-            pages: ['./src/pages'],
-            routes: ['./src/routes'],
-            reduxStore: ['./src/reduxStore'],
-            styles: ['./src/styles'],
-            hooks: ['./src/hooks'],
-            utils: ['./src/utils'],
             stream: 'stream-browserify',
             crypto: 'react-native-quick-crypto',
             'react-native-crypto': 'react-native-quick-crypto',
@@ -34,6 +22,7 @@ module.exports = function (api) {
       '@babel/plugin-syntax-import-assertions',
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
     ],
     overrides: [
       {

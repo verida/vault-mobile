@@ -1,5 +1,4 @@
 import Color from 'color'
-import { useTheme } from 'contexts/ThemeContext'
 import React, {
   ForwardedRef,
   RefObject,
@@ -15,11 +14,12 @@ import {
 } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
-import { Icon } from 'components/Icon'
-import { Label } from 'components/Typography/Label'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import inputs from 'styles/inputs'
-import { Theme } from 'styles/types'
+import { Icon } from '~/components/Icon'
+import { Label } from '~/components/Typography/Label'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import inputs from '~/styles/inputs'
+import { Theme } from '~/styles/types'
 
 import { AnimatedCheckbox } from './AnimatedCheckbox'
 
@@ -68,7 +68,7 @@ export const FormInput = React.forwardRef(
     } = props
     const { theme } = useTheme()
     const styles = useThemeAwareStyle(createStyles)
-    const [focused, setFocused] = useState(false)
+    const [focused, setFocused] = useState<boolean>(false)
     const fallbackRef = useRef<OriginalTextInput>(null)
     const ref = (receivedRef || fallbackRef) as RefObject<OriginalTextInput>
     const onFocus = useCallback(

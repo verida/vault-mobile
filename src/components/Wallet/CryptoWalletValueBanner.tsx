@@ -1,11 +1,11 @@
 import BigDecimal from 'bignumber.js'
-import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { NumberFiat } from 'components/Numbers'
-import { Typography } from 'components/Typography'
-import { Theme } from 'styles/types'
+import { NumberFiat } from '~/components/Numbers'
+import { Typography } from '~/components/Typography'
+import { useThemeAwareStyle } from '~/hooks'
+import { Theme } from '~/styles/types'
 
 export type CryptoWalletValueBannerProps = {
   value: BigDecimal

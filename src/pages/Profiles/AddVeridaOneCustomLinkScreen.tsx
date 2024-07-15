@@ -1,24 +1,29 @@
-import Clipboard from '@react-native-community/clipboard'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { isEmpty } from 'lodash'
-import React, { useState } from 'react'
-import { Alert, Keyboard, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import React, { useCallback, useEffect, useState } from 'react'
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
-import ClipboardIcon from 'assets/clipboard_icon.svg'
-import TrashBinIcon from 'assets/trash_bin_icon.svg'
-import { FormInput } from 'components/Input/FormInput'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Text } from 'components/Typography/Text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import ClipboardIcon from '~/assets/clipboard_icon.svg'
+import { BottomActionBar, Icon, ScreenWrapper } from '~/components'
+import Button from '~/components/Button'
+import { FormInput } from '~/components/Input/FormInput'
+import { Text } from '~/components/Typography/Text'
+import { HIT_SLOP_10_10 } from '~/constants'
+import { DECLINE_COLOR } from '~/constants/color'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from '~/constants/text'
+import { useTheme } from '~/contexts'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation'
+import { Theme } from '~/styles/types'
 
-import Button from '../../components/Button'
-import { DECLINE_COLOR } from '../../constants/color'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
 import { PublicProfileEditMode } from './PublicProfileScreen'
 
 const logger = Logger.create('Pages/AddCustomLink')
@@ -58,11 +63,14 @@ export const AddVeridaOneCustomLinkScreen: React.FC<
   } = params
 
   const styles = useThemeAwareStyle(createStyles)
-  const { bottom } = useSafeAreaInsets()
-  const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
-  const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
+  const { theme } = useTheme()
 
-  const saveValue = async () => {
+  const [labelInput, setLabelInput] = useState<string>(
+    originalValue?.label ?? ''
+  )
+  const [urlInput, setUrlInput] = useState<string>(originalValue?.url ?? '')
+
+  const saveValue = useCallback(async () => {
     try {
       Keyboard.dismiss()
 
@@ -80,100 +88,116 @@ export const AddVeridaOneCustomLinkScreen: React.FC<
     } catch (error) {
       logger.error(error)
     }
-  }
+  }, [labelInput, mode, navigation, originalValue, screenName, title, urlInput])
 
-  const isEditMode = () => !isEmpty(label) && !isEmpty(url)
+  const isEditMode = useCallback(
+    () => !isEmpty(label) && !isEmpty(url),
+    [label, url]
+  )
+
+  const handleDeleteButtonPress = useCallback(() => {
+    Alert.alert('Are you sure you want to delete this link?', undefined, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          emitter.emit('SAVE_GENERIC_PROPERTY', {
+            screenName,
+            title,
+            value: originalValue,
+            mode: PublicProfileEditMode.DeleteCustomURL,
+            originalValue,
+          })
+          navigation.goBack()
+        },
+      },
+    ])
+  }, [navigation, originalValue, screenName, title])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: isEditMode() ? 'Edit Link' : 'Add New Link',
+      headerRight: isEditMode()
+        ? () => (
+            <TouchableOpacity
+              onPress={handleDeleteButtonPress}
+              hitSlop={HIT_SLOP_10_10}
+              style={styles.headerDeleteButton}>
+              <Icon name='delete' size={24} color={theme.color.primary} />
+            </TouchableOpacity>
+          )
+        : undefined,
+    })
+  }, [
+    navigation,
+    isEditMode,
+    handleDeleteButtonPress,
+    styles.headerDeleteButton,
+    theme.color.primary,
+  ])
 
   return (
-    <Screen withKeyboardAvoidingView>
-      <NavigationHeader
-        title={isEditMode() ? 'Edit Link' : 'Add New Link'}
-        left={{
-          icon: 'close',
-        }}
-        right={
-          isEditMode()
-            ? {
-                icon: <TrashBinIcon />,
-                action: () => {
-                  Alert.alert(
-                    'Are you sure you want to delete this link?',
-                    undefined,
-                    [
-                      {
-                        text: 'Cancel',
-                        style: 'cancel',
-                      },
-                      {
-                        text: 'Delete',
-                        style: 'destructive',
-                        onPress: () => {
-                          emitter.emit('SAVE_GENERIC_PROPERTY', {
-                            screenName,
-                            title,
-                            value: originalValue,
-                            mode: PublicProfileEditMode.DeleteCustomURL,
-                            originalValue,
-                          })
-                          navigation.goBack()
-                        },
-                      },
-                    ]
-                  )
-                },
-              }
-            : undefined
-        }
-      />
-      <View style={[styles.constainer, { marginBottom: bottom }]}>
-        <View style={{ flexDirection: 'column' }}>
-          <FormInput
-            label='Label'
-            placeholder='Enter label'
-            autoComplete='off'
-            autoCorrect={false}
-            value={labelInput}
-            onChangeText={(text) => setLabelInput(text)}
-          />
-          <FormInput
-            style={{ marginTop: 16 }}
-            label='URL'
-            autoCapitalize='none'
-            autoComplete='off'
-            autoCorrect={false}
-            keyboardType='url'
-            value={urlInput}
-            onChangeText={(text) => setUrlInput(text)}
-            placeholder='Enter URL'
-          />
+    <ScreenWrapper isModal keyboardAvoiding>
+      <View style={styles.constainer}>
+        <FormInput
+          label='Label'
+          placeholder='Enter label'
+          autoComplete='off'
+          autoCorrect={false}
+          value={labelInput}
+          onChangeText={(text) => setLabelInput(text)}
+        />
+        <FormInput
+          style={{ marginTop: 16 }}
+          label='URL'
+          autoCapitalize='none'
+          autoComplete='off'
+          autoCorrect={false}
+          keyboardType='url'
+          value={urlInput}
+          onChangeText={(text) => setUrlInput(text)}
+          placeholder='Enter URL'
+        />
 
-          <Button
-            color='transparent-link'
-            onPress={async () => {
-              const text = await Clipboard.getString()
-              setUrlInput(text)
-            }}>
-            <View style={styles.clipboardPasteButton}>
-              <ClipboardIcon />
-              <Text style={styles.clipboardPasteButtonText}>
-                Paste from clipboard
-              </Text>
-            </View>
-          </Button>
-        </View>
-        <Button onPress={saveValue}>{submitButtonLabel}</Button>
+        <Button
+          color='transparent-link'
+          onPress={async () => {
+            const text = await Clipboard.getString()
+            setUrlInput(text)
+          }}>
+          <View style={styles.clipboardPasteButton}>
+            <ClipboardIcon />
+            <Text style={styles.clipboardPasteButtonText}>
+              Paste from clipboard
+            </Text>
+          </View>
+        </Button>
       </View>
-    </Screen>
+      <BottomActionBar
+        actions={[
+          {
+            label: submitButtonLabel,
+            onPress: saveValue,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    headerDeleteButton: {
+      marginRight: theme.spacing.m,
+    },
     constainer: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
       paddingTop: theme.spacing.m,
-      justifyContent: 'space-between',
     },
     inputValidation: {
       borderColor: DECLINE_COLOR,
@@ -184,11 +208,6 @@ const createStyles = (theme: Theme) =>
       fontStyle: 'italic',
       fontSize: 12,
       marginVertical: 4,
-    },
-    description: {
-      marginVertical: theme.spacing.xs,
-      color: theme.color.textLightGrey,
-      fontSize: theme.fontSize.s,
     },
     clipboardPasteButton: {
       flexDirection: 'row',

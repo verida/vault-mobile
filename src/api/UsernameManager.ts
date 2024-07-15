@@ -1,7 +1,8 @@
 import { VeridaNameClient } from '@verida/vda-name-client'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { getDidClientConfigForNetwork } from 'features/verida'
+
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { getDidClientConfigForNetwork } from '~/features/verida'
 
 import AccountManager from './AccountManager'
 

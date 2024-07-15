@@ -1,4 +1,4 @@
-import type { ChainMetadata } from 'features/caip'
+import type { ChainMetadata } from '~/features/caip'
 
 import { CustomBlockchainNetwork } from '../types'
 

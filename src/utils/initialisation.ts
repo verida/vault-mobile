@@ -1,11 +1,11 @@
-import { config } from 'config'
-import { initNotifications } from 'features/notifications'
-import { publicProfileStorage } from 'features/profiles'
-import { initSentry, Logger } from 'features/telemetry'
 import { Text } from 'react-native'
 import { initializeMMKVFlipper } from 'react-native-mmkv-flipper-plugin'
 
-import { reduxStorage } from 'reduxStore/utils/mmkvPersistStorage'
+import { config } from '~/config'
+import { initNotifications } from '~/features/notifications'
+import { publicProfileStorage } from '~/features/profiles'
+import { initSentry, Logger } from '~/features/telemetry'
+import { reduxStorage } from '~/reduxStore/utils/mmkvPersistStorage'
 
 const logger = Logger.create('Initialisation')
 

@@ -1,10 +1,9 @@
 import { Context } from '@verida/client-rn'
-import { config } from 'config'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import AccountManager from '~/api/AccountManager'
+import { config } from '~/config'
 import { Logger } from '~/features/telemetry'
-
-import AccountManager from 'api/AccountManager'
 
 import { PolygonIdManager } from '../classes'
 import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
@@ -70,8 +69,9 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const account = accountManager.getSelectedAccount()
   const veridaVaultContext = accountManager.context as Context | undefined
 
-  const [isManagerInitialising, setIsManagerInitialising] = useState(false)
-  const [isManagerInError, setIsManagerInError] = useState(false)
+  const [isManagerInitialising, setIsManagerInitialising] =
+    useState<boolean>(false)
+  const [isManagerInError, setIsManagerInError] = useState<boolean>(false)
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 

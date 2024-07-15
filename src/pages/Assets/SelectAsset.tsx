@@ -1,10 +1,4 @@
-import { useNavigation } from '@react-navigation/native'
-import { useTheme } from 'contexts/ThemeContext'
-import { NFT, NFTMetadata, useGetNFTsQuery } from 'features/assets'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
-import { getNFTImageUri } from 'helpers/nft'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   ListRenderItem,
   RefreshControl,
@@ -14,35 +8,44 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
-import { NftItem } from 'components/Assets/NftItem'
-import GridView from 'components/Grids/GridView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import { Title } from 'components/Typography/Title'
-import useParams from 'hooks/useParams'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
-import { Theme } from 'styles/types'
+import NFTPlaceholder from '~/assets/stubs/nft_placeholder.svg'
+import { ScreenWrapper } from '~/components'
+import { NftItem } from '~/components/Assets/NftItem'
+import GridView from '~/components/Grids/GridView'
+import LoadingView from '~/components/LoadingView'
+import { Title } from '~/components/Typography/Title'
+import { useTheme } from '~/contexts'
+import { NFT, NFTMetadata, useGetNFTsQuery } from '~/features/assets'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
+import { getNFTImageUri } from '~/helpers/nft'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation'
+import { NUMBER_OF_COLUMNS } from '~/pages/Assets/constants'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Pages/SelectAsset')
 
-export interface SelectAssetScreenProps {
+export type SelectAssetScreenParams = {
   searchableAddresses: string[]
   screenName: string
   mode: string | number
   originalValue: any
 }
 
-const SelectAsset = () => {
-  const navigation = useNavigation()
-  const params = useParams<SelectAssetScreenProps>()
+type SelectAssetScreenProps = MainStackScreenProps<'SelectAsset'>
+
+export const SelectAssetScreen: React.FC<SelectAssetScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
   const { screenName, mode, originalValue, searchableAddresses } = params
 
   const { data, isLoading, refetch } = useGetNFTsQuery(searchableAddresses)
 
   // pull to refresh data
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = React.useState<boolean>(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
     refetch().finally(() => {
@@ -96,15 +99,17 @@ const SelectAsset = () => {
     [mode, navigation, originalValue, screenName]
   )
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Select Asset',
+    })
+  }, [navigation])
+
   return (
-    <Screen withLoadingView showLoading={isLoading} loadingOverlayColorLight>
-      <NavigationHeader
-        title={'Select Asset'}
-        left={{
-          icon: 'close',
-        }}
-      />
-      {!isLoading && (
+    <ScreenWrapper>
+      {isLoading ? (
+        <LoadingView />
+      ) : (
         <View style={[styles.constainer, { marginBottom: bottom }]}>
           <GridView
             numColumns={NUMBER_OF_COLUMNS}
@@ -136,11 +141,9 @@ const SelectAsset = () => {
           />
         </View>
       )}
-    </Screen>
+    </ScreenWrapper>
   )
 }
-
-export default SelectAsset
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

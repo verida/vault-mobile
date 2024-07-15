@@ -1,22 +1,22 @@
 import Color from 'color'
-import { useTheme } from 'contexts/ThemeContext'
-import {
-  VERIDA_ONE_PLATFORM_METADATA,
-  VeridaOnePlatformLink,
-} from 'features/veridaOne'
 import React from 'react'
 import { Image, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 
-import DragIcon from 'assets/drag_icon.svg'
-import EditIcon from 'assets/edit_icon.svg'
-import VeridaTick from 'assets/icons/verida_tick.svg'
-import Button from 'components/Button'
-import { Label } from 'components/Typography/Label'
-import { SubHeadline } from 'components/Typography/SubHeadline'
-import { Text } from 'components/Typography/Text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { smallButtonHitSlop } from 'styles/button'
-import { Theme } from 'styles/types'
+import DragIcon from '~/assets/drag_icon.svg'
+import EditIcon from '~/assets/edit_icon.svg'
+import VeridaTick from '~/assets/icons/verida_tick.svg'
+import Button from '~/components/Button'
+import { Label } from '~/components/Typography/Label'
+import { SubHeadline } from '~/components/Typography/SubHeadline'
+import { Text } from '~/components/Typography/Text'
+import { useTheme } from '~/contexts/ThemeContext'
+import {
+  VERIDA_ONE_PLATFORM_METADATA,
+  VeridaOnePlatformLink,
+} from '~/features/veridaOne'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { smallButtonHitSlop } from '~/styles/button'
+import { Theme } from '~/styles/types'
 
 type Props = {
   platformLink: VeridaOnePlatformLink

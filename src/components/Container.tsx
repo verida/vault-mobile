@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   Animated,
@@ -6,15 +5,15 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  StatusBar,
   StyleSheet,
   View,
   ViewStyle,
 } from 'react-native'
 import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context'
 
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 import { ConditionalWrap } from './ConditionalWrap'
 import LoadingIndicator from './LoadingIndicator'
@@ -34,6 +33,9 @@ interface ContainerProps {
   keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
+/**
+ * @deprecated use <ScreenWrapper> instead
+ */
 const Container = (props: ContainerProps) => {
   const {
     withSafeAreaView,
@@ -52,7 +54,8 @@ const Container = (props: ContainerProps) => {
   const { theme } = useTheme()
 
   const fadeInAnimRef = useRef(new Animated.Value(1))
-  const [completeHideLoadingView, setCompleteHideLoadingView] = useState(true)
+  const [completeHideLoadingView, setCompleteHideLoadingView] =
+    useState<boolean>(true)
   useEffect(() => {
     if (!completeHideLoadingView && !showLoading) {
       setCompleteHideLoadingView(false)
@@ -117,7 +120,6 @@ const Container = (props: ContainerProps) => {
               )}
             </>
           )}>
-          <StatusBar barStyle='dark-content' translucent />
           <View
             style={[
               styles.container,

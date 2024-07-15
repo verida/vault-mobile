@@ -1,20 +1,18 @@
-import { ScreenWrapper } from 'components'
-import { useTheme } from 'contexts'
-import { useCurrentIdentity } from 'features/identities'
-import { canMigrateToMainnet } from 'features/identities/utils/migration'
-import { useThemeAwareStyle } from 'hooks'
-import { Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import PropertyList from 'components/PropertyList'
-import Text from 'components/Text'
-import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
+import { ScreenWrapper } from '~/components'
+import { PropertyList } from '~/components/PropertyList'
+import Text from '~/components/Text'
+import { APP_NAME, APP_VERSION_FORMATTED } from '~/constants/application'
+import { useTheme } from '~/contexts'
+import { useCurrentIdentity } from '~/features/identities'
+import { canMigrateToMainnet } from '~/features/identities/utils/migration'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 type SettingsItem = {
   // TODO: Get it from the props of the component
@@ -42,19 +40,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
 
-  const [walletAppVersion, setWalletAppVersion] = React.useState(
+  const [walletAppVersion, setWalletAppVersion] = useState<string>(
     `${APP_NAME} ${APP_VERSION_FORMATTED}`
   )
-
-  const handleBack = useCallback(() => {
-    navigation.goBack()
-  }, [navigation])
 
   useEffect(() => {
     navigation.setOptions({
       title: 'Settings',
     })
-  }, [navigation, handleBack])
+  }, [navigation])
 
   const currentIdentity = useCurrentIdentity()
 
@@ -94,7 +88,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           label: 'Seed Phrase',
           action: 'arrow',
           optional: true,
-          onPress: () => navigation.navigate('SeedPhraseView'),
+          onPress: () =>
+            navigation.navigate('DisplayPrivateInfo', {
+              source: 'currentVeridaDid',
+              type: 'recoveryPhrase',
+            }),
         },
         {
           label: 'Login History',
@@ -127,6 +125,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           action: 'arrow',
           optional: true,
           onPress: () => navigation.navigate('BlockchainNetworks'),
+        },
+        {
+          label: 'Crypto Wallets',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('ManageWallets'),
         },
         {
           label: 'DApp Connections',
@@ -162,13 +166,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     <ScreenWrapper
       backgroundColor={theme.color.snow}
       safeAreaEdges={['left', 'right']}>
-      <NavigationHeader // TODO: Get rid of the following when properly handling a common header in the navigator
-        title='Settings'
-        left={{
-          icon: <IconNativeBase name='arrow-back' style={{ color: '#000' }} />,
-          action: () => props.navigation.goBack(),
-        }}
-      />
       <ScrollView
         contentContainerStyle={[
           styles.container,

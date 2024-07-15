@@ -1,7 +1,4 @@
 import { DIDClient } from '@verida/did-client'
-import { getNetworkFromDID } from 'features/identities'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
   FC,
@@ -12,7 +9,10 @@ import React, {
   useState,
 } from 'react'
 
-import AccountManager from 'api/AccountManager'
+import AccountManager from '~/api/AccountManager'
+import { getNetworkFromDID } from '~/features/identities'
+import { Logger } from '~/features/telemetry'
+import { emitter } from '~/helpers/emitter'
 
 import { useEmitter } from './useEmitter'
 
@@ -37,8 +37,8 @@ const AuthContext = createContext<AuthContextState>({
 })
 
 export const AuthProvider: FC = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  const [authenticated, setAuthenticated] = useState<boolean>(false)
+  const [loaded, setLoaded] = useState<boolean>(false)
 
   const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()

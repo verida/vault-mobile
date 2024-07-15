@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native'
 
-import LoadingView from 'components/LoadingView'
+import LoadingView from '~/components/LoadingView'
 
 import Text from './Text'
 
@@ -38,10 +38,10 @@ const CustomFlatList = <ItemT,>(
   }))
 
   const skip = useRef(0)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-  const [noMoreData, setNoMoreData] = useState(false)
+  const [loadingMore, setLoadingMore] = useState<boolean>(false)
+  const [refreshing, setRefreshing] = useState<boolean>(false)
+  const [loaded, setLoaded] = useState<boolean>(false)
+  const [noMoreData, setNoMoreData] = useState<boolean>(false)
   const [data, setData] = useState<ItemT[]>([])
 
   const onEndReached = useCallback(async () => {

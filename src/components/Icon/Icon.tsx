@@ -1,22 +1,22 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore as it comes from our own declaration extension
 import { DimensionValue, SvgProps, View } from 'react-native'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
-import { IconProps } from 'react-native-vector-icons/Icon'
+import { IconProps as VectorIconProps } from 'react-native-vector-icons/Icon'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
-import EditIcon from 'assets/edit_icon.svg'
-import CopyIcon from 'assets/icons/copy.svg'
-import GoToIcon from 'assets/icons/goto_icon.svg'
-import ShareIcon from 'assets/icons/share_icon.svg'
-import TickIcon from 'assets/icons/tick_icon.svg'
-import WarningIcon from 'assets/icons/warning_icon.svg'
-import EthereumIcon from 'assets/wallets/Ethereum.svg'
+import EditIcon from '~/assets/edit_icon.svg'
+import CopyIcon from '~/assets/icons/copy.svg'
+import GoToIcon from '~/assets/icons/goto_icon.svg'
+import ShareIcon from '~/assets/icons/share_icon.svg'
+import TickIcon from '~/assets/icons/tick_icon.svg'
+import WarningIcon from '~/assets/icons/warning_icon.svg'
+import EthereumIcon from '~/assets/wallets/Ethereum.svg'
+import { useTheme } from '~/contexts/ThemeContext'
 
 // TODO: Check with the designers on whether to use custom icons or from a library and if so, pick a single library rather than the mix of different icons styles with currently have.
 
@@ -30,10 +30,12 @@ type CustomIconName =
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
+  | 'back'
   | 'business'
   | 'calculator'
   | 'wallet'
   | 'clipboard' // TODO: replace the clipboard by copy?
+  | 'paste'
   | 'inbox'
   | 'info-circle'
   | 'question-circle'
@@ -70,20 +72,27 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'checkbox-unchecked'
+  | 'checkbox-checked'
   | 'send'
   | 'receive'
+  | 'delete'
+  | 'import'
+  | 'enter'
 
 export type IconName = CustomIconName | LibIconName
 
-export const Icon = (props: {
+export type IconProps = {
   name: IconName
   size?: DimensionValue | undefined
   color?: string
-}) => {
+}
+
+export const Icon: React.FC<IconProps> = (props) => {
   const { theme } = useTheme()
   const { name, size = '100%', color = theme.color.iconDefault } = props
 
-  const iconProps: Partial<IconProps> = {
+  const iconProps: Partial<VectorIconProps> = {
     style: {
       fontSize: 90,
       color,
@@ -103,7 +112,17 @@ export const Icon = (props: {
     case 'copy':
       return <CopyIcon {...svgProps} />
     case 'clipboard':
-      return <Ionicon name='copy-outline' {...iconProps} />
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='copy-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'paste':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='clipboard-outline' {...iconProps} />
+        </IconWrapper>
+      )
     case 'edit':
       return <EditIcon {...svgProps} />
     case 'goto':
@@ -114,6 +133,12 @@ export const Icon = (props: {
       return <WarningIcon {...svgProps} />
     case 'tick':
       return <TickIcon {...svgProps} />
+    case 'back':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='arrowleft' {...iconProps} />
+        </IconWrapper>
+      )
     case 'business':
       return (
         <IconWrapper size={size}>
@@ -273,7 +298,7 @@ export const Icon = (props: {
     case 'add':
       return (
         <IconWrapper size={size}>
-          <Ionicon name='add' {...iconProps} />
+          <MaterialIcon name='add' {...iconProps} />
         </IconWrapper>
       )
     case 'settings':
@@ -343,6 +368,18 @@ export const Icon = (props: {
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
         </IconWrapper>
       )
+    case 'checkbox-unchecked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='square-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'checkbox-checked':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='checkbox' {...iconProps} />
+        </IconWrapper>
+      )
     case 'send':
       return (
         <IconWrapper size={size}>
@@ -353,6 +390,24 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialIcon name='vertical-align-bottom' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'delete':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='delete' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'import':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='arrow-collapse-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'enter':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='enter-outline' {...iconProps} />
         </IconWrapper>
       )
   }

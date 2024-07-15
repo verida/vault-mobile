@@ -1,5 +1,6 @@
-import { CryptoWalletContext } from 'features/cryptoWallet/contexts'
 import { useContext } from 'react'
+
+import { CryptoWalletContext } from '~/features/cryptoWallet/contexts'
 
 export function useCryptoWallet() {
   const contextValue = useContext(CryptoWalletContext)

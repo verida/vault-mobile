@@ -1,16 +1,20 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
+import * as React from 'react'
+import { $enum } from 'ts-enum-util'
+
+import {
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from '~/features/blockchain'
 import {
   Eip155RpcMethod,
   useBlockchainRequestHandlersEip155,
-} from 'features/blockchain/eip155'
+} from '~/features/blockchain/eip155'
 import {
   CryptoWalletAccounts,
   useSelectedMinifiedBlockchainAccounts,
-} from 'features/cryptoWallet'
-import * as React from 'react'
-import { $enum } from 'ts-enum-util'
+} from '~/features/cryptoWallet'
 
 import {
   EthereumSessionRequestHandlers,

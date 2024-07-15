@@ -1,4 +1,4 @@
-import { PublicProfile } from 'features/profiles'
+import { PublicProfile } from '~/features/profiles'
 
 export type Account = {
   did: string
@@ -22,10 +22,10 @@ export type CreateIdentityStep =
   | 'CreateProfile'
 
 export type CreateIdentityStepStatus =
-  | 'None'
-  | 'Loading'
-  | 'Success'
-  | 'Failure'
+  | 'idle'
+  | 'processing'
+  | 'success'
+  | 'error'
 
 export type MigrateIdentityStep =
   | 'createDID'

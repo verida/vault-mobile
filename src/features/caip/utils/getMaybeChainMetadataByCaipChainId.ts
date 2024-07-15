@@ -1,5 +1,6 @@
 import { ChainId } from 'caip'
-import { isSupportedCaipNamespace } from 'features/caip'
+
+import { isSupportedCaipNamespace } from '~/features/caip'
 
 import { ChainMetadata, ChainMetadatas } from '../types'
 import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'

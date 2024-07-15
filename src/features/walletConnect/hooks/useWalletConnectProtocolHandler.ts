@@ -1,9 +1,10 @@
-import type { ProtocolHandler } from 'features/protocols'
+import { useCallback } from 'react'
+
+import type { ProtocolHandler } from '~/features/protocols'
 import {
   isWalletConnectConnection,
   useWalletConnectContext,
-} from 'features/walletConnect'
-import { useCallback } from 'react'
+} from '~/features/walletConnect'
 
 export function useWalletConnectProtocolHandler(): ProtocolHandler {
   const { handleQrCodeMessage } = useWalletConnectContext()

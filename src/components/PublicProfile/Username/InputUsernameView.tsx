@@ -1,20 +1,18 @@
 import Color from 'color'
-import { useTheme } from 'contexts/ThemeContext'
 import React, { useImperativeHandle, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import { StyleSheet, TextInput, View } from 'react-native'
 import ParsedText from 'react-native-parsed-text'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDebouncedCallback } from 'use-debounce'
 
-import UsernameManager from 'api/UsernameManager'
-import Button from 'components/Button'
-import Container from 'components/Container'
-import { FormInput } from 'components/Input/FormInput'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
-import { NUNITO_SANS } from 'constants/text'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
+import UsernameManager from '~/api/UsernameManager'
+import { FormInput } from '~/components/Input/FormInput'
+import { BottomActionBar } from '~/components/ScreenLayouts'
+import { Headline } from '~/components/Typography/Headline'
+import { Text } from '~/components/Typography/Text'
+import { NUNITO_SANS } from '~/constants/text'
+import { useTheme } from '~/contexts/ThemeContext'
+import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
+import { Theme } from '~/styles/types'
 
 const MIN_INPUT_LENGTH = 2
 const MAX_INPUT_LENGTH = 32
@@ -36,19 +34,18 @@ export const InputUsernameView = React.forwardRef(
     { onClaimUsername }: PageProps,
     receivedRef: React.ForwardedRef<InputUsernameViewRefProps>
   ) => {
-    const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
 
-    const [inputText, setInputText] = useState('')
+    const [inputText, setInputText] = useState<string>('')
     const usernameInputRef = useRef<TextInput | null>(null)
 
-    const [checkingUsername, setCheckingUsername] = useState(false)
-    const [availableUsername, setAvailableUsername] = useState(false)
+    const [checkingUsername, setCheckingUsername] = useState<boolean>(false)
+    const [availableUsername, setAvailableUsername] = useState<boolean>(false)
     const [usernameError, setUsernameError] = useState<string | undefined>(
       undefined
     )
-    const [checkboxEmpty, setCheckboxEmpty] = useState(true)
+    const [checkboxEmpty, setCheckboxEmpty] = useState<boolean>(true)
 
     useImperativeHandle(receivedRef, () => ({
       focusInput: () => {
@@ -118,117 +115,93 @@ export const InputUsernameView = React.forwardRef(
     )
 
     return (
-      <Container
-        key={'InputUsername'}
-        withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 48 + top }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: theme.spacing.xxl,
-            paddingTop: theme.spacing.l,
-            paddingHorizontal: theme.spacing.m,
-          }}
-          keyboardShouldPersistTaps='handled'>
-          <View style={{ flex: 1 }}>
-            <Headline style={{ marginBottom: 10 }}>Username</Headline>
-            <Text style={{ marginBottom: theme.spacing.l }}>
-              Your username is unique to your identity.
-            </Text>
-            <FormInput
-              ref={usernameInputRef}
-              placeholder={`veridaname${VERIDA_NAME_SUFFIX}`}
-              label={'Username'}
-              desciption={
-                usernameError
-                  ? undefined
-                  : 'Your username is public and optional'
+      <View key={'InputUsername'} style={styles.container}>
+        <View style={styles.content}>
+          <Headline style={{ marginBottom: 10 }}>Username</Headline>
+          <Text style={{ marginBottom: theme.spacing.l }}>
+            Your username is unique to your identity.
+          </Text>
+          <FormInput
+            ref={usernameInputRef}
+            placeholder={`veridaname${VERIDA_NAME_SUFFIX}`}
+            label={'Username'}
+            desciption={
+              usernameError ? undefined : 'Your username is public and optional'
+            }
+            autoFocus={false} // TODO Investigate: There's an crash when combining with pagerview, so we will do a delay and manually set focus the input
+            autoCorrect={false}
+            autoComplete='off'
+            autoCapitalize='none'
+            returnKeyType='done'
+            withAnimatedChecbox
+            checkboxEmptyState={checkboxEmpty}
+            loading={checkingUsername}
+            checked={availableUsername}
+            errorMessage={usernameError}
+            maxLength={MAX_INPUT_LENGTH + VERIDA_NAME_SUFFIX_LENGTH}
+            onFocus={() => {
+              ensureSelectionPosition(undefined)
+            }}
+            onSelectionChange={(e) => {
+              ensureSelectionPosition(e.nativeEvent.selection)
+            }}
+            onChangeText={(text) => {
+              setUsernameError('')
+              setCheckboxEmpty(true)
+              setAvailableUsername(false)
+              if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
+                setInputText(text + VERIDA_NAME_SUFFIX)
+              } else if (text === VERIDA_NAME_SUFFIX) {
+                setInputText('')
+              } else {
+                setInputText(text)
               }
-              autoFocus={false} // TODO Investigate: There's an crash when combining with pagerview, so we will do a delay and manually set focus the input
-              autoCorrect={false}
-              autoComplete='off'
-              autoCapitalize='none'
-              returnKeyType='done'
-              withAnimatedChecbox
-              checkboxEmptyState={checkboxEmpty}
-              loading={checkingUsername}
-              checked={availableUsername}
-              errorMessage={usernameError}
-              maxLength={MAX_INPUT_LENGTH + VERIDA_NAME_SUFFIX_LENGTH}
-              onFocus={() => {
-                ensureSelectionPosition(undefined)
+              debounceCheckUsername(text)
+            }}>
+            <ParsedText
+              style={{
+                fontFamily: NUNITO_SANS,
+                fontSize: theme.fontSize.m,
+                color: theme.color.onBackground,
               }}
-              onSelectionChange={(e) => {
-                ensureSelectionPosition(e.nativeEvent.selection)
-              }}
-              onChangeText={(text) => {
-                setUsernameError('')
-                setCheckboxEmpty(true)
-                setAvailableUsername(false)
-                if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
-                  setInputText(text + VERIDA_NAME_SUFFIX)
-                } else if (text === VERIDA_NAME_SUFFIX) {
-                  setInputText('')
-                } else {
-                  setInputText(text)
-                }
-                debounceCheckUsername(text)
-              }}>
-              <ParsedText
-                style={{
-                  fontFamily: NUNITO_SANS,
-                  fontSize: theme.fontSize.m,
-                  color: theme.color.onBackground,
-                }}
-                parse={[
-                  {
-                    pattern: VERIDA_NAME_PATTERN,
-                    style: {
-                      fontFamily: NUNITO_SANS,
-                      fontSize: theme.fontSize.m,
-                      color: Color(theme.color.onBackground)
-                        .alpha(0.4)
-                        .toString(),
-                    },
+              parse={[
+                {
+                  pattern: VERIDA_NAME_PATTERN,
+                  style: {
+                    fontFamily: NUNITO_SANS,
+                    fontSize: theme.fontSize.m,
+                    color: Color(theme.color.onBackground)
+                      .alpha(0.4)
+                      .toString(),
                   },
-                ]}>
-                {inputText}
-              </ParsedText>
-            </FormInput>
-          </View>
-        </ScrollView>
-
-        <View
-          style={[
-            styles.bottomNavContainer,
-            { marginBottom: bottom + theme.spacing.m },
-          ]}>
-          <Button
-            disabled={Boolean(usernameError) || !availableUsername}
-            style={styles.button}
-            onPress={() => onClaimUsername(inputText)}>
-            Claim
-          </Button>
+                },
+              ]}>
+              {inputText}
+            </ParsedText>
+          </FormInput>
         </View>
-      </Container>
+        <BottomActionBar
+          // TODO: Investigate as the button briefly disapear when keyboard is shown
+          actions={[
+            {
+              label: 'Claim',
+              onPress: () => onClaimUsername(inputText),
+              disabled: Boolean(usernameError) || !availableUsername,
+            },
+          ]}
+        />
+      </View>
     )
   }
 )
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    bottomNavContainer: {
-      width: '100%',
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing.m,
-    },
-    button: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
-    },
-    pagerView: {
+    container: {
       flex: 1,
+    },
+    content: {
+      flex: 1,
+      padding: theme.spacing.m,
     },
   })

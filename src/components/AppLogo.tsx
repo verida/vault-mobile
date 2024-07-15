@@ -17,7 +17,7 @@ export type AppLogoProps = Omit<ImageProps, 'source'> & {
 function AppLogo(props: AppLogoProps) {
   const { url, style } = props
   const [source, setSource] = useState<ImageSourcePropType>(
-    require('assets/placeholder-app-logo.png')
+    require('~/assets/placeholder-app-logo.png')
   )
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function AppLogo(props: AppLogoProps) {
   return (
     <Image
       source={source}
-      defaultSource={require('assets/placeholder-app-logo.png')}
+      defaultSource={require('~/assets/placeholder-app-logo.png')}
       style={[styles.image, style]}
     />
   )

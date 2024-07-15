@@ -1,11 +1,11 @@
 import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
-import { config } from 'config'
-import { VERIDA_DID_REGEXP } from 'features/verida'
 
+import { config } from '~/config'
 import {
   VERIDA_VAULT_CONTEXT_NAME,
   VERIDA_WALLET_USER_AGENT,
-} from 'constants/application'
+} from '~/constants/application'
+import { VERIDA_DID_REGEXP } from '~/features/verida'
 
 /**
  * Check if a string value is a valid Verida DID.

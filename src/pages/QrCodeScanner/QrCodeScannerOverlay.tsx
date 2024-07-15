@@ -12,9 +12,9 @@ import { Defs, Mask, Rect, Svg } from 'react-native-svg'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-import Text from 'components/Text'
-import { GREY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import Text from '~/components/Text'
+import { GREY_COLOR, WHITE_COLOR } from '~/constants/color'
+import { NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 
 export type QrCodeScannerOverlayProps = Omit<ViewProps, 'children'> & {
   processing: boolean
@@ -42,7 +42,11 @@ export const QrCodeScannerOverlay: React.FunctionComponent<
 
   return (
     <View style={styles.container}>
-      <Svg height='100%' width='100%'>
+      <Svg
+        height='200%' // FIXME: Investigate why a value higher than 100% is needed. Otherwise there is a white space at the bottom of the screen.
+        width='100%'
+        x='0'
+        y='0'>
         <Defs>
           <Mask id='mask' x='0' y='0' height='100%' width='100%'>
             <Rect x='0' y='0' height='100%' width='100%' fill={'#fff'} />

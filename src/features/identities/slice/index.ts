@@ -1,11 +1,11 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { logout } from 'features/auth'
-import { Account } from 'features/identities'
-import { Sentry } from 'features/telemetry'
 import { cloneDeep } from 'lodash'
 
-import { RootState } from 'reduxStore/types'
+import { logout } from '~/features/auth'
+import { Account } from '~/features/identities'
+import { Sentry } from '~/features/telemetry'
+import { RootState } from '~/reduxStore/types'
 
 export interface IdentitiesState {
   accounts: Record<string, Account> // FIXME: we keep the old Account term, but it should be Identity

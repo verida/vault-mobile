@@ -1,16 +1,19 @@
 import { ethers } from 'ethers'
-import { convertFromCryptoIntegerToDecimal } from 'features/token/utils/convertFromCryptoIntegerToDecimal'
-import { convertFromCryptoIntegerToMaybeDecimalFiat } from 'features/token/utils/convertFromCryptoIntegerToMaybeDecimalFiat'
-import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
 import * as React from 'react'
 import { ActivityIndicator } from 'react-native'
 
 import { ChainMetadata } from '~/features/caip'
 import { DetailedValuation } from '~/features/cryptoWallet'
+import { convertFromCryptoIntegerToDecimal } from '~/features/token/utils/convertFromCryptoIntegerToDecimal'
+import { convertFromCryptoIntegerToMaybeDecimalFiat } from '~/features/token/utils/convertFromCryptoIntegerToMaybeDecimalFiat'
+import { convertPredictedTransactionFeeToString } from '~/features/token/utils/convertPredictedTransactionFeeToString'
 
 import { NumericCryptoInternal } from './Numeric.Crypto.Internal'
 import { NumericFiat } from './Numeric.Fiat'
 
+/**
+ * @deprecated use Numbers instead
+ */
 export const NumericCryptoMaxTransactionFee = React.memo(
   function NumericCryptoMaxTransactionFee({
     chainMetadata,

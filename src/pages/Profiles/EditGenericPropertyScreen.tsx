@@ -1,30 +1,20 @@
-import { Logger } from 'features/telemetry'
-import { COUNTRIES } from 'helpers/countries'
-import { emitter } from 'helpers/emitter'
-import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Keyboard, StyleSheet, Text, View } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 
-import { FormInput } from 'components/Input/FormInput'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackScreenProps } from 'navigation/types'
-import { Theme } from 'styles/types'
-
-import Button from '../../components/Button'
-import Label from '../../components/Label'
-import DropDownPicker from '../../components/Select'
-import { DECLINE_COLOR } from '../../constants/color'
-import { NUNITO_SANS } from '../../constants/text'
-import InputStyles from '../../styles/inputs'
+import { BottomActionBar, ScreenWrapper } from '~/components'
+import { FormInput } from '~/components/Input/FormInput'
+import Label from '~/components/Label'
+import DropDownPicker from '~/components/Select'
+import { DECLINE_COLOR } from '~/constants/color'
+import { NUNITO_SANS } from '~/constants/text'
+import { Logger } from '~/features/telemetry'
+import { COUNTRIES } from '~/helpers/countries'
+import { emitter } from '~/helpers/emitter'
+import { useThemeAwareStyle } from '~/hooks'
+import { MainStackScreenProps } from '~/navigation'
+import InputStyles from '~/styles/inputs'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Pages/Profiles/EditGenericProperty')
 
@@ -78,9 +68,15 @@ export const EditGenericPropertyScreen: React.FC<
     verification,
   } = params
 
+  useEffect(() => {
+    navigation.setOptions({
+      title,
+    })
+  }, [navigation, title])
+
   const styles = useThemeAwareStyle(createStyles)
 
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState<boolean>(false)
   const [edited, setEdited] = useState<string | ValueObject>(
     option.value as any
   )
@@ -137,89 +133,84 @@ export const EditGenericPropertyScreen: React.FC<
   }
 
   return (
-    <Container>
-      <NavigationHeader title={title} left={{ icon: 'close' }} />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}>
-        <Content
-          contentContainerStyle={{
-            flex: 1,
-            margin: 20,
-            justifyContent: 'space-between',
-          }}>
-          <View style={{ flex: 1 }}>
-            {option.type === 'input' && (
-              <FormInput
-                placeholder={option.placeholder}
-                label={option.label}
-                value={edited as string}
-                autoFocus={true}
-                autoCapitalize='none'
-                autoCorrect={false}
-                errorMessage={
-                  inputError.isExceededMaxLength
-                    ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
-                    : undefined
-                }
-                placeholderTextColor='rgba(4, 17, 51, 0.3)'
-                maxLength={MAX_INPUT_LENGTH}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_INPUT_LENGTH)
-                }}
-              />
-            )}
-            {option.type === 'select' && (
-              <>
-                <Label style={{ marginTop: 0 }}>{option.label}</Label>
-                <DropDownPicker
-                  searchable={true}
-                  searchablePlaceholder='Search...'
-                  placeholder=''
-                  defaultValue={option.value as string}
-                  items={COUNTRIES}
-                  containerStyle={InputStyles.select}
-                  onChangeItem={onChangeItem}
-                />
-              </>
-            )}
-            {option.type === 'textarea' && (
-              <FormInput
-                placeholder={`Enter the ${option.label}`}
-                label={option.label}
-                inputStyle={{ minHeight: 68 }}
-                value={edited as string}
-                multiline
-                numberOfLines={4}
-                maxLength={MAX_TEXTAREA_LENGTH}
-                editable
-                autoFocus={true}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_TEXTAREA_LENGTH)
-                }}
-              />
-            )}
-            {Boolean(option.description) && (
-              <Text style={[styles.description]}>{option.description}</Text>
-            )}
-          </View>
-          <Button
-            disabled={
+    <ScreenWrapper isModal keyboardAvoiding>
+      <View style={styles.container}>
+        {option.type === 'input' && (
+          <FormInput
+            placeholder={option.placeholder}
+            label={option.label}
+            value={edited as string}
+            autoFocus={true}
+            autoCapitalize='none'
+            autoCorrect={false}
+            errorMessage={
+              inputError.isExceededMaxLength
+                ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
+                : undefined
+            }
+            placeholderTextColor='rgba(4, 17, 51, 0.3)'
+            maxLength={MAX_INPUT_LENGTH}
+            onChangeText={(text) => {
+              handleInput(text, MAX_INPUT_LENGTH)
+            }}
+          />
+        )}
+        {option.type === 'select' && (
+          <>
+            <Label style={{ marginTop: 0 }}>{option.label}</Label>
+            <DropDownPicker
+              searchable={true}
+              searchablePlaceholder='Search...'
+              placeholder=''
+              defaultValue={option.value as string}
+              items={COUNTRIES}
+              containerStyle={InputStyles.select}
+              onChangeItem={onChangeItem}
+            />
+          </>
+        )}
+        {option.type === 'textarea' && (
+          <FormInput
+            placeholder={`Enter the ${option.label}`}
+            label={option.label}
+            inputStyle={{ minHeight: 68 }}
+            value={edited as string}
+            multiline
+            numberOfLines={4}
+            maxLength={MAX_TEXTAREA_LENGTH}
+            editable
+            autoFocus={true}
+            onChangeText={(text) => {
+              handleInput(text, MAX_TEXTAREA_LENGTH)
+            }}
+          />
+        )}
+        {Boolean(option.description) && (
+          <Text style={[styles.description]}>{option.description}</Text>
+        )}
+      </View>
+      <BottomActionBar
+        actions={[
+          {
+            label: submitButtonLabel,
+            onPress: saveValue,
+            disabled:
               disabled ||
               (edited as string).length === 0 ||
-              inputError.isExceededMaxLength
-            }
-            onPress={saveValue}>
-            {submitButtonLabel}
-          </Button>
-        </Content>
-      </KeyboardAvoidingView>
-    </Container>
+              inputError.isExceededMaxLength,
+          },
+        ]}
+      />
+    </ScreenWrapper>
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: theme.spacing.m,
+    },
     inputValidation: {
       borderColor: DECLINE_COLOR,
     },

@@ -4,6 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
 import PhotoCameraSvg from '~/assets/photo-camera.svg'
+import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
 import { selectSelectedAccount } from '~/features/identities'
 import {
   fetchPublicProfileData,
@@ -16,7 +17,6 @@ import { useThemeAwareStyle } from '~/hooks'
 import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
 
-import { ShimmerPlaceholder } from '../ShimmerPlaceholder'
 import { IdentityAvatar } from './IdentityAvatar'
 
 const logger = Logger.create('Components/AvatarUploader')

@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import React, { useState } from 'react'
 import {
   Dimensions,
@@ -12,13 +12,13 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-import Text from 'components/Text'
+import Text from '~/components/Text'
 import {
   BLACK_COLOR_OPACITY,
   GREY_COLOR,
   LIGHTGREY_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+} from '~/constants/color'
+import { NUNITO_SANS_BOLD } from '~/constants/text'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
@@ -35,7 +35,7 @@ type ErrorDetailsProps = {
 
 function ErrorDetails(props: ErrorDetailsProps) {
   const { content } = props
-  const [isShowing, setIsShowing] = useState(false)
+  const [isShowing, setIsShowing] = useState<boolean>(false)
 
   return (
     <View style={styles.errorDetailsContainer}>

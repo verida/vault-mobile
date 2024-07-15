@@ -2,8 +2,11 @@ import { Footer } from 'native-base'
 import React from 'react'
 import { ViewProps } from 'react-native'
 
-import { WHITE_COLOR } from 'constants/color'
+import { WHITE_COLOR } from '~/constants/color'
 
+/**
+ * @deprecated use <BottomActionBar> instead
+ */
 const CustomFooter: React.FC<ViewProps> = (props) => {
   const { style, ...rest } = props
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
