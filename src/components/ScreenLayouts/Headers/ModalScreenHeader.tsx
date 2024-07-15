@@ -1,6 +1,6 @@
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import React, { useCallback } from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity } from 'react-native'
 import { useSafeAreaFrame } from 'react-native-safe-area-context'
 
 import { Icon } from '~/components/Icon'
@@ -33,7 +33,11 @@ export const ModalScreenHeader: React.FunctionComponent<
         onPress={handleBackPress}
         hitSlop={HIT_SLOP_10_10}
         style={styles.closeButton}>
-        <Icon name='close' size={24} color={theme.color.onBackground} />
+        <Icon
+          name={Platform.OS === 'ios' ? 'close' : 'back'}
+          size={24}
+          color={theme.color.onBackground}
+        />
       </TouchableOpacity>
     ),
     [handleBackPress, theme.color.onBackground, styles.closeButton]

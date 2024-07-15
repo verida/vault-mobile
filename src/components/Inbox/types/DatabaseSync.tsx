@@ -1,5 +1,4 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert } from 'react-native'
 
@@ -42,16 +41,14 @@ const DatabaseSync: React.FunctionComponent<DatabaseSyncProps> = (props) => {
   }
 
   return (
-    <Content>
-      <RequestDetailsLayout
-        item={item}
-        type={type}
-        inboxItem={inboxItem}
-        onResultClick={onResultClick}
-        currentAction={currentAction}>
-        {/* Hide details about incoming data for now. <RecordList list={records} /> */}
-      </RequestDetailsLayout>
-    </Content>
+    <RequestDetailsLayout
+      item={item}
+      type={type}
+      inboxItem={inboxItem}
+      onResultClick={onResultClick}
+      currentAction={currentAction}>
+      {/* Hide details about incoming data for now. <RecordList list={records} /> */}
+    </RequestDetailsLayout>
   )
 }
 export default DatabaseSync

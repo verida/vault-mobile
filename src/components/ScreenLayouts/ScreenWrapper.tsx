@@ -52,7 +52,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
     isModal,
   })
   const resolvedKeyboardVerticalOffset =
-    keyboardVerticalOffset || totalHeaderAndStatusBarHeight
+    keyboardVerticalOffset ?? totalHeaderAndStatusBarHeight
 
   const insets = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
@@ -92,7 +92,10 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
         behavior={
           keyboardAvoidingBehavior || Platform.OS === 'ios'
             ? 'padding'
-            : 'height'
+            : 'padding' // HACK: Android should usually be set to 'height
+          // but since we set `setDecorFitsSystemWindows` in `MainActivity.java`
+          // The KeyboardAvoidingView was not working correctly. The `padding`
+          // value seems to be ok.
         }
         keyboardVerticalOffset={resolvedKeyboardVerticalOffset}
         style={styles.keyboardAvoidingView}>

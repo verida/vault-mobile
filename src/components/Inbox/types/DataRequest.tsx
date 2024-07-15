@@ -1,7 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert, Image, StyleSheet, View } from 'react-native'
 
@@ -9,9 +8,8 @@ import AccountManager from '~/api/AccountManager'
 import { DefaultAvatar } from '~/api/utils'
 import { InboxEntry } from '~/api/VaultCommon/interfaces/inbox/Inbox'
 import { DataAction } from '~/api/VaultCommon/managers/inbox/DataAction'
-import Button from '~/components/Button'
 import { RequestedDataSelector } from '~/components/Inbox/RequestedDataSelector'
-import CustomFooter from '~/components/Layouts/CustomFooter'
+import { BottomActionBar } from '~/components/ScreenLayouts'
 import Text from '~/components/Text'
 import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from '~/constants/color'
 import { Logger } from '~/features/telemetry'
@@ -73,67 +71,67 @@ const DataRequest: React.FC<DataRequestProps> = (props) => {
   }
 
   return (
-    <>
-      <Content>
-        <View style={styles.container}>
-          <View style={styles.sender}>
-            <Image
-              source={item.logo || DefaultAvatar}
-              style={styles.senderAvatar}
-            />
-            <View style={styles.senderInfo}>
-              <Text style={styles.senderName}>{item.item.sentBy.context}</Text>
-              <Text style={styles.sendAt}>{formattedSentAt}</Text>
-            </View>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.sender}>
+          <Image
+            source={item.logo || DefaultAvatar}
+            style={styles.senderAvatar}
+          />
+          <View style={styles.senderInfo}>
+            <Text style={styles.senderName}>{item.item.sentBy.context}</Text>
+            <Text style={styles.sendAt}>{formattedSentAt}</Text>
           </View>
-          <View style={styles.divider} />
-          {status ? (
-            <View
-              style={[styles.statusContainer, { justifyContent: 'center' }]}>
-              <Text
-                style={[
-                  styles.status,
-                  status === 'accept'
-                    ? styles.statusAccept
-                    : styles.statusDecline,
-                ]}>
-                {status === 'accept' ? 'Accepted' : 'Declined'}
-              </Text>
-            </View>
-          ) : (
-            <RequestedDataSelector
-              name={item.title} // Not the best to use the message title but better than nothing for the moment
-              schemaUrl={requestSchema}
-              userSelect={!!userSelect}
-              fallbackAction={fallbackAction}
-              onPress={onItemPress}
-              selectedItems={selectedItems}
-            />
-          )}
         </View>
-      </Content>
-      {status ? null : (
-        <CustomFooter>
-          <View style={styles.footer}>
-            <Button
-              color='grey'
-              style={[styles.button, styles.ignoreButton]}
-              onPress={() => handleAction('decline')}
-              loading={currentAction === 'decline'}
-              disabled={!!status}>
-              Decline
-            </Button>
-            <Button
-              style={[styles.button, styles.shareButton]}
-              onPress={() => handleAction('accept')}
-              loading={currentAction === 'accept'}
-              disabled={!shareEnabled || !!status}>
-              Share
-            </Button>
+        <View style={styles.divider} />
+        {status ? (
+          <View style={[styles.statusContainer, { justifyContent: 'center' }]}>
+            <Text
+              style={[
+                styles.status,
+                status === 'accept'
+                  ? styles.statusAccept
+                  : styles.statusDecline,
+              ]}>
+              {status === 'accept' ? 'Accepted' : 'Declined'}
+            </Text>
           </View>
-        </CustomFooter>
+        ) : (
+          <RequestedDataSelector
+            name={item.title} // Not the best to use the message title but better than nothing for the moment
+            schemaUrl={requestSchema}
+            userSelect={!!userSelect}
+            fallbackAction={fallbackAction}
+            onPress={onItemPress}
+            selectedItems={selectedItems}
+          />
+        )}
+      </View>
+      {status ? null : (
+        <BottomActionBar
+          actions={[
+            {
+              variant: 'secondary',
+              label: 'Decline',
+              onPress: () => handleAction('decline'),
+              disabled:
+                !!status ||
+                currentAction === 'accept' ||
+                currentAction === 'decline',
+            },
+            {
+              label: 'Share',
+              onPress: () => handleAction('accept'),
+              disabled:
+                !shareEnabled ||
+                !!status ||
+                currentAction === 'accept' ||
+                currentAction === 'decline',
+            },
+          ]}
+        />
       )}
-    </>
+    </View>
   )
 }
 
@@ -141,6 +139,10 @@ export default DataRequest
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
     alignItems: 'stretch',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -165,20 +167,6 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: GREY_COLOR,
     marginTop: 20,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10, // Supported in RN 0.71+
-  },
-  button: {
-    flex: 1,
-  },
-  ignoreButton: {
-    marginRight: 5, // TODO: Remove this when gap is supported in RN 0.71
-  },
-  shareButton: {
-    marginLeft: 5, // TODO: Remove this when gap is supported in RN 0.71
   },
   senderAvatar: {
     width: 60,
