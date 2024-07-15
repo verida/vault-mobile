@@ -42,7 +42,11 @@ export const QrCodeScannerOverlay: React.FunctionComponent<
 
   return (
     <View style={styles.container}>
-      <Svg height='100%' width='100%'>
+      <Svg
+        height='200%' // FIXME: Investigate why a value higher than 100% is needed. Otherwise there is a white space at the bottom of the screen.
+        width='100%'
+        x='0'
+        y='0'>
         <Defs>
           <Mask id='mask' x='0' y='0' height='100%' width='100%'>
             <Rect x='0' y='0' height='100%' width='100%' fill={'#fff'} />

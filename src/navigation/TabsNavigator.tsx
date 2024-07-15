@@ -39,9 +39,9 @@ export const TabsNavigator: React.FunctionComponent = () => {
           header: (props) => <TabScreenHeader {...props} />,
           headerShadowVisible: true,
           tabBarStyle: {
-            height: 40 + 10 + (insets.bottom === 0 ? 6 : insets.bottom), // 40 (icon and label) + 10 (padding top) + 6 or insets.bottom (padding bottom)
             paddingTop: 10,
-            paddingBottom: insets.bottom || 6, // insets.bottom act as padding
+            paddingBottom: 6 + insets.bottom,
+            height: 40 + 10 + 6 + insets.bottom, // 40 (icon and label) + 10 (padding top) + (6 + insets.bottom) (padding bottom)
             borderTopWidth: 1,
           },
           tabBarIcon: ({ color, focused, size }) => {

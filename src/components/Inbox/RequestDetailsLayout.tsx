@@ -3,8 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native'
 
 import { InboxEntry } from '~/api/VaultCommon/interfaces/inbox/Inbox'
 import { DataAction } from '~/api/VaultCommon/managers/inbox/DataAction'
-import Button from '~/components/Button'
-import Layout from '~/components/Layouts/Layout'
+import { BottomActionBar } from '~/components/ScreenLayouts'
 import Text from '~/components/Text'
 import { ACCEPT_COLOR, DECLINE_COLOR } from '~/constants/color'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
@@ -35,50 +34,60 @@ const RequestDetailsLayout: React.FC<RequestDetailsLayoutProps> = (props) => {
   }
 
   return (
-    <Layout style={style.layout}>
-      <View style={style.header}>
-        <Text style={style.title}>{type.title}</Text>
+    <View style={style.container}>
+      <View style={style.content}>
+        <View style={style.header}>
+          <Text style={style.title}>{type.title}</Text>
+        </View>
+        <Description details={description} />
+        <ScrollView>{children}</ScrollView>
+        {inboxItem.data.status ? (
+          <View style={[style.action, { justifyContent: 'center' }]}>
+            <Text
+              style={[
+                style.result,
+                inboxItem.data.status === 'accept'
+                  ? style.resultAccept
+                  : style.resultDecline,
+              ]}>
+              {inboxItem.data.status === 'accept' ? 'Accepted' : 'Declined'}
+            </Text>
+          </View>
+        ) : null}
       </View>
-      <Description details={description} />
-      <ScrollView>{children}</ScrollView>
-      {inboxItem.data.status ? (
-        <View style={[style.action, { justifyContent: 'center' }]}>
-          <Text
-            style={[
-              style.result,
-              inboxItem.data.status === 'accept'
-                ? style.resultAccept
-                : style.resultDecline,
-            ]}>
-            {inboxItem.data.status === 'accept' ? 'Accepted' : 'Declined'}
-          </Text>
-        </View>
-      ) : (
-        <View style={style.action}>
-          <Button
-            color='grey'
-            style={style.btn}
-            onPress={() => onResultClick('decline')}
-            loading={currentAction === 'decline'}>
-            Decline
-          </Button>
-          <Button
-            style={{ ...style.btn, marginLeft: 20 }}
-            onPress={() => onResultClick('accept')}
-            loading={currentAction === 'accept'}>
-            Accept
-          </Button>
-        </View>
-      )}
-    </Layout>
+      {!inboxItem.data.status ? (
+        <BottomActionBar
+          actions={[
+            {
+              variant: 'secondary',
+              label: 'Decline',
+              onPress: () => onResultClick('decline'),
+              disabled:
+                currentAction === 'accept' || currentAction === 'decline',
+            },
+            {
+              variant: 'primary',
+              label: 'Accept',
+              onPress: () => onResultClick('accept'),
+              disabled:
+                currentAction === 'accept' || currentAction === 'decline',
+            },
+          ]}
+        />
+      ) : null}
+    </View>
   )
 }
 
 export default RequestDetailsLayout
 
 const style = StyleSheet.create({
-  layout: {
+  container: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
@@ -109,10 +118,6 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 30,
     bottom: 0,
-  },
-  btn: {
-    flex: 0.5,
-    height: 40,
   },
   svg: {
     position: 'absolute',

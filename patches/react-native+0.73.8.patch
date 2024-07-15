@@ -1,0 +1,25 @@
+diff --git a/node_modules/react-native/ReactCommon/jsc/JSCRuntime.cpp b/node_modules/react-native/ReactCommon/jsc/JSCRuntime.cpp
+index 906ca7c..dc033c8 100644
+--- a/node_modules/react-native/ReactCommon/jsc/JSCRuntime.cpp
++++ b/node_modules/react-native/ReactCommon/jsc/JSCRuntime.cpp
+@@ -387,12 +387,14 @@ JSCRuntime::~JSCRuntime() {
+   // has started.
+   ctxInvalid_ = true;
+   JSGlobalContextRelease(ctx_);
+-#ifndef NDEBUG
+-  assert(
+-      objectCounter_ == 0 && "JSCRuntime destroyed with a dangling API object");
+-  assert(
+-      stringCounter_ == 0 && "JSCRuntime destroyed with a dangling API string");
+-#endif
++
++// TODO: temporary disable to avoid crash on reload the app, until this issue is fixed https://github.com/software-mansion/react-native-reanimated/issues/4783
++// #ifndef NDEBUG
++//   assert(
++//       objectCounter_ == 0 && "JSCRuntime destroyed with a dangling API object");
++//   assert(
++//       stringCounter_ == 0 && "JSCRuntime destroyed with a dangling API string");
++// #endif
+ }
+ 
+ std::shared_ptr<const jsi::PreparedJavaScript> JSCRuntime::prepareJavaScript(

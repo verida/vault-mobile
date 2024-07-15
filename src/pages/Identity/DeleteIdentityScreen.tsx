@@ -32,7 +32,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
     navigation.setOptions({
       title: 'Delete your Identity',
       headerShown: !processing,
-      headerLeft: () => null,
+      // TODO: Block the navigation when processing
     })
   }, [navigation, processing])
 
