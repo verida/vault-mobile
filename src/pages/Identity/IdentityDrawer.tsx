@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import {
+  CopyToClipboardButton,
   DrawerIdentityList,
   DrawerShortcutButton,
   Icon,
@@ -115,20 +116,26 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   ellipsizeMode='tail'>
                   {displayedName}
                 </Typography>
-                <Typography
-                  variant='label'
-                  style={styles.did}
-                  numberOfLines={2}
-                  ellipsizeMode='middle'>
-                  {identity?.did}
-                </Typography>
+                <View style={styles.didWrapper}>
+                  <Typography
+                    variant='label'
+                    style={styles.did}
+                    numberOfLines={2}
+                    ellipsizeMode='middle'>
+                    {identity?.did}
+                  </Typography>
+
+                  <CopyToClipboardButton
+                    content={identity?.did || ''}
+                    size={16}
+                  />
+                </View>
               </View>
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
                   label='Inbox'
                   icon={<InboxIcon size={theme.iconSize.m} />}
                   onPress={handleInboxPress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='Share Identity'
@@ -140,7 +147,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleShareIdentityPress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='View Profile'
@@ -152,7 +158,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleViewProfilePress}
-                  style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
                   label='Settings'
@@ -164,7 +169,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                     />
                   }
                   onPress={handleSettingsPress}
-                  style={styles.shortcutButton}
                 />
               </View>
             </View>
@@ -216,6 +220,7 @@ const createStyles = (theme: Theme) =>
       paddingBottom: theme.spacing.m,
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
+      gap: theme.spacing.s,
       alignItems: 'center',
     },
     avatar: {
@@ -223,24 +228,26 @@ const createStyles = (theme: Theme) =>
       aspectRatio: 1,
     },
     name: {
-      marginTop: theme.spacing.s,
       textAlign: 'center',
     },
     emptyName: {
       color: theme.color.textLightGrey,
       fontStyle: 'italic', // FIXME: Italic not applied
     },
+    didWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
     did: {
-      marginTop: theme.spacing.s,
-      paddingHorizontal: theme.spacing.l,
+      flex: 1,
       textAlign: 'center',
       color: theme.color.textLightGrey,
     },
     shortcutsContainer: {
       padding: theme.spacing.m,
-    },
-    shortcutButton: {
-      marginBottom: theme.spacing.m,
+      gap: theme.spacing.m,
     },
     identitiesContainer: {
       flexShrink: 1,

@@ -4,17 +4,19 @@ import { AuthContext, AuthTypeConfig, Network } from '@verida/types'
 import didJWT from 'did-jwt'
 import { capitalize } from 'lodash'
 import moment from 'moment'
-import { Container, Content, Icon } from 'native-base'
+import { Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, StyleSheet, View } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
 import MobileSvg from '~/assets/mobile.svg'
-import { Alert as AlertBanner } from '~/components'
+import {
+  Alert as AlertBanner,
+  BottomActionBar,
+  ScreenWrapper,
+} from '~/components'
 import AppLogo from '~/components/AppLogo'
-import Button from '~/components/Button'
 import CountDownText from '~/components/CountDownText'
-import CustomFooter from '~/components/Layouts/CustomFooter'
 import LoadingView from '~/components/LoadingView'
 import Text from '~/components/Text'
 import {
@@ -345,23 +347,28 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
     setExpired(true)
   }
 
+  if (status === 'loading') {
+    return (
+      <View style={style.container}>
+        <LoadingView />
+      </View>
+    )
+  }
+
   return (
-    <Container>
-      <Content contentContainerStyle={style.contentContainer}>
-        {status === 'loading' && <LoadingView />}
-        {status !== 'loading' ? (
-          <View style={style.content}>
-            {!errorMessage && (
-              <>
-                {logoUrl ? (
-                  <AppLogo url={logoUrl} style={style.img} />
-                ) : (
-                  <MobileSvg style={style.img} />
-                )}
-                <Text style={style.appName}>{appName}</Text>
-              </>
+    <ScreenWrapper>
+      <View style={style.container}>
+        {!errorMessage && (
+          <>
+            {logoUrl ? (
+              <AppLogo url={logoUrl} style={style.img} />
+            ) : (
+              <MobileSvg style={style.img} />
             )}
-            {/* <View style={style.verified}>
+            <Text style={style.appName}>{appName}</Text>
+          </>
+        )}
+        {/* <View style={style.verified}>
               {!errorMessage ? (
                 <>
                   <AntDesign name='check' size={15} color={SUCCESS_COLOR} />
@@ -381,145 +388,129 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
                 </>
               )}
             </View> */}
-            <Text style={style.title}>New Login Request</Text>
-            <View>
-              <Text style={style.text}>
-                There is a new login approval request from
-              </Text>
-              <Text
-                style={[style.text, style.link]}
-                onPress={onPressLoginDomain}>
-                {fromText}
-              </Text>
-            </View>
-            <View style={style.timeContainer}>
-              <Text style={style.generatedTime}>
-                Generated:{' '}
-                {moment(info.payload.insertedAt).format(
-                  'DD MMM, YYYY [at] h:mm a'
-                )}
-              </Text>
-              {compatibleNetwork !== 'incompatible' && !expired && (
-                <Text style={style.expiresTime}>
-                  Expires:{' '}
-                  <CountDownText
-                    seconds={secondsUntilExpire}
-                    style={style.countDownText}
-                    onFinish={onCountdownFinished}
-                  />{' '}
-                  seconds ({(expiry || 0) / 1000})
-                </Text>
-              )}
-            </View>
-            {compatibleNetwork === 'incompatible' ? (
-              <View style={style.alertBannerContainer}>
-                <AlertBanner type='error'>{`The application requests a ${capitalize(
-                  info.network
-                )} Identity, switch to a compatible one.`}</AlertBanner>
-              </View>
-            ) : null}
-            {compatibleNetwork === 'unknown' && !hasNetworkInRequest ? (
-              <View style={style.alertBannerContainer}>
-                <AlertBanner type='warning'>
-                  {`The application doesn't specify a network, compatibility issue may occur with your ${capitalize(
-                    currentIdentityNetwork as string
-                  )} Identity`}
-                </AlertBanner>
-              </View>
-            ) : null}
-            {compatibleNetwork !== 'incompatible' &&
-              (expired || errorMessage) && (
-                <View style={style.modal}>
-                  {errorMessage && (
-                    <>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text
-                          style={[
-                            style.text,
-                            { color: errorMessage.color, marginBottom: 2 },
-                          ]}>
-                          <Icon
-                            type='AntDesign'
-                            name={errorMessage.iconName}
-                            style={[style.text, { color: errorMessage.color }]}
-                          />
-                          &nbsp; {errorMessage.heading}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          style.text,
-                          { fontSize: 12, color: errorMessage.color },
-                          expired && { marginBottom: 5 },
-                        ]}>
-                        {errorMessage.message}
-                      </Text>
-                    </>
-                  )}
-                  {expired && (
-                    <Text
-                      style={[
-                        style.text,
-                        { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
-                      ]}>
-                      Expired: {timeToExpire}
-                    </Text>
-                  )}
+        <Text style={style.title}>New Login Request</Text>
+        <View>
+          <Text style={style.text}>
+            There is a new login approval request from
+          </Text>
+          <Text style={[style.text, style.link]} onPress={onPressLoginDomain}>
+            {fromText}
+          </Text>
+        </View>
+        <View style={style.timeContainer}>
+          <Text style={style.generatedTime}>
+            Generated:{' '}
+            {moment(info.payload.insertedAt).format('DD MMM, YYYY [at] h:mm a')}
+          </Text>
+          {compatibleNetwork !== 'incompatible' && !expired && (
+            <Text style={style.expiresTime}>
+              Expires:{' '}
+              <CountDownText
+                seconds={secondsUntilExpire}
+                style={style.countDownText}
+                onFinish={onCountdownFinished}
+              />{' '}
+              seconds ({(expiry || 0) / 1000})
+            </Text>
+          )}
+        </View>
+        {compatibleNetwork === 'incompatible' ? (
+          <View style={style.alertBannerContainer}>
+            <AlertBanner type='error'>{`The application requests a ${capitalize(
+              info.network
+            )} Identity, switch to a compatible one.`}</AlertBanner>
+          </View>
+        ) : null}
+        {compatibleNetwork === 'unknown' && !hasNetworkInRequest ? (
+          <View style={style.alertBannerContainer}>
+            <AlertBanner type='warning'>
+              {`The application doesn't specify a network, compatibility issue may occur with your ${capitalize(
+                currentIdentityNetwork as string
+              )} Identity`}
+            </AlertBanner>
+          </View>
+        ) : null}
+        {compatibleNetwork !== 'incompatible' && (expired || errorMessage) && (
+          <View style={style.modal}>
+            {errorMessage && (
+              <>
+                <View style={{ flexDirection: 'row' }}>
                   <Text
                     style={[
                       style.text,
-                      { fontSize: 12, color: '#FF3B30', marginTop: 5 },
+                      { color: errorMessage.color, marginBottom: 2 },
                     ]}>
-                    Please refresh the login screen
+                    <Icon
+                      type='AntDesign'
+                      name={errorMessage.iconName}
+                      style={[style.text, { color: errorMessage.color }]}
+                    />
+                    &nbsp; {errorMessage.heading}
                   </Text>
                 </View>
-              )}
-          </View>
-        ) : null}
-      </Content>
-      {compatibleNetwork !== 'incompatible' ? (
-        <CustomFooter>
-          <View style={style.actions}>
-            {expired || errorMessage ? (
-              <Button style={style.btn} onPress={tryAgainOnPress}>
-                Try Again
-              </Button>
-            ) : (
-              <Button
-                style={[style.btn, style.mr]}
-                color='grey'
-                onPress={deny}
-                disabled={status !== 'loaded' && status !== 'error'}>
-                Ignore
-              </Button>
+                <Text
+                  style={[
+                    style.text,
+                    { fontSize: 12, color: errorMessage.color },
+                    expired && { marginBottom: 5 },
+                  ]}>
+                  {errorMessage.message}
+                </Text>
+              </>
             )}
-            {!errorMessage && !expired ? (
-              <Button
-                style={style.btn}
-                onPress={approve}
-                disabled={status !== 'loaded'}>
-                Login
-              </Button>
-            ) : null}
+            {expired && (
+              <Text
+                style={[
+                  style.text,
+                  { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
+                ]}>
+                Expired: {timeToExpire}
+              </Text>
+            )}
+            <Text
+              style={[
+                style.text,
+                { fontSize: 12, color: '#FF3B30', marginTop: 5 },
+              ]}>
+              Please refresh the login screen
+            </Text>
           </View>
-          {status === 'approving' || status === 'denying' ? (
-            <View>
-              <Text style={style.text}>Sending response...</Text>
-            </View>
-          ) : null}
-        </CustomFooter>
+        )}
+      </View>
+      {compatibleNetwork !== 'incompatible' ? (
+        <BottomActionBar
+          actions={
+            expired || errorMessage
+              ? [
+                  {
+                    label: 'Try Again',
+                    onPress: tryAgainOnPress,
+                  },
+                ]
+              : [
+                  {
+                    variant: 'secondary',
+                    label: 'Ignore',
+                    onPress: deny,
+                    disabled: status !== 'loaded' && status !== 'error',
+                  },
+                  {
+                    label: 'Login',
+                    onPress: approve,
+                    disabled: status !== 'loaded',
+                  },
+                ]
+          }
+        />
       ) : null}
-    </Container>
+    </ScreenWrapper>
   )
 }
 
 const style = StyleSheet.create({
-  contentContainer: {
+  container: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
   img: {

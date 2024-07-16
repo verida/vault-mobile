@@ -5,6 +5,7 @@ import {
   Alert,
   Image,
   Keyboard,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -136,6 +137,7 @@ export const AddVeridaOnePlatformLinkScreen: React.FunctionComponent<
     [mode, navigation, originalValue, screenName, selectedNetwork.name]
   )
 
+  // TODO: Overwrite the back navigation handling at OS level to use the custom goBack
   useEffect(() => {
     navigation.setOptions({
       title: getPageName(),
@@ -144,7 +146,8 @@ export const AddVeridaOnePlatformLinkScreen: React.FunctionComponent<
           onPress={goBack}
           hitSlop={HIT_SLOP_10_10}
           style={styles.headerLeftButton}>
-          {currentPage === PageType.ListSocialNetworks ? (
+          {currentPage === PageType.ListSocialNetworks &&
+          Platform.OS === 'ios' ? (
             <Icon name='close' size={24} color={theme.color.onBackground} />
           ) : (
             <Icon name='back' size={24} color={theme.color.onBackground} />

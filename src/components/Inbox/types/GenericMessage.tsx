@@ -1,20 +1,21 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { get, isEmpty } from 'lodash'
 import moment from 'moment'
-import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, Image, Linking, StyleSheet, View } from 'react-native'
 
 import AccountManager from '~/api/AccountManager'
 import { DefaultAvatar, getPublicProfile } from '~/api/utils'
 import MailSvg from '~/assets/icons/mail.svg'
-import Button from '~/components/Button'
+import { BottomActionBar } from '~/components/ScreenLayouts'
 import { ShimmerPlaceholder } from '~/components/ShimmerPlaceholder'
 import Text from '~/components/Text'
+import { Typography } from '~/components/Typography'
 import { NUNITO_SANS_BOLD } from '~/constants/text'
 import { Logger } from '~/features/telemetry'
-import { useEmitter } from '~/hooks'
+import { useEmitter, useThemeAwareStyle } from '~/hooks'
 import { MainStackParams } from '~/navigation/types'
+import { Theme } from '~/styles/types'
 
 const logger = Logger.create('Component/GenericMessage')
 
@@ -40,6 +41,8 @@ function GenericMessage(props: GenericMessageProps) {
   const { inboxItem, navigation } = props
   const [sender, setSender] = useState<Sender>(defaultSender)
   const [submitting, setSubmitting] = useState<boolean>(false)
+
+  const styles = useThemeAwareStyle(createStyles)
 
   const fetchSenderData = React.useCallback(async () => {
     try {
@@ -115,109 +118,111 @@ function GenericMessage(props: GenericMessageProps) {
   const formattedSentAt = moment(inboxItem.sentAt).format('MMM D, HH:mm')
 
   return (
-    <Content>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <View style={styles.header}>
           <MailSvg />
-          <Text style={styles.title}>{itemData.subject}</Text>
+          <Typography variant='h3' numberOfLines={1} ellipsizeMode='tail'>
+            {itemData.subject}
+          </Typography>
         </View>
-      </View>
-      <View style={styles.senderContainer}>
-        <ShimmerPlaceholder
-          visible={!sender.isLoading}
-          style={styles.senderAvatar}>
-          <Image source={sender.avatar} style={styles.senderAvatar} />
-        </ShimmerPlaceholder>
-        <View>
+        <View style={styles.senderContainer}>
           <ShimmerPlaceholder
             visible={!sender.isLoading}
-            style={styles.senderName}>
-            <Text style={styles.senderName}>{sender.name}</Text>
+            style={styles.senderAvatar}>
+            <Image source={sender.avatar} style={styles.senderAvatar} />
           </ShimmerPlaceholder>
-          <Text style={styles.sentAt}>{formattedSentAt}</Text>
+          <View>
+            <ShimmerPlaceholder
+              visible={!sender.isLoading}
+              style={styles.senderName}>
+              <Text style={styles.senderName}>{sender.name}</Text>
+            </ShimmerPlaceholder>
+            <Text style={styles.sentAt}>{formattedSentAt}</Text>
+          </View>
+        </View>
+        <View style={styles.messageContainer}>
+          <Text style={styles.message}>{itemData.message}</Text>
         </View>
       </View>
-      <View style={styles.messageContent}>
-        <Text style={styles.message}>{itemData.message}</Text>
-      </View>
-      <View style={styles.footerContent}>
-        {itemData.link ? (
-          <View>
-            <Button
-              color='primary'
-              style={styles.linkButton}
-              onPress={() => {
-                openLink(itemData.link.url)
-              }}>
-              {itemData.link.text}
-            </Button>
-          </View>
-        ) : null}
-        <Button
-          color='grey'
-          style={styles.okayButton}
-          onPress={onSubmit}
-          loading={submitting}>
-          Mark as read
-        </Button>
-      </View>
-    </Content>
+      <BottomActionBar
+        actionsOrientation='column'
+        actions={
+          itemData.link
+            ? [
+                {
+                  variant: 'primary',
+                  label: itemData.link.text,
+                  onPress: () => openLink(itemData.link.url),
+                },
+                {
+                  variant: 'secondary',
+                  label: 'Mark as read',
+                  onPress: onSubmit,
+                  disabled: submitting,
+                },
+              ]
+            : [
+                {
+                  variant: 'secondary',
+                  label: 'Mark as read',
+                  onPress: onSubmit,
+                  disabled: submitting,
+                },
+              ]
+        }
+      />
+    </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 15,
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: NUNITO_SANS_BOLD,
-    marginLeft: 24,
-  },
-  messageContent: {
-    marginHorizontal: 15,
-  },
-  senderContainer: {
-    marginVertical: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(60, 60, 67, 0.4)',
-    borderBottomColor: 'rgba(60, 60, 67, 0.4)',
-    paddingHorizontal: 15,
-  },
-  senderAvatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    resizeMode: 'cover',
-    marginRight: 15,
-  },
-  senderName: {
-    fontSize: 14,
-  },
-  sentAt: {
-    fontSize: 12,
-  },
-  message: {
-    color: 'rgba(129, 136, 153, 1)',
-    fontSize: 14,
-  },
-  linkButton: {
-    marginHorizontal: 15,
-  },
-  okayButton: {
-    marginHorizontal: 15,
-  },
-  footerContent: {
-    marginTop: 38,
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    content: {
+      flex: 1,
+    },
+    header: {
+      padding: theme.spacing.m,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.m,
+    },
+    title: {
+      fontSize: 22,
+      fontFamily: NUNITO_SANS_BOLD,
+    },
+    senderContainer: {
+      borderWidth: StyleSheet.hairlineWidth,
+      borderTopColor: theme.color.separator,
+      borderBottomColor: theme.color.separator,
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.m,
+    },
+    senderAvatar: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      resizeMode: 'cover',
+      marginRight: 15,
+    },
+    senderName: {
+      fontSize: 14,
+    },
+    sentAt: {
+      fontSize: 12,
+    },
+    messageContainer: {
+      flex: 1,
+      padding: theme.spacing.m,
+    },
+    message: {
+      color: 'rgba(129, 136, 153, 1)',
+      fontSize: 14,
+    },
+  })
 
 export default GenericMessage

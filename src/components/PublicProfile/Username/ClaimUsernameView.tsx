@@ -2,14 +2,12 @@ import { useNavigation } from '@react-navigation/native'
 import LottieView from 'lottie-react-native'
 import React, { useImperativeHandle, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import UsernameManager from '~/api/UsernameManager'
 import BlurCircle from '~/assets/blur_circle.svg'
 import FailureCross from '~/assets/failure_cross.svg'
 import SuccessTick from '~/assets/success_tick.svg'
-import Button from '~/components/Button'
-import Container from '~/components/Container'
+import { BottomActionBar } from '~/components/ScreenLayouts'
 import { Headline } from '~/components/Typography/Headline'
 import { Text } from '~/components/Typography/Text'
 import { Title } from '~/components/Typography/Title'
@@ -29,7 +27,6 @@ export interface ClaimUsernameViewRefProps {
 export const ClaimUsernameView = React.forwardRef(
   (_, receivedRef: React.ForwardedRef<ClaimUsernameViewRefProps>) => {
     const navigation = useNavigation()
-    const { bottom } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
     const [inputUsername, setInputUsername] = useState<string>('')
@@ -69,7 +66,7 @@ export const ClaimUsernameView = React.forwardRef(
     }
 
     return (
-      <Container key='ClaimUsername'>
+      <View key='ClaimUsername' style={styles.container}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -87,7 +84,7 @@ export const ClaimUsernameView = React.forwardRef(
               marginTop: 56,
               marginBottom: theme.spacing.xl,
             }}>
-            {processing ? (
+            {processing ? ( // TODO: Replace with StatusInfo
               <>
                 <BlurCircle />
                 <LottieView
@@ -140,46 +137,39 @@ export const ClaimUsernameView = React.forwardRef(
             </Title>
           )}
         </ScrollView>
-
-        <View
-          style={[
-            styles.bottomNavContainer,
-            { marginBottom: bottom + theme.spacing.m },
-          ]}>
-          {showRetry ? (
-            <Button
-              style={styles.button}
-              onPress={() => handleClaimUsername(inputUsername)}>
-              Retry
-            </Button>
-          ) : isDoneCreateUsername ? (
-            <Button style={styles.button} onPress={() => navigation.goBack()}>
-              Done
-            </Button>
-          ) : null}
-        </View>
-      </Container>
+        <BottomActionBar
+          actions={
+            showRetry
+              ? [
+                  {
+                    label: 'Retry',
+                    onPress: () => handleClaimUsername(inputUsername),
+                  },
+                ]
+              : isDoneCreateUsername
+                ? [
+                    {
+                      label: 'Done',
+                      onPress: () => navigation.goBack(),
+                    },
+                  ]
+                : []
+          }
+        />
+      </View>
     )
   }
 )
 
-const createStyles = (theme: Theme) =>
+const createStyles = (_theme: Theme) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     dotsLoader: {
       width: 48,
       height: 48,
       position: 'absolute',
-    },
-    bottomNavContainer: {
-      width: '100%',
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing.m,
-    },
-    button: {
-      height: 48,
-      marginHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.s,
-      marginBottom: 0,
     },
     pagerView: {
       flex: 1,
