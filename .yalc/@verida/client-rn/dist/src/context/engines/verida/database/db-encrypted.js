@@ -108,6 +108,7 @@ var EncryptedDatabase = /** @class */ (function (_super) {
      */
     function EncryptedDatabase(config, engine) {
         var _this = _super.call(this, config, engine) || this;
+        _this._closing = false;
         _this._syncError = null;
         _this.encryptionKey = config.encryptionKey;
         // PouchDB sync object
@@ -308,43 +309,51 @@ var EncryptedDatabase = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (this._sync === null) {
-                            // No sync object indicates this database is closed
+                        if (this.closing) {
                             return [2 /*return*/];
                         }
-                        return [4 /*yield*/, this.finalizeSync()];
+                        this.closing = true;
+                        if (!(this._sync === null)) return [3 /*break*/, 2];
+                        // No sync object indicates this database is closed
+                        return [4 /*yield*/, this.engine.closeDatabase(this.did, this.databaseName)];
                     case 1:
+                        // No sync object indicates this database is closed
                         _a.sent();
-                        if (!options.clearLocal) return [3 /*break*/, 3];
+                        this.emit('closed', this.databaseName);
+                        return [2 /*return*/];
+                    case 2: return [4 /*yield*/, this.finalizeSync()];
+                    case 3:
+                        _a.sent();
+                        if (!options.clearLocal) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.destroy({
                                 localOnly: true
                             })
                             // Return, because destroy will close all database connections
                         ];
-                    case 2:
+                    case 4:
                         _a.sent();
                         // Return, because destroy will close all database connections
                         return [2 /*return*/];
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, this._localDbEncrypted.close()];
-                    case 4:
-                        _a.sent();
-                        return [3 /*break*/, 6];
                     case 5:
-                        err_2 = _a.sent();
-                        return [3 /*break*/, 6];
+                        _a.trys.push([5, 7, , 8]);
+                        return [4 /*yield*/, this._localDbEncrypted.close()];
                     case 6:
-                        _a.trys.push([6, 8, , 9]);
-                        return [4 /*yield*/, this.db.close()];
-                    case 7:
                         _a.sent();
-                        return [3 /*break*/, 9];
+                        return [3 /*break*/, 8];
+                    case 7:
+                        err_2 = _a.sent();
+                        return [3 /*break*/, 8];
                     case 8:
-                        err_3 = _a.sent();
-                        return [3 /*break*/, 9];
-                    case 9: return [4 /*yield*/, this.engine.closeDatabase(this.did, this.databaseName)];
+                        _a.trys.push([8, 10, , 11]);
+                        return [4 /*yield*/, this.db.close()];
+                    case 9:
+                        _a.sent();
+                        return [3 /*break*/, 11];
                     case 10:
+                        err_3 = _a.sent();
+                        return [3 /*break*/, 11];
+                    case 11: return [4 /*yield*/, this.engine.closeDatabase(this.did, this.databaseName)];
+                    case 12:
                         _a.sent();
                         this.emit('closed', this.databaseName);
                         return [2 /*return*/];

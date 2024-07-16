@@ -246,6 +246,7 @@ var VeridaInbox = /** @class */ (function (_super) {
                             // This often happens when changing networks, so don't log
                             setTimeout(function () {
                                 console.log("Retrying to establish public inbox connection");
+                                inbox.emit("connectionError", err);
                                 inbox.watch();
                             }, 1000);
                         }); // Setup watching for any changes to the local private inbox (ie: marking an item as read)

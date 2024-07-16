@@ -137,30 +137,37 @@ var DIDContextManager = /** @class */ (function () {
                         if (this.didContexts[contextHash]) {
                             return [2 /*return*/, this.didContexts[contextHash]];
                         }
-                        if (!this.account) return [3 /*break*/, 5];
+                        if (!this.account) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.account.did()];
                     case 1:
                         accountDid = _a.sent();
-                        if (!(accountDid == did)) return [3 /*break*/, 5];
+                        if (!(accountDid == did)) return [3 /*break*/, 7];
                         _a.label = 2;
                     case 2:
-                        _a.trys.push([2, 4, , 5]);
+                        _a.trys.push([2, 6, , 7]);
                         return [4 /*yield*/, this.account.storageConfig(contextName, forceCreate)];
                     case 3:
                         //const now = (new Date()).getTime()
                         storageConfig = _a.sent();
-                        return [3 /*break*/, 5];
+                        if (!(storageConfig === null || storageConfig === void 0 ? void 0 : storageConfig.isLegacyDid)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this.account.did()];
                     case 4:
-                        err_1 = _a.sent();
-                        console.log(err_1);
-                        return [3 /*break*/, 5];
-                    case 5:
-                        if (!!storageConfig) return [3 /*break*/, 7];
-                        return [4 /*yield*/, storage_link_1.StorageLink.getLink(this.network, this.didClient, did, contextName, true)];
+                        did = _a.sent();
+                        if (contextName.substring(0, 2) != '0x') {
+                            contextHash = did_document_1.DIDDocument.generateContextHash(did, contextName);
+                        }
+                        _a.label = 5;
+                    case 5: return [3 /*break*/, 7];
                     case 6:
-                        storageConfig = _a.sent();
-                        _a.label = 7;
+                        err_1 = _a.sent();
+                        throw new Error("Unable to locate requested storage context (" + contextName + ") for this DID (" + did + "): " + err_1.message);
                     case 7:
+                        if (!!storageConfig) return [3 /*break*/, 9];
+                        return [4 /*yield*/, storage_link_1.StorageLink.getLink(this.network, this.didClient, did, contextName, true)];
+                    case 8:
+                        storageConfig = _a.sent();
+                        _a.label = 9;
+                    case 9:
                         if (!storageConfig) {
                             if (forceCreate) {
                                 throw new Error("Unable to force creation of storage context for this DID");

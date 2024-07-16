@@ -66,24 +66,14 @@ class Client implements IClient {
       : {};
     this.config = _.merge(defaultConfig, userConfig) as DefaultClientConfig;
 
-    /**
-     * Auto-determine the did client based on the Verida Network
-     * 
-     * @todo Consider deprecating this and injecting a did client object as part of the config
-     */
-    const blockchain = DefaultNetworkBlockchainAnchors[this.network]
-    userConfig.didClientConfig = userConfig.didClientConfig ? userConfig.didClientConfig : {
-      blockchain
-    }
-
-    this.didClient = new DIDClient({
-      ...userConfig.didClientConfig,
-      blockchain
+    this.didClient = new DIDClient(userConfig.didClientConfig ? userConfig.didClientConfig : {
+      network: this.network
     });
 
     const rpcUrl = this.didClient.getRpcUrl()
+    const blockchainAnchor = DefaultNetworkBlockchainAnchors[this.network];
     this.nameClient = new VeridaNameClient({
-      network: this.network,
+      blockchainAnchor,
       web3Options: {
         rpcUrl
       }
@@ -118,6 +108,10 @@ class Client implements IClient {
    */
   public isConnected() {
     return typeof this.account != "undefined";
+  }
+
+  public getNetwork(): Network {
+    return this.network
   }
 
   /**
@@ -221,10 +215,12 @@ class Client implements IClient {
     contextName: string,
     profileName: string = "basicProfile",
     fallbackContext: string | null = "Verida: Vault",
-    ignoreCache: boolean = false): Promise<ProfileDocument> {
+    ignoreCache: boolean = false,
+    networkFallback: boolean = true
+  ): Promise<ProfileDocument | undefined> {
     if (this.config.readOnlyDataApiUri) {
       // Try to fetch the profile from our data API
-      const fetchUri = `${this.config.readOnlyDataApiUri}/${did}/${contextName}/profile_public/${profileName}?ignoreCache=${ignoreCache}`
+      const fetchUri = `${this.config.readOnlyDataApiUri}/${this.network}/${did}/${contextName}/profile_public/${profileName}?ignoreCache=${ignoreCache}`
 
       try {
         const response = await axios.get(fetchUri)
@@ -241,13 +237,17 @@ class Client implements IClient {
 
     // Profile not able to be fetched from the read only data API
     // Try fetching from the network
-    const profile = await this.openPublicProfile(did, contextName, profileName, fallbackContext)
-
-    if (!profile) {
-      throw new Error('Profile not found')
+    if (networkFallback) {
+      try {
+        const profile = await this.openPublicProfile(did, contextName, profileName, fallbackContext)
+    
+        if (profile) {
+          return profile.getMany({}, {})
+        }
+      } catch (err: any) {
+        // do nothing, simply return undefined
+      }
     }
-
-    return profile.getMany({}, {})
   }
 
   /**

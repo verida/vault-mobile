@@ -15,6 +15,7 @@ declare class EncryptedDatabase extends BaseDb {
     private _syncStatus?;
     private _localDbEncrypted;
     private _localDb;
+    private _closing;
     private _syncError;
     /**
      *

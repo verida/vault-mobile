@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -79,19 +68,13 @@ var Client = /** @class */ (function () {
             ? config_1.default.environments[this.network]
             : {};
         this.config = _.merge(defaultConfig, userConfig);
-        /**
-         * Auto-determine the did client based on the Verida Network
-         *
-         * @todo Consider deprecating this and injecting a did client object as part of the config
-         */
-        var blockchain = vda_common_1.DefaultNetworkBlockchainAnchors[this.network];
-        userConfig.didClientConfig = userConfig.didClientConfig ? userConfig.didClientConfig : {
-            blockchain: blockchain
-        };
-        this.didClient = new did_client_1.DIDClient(__assign(__assign({}, userConfig.didClientConfig), { blockchain: blockchain }));
+        this.didClient = new did_client_1.DIDClient(userConfig.didClientConfig ? userConfig.didClientConfig : {
+            network: this.network
+        });
         var rpcUrl = this.didClient.getRpcUrl();
+        var blockchainAnchor = vda_common_1.DefaultNetworkBlockchainAnchors[this.network];
         this.nameClient = new vda_name_client_1.VeridaNameClient({
-            network: this.network,
+            blockchainAnchor: blockchainAnchor,
             web3Options: {
                 rpcUrl: rpcUrl
             }
@@ -134,6 +117,9 @@ var Client = /** @class */ (function () {
      */
     Client.prototype.isConnected = function () {
         return typeof this.account != "undefined";
+    };
+    Client.prototype.getNetwork = function () {
+        return this.network;
     };
     /**
      * Open a storage context for the current account.
@@ -234,17 +220,18 @@ var Client = /** @class */ (function () {
     Client.prototype.getConfig = function () {
         return this.config;
     };
-    Client.prototype.getPublicProfile = function (did, contextName, profileName, fallbackContext, ignoreCache) {
+    Client.prototype.getPublicProfile = function (did, contextName, profileName, fallbackContext, ignoreCache, networkFallback) {
         if (profileName === void 0) { profileName = "basicProfile"; }
         if (fallbackContext === void 0) { fallbackContext = "Verida: Vault"; }
         if (ignoreCache === void 0) { ignoreCache = false; }
+        if (networkFallback === void 0) { networkFallback = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var fetchUri, response, err_1, profile;
+            var fetchUri, response, err_1, profile, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.config.readOnlyDataApiUri) return [3 /*break*/, 4];
-                        fetchUri = this.config.readOnlyDataApiUri + "/" + did + "/" + contextName + "/profile_public/" + profileName + "?ignoreCache=" + ignoreCache;
+                        fetchUri = this.config.readOnlyDataApiUri + "/" + this.network + "/" + did + "/" + contextName + "/profile_public/" + profileName + "?ignoreCache=" + ignoreCache;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -261,13 +248,22 @@ var Client = /** @class */ (function () {
                             }
                         }
                         return [3 /*break*/, 4];
-                    case 4: return [4 /*yield*/, this.openPublicProfile(did, contextName, profileName, fallbackContext)];
+                    case 4:
+                        if (!networkFallback) return [3 /*break*/, 8];
+                        _a.label = 5;
                     case 5:
+                        _a.trys.push([5, 7, , 8]);
+                        return [4 /*yield*/, this.openPublicProfile(did, contextName, profileName, fallbackContext)];
+                    case 6:
                         profile = _a.sent();
-                        if (!profile) {
-                            throw new Error('Profile not found');
+                        if (profile) {
+                            return [2 /*return*/, profile.getMany({}, {})];
                         }
-                        return [2 /*return*/, profile.getMany({}, {})];
+                        return [3 /*break*/, 8];
+                    case 7:
+                        err_2 = _a.sent();
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -390,7 +386,7 @@ var Client = /** @class */ (function () {
     };
     Client.prototype.destroyAccount = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var didDocument, doc, contextNames, _a, _b, _i, i, keyAgreement, matches, contextHash, contextName, err_2, _c, _d, _e, c, didClient;
+            var didDocument, doc, contextNames, _a, _b, _i, i, keyAgreement, matches, contextHash, contextName, err_3, _c, _d, _e, c, didClient;
             return __generator(this, function (_f) {
                 switch (_f.label) {
                     case 0:
@@ -428,7 +424,7 @@ var Client = /** @class */ (function () {
                         contextNames.push(contextName);
                         return [3 /*break*/, 6];
                     case 5:
-                        err_2 = _f.sent();
+                        err_3 = _f.sent();
                         return [3 /*break*/, 6];
                     case 6:
                         _i++;
@@ -541,7 +537,7 @@ var Client = /** @class */ (function () {
     };
     Client.prototype.getContextNameFromHash = function (contextHash, didDocument) {
         return __awaiter(this, void 0, void 0, function () {
-            var services, service, timestamp, did, endpoints, _a, _b, _i, e, endpointUri, consentMessage, signature, response, err_3;
+            var services, service, timestamp, did, endpoints, _a, _b, _i, e, endpointUri, consentMessage, signature, response, err_4;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -596,7 +592,7 @@ var Client = /** @class */ (function () {
                         }
                         return [3 /*break*/, 9];
                     case 8:
-                        err_3 = _c.sent();
+                        err_4 = _c.sent();
                         return [3 /*break*/, 9];
                     case 9:
                         _i++;

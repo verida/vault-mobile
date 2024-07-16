@@ -269,7 +269,7 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                                 throw new Error("Unable to open database. Permissions require \"owner\" access to read, but account is not owner.");
                             }
                         }
-                        if (!!config.isOwner) return [3 /*break*/, 10];
+                        if (!!config.isOwner) return [3 /*break*/, 12];
                         // Not the owner, so need the endpoints to have been specified in the config
                         if (!config.endpoints) {
                             throw new Error("Unable to determine endpoints for this user (" + did + ") and this context (" + contextName + ")");
@@ -282,20 +282,29 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                         _i = 0;
                         _c.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3 /*break*/, 8];
+                        if (!(_i < _a.length)) return [3 /*break*/, 10];
                         i = _a[_i];
                         endpointUri = endpointUris[i];
                         endpoint_2 = new endpoint_1.default(this, this.storageContext, this.contextConfig, endpointUri);
-                        if (!this.account) return [3 /*break*/, 6];
-                        _c.label = 2;
+                        if (!(config.permissions.read == "public")) return [3 /*break*/, 3];
+                        // connect account using a public endpoint
+                        return [4 /*yield*/, endpoint_2.setUsePublic()];
                     case 2:
-                        _c.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, endpoint_2.connectAccount(this.account, false)];
-                    case 3:
+                        // connect account using a public endpoint
                         _c.sent();
                         endpoints[endpointUri] = endpoint_2;
-                        return [3 /*break*/, 5];
+                        return [3 /*break*/, 9];
+                    case 3:
+                        if (!this.account) return [3 /*break*/, 8];
+                        _c.label = 4;
                     case 4:
+                        _c.trys.push([4, 6, , 7]);
+                        return [4 /*yield*/, endpoint_2.connectAccount(this.account, false)];
+                    case 5:
+                        _c.sent();
+                        endpoints[endpointUri] = endpoint_2;
+                        return [3 /*break*/, 7];
+                    case 6:
                         err_3 = _c.sent();
                         if (err_3.message.match('Unable to connect')) {
                             // storage node is unavailable, so ignore
@@ -303,27 +312,27 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                         else {
                             throw err_3;
                         }
-                        return [3 /*break*/, 5];
-                    case 5: return [3 /*break*/, 7];
-                    case 6:
+                        return [3 /*break*/, 7];
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
                         // Unknown if this endpoint is valid, so include it in the pool and the status
                         // will be checked
                         endpoints[endpointUri] = endpoint_2;
-                        _c.label = 7;
-                    case 7:
+                        _c.label = 9;
+                    case 9:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 8: return [4 /*yield*/, this.locateAvailableEndpoint(endpoints, this.account ? true : false)];
-                    case 9:
+                    case 10: return [4 /*yield*/, this.locateAvailableEndpoint(endpoints, this.account ? true : false)];
+                    case 11:
                         // If we have an account we would have already attempted to connect to the storage node
                         // and removed it if it was unavailable, so don't need to check the endpoint status
                         endpoint = _c.sent();
-                        return [3 /*break*/, 12];
-                    case 10: return [4 /*yield*/, this.getActiveEndpoint()];
-                    case 11:
+                        return [3 /*break*/, 14];
+                    case 12: return [4 /*yield*/, this.getActiveEndpoint()];
+                    case 13:
                         endpoint = _c.sent();
-                        _c.label = 12;
-                    case 12:
+                        _c.label = 14;
+                    case 14:
                         // force read only access if the current user doesn't have write access
                         if (!config.isOwner) {
                             if (config.permissions.write == "owner") {
@@ -338,12 +347,12 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                             }
                         }
                         if (!(config.permissions.read == "owner" &&
-                            config.permissions.write == "owner")) return [3 /*break*/, 15];
+                            config.permissions.write == "owner")) return [3 /*break*/, 17];
                         if (!this.keyring) {
                             throw new Error("Unable to open database. Permissions require \"owner\" access, but no account connected.");
                         }
                         return [4 /*yield*/, this.keyring.getStorageContextKey(databaseName)];
-                    case 13:
+                    case 15:
                         storageContextKey = _c.sent();
                         encryptionKey = storageContextKey.secretKey;
                         db = new db_encrypted_1.default({
@@ -360,20 +369,18 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                             verifyEncryptionKey: config.verifyEncryptionKey
                         }, this);
                         return [4 /*yield*/, db.init()];
-                    case 14:
-                        _c.sent();
-                        return [2 /*return*/, db];
-                    case 15:
-                        if (!(config.permissions.read == "public")) return [3 /*break*/, 19];
-                        if (!!config.isOwner) return [3 /*break*/, 17];
-                        return [4 /*yield*/, endpoint.setUsePublic()];
                     case 16:
                         _c.sent();
-                        if (config.permissions.write != "public") {
-                            config.readOnly = true;
-                        }
-                        _c.label = 17;
+                        return [2 /*return*/, db];
                     case 17:
+                        if (!(config.permissions.read == "public")) return [3 /*break*/, 19];
+                        // If we aren't the owner of this database use the public credentials
+                        // to access this database
+                        if (!config.isOwner) {
+                            if (config.permissions.write != "public") {
+                                config.readOnly = true;
+                            }
+                        }
                         db = new db_public_1.default({
                             databaseName: databaseName,
                             did: did,

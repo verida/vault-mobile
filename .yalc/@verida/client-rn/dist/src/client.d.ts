@@ -1,4 +1,4 @@
-import { IProfile, IClient, ClientConfig, DefaultClientConfig, IAccount, IContext, SecureContextConfig } from "@verida/types";
+import { IProfile, IClient, ClientConfig, DefaultClientConfig, IAccount, IContext, SecureContextConfig, Network } from "@verida/types";
 import { DIDClient } from "@verida/did-client";
 import Schema from "./context/schema";
 import { DIDDocument } from "@verida/did-document";
@@ -54,6 +54,7 @@ declare class Client implements IClient {
      * @returns boolean True of an account is connected
      */
     isConnected(): boolean;
+    getNetwork(): Network;
     /**
      * Open a storage context for the current account.
      *
@@ -80,7 +81,7 @@ declare class Client implements IClient {
      */
     getContextConfig(did: string, contextName: string): Promise<SecureContextConfig | undefined>;
     getConfig(): DefaultClientConfig;
-    getPublicProfile(did: string, contextName: string, profileName?: string, fallbackContext?: string | null, ignoreCache?: boolean): Promise<ProfileDocument>;
+    getPublicProfile(did: string, contextName: string, profileName?: string, fallbackContext?: string | null, ignoreCache?: boolean, networkFallback?: boolean): Promise<ProfileDocument | undefined>;
     /**
      * Open the public profile of any user in read only mode.
      *

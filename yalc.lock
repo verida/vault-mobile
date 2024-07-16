@@ -2,8 +2,8 @@
   "version": "v1",
   "packages": {
     "@verida/client-rn": {
-      "version": "4.0.0-alpha.0",
-      "signature": "4d0be2a9e520a9d5bbfa4b2805840764",
+      "version": "4.0.0",
+      "signature": "85715a5d249cbf5de0689d4c05644dbd",
       "file": true,
       "replaced": "3.0.2"
     }
