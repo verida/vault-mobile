@@ -135,8 +135,8 @@ export class InboxManager {
     return this.messaging!
   }
 
-  private async init() {
-    if (this.messaging) {
+  public async init(force = false) {
+    if (!force && this.messaging) {
       return
     }
 
