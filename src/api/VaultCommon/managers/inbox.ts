@@ -135,8 +135,8 @@ export class InboxManager {
     return this.messaging!
   }
 
-  private async init() {
-    if (this.messaging) {
+  public async init(force = false) {
+    if (!force && this.messaging) {
       return
     }
 
@@ -164,6 +164,10 @@ export class InboxManager {
       publicDb: db2,
       publicDbCount: db2Count,
     }
+  }
+
+  public async healthCheck() {
+    return await this.info()
   }
 
   public async rebuild() {

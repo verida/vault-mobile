@@ -17,6 +17,7 @@ export default class VaultCommon {
   constructor(client: any, vault: any) {
     this.client = client
     this.vault = vault
+
     this.inbox = new InboxManager(this)
     this.sync = new SyncManager(this)
     this.data = new DataManager(this)
