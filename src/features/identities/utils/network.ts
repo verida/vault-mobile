@@ -19,7 +19,6 @@ export function getNetworkFromDID(did: string): Network {
           : networkAsString === Network.LOCAL
             ? Network.LOCAL
             : null
-  console.log('networkAsString', networkAsString, network)
 
   if (!network) throw new Error(`Invalid Verida Network: ${networkAsString}`)
 

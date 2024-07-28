@@ -154,8 +154,8 @@ class AccountManager extends EventEmitter {
       this.client = new Client({
         network,
         didClientConfig: {
+          network,
           rpcUrl: didClientConfig.rpcUrl,
-          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
         },
       })
 
@@ -310,28 +310,22 @@ class AccountManager extends EventEmitter {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
-      console.log('Create account 0', didClientConfig)
-
       this.client = new Client({
         network,
         didClientConfig: {
-          rpcUrl: didClientConfig.rpcUrl,
-          blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
+          network,
         },
       })
 
-      console.log('Create account 1')
       const account = new AutoAccount({
         privateKey: this.selectedAccount!.mnemonic,
         network,
         didClientConfig,
       })
 
-      console.log('Create account 2', account)
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
 
-      console.log('Create account 3', countryCode)
       const notificationEndpoints =
         config.verida[network].notificationServerUrls
 
@@ -340,13 +334,9 @@ class AccountManager extends EventEmitter {
         notificationEndpoints,
       })
 
-      console.log('Create account 4')
-
       updateProgress?.('StorageLocation', 'processing')
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
-
-      console.log('Create account 5')
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
@@ -354,14 +344,10 @@ class AccountManager extends EventEmitter {
         true
       )
 
-      console.log('Create account 6')
-
       if (context === undefined) {
         throw new Error(`Failed to open context ${VERIDA_VAULT_CONTEXT_NAME}`)
       }
       this.context = context
-
-      console.log('Create account 7')
 
       // Set the Vault
       this.vault = await this.getVault()

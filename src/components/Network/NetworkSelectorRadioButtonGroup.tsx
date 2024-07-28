@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import React, { useCallback } from 'react'
 
 import {
@@ -12,8 +12,8 @@ export type NetworkSelectorRadioButtonGroupProps = Omit<
   CollapsibleRadioButtonGroupProps,
   'title' | 'items' | 'selectedItem' | 'onValueChange'
 > & {
-  selectedNetwork?: EnvironmentType
-  onSelectionChange?: (newNetwork: EnvironmentType) => void
+  selectedNetwork?: Network
+  onSelectionChange?: (newNetwork: Network) => void
 }
 
 export const NetworkSelectorRadioButtonGroup: React.FunctionComponent<
@@ -23,7 +23,7 @@ export const NetworkSelectorRadioButtonGroup: React.FunctionComponent<
 
   const handleValueChange = useCallback(
     (newNetwork: string) => {
-      onSelectionChange && onSelectionChange(newNetwork as EnvironmentType)
+      onSelectionChange && onSelectionChange(newNetwork as Network)
     },
     [onSelectionChange]
   )

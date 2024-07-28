@@ -20,7 +20,7 @@ export function isValidVeridaDid(maybeDid: string) {
 export function getDidClientConfigForNetwork(
   network: Network
 ): AccountNodeDIDClientConfig {
-  const rpcUrl = config.verida[network].rpcUrl
+  // const rpcUrl = config.verida[network].rpcUrl
   const metaTransactionServerUrl =
     config.verida[network].metaTransactionServerUrl
 
@@ -31,7 +31,7 @@ export function getDidClientConfigForNetwork(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       callType: 'gasless',
-      rpcUrl,
+      // rpcUrl,
       serverConfig: {
         headers: {
           'context-name': VERIDA_VAULT_CONTEXT_NAME,
@@ -44,7 +44,7 @@ export function getDidClientConfigForNetwork(
       },
       endpointUrl: metaTransactionServerUrl,
     },
-    rpcUrl,
+    // rpcUrl,
   }
 }
 
@@ -57,7 +57,7 @@ export function getSupportedVeridaNetworks(): Network[] {
   const networks: Network[] = []
 
   networks.push(Network.MYRTLE) // Main net
-  // TODO: Add Banksia when available
+  networks.push(Network.BANKSIA)
 
   if (config.dev.devMode) {
     networks.push(Network.DEVNET)
@@ -67,7 +67,5 @@ export function getSupportedVeridaNetworks(): Network[] {
 }
 
 export function getDefaultVeridaNetwork(): Network {
-  return config.dev.devMode
-    ? Network.DEVNET // TODO: Should we change to testnet/banksia? As the wallet dev should use a testnet
-    : Network.MYRTLE
+  return config.dev.devMode ? Network.BANKSIA : Network.MYRTLE
 }

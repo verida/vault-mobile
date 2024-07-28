@@ -46,9 +46,8 @@ export const AuthProvider: FC = ({ children }) => {
     // try to fetch the DID
     const did = selectedAccount!.did
     const veridaNetwork = getNetworkFromDID(did)
-    console.log('AuthProvider', veridaNetwork)
     const didClient = new DIDClient({
-      blockchain: BlockchainAnchor.POLPOS, // TODO: migration check
+      network: veridaNetwork,
     })
 
     try {
@@ -69,7 +68,6 @@ export const AuthProvider: FC = ({ children }) => {
       const selectedAccount = AccountManager.getInstance().getSelectedAccount()
       if (selectedAccount) {
         const network = getNetworkFromDID(selectedAccount.did)
-        console.log('AuthProvider 2', network)
         await AccountManager.getInstance().connect(false, network)
       }
       setLoaded(true)
