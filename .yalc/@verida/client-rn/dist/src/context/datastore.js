@@ -274,6 +274,9 @@ var Datastore = /** @class */ (function () {
             });
         });
     };
+    Datastore.prototype.getSchema = function () {
+        return this.schema;
+    };
     /**
      * Initialize this datastore instance before use.
      *

@@ -1,4 +1,4 @@
-import { NetworkConnectionConfig, Network as VeridaNetwork } from "@verida/types";
+import { NetworkConnectionConfig } from "@verida/types";
 import { Context } from ".";
 /**
  * @category
@@ -15,6 +15,6 @@ declare class Network {
      * @returns {Context | undefined} If the user logs in a valid `Context` object is returned. If an unexpected error occurs or the user cancels the login attempt then nothing is returned.
      */
     static connect(config: NetworkConnectionConfig): Promise<Context | undefined>;
-    static getRecord(network: VeridaNetwork, veridaUri: string, encoded?: boolean): Promise<any>;
+    static getRecord(veridaUri: string, encoded?: boolean): Promise<any>;
 }
 export default Network;

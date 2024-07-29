@@ -22,7 +22,7 @@ export declare class Profile extends EventEmitter implements IProfile {
      *
      * **Do not instantiate directly.**
      *
-     * Access the current user's profile via {@link App.profile}
+     * Access the current user's profile
      *
      * @constructor
      */

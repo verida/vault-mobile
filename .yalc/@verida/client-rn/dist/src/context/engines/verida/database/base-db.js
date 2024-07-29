@@ -391,17 +391,23 @@ var BaseDb = /** @class */ (function (_super) {
     // This will be extended by sub-classes to initialize the database connection
     BaseDb.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _i, _a, plugin, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         if (this.db) {
                             return [2 /*return*/];
                         }
-                        _a = this;
+                        if (this.config.plugins) {
+                            for (_i = 0, _a = this.config.plugins; _i < _a.length; _i++) {
+                                plugin = _a[_i];
+                                PouchDB.plugin(plugin);
+                            }
+                        }
+                        _b = this;
                         return [4 /*yield*/, this.endpoint.connectDb(this.did, this.databaseName, this.permissions, this.isOwner)];
                     case 1:
-                        _a.db = _b.sent();
+                        _b.db = _c.sent();
                         return [2 /*return*/];
                 }
             });

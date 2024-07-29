@@ -117,17 +117,23 @@ var EncryptedDatabase = /** @class */ (function (_super) {
     }
     EncryptedDatabase.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var now, password, saltString, salt;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _i, _a, plugin, now, password, saltString, salt;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (this.db) {
                             return [2 /*return*/];
                         }
+                        if (this.config.plugins) {
+                            for (_i = 0, _a = this.config.plugins; _i < _a.length; _i++) {
+                                plugin = _a[_i];
+                                pouchdb_core_react_native_2.default.plugin(plugin);
+                            }
+                        }
                         now = (new Date()).getTime();
                         return [4 /*yield*/, _super.prototype.init.call(this)];
                     case 1:
-                        _a.sent();
+                        _b.sent();
                         //console.log(`Db.init-1(${this.databaseName}): ${(new Date()).getTime()-now}`)
                         this._localDbEncrypted = new pouchdb_core_react_native_1.default(this.databaseHash);
                         this._localDb = new pouchdb_core_react_native_2.default(this.databaseHash);
@@ -141,10 +147,10 @@ var EncryptedDatabase = /** @class */ (function (_super) {
                                 // Setting to 1,000 -- Any higher and it takes too long on mobile devices
                             })];
                     case 2:
-                        _a.sent();
+                        _b.sent();
                         return [4 /*yield*/, this.initSync()];
                     case 3:
-                        _a.sent();
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });

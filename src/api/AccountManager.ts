@@ -1,6 +1,6 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
-import { BlockchainAnchor, IContext, Network } from '@verida/types'
+import { IContext, Network } from '@verida/types'
 import EventEmitter from 'events'
 import { isEmpty, merge } from 'lodash'
 

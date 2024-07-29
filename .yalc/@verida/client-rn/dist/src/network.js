@@ -83,18 +83,19 @@ var Network = /** @class */ (function () {
             });
         });
     };
-    Network.getRecord = function (network, veridaUri, encoded) {
+    Network.getRecord = function (veridaUri, encoded) {
         if (encoded === void 0) { encoded = false; }
         return __awaiter(this, void 0, void 0, function () {
-            var client, record;
+            var urlParts, client, record;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (encoded) {
                             veridaUri = (0, helpers_1.decodeUri)(veridaUri);
                         }
+                        urlParts = (0, helpers_1.explodeVeridaUri)(veridaUri);
                         client = new client_1.default({
-                            network: network
+                            network: urlParts.network
                         });
                         return [4 /*yield*/, (0, helpers_1.fetchVeridaUri)(veridaUri, client)];
                     case 1:

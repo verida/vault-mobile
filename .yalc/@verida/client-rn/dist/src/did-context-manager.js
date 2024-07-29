@@ -166,6 +166,14 @@ var DIDContextManager = /** @class */ (function () {
                         return [4 /*yield*/, storage_link_1.StorageLink.getLink(this.network, this.didClient, did, contextName, true)];
                     case 8:
                         storageConfig = _a.sent();
+                        // If we have a legacy DID then we need to update the context hash
+                        // to use `did:vda:mainnet`
+                        if (storageConfig === null || storageConfig === void 0 ? void 0 : storageConfig.isLegacyDid) {
+                            if (contextName.substring(0, 2) != '0x') {
+                                did = did.replace('polpos', 'mainnet');
+                                contextHash = did_document_1.DIDDocument.generateContextHash(did, contextName);
+                            }
+                        }
                         _a.label = 9;
                     case 9:
                         if (!storageConfig) {

@@ -120,6 +120,7 @@ declare class Datastore implements IDatastore {
      * @returns {object} Returns an object with a `.cancel()` method to cancel the listener
      */
     changes(cb: any, options?: any): Promise<any>;
+    getSchema(): any;
     /**
      * Initialize this datastore instance before use.
      *

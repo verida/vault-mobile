@@ -366,7 +366,8 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                             endpoint: endpoint,
                             isOwner: config.isOwner,
                             saveDatabase: config.saveDatabase,
-                            verifyEncryptionKey: config.verifyEncryptionKey
+                            verifyEncryptionKey: config.verifyEncryptionKey,
+                            plugins: config.plugins ? config.plugins : []
                         }, this);
                         return [4 /*yield*/, db.init()];
                     case 16:
@@ -391,6 +392,7 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                             endpoint: endpoint,
                             isOwner: config.isOwner,
                             saveDatabase: config.saveDatabase,
+                            plugins: config.plugins ? config.plugins : []
                         }, this);
                         return [4 /*yield*/, db.init()];
                     case 18:
@@ -422,7 +424,8 @@ var StorageEngineVerida = /** @class */ (function (_super) {
                             endpoint: endpoint,
                             isOwner: config.isOwner,
                             saveDatabase: config.saveDatabase,
-                            verifyEncryptionKey: config.verifyEncryptionKey
+                            verifyEncryptionKey: config.verifyEncryptionKey,
+                            plugins: config.plugins ? config.plugins : []
                         }, this);
                         _c.label = 21;
                     case 21:

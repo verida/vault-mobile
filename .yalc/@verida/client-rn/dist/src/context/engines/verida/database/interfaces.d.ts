@@ -18,4 +18,5 @@ export interface VeridaDatabaseConfig {
     encryptionKey?: Buffer;
     saveDatabase: boolean;
     endpoint: Endpoint;
+    plugins?: any[];
 }

@@ -403,7 +403,7 @@ var Context = /** @class */ (function (_super) {
                     case 1:
                         did = _a.sent();
                         did = did.toLowerCase();
-                        cacheKey = did + "/" + databaseName + "/external";
+                        cacheKey = did.replace(/did:vda:[a-z]*:/, '') + "/" + databaseName + "/external";
                         if (this.databaseCache[cacheKey] && !config.ignoreCache) {
                             return [2 /*return*/, this.databaseCache[cacheKey]];
                         }
@@ -412,6 +412,9 @@ var Context = /** @class */ (function (_super) {
                     case 2:
                         contextConfig = _a.sent();
                         config.endpoints = contextConfig.services.databaseServer.endpointUri;
+                        if (contextConfig.isLegacyDid) {
+                            did = config.did = did.replace('polpos', 'mainnet');
+                        }
                         _a.label = 3;
                     case 3:
                         config = _.merge({
