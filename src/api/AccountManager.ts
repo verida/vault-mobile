@@ -273,8 +273,6 @@ class AccountManager extends EventEmitter {
       status: CreateIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
-    console.log('Create account -------')
-
     let connected = false
     updateProgress?.('StorageLocation', 'idle')
     updateProgress?.('CreateProfile', 'idle')
