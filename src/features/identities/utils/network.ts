@@ -1,18 +1,22 @@
 import { Account } from '@verida/account'
 import { explodeDID } from '@verida/helpers'
-import { Network } from '@verida/types'
+import { BlockchainAnchor, Network } from '@verida/types'
 
 export function getNetworkFromDID(did: string): Network {
   let { network: networkAsString } = explodeDID(did)
 
-  if (networkAsString === 'mainnet') {
+  if (
+    networkAsString === 'mainnet' ||
+    networkAsString === BlockchainAnchor.POLPOS
+  ) {
     networkAsString = Network.MYRTLE
   }
 
   const network =
     networkAsString === Network.MYRTLE
       ? Network.MYRTLE
-      : networkAsString === Network.BANKSIA
+      : networkAsString === Network.BANKSIA ||
+          networkAsString === BlockchainAnchor.POLAMOY
         ? Network.BANKSIA
         : networkAsString === Network.DEVNET
           ? Network.DEVNET

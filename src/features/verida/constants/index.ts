@@ -1,6 +1,4 @@
-export const VERIDA_DID_REGEXP =
-  /did:vda:(devnet|mainnet|testnet):0x[0-9a-fA-F]{40}/
-// TODO: Update the regex to include Banksia
+export const VERIDA_DID_REGEXP = /did:vda:(polamoy|polpos):0x[0-9a-fA-F]{40}/
 
 export enum VeridaMessageType {
   SIMPLE_MESSAGE = 'inbox/type/message',

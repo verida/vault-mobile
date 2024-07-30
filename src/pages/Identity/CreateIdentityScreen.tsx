@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -122,7 +122,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState<PageType>(PageType.Name)
 
-  const [network, setNetwork] = useState<EnvironmentType>(defaultNetwork)
+  const [network, setNetwork] = useState<Network>(defaultNetwork)
 
   const [profile, setProfile] = useState<{
     name: string
