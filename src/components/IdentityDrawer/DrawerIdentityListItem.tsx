@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
 
@@ -21,7 +21,7 @@ export const DrawerIdentityListItem: React.FunctionComponent<
   DrawerIdentityListItemProps
 > = (props) => {
   const { did, profile, isCurrent, onPress } = props
-  const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
+  const network = did ? getNetworkFromDID(did) : Network.MYRTLE
   const displayedDid = getAddressFromDID(did)
 
   const isNameEmpty = !profile.name

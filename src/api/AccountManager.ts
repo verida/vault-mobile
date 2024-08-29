@@ -1,6 +1,6 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
-import { EnvironmentType, IContext } from '@verida/types'
+import { IContext, Network } from '@verida/types'
 import EventEmitter from 'events'
 import { isEmpty, merge } from 'lodash'
 
@@ -119,7 +119,7 @@ class AccountManager extends EventEmitter {
       : undefined
   }
 
-  public async connect(forced: boolean, network: EnvironmentType) {
+  public async connect(forced: boolean, network: Network) {
     if (!forced && this.context) {
       return
     }
@@ -137,7 +137,7 @@ class AccountManager extends EventEmitter {
   }
 
   public async getVeridaContext(
-    veridaNetwork: EnvironmentType
+    veridaNetwork: Network
   ): Promise<IContext | undefined> {
     try {
       if (!this.selectedAccount) return undefined
@@ -149,23 +149,31 @@ class AccountManager extends EventEmitter {
         network = getNetworkFromDID(selectAccountDid)
       }
 
+      console.log(
+        'getVeridaContext',
+        network,
+        JSON.stringify(this.selectedAccount, null, 2)
+      )
+
       const didClientConfig = getDidClientConfigForNetwork(network)
 
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
+          network,
           rpcUrl: didClientConfig.rpcUrl,
-          network: network,
         },
       })
-
+      console.log('getVeridaContext 1', this.client)
       const { mnemonic } = this.selectedAccount
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
+
+      console.log('getVeridaContext 2', account)
 
       // Fill the connected account with Verida DID
       let did
@@ -177,11 +185,15 @@ class AccountManager extends EventEmitter {
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
+      console.log('getVeridaContext 3', account)
+
       // Open an application context
       const context = await this.client.openContext(
         VERIDA_VAULT_CONTEXT_NAME,
         false
       )
+
+      console.log('getVeridaContext 4', context)
 
       // Fetch the context config from the Vault and re-apply it to the account
       // so that any new login requests will have default config matching the vault.
@@ -267,7 +279,7 @@ class AccountManager extends EventEmitter {
   public async createAccount(
     userData: PublicProfile,
     country: string,
-    network: EnvironmentType,
+    network: Network,
     updateProgress?: (
       step: CreateIdentityStep,
       status: CreateIdentityStepStatus
@@ -309,16 +321,15 @@ class AccountManager extends EventEmitter {
       })
 
       this.client = new Client({
-        environment: network,
+        network,
         didClientConfig: {
-          rpcUrl: didClientConfig.rpcUrl,
           network,
         },
       })
 
       const account = new AutoAccount({
         privateKey: this.selectedAccount!.mnemonic,
-        environment: network,
+        network,
         didClientConfig,
       })
 
@@ -549,7 +560,7 @@ class AccountManager extends EventEmitter {
     )
   }
 
-  public async importAccount(mnemonic: string, network: EnvironmentType) {
+  public async importAccount(mnemonic: string, network: Network) {
     try {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null

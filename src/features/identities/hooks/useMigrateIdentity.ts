@@ -1,7 +1,7 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
-import { EnvironmentType, IContext } from '@verida/types'
+import { BlockchainAnchor, IContext, Network } from '@verida/types'
 import { merge } from 'lodash'
 import { useCallback } from 'react'
 
@@ -31,7 +31,7 @@ import { useCurrentIdentity } from './useCurrentIdentity'
 
 const logger = Logger.create('IdentityMigration')
 
-const mainnetNetwork = EnvironmentType.MAINNET
+const mainnetNetwork = Network.MYRTLE
 
 export function useMigrateIdentity() {
   const dispatch = useAppDispatch()
@@ -66,17 +66,17 @@ export function useMigrateIdentity() {
         })
 
         mainnetClient = new Client({
-          environment: mainnetNetwork,
+          network: mainnetNetwork,
           didClientConfig: {
             rpcUrl: didClientConfig.rpcUrl,
-            network: mainnetNetwork,
+            blockchain: BlockchainAnchor.POLPOS,
           },
         })
         logger.debug('Created Mainnet client')
 
         mainnetVeridaAccount = new AutoAccount({
           privateKey: currentIdentity.privateKey,
-          environment: mainnetNetwork,
+          network: mainnetNetwork,
           didClientConfig,
         })
         logger.debug('Created Mainnet local account')

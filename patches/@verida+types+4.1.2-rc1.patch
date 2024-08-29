@@ -1,8 +1,8 @@
 diff --git a/node_modules/@verida/types/dist/IDatastore.d.ts b/node_modules/@verida/types/dist/IDatastore.d.ts
-index b6f9225..3dd2878 100644
+index 1e1ee68..5d8caa5 100644
 --- a/node_modules/@verida/types/dist/IDatastore.d.ts
 +++ b/node_modules/@verida/types/dist/IDatastore.d.ts
-@@ -3,7 +3,7 @@ import { IDatabase } from "./IDatabase";
+@@ -4,7 +4,7 @@ import { ISchema } from "./ISchema";
  export interface IDatastore {
      errors: any;
      save(data: any, options: any): Promise<object | boolean>;

@@ -1286,7 +1286,7 @@ PODS:
     - React-perflogger (= 0.73.8)
   - RNCAsyncStorage (1.21.0):
     - React-Core
-  - RNCClipboard (1.14.0):
+  - RNCClipboard (1.13.2):
     - React-Core
   - RNCPushNotificationIOS (1.10.1):
     - React-Core
@@ -1833,7 +1833,7 @@ SPEC CHECKSUMS:
   React-utils: 4cc2ba652f5df1c8f0461d4ae9e3ee474c1354ea
   ReactCommon: 512222a2c036e9a7d1489d4c888aac178dfb0f3c
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
-  RNCClipboard: 090462274cc05b02628bd158baf6d73c3abe8441
+  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
@@ -1857,7 +1857,7 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
-  Yoga: 2a16e58450c48e110211dae1159fb114bbcdcfc0
+  Yoga: e5b887426cee15d2a326bdd34afc0282fc0486ad
 
 PODFILE CHECKSUM: a6a37643be13b0e22c09029b01c6d560c02c18c2
 

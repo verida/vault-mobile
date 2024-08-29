@@ -1,5 +1,5 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import React, { useCallback } from 'react'
 import {
   StatusBar,
@@ -53,7 +53,7 @@ export const HomeScreenHeader: React.FunctionComponent<
 
   const network = identity?.did
     ? getNetworkFromDID(identity?.did)
-    : EnvironmentType.MAINNET
+    : Network.MYRTLE
   const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
   const { open: openIdentityDrawer } = useIdentityDrawer()

@@ -1,4 +1,4 @@
-import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
+import { AccountNodeDIDClientConfig, Network } from '@verida/types'
 
 import { config } from '~/config'
 import {
@@ -18,7 +18,7 @@ export function isValidVeridaDid(maybeDid: string) {
 }
 
 export function getDidClientConfigForNetwork(
-  network: EnvironmentType
+  network: Network
 ): AccountNodeDIDClientConfig {
   const rpcUrl = config.verida[network].rpcUrl
   const metaTransactionServerUrl =
@@ -53,21 +53,19 @@ export function getDidClientConfigForNetwork(
  *
  * @returns An array of supported Verida networks.
  */
-export function getSupportedVeridaNetworks(): EnvironmentType[] {
-  const networks: EnvironmentType[] = []
+export function getSupportedVeridaNetworks(): Network[] {
+  const networks: Network[] = []
 
-  networks.push(EnvironmentType.MAINNET)
-  // TODO: Add Banksia when available
+  networks.push(Network.MYRTLE) // Main net
+  networks.push(Network.BANKSIA)
 
   if (config.dev.devMode) {
-    networks.push(EnvironmentType.DEVNET)
-    networks.push(EnvironmentType.LOCAL)
+    networks.push(Network.DEVNET)
+    networks.push(Network.LOCAL)
   }
   return networks
 }
 
-export function getDefaultVeridaNetwork(): EnvironmentType {
-  return config.dev.devMode
-    ? EnvironmentType.DEVNET // TODO: Change to Banksia when available
-    : EnvironmentType.MAINNET
+export function getDefaultVeridaNetwork(): Network {
+  return config.dev.devMode ? Network.BANKSIA : Network.MYRTLE
 }

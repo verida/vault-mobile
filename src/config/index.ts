@@ -1,5 +1,5 @@
 import { core as PolygonId, CredentialStatusType } from '@0xpolygonid/js-sdk'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
@@ -56,7 +56,7 @@ export const config = {
     },
   },
   verida: {
-    [EnvironmentType.LOCAL]: {
+    [Network.LOCAL]: {
       // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
       rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
@@ -64,26 +64,29 @@ export const config = {
       metaTransactionServerUrl:
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.DEVNET]: {
+    [Network.DEVNET]: {
+      // TODO: Update the devnet variables
       rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
       dataConnectorServerUrl: envVars.VERIDA_DEVNET_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
         envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.TESTNET]: {
-      rpcUrl: envVars.VERIDA_TESTNET_RPC_URL,
-      notificationServerUrls: [envVars.VERIDA_TESTNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: envVars.VERIDA_TESTNET_DATA_CONNECTOR_URL,
+    [Network.BANKSIA]: {
+      // TODO: Change it to Banksia
+      rpcUrl: envVars.VERIDA_BANKSIA_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_BANKSIA_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_BANKSIA_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        envVars.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_BANKSIA_META_TRANSACTION_SERVER_URL,
     },
-    [EnvironmentType.MAINNET]: {
-      rpcUrl: envVars.VERIDA_MAINNET_RPC_URL,
-      notificationServerUrls: [envVars.VERIDA_MAINNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: envVars.VERIDA_MAINNET_DATA_CONNECTOR_URL,
+    [Network.MYRTLE]: {
+      // TODO: Change it to Myrtle
+      rpcUrl: envVars.VERIDA_MYRTLE_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_MYRTLE_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_MYRTLE_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        envVars.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_MYRTLE_META_TRANSACTION_SERVER_URL,
     },
   },
   walletProvider: {

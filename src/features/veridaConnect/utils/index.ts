@@ -1,8 +1,8 @@
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 
 export function isNetworkCompatibleForConnect(
-  identityNetwork: EnvironmentType,
-  requestNetwork: EnvironmentType
+  identityNetwork: Network,
+  requestNetwork: Network
 ) {
   if (identityNetwork === requestNetwork) {
     // If same network
@@ -10,10 +10,9 @@ export function isNetworkCompatibleForConnect(
   }
 
   if (
-    (identityNetwork === EnvironmentType.TESTNET ||
-      identityNetwork === EnvironmentType.DEVNET) &&
-    (requestNetwork === EnvironmentType.TESTNET ||
-      requestNetwork === EnvironmentType.DEVNET)
+    (identityNetwork === Network.BANKSIA ||
+      identityNetwork === Network.DEVNET) &&
+    (requestNetwork === Network.BANKSIA || requestNetwork === Network.DEVNET)
   ) {
     // If both networks are testnet or devnet, they are compatible
     return true

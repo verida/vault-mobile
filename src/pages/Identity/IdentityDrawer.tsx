@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import React, { useCallback } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
@@ -48,7 +48,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
-    : EnvironmentType.MAINNET
+    : Network.MYRTLE
 
   const handleAddIdentity = useCallback(() => {
     navigation.navigate('AddIdentity', { firstIdentity: false })

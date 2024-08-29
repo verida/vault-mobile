@@ -1,18 +1,27 @@
 import { Account } from '@verida/account'
 import { explodeDID } from '@verida/helpers'
-import { EnvironmentType } from '@verida/types'
+import { BlockchainAnchor, Network } from '@verida/types'
 
-export function getNetworkFromDID(did: string): EnvironmentType {
-  const { network: networkAsString } = explodeDID(did)
+export function getNetworkFromDID(did: string): Network {
+  let { network: networkAsString } = explodeDID(did)
+
+  if (
+    networkAsString === 'mainnet' ||
+    networkAsString === BlockchainAnchor.POLPOS
+  ) {
+    networkAsString = Network.MYRTLE
+  }
+
   const network =
-    networkAsString === EnvironmentType.MAINNET
-      ? EnvironmentType.MAINNET
-      : networkAsString === EnvironmentType.TESTNET
-        ? EnvironmentType.TESTNET
-        : networkAsString === EnvironmentType.DEVNET
-          ? EnvironmentType.DEVNET
-          : networkAsString === EnvironmentType.LOCAL
-            ? EnvironmentType.LOCAL
+    networkAsString === Network.MYRTLE
+      ? Network.MYRTLE
+      : networkAsString === Network.BANKSIA ||
+          networkAsString === BlockchainAnchor.POLAMOY
+        ? Network.BANKSIA
+        : networkAsString === Network.DEVNET
+          ? Network.DEVNET
+          : networkAsString === Network.LOCAL
+            ? Network.LOCAL
             : null
 
   if (!network) throw new Error(`Invalid Verida Network: ${networkAsString}`)

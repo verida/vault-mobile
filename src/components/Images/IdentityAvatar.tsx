@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { Network } from '@verida/types'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
@@ -9,7 +9,7 @@ import { Theme } from '~/styles/types'
 import { Avatar, AvatarProps } from './Avatar'
 
 export type IdentityAvatarProps = Pick<AvatarProps, 'source'> & {
-  network?: EnvironmentType
+  network?: Network
   networkIndicatorSize?: NetworkIndicatorProps['size']
   loading?: boolean
 } & ViewProps
@@ -25,7 +25,7 @@ export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
     <View {...viewProps}>
       <View style={styles.container}>
         <Avatar source={source} fallbackType='person' />
-        {network && network !== EnvironmentType.MAINNET ? (
+        {network && network !== Network.MYRTLE ? (
           <NetworkIndicator
             network={network}
             size={networkIndicatorSize}
