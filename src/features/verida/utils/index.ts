@@ -20,7 +20,7 @@ export function isValidVeridaDid(maybeDid: string) {
 export function getDidClientConfigForNetwork(
   network: Network
 ): AccountNodeDIDClientConfig {
-  // const rpcUrl = config.verida[network].rpcUrl
+  const rpcUrl = config.verida[network].rpcUrl
   const metaTransactionServerUrl =
     config.verida[network].metaTransactionServerUrl
 
@@ -31,7 +31,7 @@ export function getDidClientConfigForNetwork(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       callType: 'gasless',
-      // rpcUrl,
+      rpcUrl,
       serverConfig: {
         headers: {
           'context-name': VERIDA_VAULT_CONTEXT_NAME,
@@ -44,7 +44,7 @@ export function getDidClientConfigForNetwork(
       },
       endpointUrl: metaTransactionServerUrl,
     },
-    // rpcUrl,
+    rpcUrl,
   }
 }
 

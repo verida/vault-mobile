@@ -149,6 +149,12 @@ class AccountManager extends EventEmitter {
         network = getNetworkFromDID(selectAccountDid)
       }
 
+      console.log(
+        'getVeridaContext',
+        network,
+        JSON.stringify(this.selectedAccount, null, 2)
+      )
+
       const didClientConfig = getDidClientConfigForNetwork(network)
 
       this.client = new Client({
@@ -158,7 +164,7 @@ class AccountManager extends EventEmitter {
           rpcUrl: didClientConfig.rpcUrl,
         },
       })
-
+      console.log('getVeridaContext 1', this.client)
       const { mnemonic } = this.selectedAccount
 
       const account = new AutoAccount({
@@ -166,6 +172,8 @@ class AccountManager extends EventEmitter {
         network,
         didClientConfig,
       })
+
+      console.log('getVeridaContext 2', account)
 
       // Fill the connected account with Verida DID
       let did
@@ -177,11 +185,15 @@ class AccountManager extends EventEmitter {
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
+      console.log('getVeridaContext 3', account)
+
       // Open an application context
       const context = await this.client.openContext(
         VERIDA_VAULT_CONTEXT_NAME,
         false
       )
+
+      console.log('getVeridaContext 4', context)
 
       // Fetch the context config from the Vault and re-apply it to the account
       // so that any new login requests will have default config matching the vault.

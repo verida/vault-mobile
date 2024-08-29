@@ -25,7 +25,7 @@ export async function getPublicProfileDatastore(
     const network = getNetworkFromDID(did)
     const defaultDidConfig = getDidClientConfigForNetwork(network)
     const client = new Client({
-      environment: network,
+      network,
       didClientConfig: {
         rpcUrl: defaultDidConfig.rpcUrl,
         network: network,

@@ -1,0 +1,22 @@
+diff --git a/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts b/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
+index 2fb9cc5..e62926b 100644
+--- a/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
++++ b/node_modules/@verida/client-rn/dist/src/context/datastore.d.ts
+@@ -24,7 +24,7 @@ declare class Datastore implements IDatastore {
+      *
+      * The errors remain until they are replaced by any new errors.
+      */
+-    errors: object;
++    errors: Array<Error>;
+     /**
+      * Create a new Datastore.
+      *
+@@ -83,7 +83,7 @@ declare class Datastore implements IDatastore {
+      * console.log(results);
+      * @returns {object[]} An array of database records.
+      */
+-    getMany(customFilter?: any, options?: any): Promise<object[]>;
++    getMany<T extends object = object>(customFilter?: any, options?: any): Promise<T[]>;
+     /**
+      * Get a single database record that matches.
+      *

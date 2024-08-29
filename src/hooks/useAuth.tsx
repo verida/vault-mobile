@@ -1,5 +1,4 @@
 import { DIDClient } from '@verida/did-client'
-import { BlockchainAnchor } from '@verida/types'
 import React, {
   createContext,
   FC,
