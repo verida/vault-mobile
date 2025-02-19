@@ -6,6 +6,7 @@ import { Checkbox } from '~/components/Input'
 import { Spacer } from '~/components/Spacer'
 import { Headline } from '~/components/Typography/Headline'
 import { Text } from '~/components/Typography/Text'
+import { TERMS_AND_CONDITIONS_URL } from '~/constants/application'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
 import { Theme } from '~/styles/types'
@@ -32,7 +33,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
   }, [])
 
   const handleTermsConditionLinkPress = useCallback(async () => {
-    const url = 'https://www.verida.io/vault/terms-and-conditions'
+    const url = TERMS_AND_CONDITIONS_URL
     const canOpen = await Linking.canOpenURL(url)
     if (canOpen) {
       Linking.openURL(url)

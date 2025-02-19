@@ -8,3 +8,6 @@ export const APP_VERSION_WITH_BUILD = `${APP_VERSION}+${APP_BUILD_NUMBER}` // Fo
 export const APP_VERSION_FORMATTED = `${APP_VERSION} (${APP_BUILD_NUMBER})` // For the UI
 export const VERIDA_VAULT_CONTEXT_NAME = 'Verida: Vault'
 export const VERIDA_WALLET_USER_AGENT = 'Verida-Vault'
+
+export const TERMS_AND_CONDITIONS_URL =
+  'https://www.verida.network/verida-wallet-terms-and-conditions'
