@@ -12,7 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import PagerView from 'react-native-pager-view'
+import PagerView, {
+  PagerViewOnPageSelectedEvent,
+} from 'react-native-pager-view'
 
 import AccountManager from '~/api/AccountManager'
 import {
@@ -248,6 +250,13 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
     pagerRef.current?.setPage(currentPage)
   }, [currentPage])
 
+  const handlSelectedPageChange = useCallback(
+    (event: PagerViewOnPageSelectedEvent) => {
+      setCurrentPage(event.nativeEvent.position)
+    },
+    []
+  )
+
   useEffect(() => {
     if (
       currentPage === PageType.Confirmation &&
@@ -354,6 +363,7 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
       <PagerView
         ref={pagerRef}
         initialPage={currentPage}
+        onPageSelected={handlSelectedPageChange}
         scrollEnabled={false}
         style={styles.pager}>
         <View key='name' style={styles.page}>
