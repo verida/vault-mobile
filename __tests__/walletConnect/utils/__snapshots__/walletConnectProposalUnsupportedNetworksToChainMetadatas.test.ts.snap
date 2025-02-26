@@ -21,6 +21,11 @@ exports[`walletConnectProposalUnsupportedNetworksToChainMetadatas proposal 1`] =
         "standard": "EIP3091",
         "url": "https://ethereum.dex.guru",
       },
+      {
+        "name": "Routescan",
+        "standard": "EIP3091",
+        "url": "https://ethereum.routescan.io",
+      },
     ],
     "decimals": 18,
     "icon": null,
