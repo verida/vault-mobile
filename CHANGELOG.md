@@ -1,3 +1,10 @@
+# 1.5.1 (2025-02-25)
+
+## Bug fixes
+
+- Update Terms & Conditions link
+- Fix identity creation navigation bug
+
 # 1.5.0 (2024-07-12)
 
 ## Enhancements

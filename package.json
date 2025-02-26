@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "scripts": {
     "clean": "rm -rf $TMPDIR/react-* && rm -rf node_modules ios/pods ios/build android/app/build && watchman watch-del-all && yarn",
     "pod:install": "cd ios && pod install && cd ..",
@@ -45,7 +45,7 @@
     "@json-rpc-tools/utils": "1.7.6",
     "@near-wallet-selector/wallet-utils": "^8.2.0",
     "@react-native-async-storage/async-storage": "^1.21.0",
-    "@react-native-community/blur": "^4.3.0",
+    "@react-native-community/blur": "^4.4.1",
     "@react-native-clipboard/clipboard": "^1.14.0",
     "@react-native-community/netinfo": "8.2.0",
     "@react-native-community/push-notification-ios": "^1.10.1",
