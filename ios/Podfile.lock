@@ -1332,9 +1332,11 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNSentry (5.22.0):
+  - RNSentry (6.8.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - Sentry/HybridSDK (= 8.24.0)
+    - Sentry/HybridSDK (= 8.45.0)
   - RNSnackbar (2.6.2):
     - React-Core
   - RNSVG (13.7.0):
@@ -1349,7 +1351,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry/HybridSDK (8.24.0)
+  - Sentry/HybridSDK (8.45.0)
   - SocketRocket (0.6.1)
   - SSZipArchive (2.2.3)
   - TcpSockets (3.3.2):

@@ -58,7 +58,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@reduxjs/toolkit": "^1.9.3",
-    "@sentry/react-native": "^5.22.0",
+    "@sentry/react-native": "^6.8.0",
     "@sinonjs/text-encoding": "^0.7.2",
     "@tradle/react-native-http": "^2.0.1",
     "@veramo/core": "^5.2.0",
