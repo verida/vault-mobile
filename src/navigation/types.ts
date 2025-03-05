@@ -50,11 +50,7 @@ import {
 import { OnboardingScreenParams } from '~/pages/Onboarding'
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
-  AddVeridaOneCustomLinkScreenParams,
-  AddVeridaOnePlatformLinkScreenParams,
-  ClaimUsernameScreenParams,
   EditProfileScreenParams,
-  EditVeridaOnePlatformLinkScreenParams,
   GenericEditPropertyScreenParams,
   PublicProfileScreenParams,
 } from '~/pages/Profiles'
@@ -138,12 +134,7 @@ export type MainStackParams = {
   LoginRequest: LoginRequestScreenParams
   PublicProfile: PublicProfileScreenParams
   EditProfile: EditProfileScreenParams
-  ClaimUsername: ClaimUsernameScreenParams
   EditGenericProperty: GenericEditPropertyScreenParams
-  AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
-  AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
-  EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
-  VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
   SwitchSelectedCryptoWallet: SwitchSelectedCryptoWalletScreenParams
   CreateCryptoWallet: CreateCryptoWalletScreenParams
