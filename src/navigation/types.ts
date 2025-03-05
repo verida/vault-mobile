@@ -57,7 +57,6 @@ import {
   EditVeridaOnePlatformLinkScreenParams,
   GenericEditPropertyScreenParams,
   PublicProfileScreenParams,
-  UnlockVeridaOneScreenParams,
 } from '~/pages/Profiles'
 import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
 import {
@@ -144,7 +143,6 @@ export type MainStackParams = {
   AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
-  UnlockVeridaOne: UnlockVeridaOneScreenParams
   VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
   SwitchSelectedCryptoWallet: SwitchSelectedCryptoWalletScreenParams

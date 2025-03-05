@@ -40,7 +40,6 @@ import {
   EditProfileScreen,
   EditVeridaOnePlatformLinkScreen,
   PublicProfileScreen,
-  UnlockVeridaOneScreen,
 } from '~/pages/Profiles'
 import { QrCodeScannerScreen } from '~/pages/QrCodeScanner'
 import {
@@ -236,10 +235,6 @@ export const MainNavigator: React.FC = () => {
               component={EditCryptoWalletScreen}
             />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
-            <Stack.Screen
-              name='UnlockVeridaOne'
-              component={UnlockVeridaOneScreen}
-            />
             <Stack.Screen
               name='ClaimUsername'
               component={ClaimUsernameScreen}

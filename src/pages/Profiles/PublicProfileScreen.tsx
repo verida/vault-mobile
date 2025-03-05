@@ -5,7 +5,6 @@ import { NestableScrollContainer } from 'react-native-draggable-flatlist'
 import { useSelector } from 'react-redux'
 
 import AccountManager from '~/api/AccountManager'
-import UsernameManager from '~/api/UsernameManager'
 import { AvatarUploader } from '~/components'
 import LoadingView from '~/components/LoadingView'
 import { PropertyList } from '~/components/PropertyList'
@@ -19,15 +18,12 @@ import {
   setPublicProfileByDid,
 } from '~/features/profiles'
 import { Logger } from '~/features/telemetry'
-// import { VeridaOneManager, VeridaOneProfile } from '~/features/veridaOne'
 import { useEmitter } from '~/hooks/useEmitter'
 import { useThemeAwareStyle } from '~/hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from '~/navigation/types'
 import { EditProfilePropertyOption } from '~/pages/Profiles/EditProfileScreen'
 import { useAppDispatch, useAppSelector } from '~/reduxStore/types'
 import { Theme } from '~/styles/types'
-
-// TODO: We absolutely have to refactor and breakdown this page!
 
 const logger = Logger.create('Pages/Profiles/PublicProfile')
 
@@ -101,8 +97,6 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const { theme } = useTheme()
-
-  const [loading, setLoading] = useState<boolean>(false)
   const [quickFetching, setQuickFetching] = useState<boolean>(false) // Manage a lighter loading indicator for a better UX
 
   const selectedAccount = useSelector(selectSelectedAccount)!
@@ -110,177 +104,17 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
 
   const dispatch = useAppDispatch()
 
-  const [username, setUsername] = useState<string | undefined>(undefined)
   const styles = useThemeAwareStyle(createStyles)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    Promise.all([
-      fetchPublicProfile(),
-      // fetchVeridaOneProfle(),
-      fetchUsername(),
-    ]).finally(() => {
+    Promise.all([fetchPublicProfile()]).finally(() => {
       setRefreshing(false)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // const debounceSaveProfile = useDebouncedCallback(
-  //   React.useCallback(
-  //     async (updatedProfile: Partial<VeridaOneProfile>) => {
-  //       const { walletAddresses, customLinks, featuredAssets, platformLinks } =
-  //         updatedProfile
-  //       try {
-  //         setQuickFetching(true)
-  //         if (
-  //           'walletAddresses' in updatedProfile &&
-  //           !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
-  //         ) {
-  //           await VeridaOneManager.setWalletAddresses(walletAddresses || [])
-  //         }
-
-  //         if (
-  //           'customLinks' in updatedProfile &&
-  //           !isEqual(veridaOneProfile.customLinks, customLinks)
-  //         ) {
-  //           await VeridaOneManager.setCustomLinks(customLinks || [])
-  //         }
-
-  //         if (
-  //           'featuredAssets' in updatedProfile &&
-  //           !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
-  //         ) {
-  //           await VeridaOneManager.setFeaturedAssets(featuredAssets || [])
-  //         }
-
-  //         if (
-  //           'platformLinks' in updatedProfile &&
-  //           !isEqual(veridaOneProfile.platformLinks, platformLinks)
-  //         ) {
-  //           await VeridaOneManager.setPlatformLinks(platformLinks || [])
-  //         }
-
-  //         // refetch profile so react state correctly updates
-  //         fetchVeridaOneProfle()
-  //       } catch (error) {
-  //         logger.error(error)
-  //         Alert.alert('Error', 'Failed to save profile')
-  //         onRefresh()
-  //       } finally {
-  //         setQuickFetching(false)
-  //       }
-  //     },
-  //     [
-  //       onRefresh,
-  //       veridaOneProfile.customLinks,
-  //       veridaOneProfile.featuredAssets,
-  //       veridaOneProfile.platformLinks,
-  //       veridaOneProfile.walletAddresses,
-  //     ]
-  //   ),
-  //   1000
-  // )
-
-  // const updateWalletAddressesOrder = useCallback(
-  //   (walletAddressesOrder: VeridaOneWalletAddress[]) => {
-  //     let orderNumber = 0
-
-  //     const newPublicAddresses = [...publicWalletAddresses]
-  //     walletAddressesOrder.forEach((walletAddress: VeridaOneWalletAddress) => {
-  //       const publicAddress = newPublicAddresses.find(
-  //         (pa) =>
-  //           pa.address === walletAddress.address &&
-  //           pa.chainId === walletAddress.chainId
-  //       )
-  //       if (publicAddress) {
-  //         publicAddress.order = orderNumber++
-  //       }
-  //     })
-
-  //     setPublicWalletAddresses(newPublicAddresses)
-  //     debounceSaveProfile({ walletAddresses: newPublicAddresses })
-  //   },
-  //   [publicWalletAddresses, debounceSaveProfile]
-  // )
-
-  // const updatePlatformLinksOrder = useCallback(
-  //   (updatedOderPlatformLinks: VeridaOnePlatformLink[]) => {
-  //     let orderNumber = 0
-
-  //     const updatedPlatformLinks = [...platformLinks]
-  //     updatedOderPlatformLinks.map((plaformLink: VeridaOnePlatformLink) => {
-  //       const pl = updatedPlatformLinks.find(
-  //         (item) => item.url === plaformLink.url
-  //       )
-  //       if (pl) {
-  //         pl.order = orderNumber++
-  //       }
-  //     })
-
-  //     setPlatformLinks(updatedPlatformLinks)
-  //     debounceSaveProfile({ platformLinks: updatedPlatformLinks })
-  //   },
-  //   [platformLinks, debounceSaveProfile]
-  // )
-
-  // const updateCustomLinksOrder = useCallback(
-  //   (customLinksWithNewOrder: VeridaOneCustomLink[]) => {
-  //     let orderNumber = 0
-
-  //     const newCustomLinks = customLinksWithNewOrder.map(
-  //       (link: VeridaOneCustomLink) => {
-  //         link.order = orderNumber++
-  //         return link
-  //       }
-  //     )
-
-  //     setPublicCustomLinks(newCustomLinks)
-  //     debounceSaveProfile({ customLinks: newCustomLinks })
-  //   },
-  //   [debounceSaveProfile]
-  // )
-
-  // const setFeaturedCustomLink = useCallback(
-  //   (customLink: VeridaOneCustomLink, featured: boolean) => {
-  //     const totalNumberFeaturedLink = publicCustomLinks.reduce(
-  //       (acc, cur: VeridaOneCustomLink) => acc + (cur.featured ? 1 : 0),
-  //       0
-  //     )
-
-  //     if (
-  //       !customLink.featured &&
-  //       featured &&
-  //       totalNumberFeaturedLink >= VERIDA_ONE_MAX_FEATURED_CUSTOM_LINKS
-  //     ) {
-  //       Snackbar.show({
-  //         text: 'You already have two featured links',
-  //         duration: Snackbar.LENGTH_SHORT,
-  //       })
-  //       return
-  //     }
-
-  //     const updatedCustomLinks = [...publicCustomLinks]
-  //     const linkIndex = updatedCustomLinks.findIndex(
-  //       (link) => link.url === customLink.url && link.label === customLink.label
-  //     )
-
-  //     if (linkIndex >= 0) {
-  //       const updateLink = {
-  //         ...customLink,
-  //         featured,
-  //       }
-
-  //       // Replace updated item
-  //       updatedCustomLinks.splice(linkIndex, 1, updateLink as any)
-
-  //       setPublicCustomLinks(updatedCustomLinks)
-  //       debounceSaveProfile({ customLinks: updatedCustomLinks })
-  //     }
-  //   },
-  //   [debounceSaveProfile, publicCustomLinks]
-  // )
 
   const fetchPublicProfile = async () => {
     try {
@@ -302,92 +136,6 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
     }
   }
 
-  // const fetchVeridaOneProfle = async () => {
-  //   // Fetch Verida One Profile
-  //   try {
-  //     const oneProfile = (await VeridaOneManager.getProfile()) as any
-  //     if (oneProfile) {
-  //       setVeridaOneProfile(oneProfile)
-
-  //       // Clone deep to avoid nested objects updating cross changes
-  //       setPublicWalletAddresses(cloneDeep(oneProfile.walletAddresses))
-  //       setPublicCustomLinks(cloneDeep(oneProfile.customLinks))
-  //       setPlatformLinks(cloneDeep(oneProfile.platformLinks))
-
-  //       // Update items order
-  //       const updatedFeaturedAssets = oneProfile.featuredAssets.map(
-  //         (asset: VeridaOneFeaturedAsset, idx: number) => ({
-  //           ...asset,
-  //           order: idx,
-  //         })
-  //       )
-  //       setFeaturedAssets(updatedFeaturedAssets)
-  //     }
-  //   } catch (error) {
-  //     logger.error(error)
-  //     Alert.alert('Error', 'Cannot load Verida profile data')
-  //   }
-  // }
-
-  const fetchUsername = async () => {
-    try {
-      const accountUsernames = await UsernameManager.get()
-      if (accountUsernames.length > 0) {
-        setUsername(accountUsernames[0])
-        setProfileReadonlyProps((currentValues) => {
-          const updateValues = [...currentValues]
-          const newItem = {
-            label: 'Username',
-            value: accountUsernames[0],
-            action: 'copy',
-          }
-          const index = currentValues.findIndex(
-            (item) => item.label === 'Username'
-          )
-
-          if (index !== -1) {
-            updateValues.splice(index, 1, newItem)
-          } else {
-            updateValues.push(newItem)
-          }
-
-          return updateValues
-        })
-      }
-    } catch (error) {
-      logger.error(error)
-    }
-  }
-
-  // const removeFeaturedAsset = useCallback(
-  //   (featuredAsset: VeridaOneFeaturedAsset) => {
-  //     let updatedFeaturedAssets = [...featuredAssets]
-  //     const itemIndex = featuredAssets.findIndex(
-  //       (it) =>
-  //         featuredAsset.chainId === it.chainId &&
-  //         featuredAsset.tokenId === it.tokenId &&
-  //         featuredAsset.order === it.order
-  //     )
-
-  //     if (itemIndex >= 0) {
-  //       updatedFeaturedAssets.splice(itemIndex, 1)
-  //       // Update items order
-  //       updatedFeaturedAssets = updatedFeaturedAssets.map((asset, idx) => ({
-  //         ...asset,
-  //         order: idx,
-  //       }))
-
-  //       setFeaturedAssets(updatedFeaturedAssets)
-  //       debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
-  //       Snackbar.show({
-  //         text: 'Removed',
-  //         duration: Snackbar.LENGTH_SHORT,
-  //       })
-  //     }
-  //   },
-  //   [debounceSaveProfile, featuredAssets]
-  // )
-
   useEmitter(
     'UPDATE_PUBLIC_PROFILE',
     debounce(() => {
@@ -395,27 +143,13 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
     }, 600)
   )
 
-  useEmitter('UPDATE_PROFILE_USERNAME', () => {
-    setLoading(true)
-    fetchUsername().finally(() => {
-      setLoading(false)
-    })
-  })
-
   useEffect(() => {
     // A little bit of delay here to avoid any unclean state when switching accounts
     const tid = setTimeout(() => {
       if (!currentAccountDID) return
-      // setLoading(true)
-
       setProfileReadonlyProps([
         { label: 'DID', value: currentAccountDID, action: 'copy' },
       ])
-
-      setUsername(undefined)
-      Promise.all([fetchUsername()]).finally(() => {
-        setLoading(false)
-      })
     }, 200)
 
     return () => {
@@ -428,7 +162,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
       backgroundGrey
       loadingOverlayColorLight
       withLoadingView
-      showLoading={!loading && quickFetching}>
+      showLoading={quickFetching}>
       {!currentAccountDID ? (
         <LoadingView />
       ) : (
