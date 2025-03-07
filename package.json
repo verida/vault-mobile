@@ -76,7 +76,6 @@
     "@verida/storage-link": "^3.0.1",
     "@verida/types": "^3.0.0",
     "@verida/vda-did-resolver": "^3.0.1",
-    "@verida/vda-name-client": "^3.0.1",
     "@verida/verifiable-credentials": "^3.0.2",
     "@verida/wallet-utils": "^1.7.4",
     "@walletconnect/react-native-compat": "^2.8.1",
@@ -355,5 +354,6 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
-  }
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }
