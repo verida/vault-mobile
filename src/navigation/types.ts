@@ -116,7 +116,7 @@ export type TabsScreenParams = {
   Profile: PublicProfileScreenParams
   Data: DataScreenParams
   Connections: ConnectionsScreenParams
-  Assets: undefined
+  Assets?: undefined
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
