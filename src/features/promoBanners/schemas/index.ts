@@ -7,6 +7,7 @@ export const BannerSchema = z.object({
   buttonLabel: z.string(),
   actionType: z.union([z.literal('screen'), z.literal('link')]),
   actionValue: z.string(),
+  params: z.object({}).optional(),
 })
 
 export const WalletProviderBannersResponseSchema = z.array(BannerSchema)

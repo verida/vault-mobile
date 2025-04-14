@@ -38,6 +38,8 @@ import { persistor, store } from '~/reduxStore'
 import { defaultTheme } from '~/styles/theme'
 import { initApplication } from '~/utils'
 
+import { sunsetFeatureFlags } from './config'
+
 initApplication()
 
 // TODO: Move other initialisations into the 'initApplication'
@@ -108,18 +110,28 @@ function App() {
                       <Authenticate>
                         <RootSiblingParent>
                           <ActionSheetProvider>
-                            <BlockchainProvider>
-                              <CryptoWalletBalanceProvider>
-                                <CryptoWalletProvider>
-                                  <WalletConnectProvider>
-                                    <GestureHandlerRootView style={styles.flex}>
-                                      <RootNavigator />
-                                    </GestureHandlerRootView>
-                                    <MetaServerChecks />
-                                  </WalletConnectProvider>
-                                </CryptoWalletProvider>
-                              </CryptoWalletBalanceProvider>
-                            </BlockchainProvider>
+                            {sunsetFeatureFlags.enabledBlockchainWallet ? (
+                              <BlockchainProvider>
+                                <CryptoWalletBalanceProvider>
+                                  <CryptoWalletProvider>
+                                    <WalletConnectProvider>
+                                      <GestureHandlerRootView
+                                        style={styles.flex}>
+                                        <RootNavigator />
+                                      </GestureHandlerRootView>
+                                      <MetaServerChecks />
+                                    </WalletConnectProvider>
+                                  </CryptoWalletProvider>
+                                </CryptoWalletBalanceProvider>
+                              </BlockchainProvider>
+                            ) : (
+                              <>
+                                <GestureHandlerRootView style={styles.flex}>
+                                  <RootNavigator />
+                                </GestureHandlerRootView>
+                                <MetaServerChecks />
+                              </>
+                            )}
                           </ActionSheetProvider>
                         </RootSiblingParent>
                       </Authenticate>
@@ -147,10 +159,5 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
 })
 
-const codePushOptions: CodePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.IMMEDIATE,
-}
-
 const WrappedWithSentry = Sentry.wrap(App)
-export default codePush(codePushOptions)(WrappedWithSentry)
+export default WrappedWithSentry
