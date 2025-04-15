@@ -21,7 +21,7 @@ export const HomeGettingStartedItem: React.FC<HomeGettingStartedItemProps> = (
   const navigation = useNavigation()
 
   const handlePress = () => {
-    navigation.navigate(item.screen as never, item.params) // Expecting potential params
+    navigation.navigate(item.screen as any, item.params) // Expecting potential params
     // TODO: Either Add screen params in the item definition or be careful not to put a screen with mandatory params
   }
 
