@@ -5,12 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Icon, ScreenWrapper } from '~/components'
 import { CryptoWalletList } from '~/components/CryptoWallet'
+import { sunsetFeatureFlags } from '~/config'
 import { HIT_SLOP_10_10 } from '~/constants'
 import { useTheme } from '~/contexts'
 import {
   deleteCryptoWallet,
   LegacyCryptoWallet,
-  selectCryptoWallet,
   useCryptoWalletsCount,
 } from '~/features/cryptoWallet'
 import { useThemeAwareStyle } from '~/hooks'
@@ -31,12 +31,13 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
 
   const dispatch = useAppDispatch()
 
-  const handleSelectWallet = useCallback(
-    (walletId: string) => {
-      dispatch(selectCryptoWallet(walletId))
-    },
-    [dispatch]
-  )
+  // NOTE: Commented out for now - sunset the blockchain wallet
+  // const handleSelectWallet = useCallback(
+  //   (walletId: string) => {
+  //     dispatch(selectCryptoWallet(walletId))
+  //   },
+  //   [dispatch]
+  // )
 
   const handleDeleteWallet = useCallback(
     (walletId: string) => {
@@ -148,17 +149,18 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
 
   const handlePressWalletListItem = useCallback(
     (item: LegacyCryptoWallet) => {
-      let options
-      if (item.readOnly) {
-        options = ['Select this wallet', 'Delete Wallet', 'Cancel']
-      } else {
-        options = [
-          'View details',
-          'Select this wallet',
-          'Delete Wallet',
-          'Cancel',
-        ]
-      }
+      const options = ['Display seed phrase', 'Delete Wallet', 'Cancel']
+      // NOTE: Commented out for now - sunset the blockchain wallet
+      // if (item.readOnly) {
+      //   options = ['Select this wallet', 'Delete Wallet', 'Cancel']
+      // } else {
+      //   options = [
+      //     'View details',
+      //     'Select this wallet',
+      //     'Delete Wallet',
+      //     'Cancel',
+      //   ]
+      // }
 
       showActionSheetWithOptions(
         {
@@ -177,10 +179,19 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
           }
 
           if (buttonIndex === 0 && !item.readOnly) {
-            navigation.navigate('SingleWallet', { walletId: item.id })
-          } else if (buttonIndex === 1) {
-            handleSelectWallet(item.id)
-          } else if (buttonIndex === 2) {
+            // NOTE: Commented out for now - sunset the blockchain wallet
+            // navigation.navigate('SingleWallet', { walletId: item.id })
+            navigation.navigate('DisplayPrivateInfo', {
+              source: 'cryptoWallet',
+              type: 'recoveryPhrase',
+              sourceId: item.id,
+            })
+          }
+          // NOTE: Commented out for now - sunset the blockchain wallet
+          // else if (buttonIndex === 1) {
+          //   handleSelectWallet(item.id)
+          // }
+          else if (buttonIndex === 1) {
             if (cryptoWalletCount <= 1) {
               showDeleteAlert()
             } else {
@@ -192,7 +203,6 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     },
     [
       cryptoWalletCount,
-      handleSelectWallet,
       navigation,
       showActionSheetWithOptions,
       showConfirmationAlert,
@@ -205,14 +215,16 @@ export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
     navigation.setOptions({
       title: 'Manage Wallets',
       headerShadowVisible: false,
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={handleAddWalletPress}
-          hitSlop={HIT_SLOP_10_10}
-          style={styles.headerAddWalletButton}>
-          <Icon name='add' size={24} color={theme.color.primary} />
-        </TouchableOpacity>
-      ),
+      headerRight: sunsetFeatureFlags.enabledBlockchainWallet
+        ? () => (
+            <TouchableOpacity
+              onPress={handleAddWalletPress}
+              hitSlop={HIT_SLOP_10_10}
+              style={styles.headerAddWalletButton}>
+              <Icon name='add' size={24} color={theme.color.primary} />
+            </TouchableOpacity>
+          )
+        : undefined,
     })
   }, [
     navigation,

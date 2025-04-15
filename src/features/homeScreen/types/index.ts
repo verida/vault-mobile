@@ -5,4 +5,5 @@ export type HomeScreenGettingStartedItem = {
   label: string
   icon: React.ReactElement
   screen: keyof MainStackParams | keyof TabsScreenParams
+  params?: Record<string, unknown>
 }

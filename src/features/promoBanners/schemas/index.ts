@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const BannerSchema = z.object({
   id: z.string(),
   order: z.number(),
-  image: z.string(),
+  image: z.union([z.string(), z.number()]),
   buttonLabel: z.string(),
   actionType: z.union([z.literal('screen'), z.literal('link')]),
   actionValue: z.string(),

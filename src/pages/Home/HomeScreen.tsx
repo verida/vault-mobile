@@ -1,15 +1,12 @@
-import { useNavigation } from '@react-navigation/native'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import {
   HomeCryptoWalletOverview,
   HomeGettingStarted,
   HomePromoBanners,
-  Icon,
   RecoveryPhraseReminder,
   ScreenWrapper,
-  Typography,
 } from '~/components'
 import { sunsetFeatureFlags } from '~/config'
 import { useTheme } from '~/contexts'
@@ -34,13 +31,12 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
   const { theme } = useTheme()
 
   const { config } = useConfig()
-  const navigation = useNavigation()
 
   const hideCryptoWalletOverview =
     !sunsetFeatureFlags.enabledBlockchainWallet ||
     config.features.home.hideCryptoWalletOverview
-  const hidePromoBanners = true //config.features.home.hidePromoBanners
-  const hideGettingStarted = true // config.features.home.hideGettingStarted
+  const hidePromoBanners = config.features.home.hidePromoBanners
+  const hideGettingStarted = config.features.home.hideGettingStarted
 
   return (
     <>
@@ -48,15 +44,6 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
         safeAreaEdges={['left', 'right']}
         backgroundColor={theme.color.snow}>
         <View style={styles.container}>
-          <Typography
-            variant='h5'
-            style={{
-              marginBottom: theme.spacing.l,
-            }}>
-            Verida Wallet is about to sunset. Get yourself ready to the next
-            phrase.
-          </Typography>
-
           {hideCryptoWalletOverview ? null : (
             <HomeCryptoWalletOverview style={styles.section} />
           )}
@@ -70,37 +57,6 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
               style={[styles.section, styles.gettingStartedSection]}
             />
           )}
-
-          <View style={styles.section}>
-            <Pressable
-              style={styles.button}
-              onPress={() => {
-                navigation.navigate('DisplayPrivateInfo', {
-                  source: 'currentVeridaDid',
-                  type: 'recoveryPhrase',
-                })
-              }}>
-              <View style={styles.details}>
-                <Text style={styles.label}>
-                  Back up Verida identity seedphrase
-                </Text>
-              </View>
-              <Icon name='chevron-forward' size={24} />
-            </Pressable>
-
-            <Pressable
-              style={styles.button}
-              onPress={() => {
-                navigation.navigate('ManageWallets')
-              }}>
-              <View style={styles.details}>
-                <Text style={styles.label}>
-                  Back up Crypto wallet seedphrases
-                </Text>
-              </View>
-              <Icon name='chevron-forward' size={24} />
-            </Pressable>
-          </View>
         </View>
 
         <RecoveryPhraseReminder style={styles.recoveryPhraseReminder} />

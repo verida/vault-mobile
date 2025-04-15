@@ -1,6 +1,5 @@
 import { core as PolygonId, CredentialStatusType } from '@0xpolygonid/js-sdk'
 import { EnvironmentType } from '@verida/types'
-import { deleteItemAsync } from 'expo-secure-store'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
@@ -126,6 +125,7 @@ export const config = {
   },
 }
 
+// Temporary local feature flags for the sunset event
 export const sunsetFeatureFlags = {
   enabledBlockchainWallet: false,
   enabledCreateIdentity: false,

@@ -21,7 +21,7 @@ export const HomeGettingStartedItem: React.FC<HomeGettingStartedItemProps> = (
   const navigation = useNavigation()
 
   const handlePress = () => {
-    navigation.navigate(item.screen as never) // Expecting potential params
+    navigation.navigate(item.screen as never, item.params) // Expecting potential params
     // TODO: Either Add screen params in the item definition or be careful not to put a screen with mandatory params
   }
 
@@ -58,8 +58,7 @@ const createStyles = (theme: Theme) =>
     label: {
       marginLeft: theme.spacing.sm,
       fontFamily: theme.fontFamily.bold,
-      fontSize: theme.fontSize.l,
-      lineHeight: theme.fontSize.l * 1.375,
+      fontSize: theme.fontSize.m,
       color: theme.color.onBackground,
     },
   })
