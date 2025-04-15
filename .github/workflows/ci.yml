@@ -24,7 +24,7 @@ jobs:
         run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_ENV
 
       - name: Set up node
-        uses: actions/setup-node@v2.5.2
+        uses: actions/setup-node@v4
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: yarn
