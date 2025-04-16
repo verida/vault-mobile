@@ -120,37 +120,40 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     {
       label: 'Blockchains',
       items: [
-        {
-          label: 'Networks',
-          action: 'arrow',
-          optional: true,
-          onPress: () => navigation.navigate('BlockchainNetworks'),
-        },
+        // NOTE: walllet sunset
+        // {
+        //   label: 'Networks',
+        //   action: 'arrow',
+        //   optional: true,
+        //   onPress: () => navigation.navigate('BlockchainNetworks'),
+        // },
         {
           label: 'Crypto Wallets',
           action: 'arrow',
           optional: true,
           onPress: () => navigation.navigate('ManageWallets'),
         },
-        {
-          label: 'DApp Connections',
-          action: 'arrow',
-          optional: true,
-          onPress: () => navigation.navigate('WalletConnectActiveSessions'),
-        },
+        // NOTE: walllet sunset
+        // {
+        //   label: 'DApp Connections',
+        //   action: 'arrow',
+        //   optional: true,
+        //   onPress: () => navigation.navigate('WalletConnectActiveSessions'),
+        // },
       ],
     },
-    {
-      label: 'Polygon ID',
-      items: [
-        {
-          label: 'Status',
-          action: 'arrow',
-          optional: true,
-          onPress: () => navigation.navigate('PolygonIdStatus'),
-        },
-      ],
-    },
+    // NOTE: walllet sunset
+    // {
+    //   label: 'Polygon ID',
+    //   items: [
+    //     {
+    //       label: 'Status',
+    //       action: 'arrow',
+    //       optional: true,
+    //       onPress: () => navigation.navigate('PolygonIdStatus'),
+    //     },
+    //   ],
+    // },
   ]
 
   useEffect(() => {
