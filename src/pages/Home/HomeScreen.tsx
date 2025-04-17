@@ -8,6 +8,7 @@ import {
   RecoveryPhraseReminder,
   ScreenWrapper,
 } from '~/components'
+import { sunsetFeatureFlags } from '~/config'
 import { useTheme } from '~/contexts'
 import { useConfig } from '~/features/config'
 import { useHomeScreenHandlers } from '~/features/homeScreen'
@@ -31,7 +32,9 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
 
   const { config } = useConfig()
 
-  const hideCryptoWalletOverview = config.features.home.hideCryptoWalletOverview
+  const hideCryptoWalletOverview =
+    !sunsetFeatureFlags.enabledBlockchainWallet ||
+    config.features.home.hideCryptoWalletOverview
   const hidePromoBanners = config.features.home.hidePromoBanners
   const hideGettingStarted = config.features.home.hideGettingStarted
 
@@ -55,6 +58,7 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
             />
           )}
         </View>
+
         <RecoveryPhraseReminder style={styles.recoveryPhraseReminder} />
       </ScreenWrapper>
     </>
@@ -70,6 +74,7 @@ const createStyle = (theme: Theme) =>
     },
     section: {
       marginBottom: theme.spacing.m,
+      gap: theme.spacing.s,
     },
     promoBannersSection: {
       marginLeft: -theme.spacing.m,
@@ -84,5 +89,28 @@ const createStyle = (theme: Theme) =>
       bottom: theme.spacing.m,
       left: theme.spacing.m,
       right: theme.spacing.m,
+    },
+
+    button: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
+      borderWidth: 1,
+      borderRadius: theme.roundness.xs,
+      borderColor: '#E0E3EA', // Hardcoded color
+      backgroundColor: theme.color.background,
+    },
+    details: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    label: {
+      marginLeft: theme.spacing.sm,
+      fontFamily: theme.fontFamily.bold,
+      fontSize: theme.fontSize.l,
+      lineHeight: theme.fontSize.l * 1.375,
+      color: theme.color.onBackground,
     },
   })

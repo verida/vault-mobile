@@ -28,7 +28,7 @@ export const HomeGettingStarted: React.FC<HomeGettingStartedProps> = (
 
   return (
     <View {...viewProps}>
-      <Text style={styles.headerLlabel}>What you could do next</Text>
+      <Text style={styles.headerLlabel}>Follow these steps</Text>
       <ScrollView
         alwaysBounceVertical={false}
         style={styles.scrollContainer}

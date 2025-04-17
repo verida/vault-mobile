@@ -46,7 +46,7 @@ export const promoBannersApi = createApi({
               ...banner,
 
               // We fetch and convert the image to a data URL so it can be cached locally (by redux) and not fetched every time if we keep it as a HTTP URL
-              image: await getImageDataUrl(banner.image),
+              image: await getImageDataUrl(banner.image as string),
             }
           })
         )

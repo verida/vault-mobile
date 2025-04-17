@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { sunsetFeatureFlags } from '~/config'
 import { CryptoWalletProvider } from '~/features/cryptoWallet'
 import { PolygonIdProvider } from '~/features/polygonid'
 import { ProtocolsProvider } from '~/features/protocols'
@@ -18,7 +19,7 @@ export const BehindAuthContextProviders: React.FunctionComponent<
   const { children } = props
 
   // TODO: Move other relavant context providers here
-  return (
+  return sunsetFeatureFlags.enabledBlockchainWallet ? (
     <CryptoWalletProvider>
       <PolygonIdProvider>
         <VeramoProvider>
@@ -26,5 +27,7 @@ export const BehindAuthContextProviders: React.FunctionComponent<
         </VeramoProvider>
       </PolygonIdProvider>
     </CryptoWalletProvider>
+  ) : (
+    <ProtocolsProvider>{children}</ProtocolsProvider>
   )
 }

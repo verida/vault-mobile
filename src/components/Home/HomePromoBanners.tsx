@@ -98,9 +98,11 @@ export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
     .map((banner) => (
       <View key={banner.id} style={styles.bannerContainer}>
         <ImageBackground
-          source={{
-            uri: banner.image,
-          }}
+          source={
+            typeof banner.image === 'number'
+              ? banner.image
+              : { uri: banner.image }
+          }
           resizeMode='cover'
           borderRadius={theme.roundness.xs}
           style={styles.bannerContent}>

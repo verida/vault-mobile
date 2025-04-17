@@ -125,6 +125,16 @@ export const config = {
   },
 }
 
+// Temporary local feature flags for the sunset event
+export const sunsetFeatureFlags = {
+  enabledBlockchainWallet: false,
+  enabledCreateIdentity: false,
+  enabledDeleteIdentity: false,
+  enabledPolygonId: false,
+
+  enabledAskForBackup: true,
+}
+
 /*
  * Merge local app-config with remote-config
  *

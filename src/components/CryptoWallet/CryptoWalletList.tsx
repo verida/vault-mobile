@@ -2,6 +2,7 @@ import React, { ComponentProps, useCallback } from 'react'
 import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 
 import { Typography } from '~/components/Typography'
+import { sunsetFeatureFlags } from '~/config'
 import {
   LegacyCryptoWallet,
   useCryptoWallets,
@@ -41,7 +42,11 @@ export const CryptoWalletList: React.FC<CryptoWalletListProps> = (props) => {
         <CryptoWalletListItem
           item={cryptoWallet}
           onPress={onPressItem}
-          selected={selectedCryptoWallet?.id === cryptoWallet.id}
+          selected={
+            sunsetFeatureFlags.enabledBlockchainWallet
+              ? selectedCryptoWallet?.id === cryptoWallet.id
+              : false
+          }
           showMoreIcon={showMoreIcon}
         />
       </View>

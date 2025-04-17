@@ -1,9 +1,11 @@
 import React from 'react'
 
 import MigrateIdentityIcon from '~/assets/icons/migrate_identity_icon.svg'
-import UpdateProfileIcon from '~/assets/icons/update_profile_icon.svg'
+// import UpdateProfileIcon from '~/assets/icons/update_profile_icon.svg'
 // import ConnectIcon from '~/assets/icons/connect_icon.svg'
-import MainWalletIcon from '~/assets/icons/wallet_icon_2.svg'
+// import MainWalletIcon from '~/assets/icons/wallet_icon_2.svg'
+import { Icon } from '~/components'
+import { ORANGE_COLOR } from '~/constants'
 import { canMigrateToMainnet } from '~/features/identities'
 
 import { HomeScreenGettingStartedItem } from '../types'
@@ -18,22 +20,40 @@ const migrateIdentityItem: HomeScreenGettingStartedItem[] = [
 ]
 
 const homeGettingStartedItems: HomeScreenGettingStartedItem[] = [
-  {
-    key: 'update_profile',
-    label: 'Update your profile',
-    icon: <UpdateProfileIcon />,
-    screen: 'Profile',
-  },
+  // {
+  //   key: 'update_profile',
+  //   label: 'Update your profile',
+  //   icon: <UpdateProfileIcon />,
+  //   screen: 'Profile',
+  // },
   // {
   //   key: 'connect_accounts',
   //   label: 'Connect social accounts',
   //   icon: <ConnectIcon />,
   //   screen: 'Connections',
   // },
+  // {
+  //   key: 'manage_crypto_wallet',
+  //   label: 'Manage your crypto wallets',
+  //   icon: <MainWalletIcon />,
+  //   screen: 'ManageWallets',
+  // },
+
   {
-    key: 'manage_crypto_wallet',
-    label: 'Manage your crypto wallets',
-    icon: <MainWalletIcon />,
+    key: 'backup_verida_identity',
+    label: 'Backup your Verida identity seed phrase',
+    icon: <Icon name='profile' size={32} color={ORANGE_COLOR} />,
+    screen: 'DisplayPrivateInfo',
+    params: {
+      source: 'currentVeridaDid',
+      type: 'recoveryPhrase',
+    },
+  },
+
+  {
+    key: 'export_crypto_wallets',
+    label: 'Export your crypto wallets',
+    icon: <Icon name='wallet' size={32} color={ORANGE_COLOR} />,
     screen: 'ManageWallets',
   },
 ]

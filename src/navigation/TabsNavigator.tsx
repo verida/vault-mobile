@@ -3,6 +3,7 @@ import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { HomeScreenHeader, Icon, IconName, TabScreenHeader } from '~/components'
+import { sunsetFeatureFlags } from '~/config'
 import { useTheme } from '~/contexts'
 import { TabsScreenParams } from '~/navigation/types'
 import { AssetsScreen } from '~/pages/Assets'
@@ -68,7 +69,10 @@ export const TabsNavigator: React.FunctionComponent = () => {
         <Tabs.Screen name='Data' component={DataScreen} />
         {/* <Tabs.Screen name='Connections' component={ConnectionsScreen} /> */}
         {/* TODO: uncomment when ready */}
-        <Tabs.Screen name='Assets' component={AssetsScreen} />
+
+        {sunsetFeatureFlags.enabledBlockchainWallet && (
+          <Tabs.Screen name='Assets' component={AssetsScreen} />
+        )}
       </Tabs.Navigator>
     </IdentityDrawer>
   )
