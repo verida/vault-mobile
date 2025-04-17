@@ -30,7 +30,8 @@ export function usePromoBanners() {
         buttonLabel: 'Learn More',
         image: require('~/assets/wallet_support_ending_banner_3x.png'),
         actionType: 'link',
-        actionValue: 'https://news.verida.network/verida-wallet-sunset',
+        actionValue:
+          'https://verida.medium.com/verida-vault-launches-take-control-of-your-personal-data-in-the-age-of-private-ai-78e859ade48d',
       } as Banner,
     ],
   }
