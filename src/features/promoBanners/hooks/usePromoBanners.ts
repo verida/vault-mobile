@@ -28,7 +28,7 @@ export function usePromoBanners() {
         id: '1',
         order: 0,
         buttonLabel: 'Learn More',
-        image: require('~/assets/profile_link_bg.png'),
+        image: require('~/assets/wallet_support_ending_banner_3x.png'),
         actionType: 'link',
         actionValue: 'https://news.verida.network/verida-wallet-sunset',
       } as Banner,
