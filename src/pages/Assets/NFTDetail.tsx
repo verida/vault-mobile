@@ -266,11 +266,6 @@ export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
           </View>
         </View>
       </ScrollView>
-      {/* <Footer>
-        <Button color='primary' onPress={null}>
-          Add to Verida One
-        </Button>
-      </Footer> */}
     </ScreenWrapper>
   )
 }

@@ -6,6 +6,7 @@ import { Checkbox } from '~/components/Input'
 import { Spacer } from '~/components/Spacer'
 import { Headline } from '~/components/Typography/Headline'
 import { Text } from '~/components/Typography/Text'
+import { sunsetFeatureFlags } from '~/config'
 import { TERMS_AND_CONDITIONS_URL } from '~/constants/application'
 import { useThemeAwareStyle } from '~/hooks'
 import { MainStackScreenProps } from '~/navigation/types'
@@ -106,11 +107,15 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
         hideBorder
         actionsOrientation='column'
         actions={[
-          {
-            label: 'Create Identity',
-            onPress: handleCreateIdentityButtonPress,
-            disabled: !isTermsConditionsChecked,
-          },
+          ...(sunsetFeatureFlags.enabledCreateIdentity
+            ? [
+                {
+                  label: 'Create Identity',
+                  onPress: handleCreateIdentityButtonPress,
+                  disabled: !isTermsConditionsChecked,
+                },
+              ]
+            : []),
           {
             label: 'Import Identity',
             variant: 'secondary',

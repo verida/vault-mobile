@@ -30,7 +30,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '~/constants/text'
 import { getNetworkFromDID, selectSelectedAccount } from '~/features/identities'
 import { Logger } from '~/features/telemetry'
 import { isNetworkCompatibleForConnect } from '~/features/veridaConnect'
-import { useWalletConnectProtocolHandler } from '~/features/walletConnect'
+// import { useWalletConnectProtocolHandler } from '~/features/walletConnect'
 import { MainStackScreenProps } from '~/navigation'
 import { useAppSelector } from '~/reduxStore/types'
 
@@ -80,7 +80,8 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
         ? 'compatible'
         : 'incompatible'
 
-  const { handleDeepLink } = useWalletConnectProtocolHandler()
+  // NOTE: Commented out for now, as the Verida Wallet sunset event
+  // const { handleDeepLink } = useWalletConnectProtocolHandler()
 
   useEffect(() => {
     const init = async () => {
@@ -311,7 +312,8 @@ export const LoginRequestScreen: React.FC<LoginRequestScreenProps> = (
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
-      if (info.walletConnect?.uri) await handleDeepLink(info.walletConnect.uri)
+      // NOTE: Commented out for now, as the Verida Wallet sunset event
+      // if (info.walletConnect?.uri) await handleDeepLink(info.walletConnect.uri)
 
       await saveLoginRequest(true, deviceId)
     } catch (error) {

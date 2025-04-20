@@ -5,7 +5,6 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
-import codePush, { CodePushOptions } from 'react-native-code-push'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import {
@@ -37,6 +36,8 @@ import { Authenticate } from '~/pages/Authentication/Authenticate'
 import { persistor, store } from '~/reduxStore'
 import { defaultTheme } from '~/styles/theme'
 import { initApplication } from '~/utils'
+
+import { sunsetFeatureFlags } from './config'
 
 initApplication()
 
@@ -108,18 +109,28 @@ function App() {
                       <Authenticate>
                         <RootSiblingParent>
                           <ActionSheetProvider>
-                            <BlockchainProvider>
-                              <CryptoWalletBalanceProvider>
-                                <CryptoWalletProvider>
-                                  <WalletConnectProvider>
-                                    <GestureHandlerRootView style={styles.flex}>
-                                      <RootNavigator />
-                                    </GestureHandlerRootView>
-                                    <MetaServerChecks />
-                                  </WalletConnectProvider>
-                                </CryptoWalletProvider>
-                              </CryptoWalletBalanceProvider>
-                            </BlockchainProvider>
+                            {sunsetFeatureFlags.enabledBlockchainWallet ? (
+                              <BlockchainProvider>
+                                <CryptoWalletBalanceProvider>
+                                  <CryptoWalletProvider>
+                                    <WalletConnectProvider>
+                                      <GestureHandlerRootView
+                                        style={styles.flex}>
+                                        <RootNavigator />
+                                      </GestureHandlerRootView>
+                                      <MetaServerChecks />
+                                    </WalletConnectProvider>
+                                  </CryptoWalletProvider>
+                                </CryptoWalletBalanceProvider>
+                              </BlockchainProvider>
+                            ) : (
+                              <>
+                                <GestureHandlerRootView style={styles.flex}>
+                                  <RootNavigator />
+                                </GestureHandlerRootView>
+                                <MetaServerChecks />
+                              </>
+                            )}
                           </ActionSheetProvider>
                         </RootSiblingParent>
                       </Authenticate>
@@ -147,10 +158,5 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
 })
 
-const codePushOptions: CodePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.IMMEDIATE,
-}
-
 const WrappedWithSentry = Sentry.wrap(App)
-export default codePush(codePushOptions)(WrappedWithSentry)
+export default WrappedWithSentry

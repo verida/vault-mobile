@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "scripts": {
     "clean": "rm -rf $TMPDIR/react-* && rm -rf node_modules ios/pods ios/build android/app/build && watchman watch-del-all && yarn",
     "pod:install": "cd ios && pod install && cd ..",
@@ -58,7 +58,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@reduxjs/toolkit": "^1.9.3",
-    "@sentry/react-native": "^5.22.0",
+    "@sentry/react-native": "^6.8.0",
     "@sinonjs/text-encoding": "^0.7.2",
     "@tradle/react-native-http": "^2.0.1",
     "@veramo/core": "^5.2.0",
@@ -76,7 +76,6 @@
     "@verida/storage-link": "^3.0.1",
     "@verida/types": "^3.0.0",
     "@verida/vda-did-resolver": "^3.0.1",
-    "@verida/vda-name-client": "^3.0.1",
     "@verida/verifiable-credentials": "^3.0.2",
     "@verida/wallet-utils": "^1.7.4",
     "@walletconnect/react-native-compat": "^2.8.1",

@@ -33,14 +33,9 @@ import { LoginHistoryScreen } from '~/pages/Login'
 import { LoginRequestScreen } from '~/pages/Login/LoginRequest'
 import { PolygonIdStatusScreen } from '~/pages/PolygonId'
 import {
-  AddVeridaOneCustomLinkScreen,
-  AddVeridaOnePlatformLinkScreen,
-  ClaimUsernameScreen,
   EditGenericPropertyScreen,
   EditProfileScreen,
-  EditVeridaOnePlatformLinkScreen,
   PublicProfileScreen,
-  UnlockVeridaOneScreen,
 } from '~/pages/Profiles'
 import { QrCodeScannerScreen } from '~/pages/QrCodeScanner'
 import {
@@ -237,30 +232,10 @@ export const MainNavigator: React.FC = () => {
             />
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
-              name='UnlockVeridaOne'
-              component={UnlockVeridaOneScreen}
-            />
-            <Stack.Screen
-              name='ClaimUsername'
-              component={ClaimUsernameScreen}
-            />
-            <Stack.Screen
               name='EditGenericProperty'
               component={EditGenericPropertyScreen}
             />
-            <Stack.Screen
-              name='AddVeridaOneCustomLink'
-              component={AddVeridaOneCustomLinkScreen}
-            />
             <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
-            <Stack.Screen
-              name='AddVeridaOnePlatformLink'
-              component={AddVeridaOnePlatformLinkScreen}
-            />
-            <Stack.Screen
-              name='EditVeridaOnePlatformLink'
-              component={EditVeridaOnePlatformLinkScreen}
-            />
             <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
             <Stack.Screen
               name='ShareIdentity'

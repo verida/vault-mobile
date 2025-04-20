@@ -1,9 +1,6 @@
-# 1.5.1 (2025-02-25)
+# 1.6.0 (2025-04-18)
 
-## Bug fixes
-
-- Update Terms & Conditions link
-- Fix identity creation navigation bug
+- Prepare for wallet support ending
 
 # 1.5.0 (2024-07-12)
 

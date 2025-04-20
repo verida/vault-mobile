@@ -50,14 +50,9 @@ import {
 import { OnboardingScreenParams } from '~/pages/Onboarding'
 import { PolygonIdStatusScreenParams } from '~/pages/PolygonId'
 import {
-  AddVeridaOneCustomLinkScreenParams,
-  AddVeridaOnePlatformLinkScreenParams,
-  ClaimUsernameScreenParams,
   EditProfileScreenParams,
-  EditVeridaOnePlatformLinkScreenParams,
   GenericEditPropertyScreenParams,
   PublicProfileScreenParams,
-  UnlockVeridaOneScreenParams,
 } from '~/pages/Profiles'
 import { QrCodeScannerScreenParams } from '~/pages/QrCodeScanner'
 import {
@@ -121,7 +116,7 @@ export type TabsScreenParams = {
   Profile: PublicProfileScreenParams
   Data: DataScreenParams
   Connections: ConnectionsScreenParams
-  Assets: undefined
+  Assets?: undefined
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
@@ -139,13 +134,7 @@ export type MainStackParams = {
   LoginRequest: LoginRequestScreenParams
   PublicProfile: PublicProfileScreenParams
   EditProfile: EditProfileScreenParams
-  ClaimUsername: ClaimUsernameScreenParams
   EditGenericProperty: GenericEditPropertyScreenParams
-  AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
-  AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
-  EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
-  UnlockVeridaOne: UnlockVeridaOneScreenParams
-  VeridaOneInvitationSuccess: undefined
   ManageWallets: ManageWalletsScreenParams
   SwitchSelectedCryptoWallet: SwitchSelectedCryptoWalletScreenParams
   CreateCryptoWallet: CreateCryptoWalletScreenParams
